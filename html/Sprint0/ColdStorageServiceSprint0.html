@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+<link rel="stylesheet" href="../_static/template.css">
+<link rel="stylesheet" href="../_static/mine.css">
+    
+<head>
+   <title>Riccardo Barbieri</title>
+</head>
+    
+<body>
+
+<div id="top">
+
+    <h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE<font size="5"></font> </h1>
+
+</div>  
+
+<div class="body"> 
+
+<h2>Introduction</h2>
+ 
+ 
+<h2>Requirements</h2>
+ 
+<div class="remark">
+    <a target="_blank" href="https://iss.riccardohost.space/TemaFinale23.html">Descrizione requirements a questa pagina</a><br>
+
+
+<bc>Goals dello sprint 0</bc>:
+<ol>
+    <li>Identificare i componenti principali del servizio <b>ColdStorageService</b></li>
+    <li>Formulare un modello di interazione dei componenti individuati</li>
+    <li>Modellare una architettura logica del sistema su base non distribuita</li>
+</ol>
+</div>
+
+<h2>Requirement analysis</h2>
+
+<div class="remark">
+    
+
+<table>
+<tr>
+<th>Termine</th>
+<th>Descrizione</th>
+</tr>
+<tr>
+<td class="greenbold center" id="coldstorageservice">ColdStorageService</td>
+<td >Sistema distribuito per il deposito di prodotti alimentari all'interno di una stanza refrigerata, automatizzato tramite l'uso di un <a href="#transporttrolley">transport trolley</a>.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="servicearea">Service area</td>
+<td>Stanza piatta a pianta rettangolare nella quale il <a href="#transporttrolley">transport trolley</a> pu&ograve; navigare, contiene:
+<ul>
+    <li><a href="#indoor">INDOOR</a>;</li>
+    <li><a href="#coldroom">ColdRoom</a>;</li>
+    <li><a href="#home">HOME</a>;</li>
+    <li>ostacoli con posizione e dimensione predefinita (tra i quali la ColdRoom).</li>    
+</ul></td>
+</tr>
+<tr>
+<td class="greenbold center" id="indoor">INDOOR</td>
+<td>Porta di accesso adibita al trasferimento di un carico dal <a href="#camionrefrigerato">camion refrigerato</a> al <a href="#transporttrolley">transport trollery</a>.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="coldroom">ColdRoom</td>
+<td>Contenitore refrigerato adibito al deposito di cibo ritirato dal <a href="#camionrefrigerato">camion refrigerato</a> da parte del <a href="#transporttrolley">transport trolley</a>.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="maxw">MAXW</td>
+<td>Limite massimo di chilogrammi che la <a href="#coldroom">ColdRoom</a> pu&ograve; contenere in un dato momento.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="transporttrolley">Transport trolley</td>
+<td>Rappresenta un robot virtuale di forma quadrata e lato <a href="#rd">RD</a>. Astrazione che usa il <a href="#ddrrobot">DDR Robot</a> per muoversi all'interno della <a href="#servicearea">service area</a>.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="home">HOME</td>
+<td>Posizione di partenza del <a href="#trasnporttrolley">transport trolley</a> situato nell'angolo tra il muro superiore e quello sinistro della <a href="#servicearea">service area</a>.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="rd">RD</td>
+<td>Lunghezza del lato del <a href="#transporttrolley">transport trolley</a>.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="azionedideposito">Azione di deposito</td>
+<td>Operazione di deposito che coinvolge il <a>camion refrigerato</a> e il <a>transport trolley</a>:
+<ol>
+    <li>il transport trolley preleva un carico di cibo dal camion refrigerato tramite la porta INDORR;</li>
+    <li>il transport trolley si sposta da INDOOR a PORT;</li>
+    <li>il carico viene depositato nella ColdRoom.</li>
+</ol></td>
+</tr>
+<tr>
+<td class="greenbold center" id="foodload">Food load</td>
+<td>Carico di cibo (frutta, vegetali...) che necessita di essere refrigerato, sia durante il trasporto che nella fase di accumulazione.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="camionrefrigerato">Camion refrigerato</td>
+<td>Entità esterna al sistema che deposita <a href="#FW">FW</a> kg di prodotti alimentari tramite la porta <a href="#INDOOR">INDOOR</a>.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="serviceaccessgui">ServiceAccessGUI</td>
+<td>Interfaccia grafica che permette di: 
+<ul>
+<li>visualizzare il peso corrente del materiale immagazzinato nella <a href="#coldroom">Cold Room</a>;</li>
+<li>inviare la richiesta di deposito di una quantità <a href="#FW">FW</a> kg di prodotti alimentari (ritornando un <a href="#ticket">ticket</a> in caso di richiesta accettata);</li>
+<li>immettere il codice del ticket quando il <a href="#camionrefrigerato">camion refrigerato</a> si trova alla porta <a href="#INDOOR">INDOOR</a>, all'esterno della service area;</li>
+<li>visualizzare il messaggio di <a href="#presaincarico">presa in carico</a>.</li>
+</ul></td>
+</tr>
+<tr>
+<td class="greenbold center" id="servicestatusgui">ServiceStatusGUI</td>
+<td>Interfaccia grafica che permette a un utente umano di visualizzare:
+<ul>
+    <li>lo <a href="#statotransporttrolley">stato del transport trolley</a>;</li>
+    <li>il <b>peso corrente</b> del cibo nella <a href="#coldroom">ColdRoom</a>;</li>
+    <li>il <b>numero di richieste rifiutate</b> dall'inizio del servizio.</li>
+</ul></td>
+</tr>
+<tr>
+<td class="greenbold center" id="ddrrobot">DDR robot</td>
+<td>Differential Drive Robot fornito dal committente insieme al software <a href="#basicrobot">BasicRobot</a> per controllarlo. Nell'ambito del <a href="#coldstorageservice">ColdStorageService</a> concretizza il comportamento del <a href="#transporttrolley">transport trolley</a>.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="servicemanager">Service manager</td>
+<td>Utente umano che pu&agrave; interagire con la <a href="#servicestatusgui">ServiceStatusGUI</a> per monitorare lo <a href="#statoservicearea">stato della service area</a></td>
+</tr>
+<tr>
+<td class="greenbold center" id="sonar">Sonar</td>
+<td>Dispositivo collegato a un RaspberryPi che, nell'ambito del <a href="#coldstorageservice">ColdStorageService</a>, concretizza il comportamento dell'<a href="#alarmdevice">alarm device</a>, &egrave; utilizzabile tramite software fornito dal committente.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="alarmdevice">Alarm device</td>
+<td>Dispositivo astratto in grado di rilevare la distanza di oggetti posti di fronte ad esso.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="led">Led</td>
+<td>
+Dispositivo collegato a un RaspberryPi che, nell'ambito del <a href="#coldstorageservice">ColdStorageService</a>, concretizza il comportamento del <a href="#warningdevice">warning device</a>, in particolare:
+<ul>
+    <li>&egrave; <b>spento</b> se il <a href="#transporttrolley">transport trolley</a> &egrave; situato in HOME;</li>
+    <li><b>lampeggia</b> se il transport trolley &egrave; in movimento;</li>
+    <li>&egrave; <b>acceso</b> se il transport trolley non &egrave; in movimento.</li>
+</ul>
+Il dispositivo &egrave; controllabile tramite software fornito dal committente.
+</tr>
+<tr>
+<td class="greenbold center" id="warningdevice">Warning device</td>
+<td>Dispositivo astratto in grado di mostrare tre distinti stati:
+<ul>
+    <li><a href="#transporttrolley">transport trolley</a> situato in HOME</li>
+    <li>transport trolley in movimento</li>
+    <li>transport trolley non in movimento (e non in HOME)</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td class="greenbold center" id="dlimt">DLIMT</td>
+<td>Limite di distanza massimo dal <a href="#sonar">sonar</a> per il quale si attivano i relativi <a href"https://iss.riccardohost.space/TemaFinale23.html">alarm requirements</a>: se viene rilevata una distanza minore, viene inviato un segnale di stop al <a href="#transporttrolley">transport trolley</a>.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="tickettime">TICKETTIME</td>
+<td>Quantit&agrave; di tempo che esprime la durata della validit&agrave; di un <a href="#ticket">ticket</a>, se il camion non &egrave; alla porta <a href="#indoor">INDOOR</a> entro questo limite la richiesta viene annullata.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="fw">FW</td>
+<td>Quantit&agrave; di carico che un <a href="camionrefrigerato">camion refrigerato</a> deve depositare, espressa in chilogrammi.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="statotransporttrolley">Stato transport trolley</td>
+<td>Stato corrente del <a href="#transporttrolley">transport trolley</a>, questo include:
+<ul>
+    <li>posizione nella <a href="#servicearea">service area</a>;</li>
+    <li>stato di movimento (<b>stopped</b>,<b>moving</b>).</li>
+</ul></td>
+</tr>
+<tr>
+<td class="greenbold center" id="mint">MINT</td>
+<td>Tempo minimo che deve trascorrere prima che il <a href="#transportrolley">transport trolley</a> possa nuovamente gestire un segnale di stop secondo le condizioni imposte dagli <a href="#alarmrequirements">alarm requirements</a>, espresso in millisecondi.</td>
+</tr>
+<tr>
+<td class="greenbold center" id="statoservicearea">Stato service area</td>
+<td>Comprende lo stato di diversi componenti che si trovano all'interno della <a href="#servicearea">service area</a>, visualizzabile tramite la <a href="#servicestatusgui">ServiceStatusGUI</a>.</td>
+</tr>
+<tr>
+</table>
+
+</div>
+
+<h2>Problem analysis</h2>
+ 
+<div class="remark">
+
+</div>
+
+<h2>Test plans</h2> 
+
+<div class="remark">
+
+</div>
+
+<h2>Project</h2> 
+ 
+<div class="remark">
+
+</div>
+
+<h2>Testing</h2> 
+ 
+<div class="remark">
+
+</div>
+
+<h2>Deployment</h2> 
+
+<div class="remark">
+
+</div>
+ 
+<h2>Maintenance</h2> 
+
+<div class="remark">
+
+</div>
+ 
+<br/><br/> 	
+
+<div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
+GIT repo: https://github.com/RiccardBarbieri/ColdStorageService
+</div> 
+</body>
+</html>
