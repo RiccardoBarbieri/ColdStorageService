@@ -98,14 +98,14 @@
 </tr>
 <tr>
 <td class="greenbold center" id="camionrefrigerato">Camion refrigerato</td>
-<td>Entità esterna al sistema che deposita <a href="#FW">FW</a> kg di prodotti alimentari tramite la porta <a href="#INDOOR">INDOOR</a>.</td>
+<td>Entità esterna al sistema che deposita <a href="#fw">FW</a> kg di prodotti alimentari tramite la porta <a href="#INDOOR">INDOOR</a>.</td>
 </tr>
 <tr>
 <td class="greenbold center" id="serviceaccessgui">ServiceAccessGUI</td>
 <td>Interfaccia grafica che permette di: 
 <ul>
 <li>visualizzare il peso corrente del materiale immagazzinato nella <a href="#coldroom">Cold Room</a>;</li>
-<li>inviare la richiesta di deposito di una quantità <a href="#FW">FW</a> kg di prodotti alimentari (ritornando un <a href="#ticket">ticket</a> in caso di richiesta accettata);</li>
+<li>inviare la richiesta di deposito di una quantità <a href="#fw">FW</a> kg di prodotti alimentari (ritornando un <a href="#ticket">ticket</a> in caso di richiesta accettata);</li>
 <li>immettere il codice del ticket quando il <a href="#camionrefrigerato">camion refrigerato</a> si trova alla porta <a href="#INDOOR">INDOOR</a>, all'esterno della service area;</li>
 <li>visualizzare il messaggio di <a href="#presaincarico">presa in carico</a>.</li>
 </ul></td>
@@ -158,7 +158,7 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
 </tr>
 <tr>
 <td class="greenbold center" id="dlimt">DLIMT</td>
-<td>Limite di distanza massimo dal <a href="#sonar">sonar</a> per il quale si attivano i relativi <a href"https://iss.riccardohost.space/TemaFinale23.html">alarm requirements</a>: se viene rilevata una distanza minore, viene inviato un segnale di stop al <a href="#transporttrolley">transport trolley</a>.</td>
+<td>Limite di distanza massimo dal <a href="#sonar">sonar</a> per il quale si attivano i relativi <a target="_blank" href="https://iss.riccardohost.space/TemaFinale23.html">alarm requirements</a>: se viene rilevata una distanza minore, viene inviato un segnale di stop al <a href="#transporttrolley">transport trolley</a>.</td>
 </tr>
 <tr>
 <td class="greenbold center" id="tickettime">TICKETTIME</td>
@@ -181,6 +181,15 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
 <td>Tempo minimo che deve trascorrere prima che il <a href="#transportrolley">transport trolley</a> possa nuovamente gestire un segnale di stop secondo le condizioni imposte dagli <a href="#alarmrequirements">alarm requirements</a>, espresso in millisecondi.</td>
 </tr>
 <tr>
+<td class="greenbold center" id="ticket">Ticket</td>
+<td>Rappresenta una prenotazione da parte dell'operatore di un camion refrigerato che identifica univocamente una azione di deposito in attesa di essere <a href="#chargetaken">presa in carico</a>, &egrave; costituito da:
+<ul>
+    <li>codice alfanumerico univoco;</li>
+    <li>un valore <a href="#tickettime">TICKETTIME</a>;</li>
+    <li>un <b>timestamp</b> che indica il momento di emissione.</li>
+</ul></td>
+</tr>
+<tr>
 <td class="greenbold center" id="statoservicearea">Stato service area</td>
 <td>Comprende lo stato di diversi componenti che si trovano all'interno della <a href="#servicearea">service area</a>, visualizzabile tramite la <a href="#servicestatusgui">ServiceStatusGUI</a>.</td>
 </tr>
@@ -199,91 +208,90 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
     </tr>
 
     <tr>
-    <td><a href="#camionrefrigerato">Camion refrigerato</a></td>
+    <td rowspan=5><a href="#camionrefrigerato">Camion refrigerato</a></td>
     <td class="greenbold center" id="sendrequest">Sends a request</td>
     <td>Peso <a href="#FW">FW</a></td>
     <td>Il (guidatore del) camion invia una richiesta di deposito di <b>FW</b> kg di cibo tramite la <a href="#serviceaccessgui">ServiceAccessGUI</a> .</td>
     </tr>
 
     <tr>
-        <td><a href="#camionrefrigerato">Camion refrigerato</a></td>
+        <!-- <td><a href="#camionrefrigerato">Camion refrigerato</a></td> -->
         <td class="greenbold center" id="drives">Drives to the <a href="#INDOOR">INDOOR</a></td>
         <td>-</td>
         <td>Il (guidatore del) camion, in caso di richiesta accettata, va fino alla porta di INDOOR, prima della scadenza del ticket (<a href="#tickettime">TICKETTIME</a>) .</td>
     </tr>
 
     <tr>
-        <td><a href="#camionrefrigerato">Camion refrigerato</a></td>
         <td class="greenbold center" id="enterticket">Enters the ticket number</td>
         <td><a href="#ticket">Ticket</a> number</td>
         <td>Il (guidatore del) camion, inserisce il numero del ticket tramite la <a href="#serviceaccessgui">ServiceAccessGUI</a> .</td>
     </tr>
     
     <tr>
-        <td><a href="#camionrefrigerato">Camion refrigerato</a></td>
+        <!-- <td><a href="#camionrefrigerato">Camion refrigerato</a></td> -->
         <td class="greenbold center" id="waits">Waits</td>
         <td>Messaggio <a href="#chargetaken">charge taken</a></td>
         <td>Il (guidatore del) camion attende fino a che il messaggio <a href="#chargetaken">Charge taken</a> non appare sulla <a href="#serviceaccessgui">ServiceAccessGUI</a>.</td>
     </tr>
 
     <tr>
-        <td><a href="#camionrefrigerato">Camion refrigerato</a></td>
+        <!-- <td><a href="#camionrefrigerato">Camion refrigerato</a></td> -->
         <td class="greenbold center" id="leaveindoor">Leaves the INDOOR</td>
         <td>-</td>
         <td>Il (guidatore del) camion, in caso di <a href="#sendrequest">richiesta di deposito</a> rifiutata, o dopo aver <a href="#waits">atteso il messaggio</a>, lascia la <a href="#indoor">INDOOR</a>.</td>
     </tr>
 
     <tr>
-        <td><a href="#coldstorageservice">ColdStorageService</a></td>
+        <td rowspan=2><a href="#coldstorageservice">ColdStorageService</a></td>
         <td class="greenbold center" id="acceptticket">Accepts a ticket</td>
         <td><a href="#ticket">Ticket</a></td>
         <td>Il servizio accetta il ticket che il (guidatore del) camion <a href="#enterticket">ha inserito</a>.</td>
     </tr>
 
     <tr>
-        <td><a href="#coldstorageservice">ColdStorageService</a></td>
+        <!-- <td><a href="#coldstorageservice">ColdStorageService</a></td> -->
         <td class="greenbold center" id="acceptticket">Avvisa il transport trolley</td>
         <td><b>INTRODURRE UN SEGNALE CHE IL ColdStorageService INVIA</b></td>
         <td>Il servizio comunica al <a href="#transporttrolley">transport trolley</a> che c'è del cibo da depositare.</td>
     </tr>
 
     <tr>
-        <td><a href="#transporttrolley">Transport trolley</a></td>
+        <td rowspan=6><a href="#transporttrolley">Transport trolley</a></td>
         <td class="greenbold center" id="reachesindoor">Reaches the INDOOR</td>
         <td>-</td>
         <td>Il transport trolley raggiunge la <a href="#INDOOR">INDOOR</a>.</td>
     </tr>
 
     <tr>
-        <td><a href="#transporttrolley">Transport trolley</a></td>
+        <!-- <td><a href="#transporttrolley">Transport trolley</a></td> -->
         <td class="greenbold center" id="pickfood">Picks up the food</td>
         <td>Peso <a href="#FW">FW</a></td>
         <td>Il transport trolley prende il cibo da depositare dalla <a href="#INDOOR">INDOOR</a>.</td>
     </tr>
 
     <tr>
-        <td><a href="#transporttrolley">Transport trolley</a></td>
+        <!-- <td><a href="#transporttrolley">Transport trolley</a></td> -->
         <td class="greenbold center" id="sendmessage">Sends message <i>Charge taken</i></td>
         <td><a href="#chargetaken">Charge taken</a></td>
         <td>Il transport trolley invia il messaggio <b>ALLA ServiceAccessGUI DIRETTAMENTE???</b>.</td>
     </tr>
 
     <tr>
-        <td><a href="#transporttrolley">Transport trolley</a></td>
+        <!-- <td><a href="#transporttrolley">Transport trolley</a></td> -->
         <td class="greenbold center" id="gotocoldroom">Goes to the ColdRoom</td>
         <td>-</td>
         <td>Il transport trolley si muove fino alla <a href="#coldroom">ColdRoom</a>.</td>
     </tr>
     
     <tr>
-        <td><a href="#transporttrolley">Transport trolley</a></td>
+        <!-- <td><a href="#transporttrolley">Transport trolley</a></td> -->
         <td class="greenbold center" id="storefood">Stores the food</td>
         <td>Peso <a href="#FW">FW</a></td>
         <td>Il transport trolley deposito il cibo nella <a href="#coldroom">ColdRoom</a>.</td>
     </tr>
 
     <tr>
-        <td><a href="#transporttrolley">Transport trolley</a></td>
+        <!-- <td><a href="#transporttrolley">Transport trolley</a></td> -->
         <td class="greenbold center" id="returnhome">Return to HOME</td>
         <td>-</a></td>
         <td>Il transport trolley ritorna alla <a href="#home">HOME</a> dopo aver <a href="#storefood">depositato</a> il cibo.</td>
