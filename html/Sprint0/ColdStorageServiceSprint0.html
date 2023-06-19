@@ -85,7 +85,7 @@
 </tr>
 <tr>
 <td class="greenbold center" id="azionedideposito">Azione di deposito</td>
-<td>Operazione di deposito che coinvolge il <a>camion refrigerato</a> e il <a>transport trolley</a>:
+<td>Operazione di deposito che coinvolge il <a href="#camionrefrigerato">camion refrigerato</a> e il <a href="transporttrolley">transport trolley</a>:
 <ol>
     <li>il transport trolley preleva un carico di cibo dal camion refrigerato tramite la porta INDORR;</li>
     <li>il transport trolley si sposta da INDOOR a PORT;</li>
@@ -242,7 +242,7 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
     </tr>
 
     <tr>
-        <td rowspan=2><a href="#coldstorageservice">ColdStorageService</a></td>
+        <td rowspan=3><a href="#coldstorageservice">ColdStorageService</a></td>
         <td class="greenbold center" id="acceptticket">Accepts a ticket</td>
         <td><a href="#ticket">Ticket</a></td>
         <td>Il servizio accetta il ticket che il (guidatore del) camion <a href="#enterticket">ha inserito</a>.</td>
@@ -256,7 +256,21 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
     </tr>
 
     <tr>
-        <td rowspan=6><a href="#transporttrolley">Transport trolley</a></td>
+        <!-- <td><a href="#coldstorageservice">ColdStorageService</a></td> -->
+        <td class="greenbold center" id="sendmessage">Sends message <i>Charge taken</i></td>
+        <td><a href="#chargetaken">Charge taken</a></td>
+        <td>Il ColdStorageService comunica alla <a href="#serviceaccessgui">ServiceAccessGUI</a> che il transport trolley ha raccolto il carico.</td>
+    </tr>
+
+    <tr>
+        <td rowspan=7><a href="#transporttrolley">Transport trolley</a></td>
+        <td class="greenbold center" id="acceptticket">Accepts a ticket</td>
+        <td><a href="#ticket">Ticket</a></td>
+        <td>Il transport trolley accetta un nuovo ticket.</td>
+    </tr>
+
+    <tr>
+        <!-- <td><a href="#transporttrolley">Transport trolley</a></td> -->
         <td class="greenbold center" id="reachesindoor">Reaches the INDOOR</td>
         <td>-</td>
         <td>Il transport trolley raggiunge la <a href="#INDOOR">INDOOR</a>.</td>
@@ -271,13 +285,6 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
 
     <tr>
         <!-- <td><a href="#transporttrolley">Transport trolley</a></td> -->
-        <td class="greenbold center" id="sendmessage">Sends message <i>Charge taken</i></td>
-        <td><a href="#chargetaken">Charge taken</a></td>
-        <td>Il transport trolley invia il messaggio <b>ALLA ServiceAccessGUI DIRETTAMENTE???</b>.</td>
-    </tr>
-
-    <tr>
-        <!-- <td><a href="#transporttrolley">Transport trolley</a></td> -->
         <td class="greenbold center" id="gotocoldroom">Goes to the ColdRoom</td>
         <td>-</td>
         <td>Il transport trolley si muove fino alla <a href="#coldroom">ColdRoom</a>.</td>
@@ -287,7 +294,7 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
         <!-- <td><a href="#transporttrolley">Transport trolley</a></td> -->
         <td class="greenbold center" id="storefood">Stores the food</td>
         <td>Peso <a href="#FW">FW</a></td>
-        <td>Il transport trolley deposito il cibo nella <a href="#coldroom">ColdRoom</a>.</td>
+        <td>Il transport trolley deposita il cibo nella <a href="#coldroom">ColdRoom</a>, il completamento di questa azione determina la <b>fine dell'azione di deposito</b></td>
     </tr>
 
     <tr>
@@ -297,6 +304,13 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
         <td>Il transport trolley ritorna alla <a href="#home">HOME</a> dopo aver <a href="#storefood">depositato</a> il cibo.</td>
     </tr>
 
+    <tr>
+        <!-- <td><a href="#coldstorageservice">ColdStorageService</a></td> -->
+        <td class="greenbold center" id="sendmessage">Sends message <i>Charge taken</i></td>
+        <td><a href="#chargetaken">Charge taken</a></td>
+        <td>Il transport trolley comunica al <a href="#coldstorageservice">ColdStorageService</a> di aver raccolto il carico.</td>
+    </tr>
+
 </table>
 
 </div>
@@ -304,6 +318,8 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
 <h2>Problem analysis</h2>
  
 <div class="remark">
+
+
 
 </div>
 
