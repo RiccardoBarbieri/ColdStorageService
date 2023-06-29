@@ -254,7 +254,7 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
     <tr>
         <!-- <td><a href="#coldstorageservice">ColdStorageService</a></td> -->
         <td class="greenbold center" id="acceptticket">Avvisa il transport trolley</td>
-        <td><b>INTRODURRE UN SEGNALE CHE IL ColdStorageService INVIA</b></td>
+        <td>Peso <a href="#FW">FW</a></td>
         <td>Il servizio comunica al <a href="#transporttrolley">transport trolley</a> che c'è del cibo da depositare.</td>
     </tr>
 
@@ -328,24 +328,25 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
     - perch&eacute; lo usiamo
 
     <h3>Macro-componenti del sistema</h3>
-    Abbiamo identificato questi componenti come principali in quanto entità a se stanti che interagiscono tra di loro.
+    All'interno di questa sezione verranno presentati i componenti che abbiamo individuato come principali, in quanto entità a se stanti che interagiscono tra di loro. <br>
+    Per ognuno di essi saranno evidenziate le responsabità che ha, trattando anche eventuali sotto-componenti che possiede. <br>
+    <br>
+    Ogni componente verrà poi analizzato in maggiore dettaglio nei successivi Sprint.
 
-    Per ogni componente io eveidenzierei le responsabità che ha (insomma quello che deve gestire). <br>
-    Dobbiamo capire se ha senso inserire in questa fase i vari contesti e definire anche dei sotto-componenti (o lo lasciamo negli altri sprint??)
 
     <h4>ColdStorageService</h4>
 
-    Il <b>ColdStorageService</b> &egrave; il componente principale del sistema, &egrave; composto da:
+    Il <b>ColdStorageService</b> &egrave; il componente principale del sistema, ed &egrave; composto da:
     <ul>
         <li>ServiceAccessGUI</li>
         <li>ServiceStatusGUI</li>
     </ul>
 
-    Il ColdStorageService &egrave; incaricato di comunicare al transport trolley la presenza di una nuova richiesta di deposito; il raggiungimento di certi landmark nella service area (HOME, INDOOR, ColdRoom), &egrave; delegato al transport trolley.<br>
+    Il ColdStorageService &egrave; incaricato di comunicare al transport trolley la presenza di una nuova richiesta di deposito, mentre il raggiungimento di certi landmark nella service area (HOME, INDOOR, ColdRoom), &egrave; delegato al transport trolley.<br>
     In questo modo il <a href="#coldstorageservice">CSS</a> sar&agrave; indipendente dalla particolare disposizione della service area.<br><br>
 
-    Quando un utente camion richiede un ticket, il ColdStorageService valuter&agrave; la richiesta, eventualmente emettendo un nuovo ticket (se la ColdRoom pu&ograve; ospitare il nuovo carico).<br>
-    Nel momento in cui l'utente inserisce il codice del ticket, il ColdStorageService comunicher&agrave; al transport trolley che &egrave; disponibile un nuovo carico da prelevare.<br><br>
+    Quando un utente (camion) richiede un ticket tramite la <a href="#serviceaccessgui">ServiceAccessGUI</a>, il ColdStorageService valuter&agrave; la richiesta, eventualmente emettendo un nuovo ticket (se la ColdRoom pu&ograve; ospitare il nuovo carico).<br>
+    Nel momento in cui l'utente inserisce il codice del ticket (sempre tramite la <a href="#serviceaccessgui">SAG</a>), il ColdStorageService comunicher&agrave; al transport trolley che &egrave; disponibile un nuovo carico da prelevare.<br><br>
 
 
     Si rimanda alla domain analysis per la descrizione della <a href="#servicestatusgui">ServiceStatusGUI</a>.<br>
@@ -380,7 +381,7 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
 
     Il controller sar&agrave; incaricato di inviare al transport trolley un segnale di stop alla realizzazione del primo evento e un segnale di resume (riprendere il movimento) all'eventuale realizzazione del secondo evento.<br>
     Si specifica che questi eventi possono realizzarsi <b>molteplici volte</b>, ma sempre in successione alternata (evento 2 seguir&agrave; sempre l'evento 1).<br>
-    Le comunicazioni inizieranno soltanto dopo la rilevazione del primo evento; a questo riguardo si suppone che, l'avvio del sistema, comporti la realizzazione dell'evento 2, senza tuttavia inviare il segnale di resume.<br><br>
+    Le comunicazioni inizieranno soltanto dopo la rilevazione del primo evento; a questo riguardo si suppone che l'avvio del sistema comporti la realizzazione dell'evento 2, senza tuttavia inviare il segnale di resume.<br><br>
 
     Relativamente ai requisiti del led, il controller ricever&agrave; dal transport trolley aggiornamenti sullo stato, che pu&ograve; assumere i seguenti valori logici:
     <ul>
@@ -427,7 +428,8 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
         <li>ColdStorageService <-> TransportTrolley</li>
     </ol>
 
-    In questa tabella non comparir&agrave; l'entit&agrave; camion refrigerato in quanto si tratta di un utente umano rappresentato da un attore solo in <b>fase di testing</b>, si da per scontato che esista una entit&agrave; che interagisce con la ServiceAccessGUI allo scopo di scatenare una storerequest.
+    In questa tabella non comparir&agrave; l'entit&agrave; camion refrigerato in quanto si tratta di un utente umano rappresentato da un attore solo in <b>fase di testing</b>. Si da per scontato che esista una entit&agrave; che interagisce con la ServiceAccessGUI allo scopo di scatenare una <i>storerequest</i>.
+    <br>
 
     <table>
         <tr>
@@ -466,36 +468,68 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
             <td>La quantit&agrave; di chilogrammi nella ColdRoom &egrave; cambiata</td>
         </tr>
         <tr>
+            <td>ColdStorageService</td>
+            <td>ServiceStatusGUI</td>
+            <td>Event</td>
+            <td>rejectedrequestupdate(NREJ)</td>
+            <td>E' stata rifiutata un'ulteriore richiesta di deposito</td>
+        </tr>
+        <tr>
             <td>ServiceAccessGUI</td>
             <td>ColdStorageService</td>
-            <td>Dispatch</td>
+            <td>Request</td>
             <td>codeentered(TICKET)</td>
             <td>Il codice TICKET &egrave; stato inserito nella ServiceAccessGUI da un utente</td>
         </tr>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>ColdStorageService</td>
+            <td>ServiceAccessGUI</td>
+            <td>Reply</td>
+            <td>ticketreply(TICKET,OKNO)</td>
+            <td>La richiesta &egrave; stata processata, pu&ograve; essere accettata o meno (OKNO) eventualmente fornisce il codice del ticket (TICKET)</td>
         </tr>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>ColdStorageService</td>
+            <td>TransportTrolley</td>
+            <td>Dispatch</td>
+            <td>newcharge(FW)</td>
+            <td>E' presente alla INDOOR un nuovo carico da prelevare</td>
         </tr>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>TransportTrolley</td>
+            <td>ColdStorageService</td>
+            <td>Dispatch</td>
+            <td>chargetakenTT()</td>
+            <td>Il carico presente alla INDOOR &egrave; stato prelevato dal transport trolley, il camion pu&ograve; spostarsi da INDOOR</td>
         </tr>
-        LEO:
-        te lo lascio qua per quando ci arrivi tu, charge taken inviato da trolley a CSS, poi a SAG
-        cosa mettiamo come dest neglio event? vedi coldroomupdate(KG)
+        <tr>
+            <td>TransportTrolley</td>
+            <td>ColdStorageService</td>
+            <td>Dispatch</td>
+            <td>chargedepositated(FW)</td>
+            <td>Il carico preso dal transport trolley è stato depositato nella ColdRoom, la SAG potrà aggiornare il peso corrente</td>
+        </tr>
+        <tr>
+            <td>TransportTrolley</td>
+            <td>ServiceStatusGUI - Sistema di allarme</td>
+            <td>Event</td>
+            <td>ttstatusupdated(POS, STATE)</td>
+            <td>Lo <b>stato</b> (posizione e/o stato di movimento) del transport trolley è cambiato</td>
+        </tr>
+        <tr>
+            <td>Sistema di allarme</td>
+            <td>TransportTrolley</td>
+            <td>Dispatch</td>
+            <td>stop()</td>
+            <td>La distanza del sonar da un ostacolo è minore di <b>DLIMIT</b></td>
+        </tr>
+        <tr>
+            <td>Sistema di allarme</td>
+            <td>TransportTrolley</td>
+            <td>Dispatch</td>
+            <td>resume()</td>
+            <td>La distanza del sonar da un ostacolo è maggiore di <b>DLIMIT</b>, eventualmente solo a seguito di un segnale di <i>stop</i> </td>
+        </tr>
     </table>
 
     <!-- Gli stati li recuperiamo dall'analisi dell'interazione fra i componenti -->
