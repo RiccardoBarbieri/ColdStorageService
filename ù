@@ -348,8 +348,7 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
     Nel momento in cui l'utente inserisce il codice del ticket, il ColdStorageService comunicher&agrave; al transport trolley che &egrave; disponibile un nuovo carico da prelevare.<br><br>
 
 
-    Si rimanda alla domain analysis per la descrizione della <a href="#servicestatusgui">ServiceStatusGUI</a>.<br>
-    I dati visualizzati nella <a href="#servicestatusgui">SSG</a> sono di competenza del ColdStorageService, ad eccezione dello stato del transport trolley (fornito dal transport trolley stesso).<br>
+    Si rimanda alla domain analysis per la descrizione della <a href="#servicestatusgui">ServiceStatusGUI</a>
 
     <h4>Camion refrigerato</h4>
 
@@ -365,55 +364,24 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
     
     A fronte dei piani di testing, il camion refrigerato verr&agrave; rappresentato come un <b>attore</b>; questo ci permetter&agrave; di simulare il comportamento di molteplici utenti (camion) per verificare il funzionamento del sistema.
 
-    <h4>Sistema di allarme (RaspberryPi)</h4>
+    <h4>RaspberryPi</h4>
 
-    
-    
-    Per trattare i requisiti di allarme, abbiamo individuato <b>sonar</b> e <b>led</b> come componenti appartenenti all'aggregato RaspberryPi, si &egrave; deciso di introdurre un ulteriore componente logico, un controller, incaricato di gestire il traffico per i due componenti sopra citati.<br><br>
+    Diciamo cosa include (led e sonar). <br>
+    Descrivere rapporto con stato trasport trolley (come ha le info?? gliele invia il CSS (o il transport trolley)).
+    <br>
+    Il CSS (o il transport trolley) riceverà le info del sonar.
 
-    Dall'analisi emergono due eventi che il sonar deve comunicare:
-    <ol>
-        <li>rilevamento di una distanza inferiore a DLIMT</li>
-        <li>rilevamento di una distanza superiore a DLIMT</li>
-    </ol>
-    Dall'analisi dei requisiti &egrave; sorto il problema di scegliere se inviare i segnali relativi agli <i>alarm requirements</i> <i>direttamente al transport trolley</i> o <i>incaricare il CSS di inoltrarli</i> al <a href="#transporttrolley">TT</a>, si &egrave; deciso di coinvolgere nella comunicazione solo il controller e il transport trolley.
+    <!-- Confrontare la scelta di "collegare" il raspberry con il transport trolley o con il CSS -->
 
-    Il controller sar&agrave; incaricato di inviare al transport trolley un segnale di stop alla realizzazione del primo evento e un segnale di resume (riprendere il movimento) all'eventuale realizzazione del secondo evento.<br>
-    Si specifica che questi eventi possono realizzarsi <b>molteplici volte</b>, ma sempre in successione alternata (evento 2 seguir&agrave; sempre l'evento 1).<br>
-    Le comunicazioni inizieranno soltanto dopo la rilevazione del primo evento; a questo riguardo si suppone che, l'avvio del sistema, comporti la realizzazione dell'evento 2, senza tuttavia inviare il segnale di resume.<br><br>
-
-    Relativamente ai requisiti del led, il controller ricever&agrave; dal transport trolley aggiornamenti sullo stato, che pu&ograve; assumere i seguenti valori logici:
-    <ul>
-        <li>HOME;</li>
-        <li>moving;</li>
-        <li>stopped (&ne; HOME),</li>
-    </ul>
-    il controller comunicher&agrave; poi al led di mostrare lo stato corrente nel rispetto degli <a target="_blank" href="https://iss.riccardohost.space/TemaFinale23.html">alarm requirements</a>.
 
     <h4>Transport trolley</h4>
 
-    Come gi&agrave; dedotto dall'analisi dei requisiti, il transport trolley &egrave; una entit&agrave; astratta che aggiunge funzionalit&agrave; di pi&ugrave; alto livello a un DDR robot (come riportato dai requisiti), queste funzionalit&agrave; sono:
-    <ul>
-        <li>trasportare un carico di cibo da INDOOR a ColdRoom;</li>
-        <li>recarsi in HOME quando non sono presenti richieste;</li>
-        <li>comunicare il proprio <a href="#statotransporttrolley">stato</a> a entit&agrave; interessate.</li>
-        <li>comunicare all'utente camion refrigerato che &egrave; stato prelevato il carico</li>
-    </ul><br>
+    Parlerei del rapporto tra il trolley, il robot. <br>
 
-    Queste funzionalit&agrave; condividono un requisito fondamentale: la possibilit&agrave; di navigare la service area, sar&agrave; quindi necessario crearne una rappresentazione comprensibile al componente che controller&agrave; il robot concreto.<br>
+    Il trolley è un astrazione di un robot fisico (prendere spunto dal documento). Stessa cosa per il movimento. <br>
 
-    L'analisi di questa problematica si rimanda a sprint successivi, abbiamo per&ograve; individuato una serie di componenti che saranno necessari:
-    <ul>
-        <li><b>transport trolley</b> come astrazione di DDR robot;</li>
-        <li><b>mapper</b> per creare la rappresentazione della service area;</li>
-        <li><b>planner</b> per decidere il percorso (ottimale o meno) per raggiungere un punto nella rappresentazione della service area;</li>
-        <li><b>controller</b> che invia istruzioni di movimento comprensibili dal DDR robot;</li>
-        <li>DDR robot concreto, fornito dal committente.</li>
-    </ul>
+    Ci ricolleghiamo al punto precedente per parlare del basicrobot che si muove nella stanza (come avviene quindi il movimento)
 
-    Questi sono i componenti che sar&agrave; necessario realizzare a supporto della funzionalit&agrave; di spostamento tra due punti della service area da parte del TT.<br>
-
-    Per i requisiti di comunicazione si sfrutter&agrave; la potenzialit&agrave; del modello ad attori, scelto per lo sviluppo del progetto, per inviare i dati necessari ai componenti interessati.
 
     <h3>Interazioni tra i componenti</h3>
 
@@ -430,11 +398,6 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
 
     <!-- Gli attori li definimao dalla parte dei macro-componenti (e da eventuali sotto-componenti) -->
     <!-- Eventuale tabella con gli attori prima di screenshot architettura logica -->
-
-    <h3>Contesti e attori</h3>
-
-
-    <h3>Architettura logica</h3>
 </div>
 
 <h2>Test plans</h2> 
