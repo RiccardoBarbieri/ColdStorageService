@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="../_static/mine.css">
     
 <head>
-   <title>Riccardo Barbieri</title>
+   <title>Sprint0</title>
 </head>
     
 <body>
@@ -198,7 +198,7 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
 
 
 
-<h4>Domain analysis</h4>
+<h4>Verbs analysis</h4>
 <table>
     <tr>
     <th>Soggetto</th>
@@ -324,6 +324,7 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
     <!-- Qui potremmo fare una breve introduzione sul mondo degli attori e sul perchè lo stiamo usando -->
     
     <h3>Macro-componenti del sistema</h3>
+    Abbiamo identificato questi componenti come principali in quanto entità a se stanti che interagiscono tra di loro.
 
     Per ogni componente io eveidenzierei le responsabità che ha (insomma quello che deve gestire). <br>
     Dobbiamo capire se ha senso inserire in questa fase i vari contesti e definire anche dei sotto-componenti (o lo lasciamo negli altri sprint??)
@@ -331,15 +332,41 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
 
     <h4>Camion refrigerato</h4>
 
-    Dobbiamo parlare di come effettuare i test in pratica.
+    Qui diciamo che il camion è un utente che interagicse con il CSS tramite la SAG. <br>
+    Le interazioni che fa il Camion le abbiamo scritte sopra (puntamento). <br>
+
+    Aprire una parentesi sui test e sul fatot che simuleremo di essere noi il guidatore. 
+    Per fare questo possiamo usare un nuovo (fittizio, di test) così da poterne generare anche molitplici 
+    (tutti che eseguono dei cicli di azioni che fa il camion).
+
 
     <h4>ColdStorageService</h4>
 
-    Rsppresentazione dell'area di servizio (e quindi qui parliamo anche della coldroom). Prendiamo in analisi tutti i punti di interesse sulla mappa e maagri ci riferiamo un attimo al basicrobot che già gestisce questa mappa.
+    Specificare da cosa è composto (SAG e SSG). <br>
+    Rappresentazione dell'area di servizio (e quindi qui parliamo anche della coldroom). 
+    Prendiamo in analisi tutti i punti di interesse sulla mappa e maagri ci riferiamo un attimo al basicrobot (diciamo che analizziamo in sprint successivi) che già gestisce questa mappa.
 
-    <h4>TransportTrolley</h4>
+    <br>
+    Aprire una parentesi sul fatto che il CSS è un componente lui stesso.
 
-    Parlerei del rapporto tra il trolley, il robot ed il RaspberryPi. Ci ricolleghiamo al punto precedente per parlare del basicrobot che si muove nella stanza (come avviene quindi il movimento)
+
+    <h4>RaspberryPi</h4>
+
+    Diciamo cosa include (led e sonar). <br>
+    Descrivere rapporto con stato trasport trolley (come ha le info?? gliele invia il CSS (o il transport trolley)).
+    <br>
+    Il CSS (o il transport trolley) riceverà le info del sonar.
+
+    <!-- Confrontare la scelta di "collegare" il raspberry con il transport trolley o con il CSS -->
+
+
+    <h4>Transport trolley</h4>
+
+    Parlerei del rapporto tra il trolley, il robot. <br>
+
+    Il trolley è un astrazione di un robot fisico (prendere spunto dal documento). Stessa cosa per il movimento. <br>
+
+    Ci ricolleghiamo al punto precedente per parlare del basicrobot che si muove nella stanza (come avviene quindi il movimento)
 
 
     <h3>Interazioni tra i componenti</h3>
@@ -347,9 +374,16 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
     Evidenziamo ogni possibile interazione tra i componenti, specificando la tipologia di messaggio (<i>request-reply</i>, <i>dispatch</i>, <i>event</i>, ...)
 
     <ol>
-        <li>Camion refrigerato <-> ColdStorageService</li>
+        <li>Camion refrigerato -> ColdStorageService</li>
+        <li>ColdStorageService <-> RaspberryPi</li>
         <li>ColdStorageService <-> TransportTrolley</li>
     </ol>
+
+
+    <!-- Gli stati li recuperiamo dall'analisi dell'interazione fra i componenti -->
+
+    <!-- Gli attori li definimao dalla parte dei macro-componenti (e da eventuali sotto-componenti) -->
+    <!-- Eventuale tabella con gli attori prima di screenshot architettura logica -->
 </div>
 
 <h2>Test plans</h2> 
