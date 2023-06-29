@@ -449,7 +449,28 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
             <td>ServiceAccessGUI</td>
             <td>Reply</td>
             <td>storereply(TICKET,OKNO)</td>
-            <td>Comunica alla SAG se la richiesta &egrave; stata accettata o meno, eventualmente fornendo il codice del ticket</td>
+            <td>La richiesta &egrave; stata processata, pu&ograve; essere accettata o meno (OKNO) eventualmente fornisce il codice del ticket (TICKET)</td>
+        </tr>
+        <tr>
+            <td>ColdStorageService</td>
+            <td>ServiceAccessGUI</td>
+            <td>Dispatch</td>
+            <td>chargetaken(TICKET)</td>
+            <td>Il carico associato a TICKET &egrave; stato prelevato dal transport trolley, il camion pu&ograve; spostarsi da INDOOR</td>
+        </tr>
+        <tr>
+            <td>ColdStorageService</td>
+            <td>ServiceAccessGUI-ServiceStatusGUI</td>
+            <td>Event</td>
+            <td>coldroomupdate(KG)</td>
+            <td>La quantit&agrave; di chilogrammi nella ColdRoom &egrave; cambiata</td>
+        </tr>
+        <tr>
+            <td>ServiceAccessGUI</td>
+            <td>ColdStorageService</td>
+            <td>Dispatch</td>
+            <td>codeentered(TICKET)</td>
+            <td>Il codice TICKET &egrave; stato inserito nella ServiceAccessGUI da un utente</td>
         </tr>
         <tr>
             <td></td>
@@ -472,6 +493,9 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
             <td></td>
             <td></td>
         </tr>
+        LEO:
+        te lo lascio qua per quando ci arrivi tu, charge taken inviato da trolley a CSS, poi a SAG
+        cosa mettiamo come dest neglio event? vedi coldroomupdate(KG)
     </table>
 
     <!-- Gli stati li recuperiamo dall'analisi dell'interazione fra i componenti -->
