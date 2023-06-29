@@ -316,11 +316,40 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
 </div>
 
 <h2>Problem analysis</h2>
- 
+
 <div class="remark">
 
+    In questa fase verranno presi in analisi i macro-componenti del sistema e le interazioni che avvengono fra essi, con il fine di delineare l'architettura logica del sistema. <br>
+
+    <!-- Qui potremmo fare una breve introduzione sul mondo degli attori e sul perchè lo stiamo usando -->
+    
+    <h3>Macro-componenti del sistema</h3>
+
+    Per ogni componente io eveidenzierei le responsabità che ha (insomma quello che deve gestire). <br>
+    Dobbiamo capire se ha senso inserire in questa fase i vari contesti e definire anche dei sotto-componenti (o lo lasciamo negli altri sprint??)
 
 
+    <h4>Camion refrigerato</h4>
+
+    Dobbiamo parlare di come effettuare i test in pratica.
+
+    <h4>ColdStorageService</h4>
+
+    Rsppresentazione dell'area di servizio (e quindi qui parliamo anche della coldroom). Prendiamo in analisi tutti i punti di interesse sulla mappa e maagri ci riferiamo un attimo al basicrobot che già gestisce questa mappa.
+
+    <h4>TransportTrolley</h4>
+
+    Parlerei del rapporto tra il trolley, il robot ed il RaspberryPi. Ci ricolleghiamo al punto precedente per parlare del basicrobot che si muove nella stanza (come avviene quindi il movimento)
+
+
+    <h3>Interazioni tra i componenti</h3>
+
+    Evidenziamo ogni possibile interazione tra i componenti, specificando la tipologia di messaggio (<i>request-reply</i>, <i>dispatch</i>, <i>event</i>, ...)
+
+    <ol>
+        <li>Camion refrigerato <-> ColdStorageService</li>
+        <li>ColdStorageService <-> TransportTrolley</li>
+    </ol>
 </div>
 
 <h2>Test plans</h2> 
