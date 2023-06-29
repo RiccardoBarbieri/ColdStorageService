@@ -415,21 +415,71 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
 
     Per i requisiti di comunicazione si sfrutter&agrave; la potenzialit&agrave; del modello ad attori, scelto per lo sviluppo del progetto, per inviare i dati necessari ai componenti interessati.
 
-    <h3>Interazioni tra i componenti</h3>
+    <h3 id="interactions">Interazioni tra i componenti</h3>
 
-    Evidenziamo ogni possibile interazione tra i componenti, specificando la tipologia di messaggio (<i>request-reply</i>, <i>dispatch</i>, <i>event</i>, ...)
+    Evidenziamo ogni possibile interazione tra i componenti, specificando la tipologia di messaggio tra quelle supportate dal linguaggio QAK (<i>request-reply</i>, <i>dispatch</i>, <i>event</i>, ...).<br>
+    
+    Abbiamo utilizzato sintassi prolog per il formato dei messaggi per mantenere la compatibilit&agrave; con il metamodello che creeremo con QAK.<br>
 
     <ol>
         <li>Camion refrigerato -> ColdStorageService</li>
-        <li>ColdStorageService <-> RaspberryPi</li>
+        <li>Transport trolley <-> RaspberryPi</li>
         <li>ColdStorageService <-> TransportTrolley</li>
     </ol>
 
+    In questa tabella non comparir&agrave; l'entit&agrave; camion refrigerato in quanto si tratta di un utente umano rappresentato da un attore solo in <b>fase di testing</b>, si da per scontato che esista una entit&agrave; che interagisce con la ServiceAccessGUI allo scopo di scatenare una storerequest.
+
+    <table>
+        <tr>
+            <th>Mittente</th>
+            <th>Destinatario</th>
+            <th>Tipologia messaggio</th>
+            <th>Formato</th>
+            <th>Significato</th>
+        </tr>
+        <tr>
+            <td>ServiceAccessGUI</td>
+            <td>ColdStorageService</td>
+            <td>Request</td>
+            <td>storerequest(FW)</td>
+            <td>Richiesta di <b>storage</b> di <b>FW</b> chili di cibo</td>
+        </tr>
+        <tr>
+            <td>ColdStorageService</td>
+            <td>ServiceAccessGUI</td>
+            <td>Reply</td>
+            <td>storereply(TICKET,OKNO)</td>
+            <td>Comunica alla SAG se la richiesta &egrave; stata accettata o meno, eventualmente fornendo il codice del ticket</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
 
     <!-- Gli stati li recuperiamo dall'analisi dell'interazione fra i componenti -->
 
     <!-- Gli attori li definimao dalla parte dei macro-componenti (e da eventuali sotto-componenti) -->
     <!-- Eventuale tabella con gli attori prima di screenshot architettura logica -->
+
+
 
     <h3>Contesti e attori</h3>
 
