@@ -1,0 +1,3 @@
+{"actor":"coldstorageservice", "msgType":"dispatch", "curstate":"work", "nextstate":"elabChargetaken", "msgId":"chargetakentt"}
+{"actor":"coldstorageservice", "msgType":"dispatch", "curstate":"work", "nextstate":"elabChargedeposited", "msgId":"chargedeposited"}
+{"actor":"serviceaccessgui", "msgType":"dispatch", "curstate":"work", "nextstate":"handleChargetaken", "msgId":"chargetaken"}
