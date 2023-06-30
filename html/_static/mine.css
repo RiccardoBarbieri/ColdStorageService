@@ -12,15 +12,44 @@ pre {
 
 .blue {
     color: blue;
-    font-style: italic;
-    font-weight: 0;
 }
-.greenbold {
+.green {
     color: green;
+}
+
+.bold {
     font-weight: bold;
 }
 
 td.center {
     text-align: center;
     vertical-align: middle;
+}
+
+.orange {
+    color: darkorange;
+}
+
+.darkgreen {
+    color: darkgreen;
+}
+
+.imglim {
+    max-width: 390px;
+}
+
+.imgslide {
+    display: flex;
+    width: inherit;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+figure {
+    display: table;
+}
+
+figcaption {
+    display: table-caption;
+    caption-side: top;
 }
