@@ -430,7 +430,7 @@ Il cliente fornisce il software <code id="basicrobot" class="prettyprint">basicr
 
     <ol>
         <li>Camion refrigerato -> ColdStorageService</li>
-        <li>Transport trolley <-> RaspberryPi</li>
+        <li>TransportTrolley <-> RaspberryPi</li>
         <li>ColdStorageService <-> TransportTrolley</li>
     </ol>
 
@@ -588,6 +588,24 @@ Il cliente fornisce il software <code id="basicrobot" class="prettyprint">basicr
             <img class="imglim" src="../images/alarm.png" alt="Interazione sistema di allarme con transport trolley">
         </figure>
     </div>
+
+
+    <h3>Interazione TransportTrolley - BasicRobot</h3>
+    Con lo scopo di definire chiaramente il comportamento del TT e di descrivere i suoi stati e le sue transazioni in QAK, si è scelto di aggiungere un attore fittizio <b>basicrobotsim</b>. <br>
+    Tramite esso abbiamo potuto quindi simulare il comportamento effettivo del TT e lo scambio di messaggi che avviene con il BasicRobot. <br>
+    <br>
+    Di seguito, viene presentato un protocollo base di interazione implementato in QAK. In particolare vediamo i messaggi che si scambiano TT, BRS (basicrobotsim) e ColdStorageService, partendo dal primo messaggio <i>newcharge(FW)</i> inviato dal CSS: <br>
+    <ol>
+        <li>TT -> BRS : goToIndoor</li>
+        <li>BRS -> TT : arrivedIndoor</li>
+        <li>TT -> CSS : chargetakentt</li>
+        <li>TT -> BRS : goToColdRoom</li>
+        <li>BRS -> TT : arrivedColdRoom</li>
+        <li>TT -> CSS : chargedeposited</li>
+        <li>TT -> BRS : goToHome</li>
+        <li>BRS -> TT : arrivedHome</li>
+    </ol>
+    In questo esempio è mostrato il protocollo di interazione dando per scontato che il robot raggiunga HOME dopo il deposito.
 
 
     <h3>Architettura logica</h3>
