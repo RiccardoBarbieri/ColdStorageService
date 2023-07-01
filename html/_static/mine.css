@@ -38,6 +38,10 @@ td.center {
     max-width: 390px;
 }
 
+.bigimglim {
+    max-width: 700px;
+}
+
 .imgslide {
     display: flex;
     width: inherit;

@@ -604,16 +604,17 @@ Il cliente fornisce il software <code id="basicrobot" class="prettyprint">basicr
         <li>TT -> CSS : chargedeposited</li>
         <li>TT -> BRS : goToHome</li>
         <li>BRS -> TT : arrivedHome</li>
-    </ol>
-    In questo esempio è mostrato il protocollo di interazione dando per scontato che il robot raggiunga HOME dopo il deposito.
-
+    </ol><br>
+    <b>NOTA:</b> questo schema di interazione &egrave; ridondante, a causa della natura del basicrobotsim, in sprint futuri verr&agrave; ridotto il numero di messaggi tra Transport trolley e basicrobot.<br>
 
     <h3>Architettura logica</h3>
 
     Di seguito verr&agrave; illustrata l'<b>architettura logica</b> preliminare del sistema creata sfruttando il linguaggio di metamodellazione <code class="prettyprint">QAK</code>; i componenti illustrati non rispecchiano l'effettivo funzionamento di ColdStorageService ma <b>simulano</b> le azioni che scatenano le interazioni individuate.<br>
 
-    In particolare non si mostrer&agrave; nel dettaglio l'interazione tra transport trolley e basicrobot (fornito dal cliente) ma verr&agrave; utilizzato un componente che simula il comportamento del robot, questo sar&agrave; oggetto di futuri sprint.
+    In particolare non si mostrer&agrave; nel dettaglio l'interazione tra transport trolley e basicrobot (fornito dal cliente) ma verr&agrave; utilizzato un componente che simula il comportamento del robot, questo sar&agrave; oggetto di futuri sprint.<br>
 
+
+    <img class="bigimglim" src="../images/coldstorageservice23archSprint0.png" alt="Architettura logica">
 
 </div>
 
