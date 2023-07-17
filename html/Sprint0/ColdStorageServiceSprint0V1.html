@@ -49,25 +49,32 @@
 	</tr>
 	<tr>
 		<td class="green bold center" id="coldstorageservice">ColdStorageService</td>
-		<td>Sistema distribuito per il deposito di prodotti alimentari all'interno di una stanza refrigerata, automatizzato tramite l'uso di un <a href="#transporttrolley">transport trolley</a>.</td>
+		<td>Servizio composto da un insieme di elementi, quali:
+            <ul>
+                <li><a href="#servicearea">Service area</a>;</li>
+                <li><a href="#ddrrobot">DDR robot</a>;</li>
+                <li><a href="#serviceaccessgui">ServiceAccessGUI</a>;</li>
+                <li><a href="#servicestatusgui">ServiceStatusGUI</a>;</li>
+                <li><a href="https://iss.riccardohost.space/TemaFinale23.html">Alarm system</a>.</li>
+            </ul></td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="servicearea">Service area</td>
-		<td>Stanza piatta a pianta rettangolare nella quale il <a href="#transporttrolley">transport trolley</a> pu&ograve; navigare, contiene:
+		<td>Stanza piatta a pianta rettangolare nella quale il <a href="#transporttrolley">transport trolley</a> pu&ograve; navigare, contiene diversi punti di interesse:
         <ul>
             <li><a href="#indoor">INDOOR</a>;</li>
             <li><a href="#coldroom">ColdRoom</a>;</li>
             <li><a href="#home">HOME</a>;</li>
-            <li>ostacoli con posizione e dimensione predefinita (tra i quali la ColdRoom).</li> 
-        </ul></td>
+        </ul>e un ostacolo di posizione e dimensione predefinita.<br>
+        Viene <a href="#serviceareamodel">modellata come un rettangolo</a>.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="indoor">INDOOR</td>
-		<td>Porta di accesso adibita al trasferimento di un carico dal <a href="#camionrefrigerato">camion refrigerato</a> al <a href="#transporttrolley">transport trollery</a>.</td>
+		<td>Porta di accesso adibita al trasferimento di un carico dal <a href="#camionrefrigerato">camion refrigerato</a> al <a href="#transporttrolley">transport trollery</a>, &egrave; identificata dalle coordinate in cui si deve posizionare il transport trolley per accedervi nel <a href="#serviceareamodel">modello della service area</a></td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="coldroom">ColdRoom</td>
-		<td>Contenitore refrigerato adibito al deposito di cibo ritirato dal <a href="#camionrefrigerato">camion refrigerato</a> da parte del <a href="#transporttrolley">transport trolley</a>.</td>
+		<td>Contenitore refrigerato adibito al deposito di cibo ritirato dal <a href="#camionrefrigerato">camion refrigerato</a> da parte del <a href="#transporttrolley">transport trolley</a>, identificata dalle coordinate della porta di accesso PORT nel <a href="#serviceareamodel">modello della service area</a></td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="maxw">MAXW</td>
@@ -75,11 +82,11 @@
 	</tr>
 	<tr>
 		<td class="green bold center" id="transporttrolley">Transport trolley</td>
-		<td>Rappresenta un robot virtuale di forma quadrata e lato <a href="#rd">RD</a>. Astrazione che usa il <a href="#ddrrobot">DDR Robot</a> per muoversi all'interno della <a href="#servicearea">service area</a>.</td>
+		<td>Rappresenta un robot virtuale di forma quadrata e lato <a href="#rd">RD</a>, &egrave; inizialmente posizionato in <a href="#home">HOME</a> e pu&ograve; muoversi avanti e indietro, ruotare di 90° e fermarsi; sfrutta il DDR robot per muoversi nella <a href="#servicearea">Service area</a>.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="home">HOME</td>
-		<td>Posizione di partenza del <a href="#trasnporttrolley">transport trolley</a> situato nell'angolo tra il muro superiore e quello sinistro della <a href="#servicearea">service area</a>.</td>
+		<td>Posizione di partenza del <a href="#trasnporttrolley">transport trolley</a>, identificata dalle coordinate nel <a href="#serviceareamodel">modello della service area</a>.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="rd">RD</td>
@@ -89,41 +96,42 @@
 		<td class="green bold center" id="azionedideposito">Azione di deposito</td>
 		<td>Operazione di deposito che coinvolge il <a href="#camionrefrigerato">camion refrigerato</a> e il <a href="transporttrolley">transport trolley</a>:
         <ol>
-            <li>il transport trolley preleva un carico di cibo dal camion refrigerato tramite la porta INDORR;</li>
-            <li>il transport trolley si sposta da INDOOR a PORT;</li>
+            <li>il transport trolley preleva un <a href="#foodload">FoodLoad</a> dal camion refrigerato posizionandosi alla porta INDOOR;</li>
+            <li>il transport trolley si sposta da INDOOR a PORT della ColdRoom;</li>
             <li>il carico viene depositato nella ColdRoom.</li>
-        </ol></td>
-	</tr>
+        </ol>
+        Quando l'azione termina, il transport trolley prende in carico una nuova azione di deposito (se &egrave; disponibile un FoodLoad) o torna in HOME.</td>
+        </tr>
 	<tr>
-		<td class="green bold center" id="foodload">Food load</td>
+		<td class="green bold center" id="foodload">FoodLoad</td>
 		<td>Carico di cibo (frutta, vegetali...) che necessita di essere refrigerato, sia durante il trasporto che nella fase di accumulazione.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="camionrefrigerato">Camion refrigerato</td>
-		<td>Entità esterna al sistema che deposita <a href="#fw">FW</a> kg di prodotti alimentari tramite la porta <a href="#INDOOR">INDOOR</a>.</td>
+		<td>Entità esterna al sistema che deposita <a href="#fw">FW</a> kg di prodotti alimentari alla porta <a href="#INDOOR">INDOOR</a>.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="serviceaccessgui">ServiceAccessGUI</td>
-		<td>Interfaccia grafica che permette di: 
+		<td>Interfaccia grafica che permette a un utente di: 
             <ul>
-            <li>visualizzare il peso corrente del materiale immagazzinato nella <a href="#coldroom">Cold Room</a>;</li>
-            <li>inviare la richiesta di deposito di una quantità <a href="#fw">FW</a> kg di prodotti alimentari (ritornando un <a href="#ticket">ticket</a> in caso di richiesta accettata);</li>
-            <li>immettere il codice del ticket quando il <a href="#camionrefrigerato">camion refrigerato</a> si trova alla porta <a href="#INDOOR">INDOOR</a>, all'esterno della service area;</li>
-            <li>visualizzare il messaggio di <a href="#chargetaken">presa in carico</a>.</li>
-        </ul></td>
+                <li>visualizzare il peso corrente del materiale immagazzinato nella <a href="#coldroom">Cold Room</a>;</li>
+                <li>inviare la richiesta di deposito di una <b>FoodLoad</b> <a href="#fw">FW</a> kg di prodotti alimentari, comunicando un <a href="#ticket">ticket</a> in caso di richiesta accettata;</li>
+                <li>immettere il codice del ticket quando il <a href="#camionrefrigerato">camion refrigerato</a> si trova alla porta <a href="#INDOOR">INDOOR</a>, all'esterno della service area;</li>
+                <li>visualizzare il messaggio di <a href="#chargetaken">charge taken</a>.</li>
+            </ul></td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="servicestatusgui">ServiceStatusGUI</td>
-		<td>Interfaccia grafica che permette a un utente umano di visualizzare:
+		<td>Interfaccia grafica che permette a un <b>service manager</b> di visualizzare:
         <ul>
             <li>lo <a href="#statotransporttrolley">stato del transport trolley</a>;</li>
             <li>il <b>peso corrente</b> del cibo nella <a href="#coldroom">ColdRoom</a>;</li>
-            <li>il <b>numero di richieste rifiutate</b> dall'inizio del servizio.</li>
+            <li>il <b>numero di richieste rifiutate</b> dall'inizio del servizio, considerando solo quelle rifiutate per mancanza di spazio nella ColdRoom.</li>
         </ul></td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="ddrrobot">DDR robot</td>
-		<td>Differential Drive Robot fornito dal committente insieme al software <a href="#basicrobot">BasicRobot</a> per controllarlo. Nell'ambito del <a href="#coldstorageservice">ColdStorageService</a> concretizza il comportamento del <a href="#transporttrolley">transport trolley</a>.</td>
+		<td>Differential Drive Robot fornito dal committente insieme al software <a href="#basicrobot">BasicRobot</a> per controllarlo. Mette in atto i comandi inviati dal <a href="#transporttrolley">transport trolley</a>.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="servicemanager">Service manager</td>
@@ -131,77 +139,112 @@
 	</tr>
 	<tr>
 		<td class="green bold center" id="sonar">Sonar</td>
-		<td>Dispositivo collegato a un RaspberryPi che, nell'ambito del <a href="#coldstorageservice">ColdStorageService</a>, concretizza il comportamento dell'<a href="#alarmdevice">alarm device</a>, &egrave; utilizzabile tramite software fornito dal committente.</td>
+		<td>Dispositivo collegato a un RaspberryPi in grado di misurare la distanza di oggetti in fronte a esso.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="alarmdevice">Alarm device</td>
-		<td>Dispositivo astratto in grado di rilevare la distanza di oggetti posti di fronte ad esso.</td>
+        <td>Componente astratto che, sfruttando un <a href="#sonar">sonar</a>, comunica al transport trolley di fermarsi quando quando la distanza rilevata &egrave; inferiore a DLIMT.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="led">Led</td>
 		<td>
-Dispositivo collegato a un RaspberryPi che, nell'ambito del <a href="#coldstorageservice">ColdStorageService</a>, concretizza il comportamento del <a href="#warningdevice">warning device</a>, in particolare:
-<ul>
-    <li>&egrave; <b>spento</b> se il <a href="#transporttrolley">transport trolley</a> &egrave; situato in HOME;</li>
-    <li><b>lampeggia</b> se il transport trolley &egrave; in movimento;</li>
-    <li>&egrave; <b>acceso</b> se il transport trolley non &egrave; in movimento.</li>
-</ul>
-Il dispositivo &egrave; controllabile tramite software fornito dal committente.
+            Dispositivo collegato a un RaspberryPi usato come dispositivo di avviso: 
+            <ul>
+                <li>&egrave; <b>spento</b> se il <a href="#transporttrolley">transport trolley</a> &egrave; situato in HOME;</li>
+                <li><b>lampeggia</b> se il transport trolley &egrave; in movimento;</li>
+                <li>&egrave; <b>acceso</b> se il transport trolley non &egrave; in movimento.</li>
+            </ul>
 	</tr>
 	<tr>
 		<td class="green bold center" id="warningdevice">Warning device</td>
-		<td>Dispositivo astratto in grado di mostrare tre distinti stati:
-<ul>
-    <li><a href="#transporttrolley">transport trolley</a> situato in HOME</li>
-    <li>transport trolley in movimento</li>
-    <li>transport trolley non in movimento (e non in HOME)</li>
-</ul>
-	</td>
+		<td>Componente astratto in grado di mostrare tre stati distinti:
+            <ul>
+                <li><a href="#transporttrolley">transport trolley</a> situato in HOME</li>
+                <li>transport trolley in movimento</li>
+                <li>transport trolley non in movimento (e non in HOME)</li>
+            </ul>
+        Comanda al <a href="#led">led</a> di assumere un certo stato a seconda dello stato del transport trolley.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="dlimt">DLIMT</td>
-		<td>Limite di distanza massimo dal <a href="#sonar">sonar</a> per il quale si attivano i relativi <a target="_blank" href="https://iss.riccardohost.space/TemaFinale23.html">alarm requirements</a>: se viene rilevata una distanza minore, viene inviato un segnale di stop al <a href="#transporttrolley">transport trolley</a>.</td>
+		<td>Distanza massima dal <a href="#sonar">sonar</a> per la quale si attivano i relativi <a target="_blank" href="https://iss.riccardohost.space/TemaFinale23.html">alarm requirements</a>: se viene rilevata una distanza minore l'<a href="#alarmsistem">alarm system</a> comunica al <a href="#transporttrolley">transport trolley</a> di fermarsi.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="tickettime">TICKETTIME</td>
-		<td>Quantit&agrave; di tempo che esprime la durata della validit&agrave; di un <a href="#ticket">ticket</a>, se il camion non &egrave; alla porta <a href="#indoor">INDOOR</a> entro questo limite la richiesta viene annullata.</td>
+		<td>Quantit&agrave; di secondi che esprime la durata della validit&agrave; di un <a href="#ticket">ticket</a>.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="fw">FW</td>
-		<td>Quantit&agrave; di carico che un <a href="camionrefrigerato">camion refrigerato</a> deve depositare, espressa in chilogrammi.</td>
-	</tr>
-	<tr>
-		<td class="green bold center" id="statotransporttrolley">Stato transport trolley</td>
-		<td>Stato corrente del <a href="#transporttrolley">transport trolley</a>, questo include:
-<ul>
-    <li>posizione nella <a href="#servicearea">service area</a>;</li>
-    <li>stato di movimento (<b>stopped</b>,<b>moving</b>).</li>
-</ul>	</td>
+		<td>Quantit&agrave; di carico che un <a href="camionrefrigerato">camion refrigerato</a> deve richiede di depositare espressa in chilogrammi.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="mint">MINT</td>
-		<td>Tempo minimo che deve trascorrere prima che il <a href="#transportrolley">transport trolley</a> possa nuovamente gestire un segnale di stop secondo le condizioni imposte dagli <a href="#alarmrequirements">alarm requirements</a>, espresso in millisecondi.</td>
+        <td>Tempo minimo che deve trascorrere prima che il <a href="#transportrolley">transport trolley</a> possa nuovamente gestire un messaggio di stop inviato dall'<a href="#alarmsystem">alarm system</a>, espresso in millisecondi.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="ticket">Ticket</td>
-		<td>Rappresenta una prenotazione da parte dell'operatore di un camion refrigerato che identifica univocamente una azione di deposito in attesa di essere <a href="#chargetaken">presa in carico</a>, &egrave; costituito da:
-    <ul>
-        <li>codice alfanumerico univoco;</li>
-        <li>un valore <a href="#tickettime">TICKETTIME</a>;</li>
-        <li>un <b>timestamp</b> che indica il momento di emissione.</li>
-    </ul></td>
+		<td>Rappresenta una prenotazione da parte dell'operatore di un camion refrigerato che identifica univocamente una azione di deposito in attesa di <a href="#chargetaken">charge taken</a>, &egrave; identificato da un <b>numero univoco</b>.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="statoservicearea">Stato service area</td>
-		<td>Comprende lo stato di diversi componenti che si trovano all'interno della <a href="#servicearea">service area</a>, visualizzabile tramite la <a href="#servicestatusgui">ServiceStatusGUI</a>.</td>
+		<td>Informazioni a riguardo alla service area in un dato momento, comprende:
+        <ul>
+            <li><a href="#ttstate">stato del transport trolley</a></li>
+            <li>peso di cibo nella <a href="#coldroom">ColdRoom</a></li>
+            <li>numero di richieste rifiutate</li>
+        </ul></td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="chargetaken">Charge taken</td>
-		<td>Messaggio che rappresenta la presa in carico di un carico di cibo da parte del transport trolley. Questo messaggio &egrave; relativo ad una singola richiesta di deposito da parte di un <a href="#camionrefrigerato">camion refrigerato</a></td>
+		<td>Messaggio che rappresenta la presa in carico di un <a href="#foodload">FoodLoad</a> da parte del transport trolley. Questo messaggio &egrave; relativo ad una singola richiesta di deposito da parte di un <a href="#camionrefrigerato">camion refrigerato</a></td>
 	</tr>
 </table>
 
+<h4 id="serviceareamodel">Service area</h3>
 
+<p>
+    Data la forma quadrata (di lato <i>RD</i>) del transport trolley e rettangolare della service area, abbiamo deciso di modellare la service area come una <b>griglia di punti</b> raggiungibili dal transport trolley, assegnando cos&igrave; a ogni punto di interesse uno specifico <b>insieme di coordinate</b>.
+    <!-- inserire immagine service area griglia e sistemare coordina ColdRoom, chiedere a natali se PORT,HOME e INDOR sono singolo punto o no-->
+In particolare:
+<ul>
+    <li>HOME si trova alle coordinare (0,0)</li>
+    <li>ColdRoom si trova alle coordinate (x,y)</li>
+    <li>INDOOR si trova alle coordinate (0,MAXY)</li>
+</ul>
+Si rimanda a incontro con il cliente la conferma della dimensione della service area e la revisione dello specifico posizionamento di ogni punto di interesse.
+</p>
+<p>
+    Questa decisione &egrave; anche mirata alla compatibilit&agrave; con il software <code class="prettyprint">basicrobot</code> che permette di muovere un DDR robot basandosi su un sistema di coordinate.
+</p>
+
+<h4>Transport trolley</h4>
+
+<p id="ttstate">
+    In questa analisi abbiamo identificato lo stato corrente del <a href="#transporttrolley">transport trolley</a> come le seguenti informazioni riguardo al transport trolley in un dato momento:
+</p>
+<ul>
+    <li>posizione nella <a href="#servicearea">service area</a>;</li>
+    <li>stato di movimento (<b>stopped</b>,<b>moving</b>).</li>
+</ul>
+
+<b>LEO: la mettiamo qua la descrizione dei messaggi TT -> DDR robot o nella analis prob? il prof aveva detto qua se non sbaglio, per una prima architettura logica (doppia con alternative per i mess, anche charge taken)</b>
+
+<h4>Ticket</h4>
+
+<p id="ticketnumber">
+    Per <b>identificare</b> il ticket in modo univoco abbiamo deciso di associare un <b>numero intero progressivo</b> ad ogni ticket rilasciato.
+</p>
+<p>
+    Abbiamo inoltre deciso di associare un <b>timestamp di emissione</b> ad ogni identificatore generato, allo scopo di poter calcolare quanto tempo &egrave; passato dall'emissione al momento dell'inserimento dell'identificatore.
+</p>
+
+<h4>Sonar e led</h4>
+<p>
+    Per l'utilizzo dei dati del sonar e il controllo del led verr&agrave; usato software fornito dal committente unito a software gi&agrave; disponibile alla nostra software house per abilitare la comunicazione con il transport trolley.
+</p>
+
+<b>LEO: stesso discorso del Transport trolley per ALARMDEVICE -> TT, dove lo mettiamo?</b>
+<b>Dobbiamo anche decidere se charge taken viene inviato da CSS o da TT, nel testo &egrave; ambiguo, forse &egrave; da chiedere al prof.</b>
 
 <h4>Verbs analysis</h4>
 <table>
@@ -318,20 +361,32 @@ Il dispositivo &egrave; controllabile tramite software fornito dal committente.
 
 </table>
 
-
-DA MODIFICARE: eliminare riferimenti a analisi dei requisiti perch&eacute; inizia dopo<br>
-
-    In questa fase verranno presi in analisi i macro-componenti del sistema e le interazioni che avvengono fra essi, con il fine di delineare l'architettura logica del sistema. <br>
-
-    Abbiamo deciso di utilizzare il <a target="_blank" href="https://en.wikipedia.org/wiki/Actor_model">modello ad attori</a> per questo progetto in quanto rispecchia i requisiti analizzati dal <a target="_blank" href="https://iss.riccardohost.space/TemaFinale23.html">documento fornito dal cliente</a>: il sistema &egrave; costituito da componenti <b>eterogenei</b> che interagiscono tra di loro su <b>base distribuita</b>; inoltre abbiamo a disposizione librerie e un linguaggio di metamodellazione che supporteranno lo sviluppo orientato agli attori.<br><br>
-
-    Il linguaggio in questione &egrave; <a target="_blank" href="https://iss.riccardohost.space/QakActors23.html#qakactors23">QAK</a>, un linguaggio di modellazione eseguibile che permette di creare prototipi e sistemi funzionanti in breve tempo (rispetto a linguaggi tradizionali) semplificando gli aspetti pi&ugrave; complessi della gestione delle interazioni tramite una struttura basata su attori che operano in <a target="_blank" href="https://iss.riccardohost.space/Actors23.html#actors23-il-contesto">contesti</a>.<br>
-
-    Oltre alla velocit&agrave; di sviluppo possibile con QAK, la scelta deriva dal fatto che il cliente ha fornito software per pilotare un DDR robot (o robot virtuali) compatibile con QAK.
-
 <h3>Software fornito dal cliente</h3>
 
-Il cliente fornisce il software <code id="basicrobot" class="prettyprint">basicrobot</code> utile a controllare il DDR robot sottostante.<br>
+    <p>
+       Il cliente fornisce il software <code id="basicrobot" class="prettyprint">basicrobot</code> utile a controllare il DDR robot, oltre a software per gestire l'accensione e spegnimento di un led e la raccolta dei dati da un sonar. 
+    </p>
+
+<h3>Modello logico</h3>
+    <p>
+        In questa fase verranno presi in analisi i macro-componenti del sistema e le interazioni che avvengono fra essi, con il fine di delineare l'architettura logica del sistema.
+    </p>
+    <p>
+        Abbiamo deciso di utilizzare il <a target="_blank" href="https://en.wikipedia.org/wiki/Actor_model">modello ad attori</a> per questo progetto in quanto rispecchia i requisiti analizzati dal <a target="_blank" href="https://iss.riccardohost.space/TemaFinale23.html">documento fornito dal cliente</a>: il sistema &egrave; costituito da componenti <b>eterogenei</b> che interagiscono tra di loro su <b>base distribuita</b>; inoltre abbiamo a disposizione librerie e un linguaggio di metamodellazione che supporteranno lo sviluppo orientato agli attori.
+    </p>
+
+    <p>
+        Il linguaggio in questione &egrave; <a target="_blank" href="https://iss.riccardohost.space/QakActors23.html#qakactors23">QAK</a>, un linguaggio di modellazione eseguibile che permette di creare prototipi e sistemi funzionanti in breve tempo (rispetto a linguaggi tradizionali) semplificando gli aspetti pi&ugrave; complessi della gestione delle interazioni tramite una struttura basata su attori che operano in <a target="_blank" href="https://iss.riccardohost.space/Actors23.html#actors23-il-contesto">contesti</a>.<br>
+
+    Oltre alla velocit&agrave; di sviluppo possibile con QAK, la scelta deriva dal fatto che il cliente ha fornito software per pilotare un DDR robot (o robot virtuali) compatibile con QAK.
+    </p>
+
+    Si riportano sotto due possibili modelli logici del sistema, basandosi sulle informazioni emersi in analisi dei requisiti che differiscono per la semantica di alcuni messaggi, in particolare:
+    <ul>
+        <li></li>
+        
+    </ul>
+    <!-- inserire messaggi diversi in lista e foto arch log-->
 
 </div>
 
@@ -407,7 +462,7 @@ Il cliente fornisce il software <code id="basicrobot" class="prettyprint">basicr
 
     Come gi&agrave; dedotto dall'analisi dei requisiti, il transport trolley &egrave; una entit&agrave; astratta che aggiunge funzionalit&agrave; di pi&ugrave; alto livello a un DDR robot (come riportato dai requisiti), queste funzionalit&agrave; sono:
     <ul>
-        <li>trasportare un carico di cibo da INDOOR a ColdRoom;</li>
+        <li>trasportare un FoodLoad da INDOOR a ColdRoom;</li>
         <li>recarsi in HOME quando non sono presenti richieste;</li>
         <li>comunicare il proprio <a href="#statotransporttrolley">stato</a> a entit&agrave; interessate.</li>
         <li>comunicare all'utente camion refrigerato che &egrave; stato prelevato il carico</li>
