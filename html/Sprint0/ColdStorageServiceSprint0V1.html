@@ -306,7 +306,7 @@ Si rimanda a incontro con il cliente la conferma della dimensione della service 
         <!-- <td><a href="#coldstorageservice">ColdStorageService</a></td> -->
         <td class="green bold center" id="acceptticket">Avvisa il transport trolley</td>
         <td>Peso <a href="#FW">FW</a></td>
-        <td>Il servizio comunica al <a href="#transporttrolley">transport trolley</a> che c'è del cibo da depositare.</td>
+        <td>Il servizio comunica al <a href="#transporttrolley">transport trolley</a> che c'&egrave; del cibo da depositare.</td>
     </tr>
 
     <tr>
@@ -400,293 +400,64 @@ Si rimanda a incontro con il cliente la conferma della dimensione della service 
 
 <div class="remark">
 
+    <p>
+        Dalla fase di analisi dei requisiti sono emerse diverse problematiche da affrontare, ma sono stati anche individuati con chiarezza dei componenti che andranno realizzati. <br>
+        Di seguito, &egrave; riportata la lista dei macro-componenti individuati, le cui descrizioni sono già state definite in fase di analisi dei requisiti:
+        <ul>
+            <li>ColdStorageService</li>
+            <li>TransportTrolley</li>
+            <li>ServiceAccessGUI</li>
+            <li>ServiceStatusGUI</li>
+            <li>Warning device (led)</li>
+            <li>Alarm device (sonar)</li>
+        </ul>
+    </p>
+    <h3>Suddivisione in Sprint</h3>
+    Abbiamo pensato di utilizzare la tecnica <b>divide et impera</b>, separando quindi l'analisi dell'applicazione in parti più piccole ed analizzandole una ad una. <br>
+    Per fare ciò si &egrave; dovuto prima identificare quale fosse il <b>core business</b> dell'applicazione, basandosi sull'analisi dei requisiti appena redatta. Abbiamo scelto come tale l'interazione tra <i>ColdStorageService</i> e <i>TransportTrolley</i>, in quanto da essa si realizza il cuore della logica applicativa richiesta dal committente. Il focus sul <i>TransportTrolley</i> implica anche la presa in considerazione del concetto di <i>basicrobot</i>, già definito in analisi dei requisiti e fornito dal committente.<br>
+    <p>
+        La tecnica appena descritta ci ha permesso di dividere i requisiti da analizzare secondo un ordine di priorità, concretizzato nella definizione di quattro <i>Sprint</i>, ognuno volto all'analisi di una diversa problematica:
+        <ol>
+            <li><b>Sprint1</b>: ColdStorageService e TransportTrolley (analisi del core business)</li>
+            <li><b>Sprint2</b>: ServiceAccessGUI</li>
+            <li><b>Sprint3</b>: requisiti di allarme</li>
+            <li><b>Sprint4</b>: ServiceStatusGUI</li>
+        </ol>
+    </p>
 
+    Questa suddivisione preliminare verrà confermata di volta in volta nei successivi Sprint, sulla base delle nuove problematiche che sorgeranno e dei relativi modi per affrontarle. <br>
 
-    <h3>Macro-componenti del sistema</h3>
-    All'interno di questa sezione verranno presentati i componenti che abbiamo individuato come principali, in quanto entità a se stanti che interagiscono tra di loro. <br>
-    Per ognuno di essi saranno evidenziate le responsabilità che ha, trattando anche eventuali sotto-componenti che possiede. <br>
-    <br>
-    Ogni componente verrà poi analizzato in maggiore dettaglio nei successivi Sprint.
-
-
-    <h4>ColdStorageService</h4>
-
-    Il <b>ColdStorageService</b> &egrave; il componente principale del sistema, ed &egrave; composto da:
-    <ul>
-        <li>ServiceAccessGUI</li>
-        <li>ServiceStatusGUI</li>
-    </ul>
-
-    Il ColdStorageService &egrave; incaricato di comunicare al transport trolley la presenza di una nuova richiesta di deposito, mentre il raggiungimento di certi landmark nella service area (HOME, INDOOR, ColdRoom), &egrave; delegato al transport trolley.<br>
-    In questo modo il <a href="#coldstorageservice">CSS</a> sar&agrave; indipendente dalla particolare disposizione della service area.<br><br>
-
-    Quando un utente (camion) richiede un ticket tramite la <a href="#serviceaccessgui">ServiceAccessGUI</a>, il ColdStorageService valuter&agrave; la richiesta, eventualmente emettendo un nuovo ticket (se la ColdRoom pu&ograve; ospitare il nuovo carico).<br>
-    Nel momento in cui l'utente inserisce il codice del ticket (sempre tramite la <a href="#serviceaccessgui">SAG</a>), il ColdStorageService comunicher&agrave; al transport trolley che &egrave; disponibile un nuovo carico da prelevare.<br><br>
-
-
-    Si rimanda alla domain analysis per la descrizione della <a href="#servicestatusgui">ServiceStatusGUI</a>.<br>
-    I dati visualizzati nella <a href="#servicestatusgui">SSG</a> sono di competenza del ColdStorageService, ad eccezione dello stato del transport trolley (fornito dal transport trolley stesso).<br>
-
-    <h4>Camion refrigerato</h4>
-
-    Consideriamo il camion refrigerato come un componente del sistema, anche se si tratta di un utente umano, in quanto esso da il via al comportamento del sistema, inviando una richiesta per un ticket tramite la ServiceAccessGUI.<br><br>
+    <h3>Valutazioni in termini di tempo</h3>
+    Il fatto di aver acquisito un'ampia visione di contesto sull'applicazione (derivante dall'analisi dei requisiti) e di aver suddiviso il lavoro in macro-parti (corrispondenti agli Sprint), ci ha permesso di definire con un buon margine di errore il costo in termini di tempo per la realizzazione dell'applicazione. <br>
+    Il tempo che verrà impegato &egrave; poi strettamente dipendente da come verrà suddiviso il lavoro tra i membri del team di sviluppo (2 in questo caso), con possibilità di parallelismo nell'analisi di problematiche diverse. <br> <br>
+    Abbiamo scelto di affrontare lo <i>Sprint1</i> assieme, in modo tale da essere certi di analizzare quello che &egrave; il core business dell'applicazione nella maniera più precisa possibile (pagando però in termini di tempo). <br>
+    Per i successivi Sprint, ovviamente al netto di eventuali nuove problematiche che sorgeranno, abbiamo invece deciso di dividerci l'analisi di <i>Sprint2</i> e <i>Sprint4</i> (in quanto affrontano problematiche simili) con lo <i>Sprint3</i>, che affronta un problema differente.
     
-    L'interazione tra camion e ColdStorageService avviene attraverso la ServiceAccessGUI: 
-    <ul>
-        <li>l'utente effettua la richiesta del ticket</li>
-        <li>se la richiesta &egrave; accettate, riceve il ticket</li>
-        <li>entro un tempo prefissato inserisce il codice del ticket</li>
-        <li>attende il messaggio <b>charge taken</b></li>
-    </ul>
+    <p>In sintesi, per come abbiamo pensato la suddivisione del lavoro, questi sono i costi valutati in termini di tempo:
+        <ol>
+            <li><b>Sprint1</b>: 2 persone - 20 ore</li>
+            <li><b>Sprint2</b> e <b>Sprint4</b>: 1 persona - 16 ore</li>
+            <li><b>Sprint3</b>: 1 persona - 16 ore</li>
+        </ol>
+        Impiego totale in termini di tempo: 42 ore in 2 persone.
+    </p>
     
-    A fronte dei piani di testing, il camion refrigerato verr&agrave; rappresentato come un <b>attore</b>; questo ci permetter&agrave; di simulare il comportamento di molteplici utenti (camion) per verificare il funzionamento del sistema.
+   
 
-    <h4>Sistema di allarme (RaspberryPi)</h4>
-    
-    Per trattare i requisiti di allarme, abbiamo individuato <b>sonar</b> e <b>led</b> come componenti appartenenti all'aggregato RaspberryPi, si &egrave; deciso di introdurre un ulteriore componente logico, un controller, incaricato di gestire il traffico per i due componenti sopra citati.<br><br>
-
-    Dall'analisi emergono due eventi che il sonar deve comunicare:
-    <ol>
-        <li>rilevamento di una distanza inferiore a DLIMT</li>
-        <li>rilevamento di una distanza superiore a DLIMT</li>
-    </ol>
-    Dall'analisi dei requisiti &egrave; sorto il problema di scegliere se inviare i segnali relativi agli <i>alarm requirements</i> <i>direttamente al transport trolley</i> o <i>incaricare il CSS di inoltrarli</i> al <a href="#transporttrolley">TT</a>, si &egrave; deciso di coinvolgere nella comunicazione solo il controller e il transport trolley.
-
-    Il controller sar&agrave; incaricato di inviare al transport trolley un segnale di stop alla realizzazione del primo evento e un segnale di resume (riprendere il movimento) all'eventuale realizzazione del secondo evento.<br>
-    Si specifica che questi eventi possono realizzarsi <b>molteplici volte</b>, ma sempre in successione alternata (evento 2 seguir&agrave; sempre l'evento 1).<br>
-    Le comunicazioni inizieranno soltanto dopo la rilevazione del primo evento; a questo riguardo si suppone che l'avvio del sistema comporti la realizzazione dell'evento 2, senza tuttavia inviare il segnale di resume.<br><br>
-
-    Relativamente ai requisiti del led, il controller ricever&agrave; dal transport trolley aggiornamenti sullo stato, che pu&ograve; assumere i seguenti valori logici:
-    <ul>
-        <li>HOME;</li>
-        <li>moving;</li>
-        <li>stopped (&ne; HOME),</li>
-    </ul>
-    il controller comunicher&agrave; poi al led di mostrare lo stato corrente nel rispetto degli <adocumento fornito dal cliente>alarm requirements</a>.
-
-    <h4>Transport trolley</h4>
-
-    Come gi&agrave; dedotto dall'analisi dei requisiti, il transport trolley &egrave; una entit&agrave; astratta che aggiunge funzionalit&agrave; di pi&ugrave; alto livello a un DDR robot (come riportato dai requisiti), queste funzionalit&agrave; sono:
-    <ul>
-        <li>trasportare un FoodLoad da INDOOR a ColdRoom;</li>
-        <li>recarsi in HOME quando non sono presenti richieste;</li>
-        <li>comunicare il proprio <a href="#statotransporttrolley">stato</a> a entit&agrave; interessate.</li>
-        <li>comunicare all'utente camion refrigerato che &egrave; stato prelevato il carico</li>
-    </ul><br>
-
-    Queste funzionalit&agrave; condividono un requisito fondamentale: la possibilit&agrave; di navigare la service area, sar&agrave; quindi necessario crearne una rappresentazione comprensibile al componente che controller&agrave; il robot concreto.<br>
-
-    L'analisi di questa problematica si rimanda a sprint successivi, abbiamo per&ograve; individuato una serie di componenti che saranno necessari:
-    <ul>
-        <li><b>transport trolley</b> come astrazione di DDR robot;</li>
-        <li><b>mapper</b> per creare la rappresentazione della service area;</li>
-        <li><b>planner</b> per decidere il percorso (ottimale o meno) per raggiungere un punto nella rappresentazione della service area;</li>
-        <li><b>controller</b> che invia istruzioni di movimento comprensibili dal DDR robot;</li>
-        <li>DDR robot concreto, fornito dal committente.</li>
-    </ul>
-
-    Queste funzionalit&agrave; sono implementate dal software fornito dal cliente <code class="prettyprint">basicrobot</code>: esso permette di muovere un robot generico (DDR robot, robot virtuale) seguendo percorsi preparati (non necessariamente ottimali) per spostarsi nella service area.<br>
-
-    <h3 id="interactions">Interazioni tra i componenti</h3>
-
-    Evidenziamo ogni possibile interazione tra i componenti, specificando la tipologia di messaggio tra quelle supportate dal linguaggio QAK (<i>request-reply</i>, <i>dispatch</i>, <i>event</i>, ...).<br>
-    
-    Abbiamo utilizzato sintassi prolog per il formato dei messaggi per mantenere la compatibilit&agrave; con il metamodello che creeremo con QAK.<br>
-
-    <ol>
-        <li>Camion refrigerato -> ColdStorageService</li>
-        <li>TransportTrolley <-> RaspberryPi</li>
-        <li>ColdStorageService <-> TransportTrolley</li>
-    </ol>
-
-    In questa tabella non comparir&agrave; l'entit&agrave; camion refrigerato in quanto si tratta di un utente umano rappresentato da un attore solo in <b>fase di testing</b>. Si da per scontato che esista una entit&agrave; che interagisce con la ServiceAccessGUI allo scopo di scatenare una <i>storerequest</i>.<br>
-
-    <table>
-        <tr>
-            <th>Mittente</th>
-            <th>Destinatario</th>
-            <th>Tipologia messaggio</th>
-            <th>Formato</th>
-            <th>Significato</th>
-        </tr>
-        <tr>
-            <td class="orange bold center">ServiceAccessGUI</td>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="blue bold center">Request</td>
-            <td>storerequest(FW)</td>
-            <td>Richiesta di <b>storage</b> di <b>FW</b> chili di cibo</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="orange bold center">ServiceAccessGUI</td>
-            <td class="blue bold center">Reply</td>
-            <td>storereply(TICKET,OKNO)</td>
-            <td>La richiesta &egrave; stata processata, pu&ograve; essere accettata o meno (OKNO) eventualmente fornisce il codice del ticket (TICKET)</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="orange bold center">ServiceAccessGUI</td>
-            <td class="blue bold center">Dispatch</td>
-            <td>chargetaken(TICKET)</td>
-            <td>Il carico associato a TICKET &egrave; stato prelevato dal transport trolley, il camion pu&ograve; spostarsi da INDOOR</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="orange bold center">ServiceAccessGUI, ServiceStatusGUI, ...</td>
-            <td class="blue bold center">Event</td>
-            <td>coldroomupdate(KG)</td>
-            <td>La quantit&agrave; di chilogrammi nella ColdRoom &egrave; cambiata</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="orange bold center">ServiceStatusGUI, ...</td>
-            <td class="blue bold center">Event</td>
-            <td>rejrequpdate(NREJ)</td>
-            <td>E' stata rifiutata un'ulteriore richiesta di deposito</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">ServiceAccessGUI</td>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="blue bold center">Request</td>
-            <td>codeentered(TICKET)</td>
-            <td>Il codice TICKET &egrave; stato inserito nella ServiceAccessGUI da un utente</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="orange bold center">ServiceAccessGUI</td>
-            <td class="blue bold center">Reply</td>
-            <td>ticketreply(TICKET,OKNO)</td>
-            <td>La richiesta &egrave; stata processata, pu&ograve; essere accettata o meno (OKNO) eventualmente fornisce il codice del ticket (TICKET)</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="orange bold center">TransportTrolley</td>
-            <td class="blue bold center">Dispatch</td>
-            <td>newcharge(FW)</td>
-            <td>E' presente alla INDOOR un nuovo carico da prelevare</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">TransportTrolley</td>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="blue bold center">Dispatch</td>
-            <td>chargetakentt()</td>
-            <td>Il carico presente alla INDOOR &egrave; stato prelevato dal transport trolley, il camion pu&ograve; spostarsi da INDOOR</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">TransportTrolley</td>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="blue bold center">Dispatch</td>
-            <td>chargedeposited(FW)</td>
-            <td>Il carico preso dal transport trolley è stato depositato nella ColdRoom, la SAG potrà aggiornare il peso corrente</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">TransportTrolley</td>
-            <td><span class="orange bold center">ServiceStatusGUI</span>, <span class="orange bold center">Sistema di allarme</span>, ...</td>
-            <td class="blue bold center">Event</td>
-            <td>statusupdate(POS, STATE)</td>
-            <td>Lo <b>stato</b> (posizione e/o stato di movimento) del transport trolley è cambiato</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">Sistema di allarme</td>
-            <td class="orange bold center">TransportTrolley</td>
-            <td class="blue bold center">Dispatch</td>
-            <td>stop()</td>
-            <td>La distanza del sonar da un ostacolo è minore di <b>DLIMIT</b></td>
-        </tr>
-        <tr>
-            <td class="orange bold center">Sistema di allarme</td>
-            <td class="orange bold center">TransportTrolley</td>
-            <td class="blue bold center">Dispatch</td>
-            <td>resume()</td>
-            <td>La distanza del sonar da un ostacolo è maggiore di <b>DLIMIT</b>, eventualmente solo a seguito di un segnale di <i>stop</i> </td>
-        </tr>
-    </table>
-
-
-    <h3 id="actors">Contesti e attori</h3>
-
-    In questa tabella si esplicitano gli attori individuati dall'analisi precedente assegnandoli ai loro contesti; in futuri sprint questa suddivisione potrebbe cambiare a seguito di analisi pi&ugrave; approfondite dei gruppi di componenti individuati.<br>
-    Come si pu&ograve; notare non &egrave; presente il componente <code class="prettyprint">controller</code> individuato nell'analisi del sistema di allarme: questo componente verr&agrave; analizzato in dettaglio in sprint futuri.
-    
-    <table>
-        <tr>
-            <th>Contesto</th>
-            <th>Attore</th>
-        </tr>
-        <tr>
-            <td class="darkgreen bold center" rowspan="2">ColdStorageService</td>
-            <td class="orange bold center">ColdStorageService</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">Transport trolley</td>
-        </tr>
-        <tr>
-            <td class="darkgreen bold center">Access</td>
-            <td class="orange bold center">ServiceAccessGUI</td>
-        </tr>
-        <tr>
-            <td class="darkgreen bold center">Status monitor</td>
-            <td class="orange bold center">ServiceStatusGUI</td>
-        </tr>
-        <tr>
-            <td class="darkgreen bold center" rowspan="2">Sistema di allarme</td>
-            <td class="orange bold center">WarningDevice</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">AlarmDevice</td>
-        </tr>
-    </table>
-
-    Di seguito si riportano alcuni <b>diagrammi di sequenza</b> che ci aiutano a comprendere meglio l'ordine di invio e ricezione dei messaggi specificati.<br>
-
-    <div class="imgslide">
-        <figure>
-            <figcaption>Sequenza 1. Richiesta di storage riuscita</figcaption>
-            <img class="imglim" src="../images/sequenza/storereq_success.png" alt="Richiesta di storage riuscita">
-        </figure>
-        <figure>
-            <figcaption>Sequenza 2. Richiesta di storage fallita, TICKETTIME scaduto</figcaption>
-            <img class="imglim" src="../images/sequenza/truck_fail.png" alt="Richiesta di storage fallita, tempo TICKETTIME scaduto">
-        </figure>
-        <figure>
-            <figcaption>Sequenza 3. Interazione sistema di allarme con transport trolley</figcaption>
-            <img class="imglim" src="../images/sequenza/alarm.png" alt="Interazione sistema di allarme con transport trolley">
-        </figure>
-    </div>
-
-
-    <h3>Interazione TransportTrolley - BasicRobot</h3>
-    Con lo scopo di definire chiaramente il comportamento del TT e di descrivere i suoi stati e le sue transazioni in QAK, si è scelto di aggiungere un attore fittizio <b>basicrobotsim</b>. <br>
-    Tramite esso abbiamo potuto quindi simulare il comportamento effettivo del TT e lo scambio di messaggi che avviene con il BasicRobot. <br>
-    <br>
-    Di seguito, viene presentato un protocollo base di interazione implementato in QAK. In particolare vediamo i messaggi che si scambiano TT, BRS (basicrobotsim) e ColdStorageService, partendo dal primo messaggio <i>newcharge(FW)</i> inviato dal CSS: <br>
-    <ol>
-        <li>TT -> BRS : goToIndoor</li>
-        <li>BRS -> TT : arrivedIndoor</li>
-        <li>TT -> CSS : chargetakentt</li>
-        <li>TT -> BRS : goToColdRoom</li>
-        <li>BRS -> TT : arrivedColdRoom</li>
-        <li>TT -> CSS : chargedeposited</li>
-        <li>TT -> BRS : goToHome</li>
-        <li>BRS -> TT : arrivedHome</li>
-    </ol><br>
-    <b>NOTA:</b> questo schema di interazione &egrave; ridondante, a causa della natura del basicrobotsim, in sprint futuri verr&agrave; ridotto il numero di messaggi tra Transport trolley e basicrobot.<br>
 
     <h3>Architettura logica</h3>
 
-    Di seguito verr&agrave; illustrata l'<b>architettura logica</b> preliminare del sistema creata sfruttando il linguaggio di metamodellazione <code class="prettyprint">QAK</code>; i componenti illustrati non rispecchiano l'effettivo funzionamento di ColdStorageService ma <b>simulano</b> le azioni che scatenano le interazioni individuate.<br>
-
-    In particolare non si mostrer&agrave; nel dettaglio l'interazione tra transport trolley e basicrobot (fornito dal cliente) ma verr&agrave; utilizzato un componente che simula il comportamento del robot, questo sar&agrave; oggetto di futuri sprint.<br>
-
-
-    <img class="bigimglim" src="../images/coldstorageservice23archSprint0.png" alt="Architettura logica">
-
+    Sulla base dell'analisi dei requisiti non siamo ancora in grado di definire un'architettura logica completa del sistema, che verrà rimandata ai successi Sprint, a valle di un'analisi più approfondita dei componenti e delle interazione presenti fra essi. <br>
+    Per ora, si utilizza come riferimento il <b>Modello dei requisiti</b> definito in fase di Analisi dei requisiti.
 </div>
 
 <h2>Test plans</h2> 
 
 <div class="remark">
-
+    Per quanto riguarda i piani di test per l'applicazione, verranno rimandati agli <i>Sprint</i> successivi, relativamente ai particolare problemi che verranno affrontati. <br>
+    <br>
+    Pensiamo sia comunque utile fare un discorso sul <i>Camion refrigerato</i> e sul suo ruolo all'interno dell'applicazione (particolarmente in fase di test). <br>
+    Come già detto in fase di analisi dei requisiti, quest'entità rappresenta l'utente umano che interagisce con il sistema (in particolar modo con la <i>ServiceAccessGUI</i>). Nonostante anche questo aspetto verrà trattato negli <i>Sprint</i> successivi, pensiamo sia utile, ai fini di test, modellare questa entità tramite una <b>mock</b> che simula l'interazione con il sistema. Successivamente, questa <i>mock</i> verrà scartata e sostituita da unità di test <b>JUnit</b> per il testing automatizzato delle varie funzioni della nostra applicazione.
 </div>
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
