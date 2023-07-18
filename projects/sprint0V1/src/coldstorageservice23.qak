@@ -1,0 +1,429 @@
+System coldstorageservice23
+
+
+
+Request 	storerequest	:	storerequest(FW)
+Reply 		storereply		:	storereply(TICKET,OKREJ)
+
+Request		codeentered		:	codeentered(TICKET)
+Reply		ticketreply		:	ticketreply(TICKET,OKREJ)
+
+Event		rejrequpdate	:	rejrequpdate(NREJ)
+
+Dispatch	newcharge		:	newcharge(FW)
+
+Dispatch	chargetakentt	:	chargetakentt(arg)
+Dispatch	chargetaken		:	chargetaken(TICKET)
+
+Dispatch	chargedeposited	:	chargedeposited(FW)
+
+Event		coldroomupdate	:	coldroomupdate(KG)
+
+Event		statusupdate	:	statusupdate(POS, STATE)
+
+Dispatch	stop			:	stop(arg)
+Dispatch	resume			:	resume(arg)
+
+
+Dispatch	goToINDOOR		:	goToINDOOR(arg)
+Dispatch	goToColdRoom	:	goToColdRoom(arg)
+Dispatch	goToHOME		:	goToHOME(arg)
+
+Dispatch	arrivedINDOOR	:	arrivedINDOOR(arg)
+Dispatch	arrivedColdRoom	:	arrivedColdRoom(arg)
+Dispatch	arrivedHOME		:	arrivedHOME(arg)
+
+
+
+
+Context ctx_coldstorageservice ip [host="localhost" port=8021]
+Context ctx_access ip [host="localhost" port=8022]
+Context ctx_statusmonitor ip [host="localhost" port=8023]
+Context ctx_alarmsystem ip [host="localhost" port=8024]
+
+Context ctx_basicrobot ip [host="127.0.0.1" port=8020]
+
+
+
+
+QActor coldstorageservice context ctx_coldstorageservice {
+	
+	[#	var TICKETTIME = 30
+		var MAXW = 100
+		var CurrentColdRoom = 0f
+		var TicketMap : HashMap<String, Pair<Float, Long>> = HashMap<String, Pair<Float, Long>>()
+		var TicketList : MutableList<String> = mutableListOf<String>()
+		var ReqRejected = 0
+	#]
+	
+	State s0 initial {
+		
+	}
+	Goto work
+	
+	State work {
+		printCurrentMessage
+	}
+	Transition t0 whenRequest storerequest -> elabStorerequest
+				  whenRequest codeentered -> elabCodeentered
+				  whenMsg	  chargetakentt -> elabChargetaken
+				  whenMsg	  chargedeposited -> elabChargedeposited
+	
+	State elabStorerequest {
+		//funzione mock, verrà cambiata
+		[#	var CurrentTime = 0L
+			var CurrentTicket = ""
+			fun generateNextTicket(existingMap: HashMap<String, Pair<Float, Long>>): String {
+    			val alphabets = ('A'..'Z').toList()
+    			val numbers = (0..9).toList()
+
+			    while (true) {
+			        val randomChars = (1..3).map { alphabets.random() }
+			        val randomNumbers = (1..3).map { numbers.random() }
+			        val randomString = (randomChars + randomNumbers).joinToString("")
+
+		    	    if (!existingMap.containsKey(randomString)) {
+			            return randomString
+		    	    }
+    			}
+			}
+		#]
+		onMsg( storerequest : storerequest(FW) ) {
+			if [# CurrentColdRoom + payloadArg(1).toInt() <= MAXW #] {
+				memoCurrentTime CurrentTime
+				[#	CurrentTicket = generateNextTicket(TicketMap)
+					TicketMap.put(CurrentTicket, Pair(payloadArg(1).toFloat(), CurrentTime)) 
+					TicketList.add(CurrentTicket)
+				#]
+				println("CSS | Accepted request for ${payloadArg(1)} kilograms")
+				replyTo storerequest with storereply : storereply($CurrentTicket,OK)
+			}
+			else {
+				println("CSS | Rejected request for ${payloadArg(1)} kilograms, not enough space")
+				replyTo storerequest with storereply : storereply(NULL,REJ)
+				[# ReqRejected += 1 #]
+				emit rejrequpdate : rejrequpdate($ReqRejected)
+			}
+		}
+	}
+	Goto work
+	
+	State elabCodeentered {
+		
+		[# var Elapsed = 0L #]
+		
+		onMsg ( codeentered : codeentered(TICKET) ) {
+			[# var TicketStart = TicketMap.get(payloadArg(1))!!.second #]
+			setDuration Elapsed from TicketStart
+			if [# Elapsed > TICKETTIME * 1000 #] {
+				[# TicketMap.remove(payloadArg(1)) #]
+				replyTo codeentered with ticketreply : ticketreply(NULL,REJ)
+				[# ReqRejected += 1 #]
+				emit rejrequpdate : rejrequpdate($ReqRejected)
+				println("CSS | Rejected code confirmation, ticket ${payloadArg(1)} has expired")
+			} else {
+				[# var CurrentFW = TicketMap.get(payloadArg(1))!!.first #]
+				replyTo codeentered with ticketreply : ticketreply($payloadArg(1),OK)
+				forward transporttrolley -m newcharge : newcharge($CurrentFW)
+				println("CSS | Accepted code confirmation for ticket ${payloadArg(1)}")
+				[# CurrentColdRoom += payloadArg(1).toFloat() #]
+			}
+		}
+	}
+	Goto work
+	
+	State elabChargetaken {
+		[# var CurrentTicketServed = TicketList.removeAt(0) #]
+		forward serviceaccessgui -m chargetaken : chargetaken($CurrentTicketServed)
+		[# TicketMap.remove(CurrentTicketServed) #]
+		println("CSS | TransportTrolley has taken current load")
+	}
+	Goto work
+	
+	State elabChargedeposited {
+		onMsg ( chargedeposited : chargedeposited(FW) ) {
+			println("CSS | TranportTrolley has deposited ${payloadArg(1)} kilograms in the ColdRoom")
+			emit coldroomupdate : coldroomupdate($CurrentColdRoom)
+		}
+	}
+	Goto work
+}
+
+
+QActor basicrobotsim context ctx_basicrobot {
+	
+	State s0 initial {
+		
+	}
+	Transition t0 whenMsg goToINDOOR -> handleToINDOOR
+	
+	State handleToINDOOR {
+		delay 3000
+		forward transporttrolley -m arrivedINDOOR : arrivedINDOOR(arg)
+	}
+	Goto inINDOOR
+	
+	State inINDOOR {
+		
+	}
+	Transition t0 whenMsg goToColdRoom -> handleToColdRoom
+	
+	State handleToColdRoom {
+		delay 3000
+		forward transporttrolley -m arrivedColdRoom : arrivedColdRoom(arg)
+	}
+	Goto inColdRoom
+	
+	State inColdRoom {
+		
+	}
+	Transition t0 whenMsg goToHOME -> goingHOME
+	
+	State goingHOME {
+	}
+	Transition t0 whenTime 3000 -> inHome
+				  whenMsg goToINDOOR -> handleToINDOOR
+	
+	State inHome {
+		forward transporttrolley -m arrivedHOME : arrivedHOME(arg)
+	}
+	
+}
+
+QActor transporttrolley context ctx_coldstorageservice {
+	
+	[#	var MovementState: MState = MState.HOME
+		var ServiceState: SState = SState.WAITING
+		
+		var ServingNow: Float = 0f
+		
+		var Pos: Pair<Int,Int> = Pair(0,0)
+		var ChargeList : MutableList<Float> = mutableListOf<Float>()
+	#]
+	
+	State s0 initial { //start in HOME
+		
+	}
+	Goto work
+	
+	State work {
+		[#	ServiceState = SState.WAITING
+			MovementState = MState.HOME
+		#]
+		emit statusupdate : statusupdate(pos(N,N),$MovementState)
+	}
+	Transition t0 whenMsg newcharge -> addCharge
+	
+	State addCharge {
+		onMsg( newcharge : newcharge(FW) ) {
+			[# ChargeList.add(payloadArg(1).toFloat()) #]
+		}
+	}
+	Goto handleCharge
+	
+	State handleCharge {
+		if [# ServiceState == SState.WAITING && !ChargeList.isEmpty() #] {
+			[#	ServiceState = SState.SERVING
+				MovementState = MState.MOVING
+			#]
+			emit statusupdate : statusupdate(pos(N,N),$MovementState)
+			forward basicrobotsim -m goToINDOOR : goToINDOOR(arg)
+		}
+	}
+	Transition t0 whenMsg arrivedINDOOR -> takeCharge
+				  whenInterrupt newcharge -> addCharge
+	
+	State takeCharge {
+		if [# ServingNow == 0f #] {
+			println("TT  | Charge taken from truck")
+			[# ServingNow = ChargeList.removeAt(0) #]
+			forward basicrobotsim -m goToColdRoom : goToColdRoom(arg)
+		}
+	}
+	Transition t0 whenMsg arrivedColdRoom -> notifyDeposit
+				  whenInterrupt newcharge -> addCharge
+				  
+	State notifyDeposit {
+		forward coldstorageservice -m chargedeposited : chargedeposited($ServingNow)
+		[# ServingNow = 0f #]
+	}
+	Transition t0 whenMsg arrivedHOME -> work
+				  whenInterrupt newcharge -> addCharge
+				  
+	State stopped {
+		
+	}
+	Transition t0 whenMsg resume -> handleCharge
+	
+}
+
+QActor serviceaccessgui context ctx_access {
+	
+	[#	var TicketList = mutableListOf<String>() 
+		var CurTicket: String = ""
+		var IsRequestRejected = false
+	#]
+	
+	State s0 initial {
+		delay 3000
+		request coldstorageservice -m storerequest : storerequest(30)
+	}
+	Goto work
+	
+	State work {
+		printCurrentMessage color green
+	}
+	Transition t0 whenReply storereply -> handleStorereply
+				  whenReply ticketreply -> handleTicketreply
+				  whenMsg	chargetaken -> handleChargetaken
+	
+	State handleStorereply {
+		[# IsRequestRejected = false #]
+		onMsg( storereply : storereply(TICKET, OKREJ) ) {
+			if [# payloadArg(2) == "REJ" #] {
+				println("SAG | Store request rejected, not enough space") color red
+				[# IsRequestRejected = true #]
+			}
+			else {
+				println("SAG | Store request accepted, your ticket number is ${payloadArg(1)}") color blue
+				[# TicketList.add(payloadArg(1)) #]
+			}
+		}
+	}
+	Goto s0 if [# IsRequestRejected #] else insertCode
+	
+	State insertCode {
+		delay 2000
+		//mock ticket
+		[# CurTicket = TicketList.get(0) #]
+		request coldstorageservice -m codeentered : codeentered($CurTicket)
+	}
+	Goto work
+	
+	State handleTicketreply {
+		onMsg( ticketreply : ticketreply(TICKET,OKNO) ) {
+			if [# payloadArg(2) == "REJ" #] {
+				println("SAG | You did not reach INDOOR in time, the request is forfeit") color red
+			}
+			else {
+				println("SAG | Ticket accepted, wait here for cargo unload") color blue
+				[# TicketList.remove(payloadArg(1)) #]
+			}
+		}
+	}
+	Goto work
+	
+	State handleChargetaken {
+		onMsg( chargetaken : chargetaken(TICKET) ) {
+			println("SAG | Ticket ${payloadArg(1)} driver can move away from INDOOR")
+		}
+	}
+	Goto s0
+}
+
+QActor servicestatusgui context ctx_statusmonitor {
+	
+	[#	var TTState: MState = MState.HOME
+		var TTPos: Pair<Int,Int> = Pair(0,0)
+		var CRWeight: Float = 0f
+		var RejReq: Int = 0
+	#]
+	
+	State s0 initial {
+		
+	}
+	Goto waitUpdate
+	
+	State waitUpdate {
+		
+	}
+	Transition t0 whenEvent coldroomupdate -> updateColdRoom
+				  whenEvent rejrequpdate -> updateRejected
+				  whenEvent statusupdate -> updateTT
+				  
+	State updateColdRoom {
+		onMsg( coldroomupdate : coldroomupdate(KG) ) {
+			[# CRWeight = payloadArg(1).toFloat() #]
+		}
+	}
+	Goto printNewStatus
+	
+	State updateTT {
+		onMsg( statusupdate : statusupdate(POS,STATE) ) {
+			[#	TTState = MState.valueOf(payloadArg(2)) #]
+			if [# !payloadArg(1).contains("N") #] {
+				[# TTPos = toPair(payloadArg(1)) #]
+			}
+		}
+	}
+	Goto printNewStatus
+	
+	State updateRejected {
+		onMsg( rejrequpdate : rejrequpdate(KG) ) {
+			[# RejReq = payloadArg(1).toInt() #]
+		}
+	}
+	Goto printNewStatus
+	
+	State printNewStatus {
+		println("SSG | Status update:")
+		println("Transport Trolley ($TTState, $TTPos)")
+		println("ColdRoom = $CRWeight KG")
+		println("Requests rejected = $RejReq")
+	}
+	Goto waitUpdate
+	
+}
+
+
+QActor warningdevice context ctx_alarmsystem {
+	
+	State s0 initial {
+		
+	}
+	Transition t0 whenEvent statusupdate -> handleStatusChange
+	
+	State handleStatusChange {
+		onMsg( statusupdate : statusupdate(_,STATUS) ) {
+			if [# MState.valueOf(payloadArg(2)) == MState.HOME #] {
+				println("WarningDevice | LED SPENTO")
+			}
+			if [# MState.valueOf(payloadArg(2)) == MState.MOVING #] {
+				println("WarningDevice | LED LAMPEGGIANTE")
+			}
+			if [# MState.valueOf(payloadArg(2)) == MState.STOPPED #] {
+				println("WarningDevice | LED ACCESO")
+			}
+			
+		}
+	}
+	Goto s0
+	
+}
+
+QActor alarmdevice context ctx_alarmsystem {
+	
+	[#	var DLIMT: Float = 10f
+		var Stopped = false
+	#]
+	
+	State s0 initial {
+		delay 5000
+		if [# (Random.nextFloat() * (0 - 50) + 50 <= DLIMT) && !Stopped #] {
+			forward transporttrolley -m stop : stop(arg)
+			[# Stopped = true #]
+		}
+		if [# (Random.nextFloat() * (0 - 50) + 50 > DLIMT) && Stopped #] {
+			forward transporttrolley -m resume : resume(arg)
+			[# Stopped = false #]
+		}
+	}
+	Goto s0
+}
+
+
+
+
+
+
+
