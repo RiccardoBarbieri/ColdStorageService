@@ -57,3 +57,12 @@ figcaption {
     display: table-caption;
     caption-side: top;
 }
+
+.stroke {
+    text-shadow:
+    -1px -1px 0 #560,
+    1px -1px 0 #560,
+    -1px 1px 0 #560,
+    1px 1px 0 #560;  
+
+}
