@@ -24,30 +24,22 @@ with Diagram('coldstorageservice23Arch', show=False, outformat='png', graph_attr
           transporttrolley=Custom('transporttrolley','./qakicons/symActorSmall.png')
      with Cluster('ctx_access', graph_attr=nodeattr):
           serviceaccessgui=Custom('serviceaccessgui','./qakicons/symActorSmall.png')
-     with Cluster('ctx_statusmonitor', graph_attr=nodeattr):
+     with Cluster('ctx_status', graph_attr=nodeattr):
           servicestatusgui=Custom('servicestatusgui','./qakicons/symActorSmall.png')
-     with Cluster('ctx_alarmsystem', graph_attr=nodeattr):
-          warningdevice=Custom('warningdevice','./qakicons/symActorSmall.png')
+     with Cluster('ctx_raspberry', graph_attr=nodeattr):
           alarmdevice=Custom('alarmdevice','./qakicons/symActorSmall.png')
+          warningdevice=Custom('warningdevice','./qakicons/symActorSmall.png')
      with Cluster('ctx_basicrobot', graph_attr=nodeattr):
-          basicrobotsim=Custom('basicrobotsim','./qakicons/symActorSmall.png')
-     coldstorageservice >> Edge( xlabel='rejrequpdate', **eventedgeattr, fontcolor='red') >> sys
-     coldstorageservice >> Edge(color='blue', style='solid', xlabel='newcharge', fontcolor='blue') >> transporttrolley
+          basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
+     coldstorageservice >> Edge(color='blue', style='solid', xlabel='deposit', fontcolor='blue') >> transporttrolley
      coldstorageservice >> Edge(color='blue', style='solid', xlabel='chargetaken', fontcolor='blue') >> serviceaccessgui
-     coldstorageservice >> Edge( xlabel='coldroomupdate', **eventedgeattr, fontcolor='red') >> sys
-     basicrobotsim >> Edge(color='blue', style='solid', xlabel='arrivedINDOOR', fontcolor='blue') >> transporttrolley
-     basicrobotsim >> Edge(color='blue', style='solid', xlabel='arrivedColdRoom', fontcolor='blue') >> transporttrolley
-     basicrobotsim >> Edge(color='blue', style='solid', xlabel='arrivedHOME', fontcolor='blue') >> transporttrolley
-     transporttrolley >> Edge( xlabel='statusupdate', **eventedgeattr, fontcolor='red') >> sys
-     transporttrolley >> Edge(color='blue', style='solid', xlabel='goToINDOOR', fontcolor='blue') >> basicrobotsim
-     transporttrolley >> Edge(color='blue', style='solid', xlabel='goToColdRoom', fontcolor='blue') >> basicrobotsim
-     transporttrolley >> Edge(color='blue', style='solid', xlabel='chargedeposited', fontcolor='blue') >> coldstorageservice
+     coldstorageservice >> Edge(color='blue', style='solid', xlabel='stop', fontcolor='blue') >> transporttrolley
+     coldstorageservice >> Edge(color='blue', style='solid', xlabel='resume', fontcolor='blue') >> transporttrolley
+     transporttrolley >> Edge(color='blue', style='solid', xlabel='step', fontcolor='blue') >> basicrobot
+     transporttrolley >> Edge(color='blue', style='solid', xlabel='cmd', fontcolor='blue') >> basicrobot
+     transporttrolley >> Edge(color='blue', style='solid', xlabel='ledupdate', fontcolor='blue') >> warningdevice
+     transporttrolley >> Edge(color='blue', style='solid', xlabel='statusupdate', fontcolor='blue') >> servicestatusgui
+     transporttrolley >> Edge(color='blue', style='solid', xlabel='chargetakentt', fontcolor='blue') >> coldstorageservice
      serviceaccessgui >> Edge(color='magenta', style='solid', xlabel='storerequest', fontcolor='magenta') >> coldstorageservice
-     serviceaccessgui >> Edge(color='magenta', style='solid', xlabel='codeentered', fontcolor='magenta') >> coldstorageservice
-     sys >> Edge(color='red', style='dashed', xlabel='coldroomupdate', fontcolor='red') >> servicestatusgui
-     sys >> Edge(color='red', style='dashed', xlabel='rejrequpdate', fontcolor='red') >> servicestatusgui
-     sys >> Edge(color='red', style='dashed', xlabel='statusupdate', fontcolor='red') >> servicestatusgui
-     sys >> Edge(color='red', style='dashed', xlabel='statusupdate', fontcolor='red') >> warningdevice
-     alarmdevice >> Edge(color='blue', style='solid', xlabel='stop', fontcolor='blue') >> transporttrolley
-     alarmdevice >> Edge(color='blue', style='solid', xlabel='resume', fontcolor='blue') >> transporttrolley
+     alarmdevice >> Edge(color='blue', style='solid', xlabel='distanceupdate', fontcolor='blue') >> coldstorageservice
 diag

@@ -233,8 +233,6 @@ Si rimanda a incontro con il cliente la conferma della dimensione della service 
     <li>stato di movimento (<b>stopped</b>,<b>moving</b>).</li>
 </ul>
 
-<b>LEO: la mettiamo qua la descrizione dei messaggi TT -> DDR robot o nella analis prob? il prof aveva detto qua se non sbaglio, per una prima architettura logica (doppia con alternative per i mess, anche charge taken)</b>
-
 <h4>Ticket</h4>
 
 <p id="ticketnumber">
@@ -248,9 +246,6 @@ Si rimanda a incontro con il cliente la conferma della dimensione della service 
 <p>
     Per l'utilizzo dei dati del sonar e il controllo del led verr&agrave; usato software fornito dal committente unito a software gi&agrave; disponibile alla nostra software house per abilitare la comunicazione con il transport trolley.
 </p>
-
-<b>LEO: stesso discorso del Transport trolley per ALARMDEVICE -> TT, dove lo mettiamo?</b>
-<b>Dobbiamo anche decidere se charge taken viene inviato da CSS o da TT, nel testo &egrave; ambiguo, forse &egrave; da chiedere al prof.</b>
 
 <h4>Verbs analysis</h4>
 <table>
@@ -387,13 +382,16 @@ Si rimanda a incontro con il cliente la conferma della dimensione della service 
     Oltre alla velocit&agrave; di sviluppo possibile con QAK, la scelta deriva dal fatto che il cliente ha fornito software per pilotare un DDR robot (o robot virtuali) compatibile con QAK.
     </p>
 
-    Si riportano sotto due possibili modelli logici del sistema, basandosi sulle informazioni emersi in analisi dei requisiti che differiscono per la semantica di alcuni messaggi, in particolare:
-    <ul>
-        <li></li>
-        
-    </ul>
-    <!-- inserire messaggi diversi in lista e foto arch log-->
+<h4>Charge taken</h4>
+    <p>
+        Nell'analisi dei requisiti abbiamo identificato una <b>discrepanza</b> riguardo al messaggio <b>charge taken</b>: non &egrave; chiaro se il messaggio charge taken debba avere semantica richiesta-risposta o semantica dispatch (non attende risposta).
+    </p>
+    <p>
+        Si rimanda a una futura discussione con il committente la scelta di una semantica per i messaggi <b>charge taken</b>.
+    </p>
 
+    <img class="bigimglim" src="../images/coldstorageservice23archSprint0V1-req.png" alt="Modello dispatch">
+    <img class="bigimglim" src="../images/coldstorageservice23archSprint0V1-dis.png" alt="Modello dispatch">
 </div>
 
 <h2>Problem analysis</h2>

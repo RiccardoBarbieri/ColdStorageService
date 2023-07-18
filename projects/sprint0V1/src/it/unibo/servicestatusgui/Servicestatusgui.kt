@@ -18,10 +18,6 @@ class Servicestatusgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
-			var TTState: MState = MState.HOME
-				var TTPos: Pair<Int,Int> = Pair(0,0)
-				var CRWeight: Float = 0f
-				var RejReq: Int = 0
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -30,73 +26,25 @@ class Servicestatusgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="waitUpdate", cond=doswitch() )
+					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
-				state("waitUpdate") { //this:State
+				state("waiting") { //this:State
 					action { //it:State
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t020",targetState="updateColdRoom",cond=whenEvent("coldroomupdate"))
-					transition(edgeName="t021",targetState="updateRejected",cond=whenEvent("rejrequpdate"))
-					transition(edgeName="t022",targetState="updateTT",cond=whenEvent("statusupdate"))
+					 transition(edgeName="t08",targetState="updateStatus",cond=whenDispatch("statusupdate"))
 				}	 
-				state("updateColdRoom") { //this:State
+				state("updateStatus") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("coldroomupdate(KG)"), Term.createTerm("coldroomupdate(KG)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								 CRWeight = payloadArg(1).toFloat()  
-						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="printNewStatus", cond=doswitch() )
-				}	 
-				state("updateTT") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("statusupdate(POS,STATE)"), Term.createTerm("statusupdate(POS,STATE)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-									TTState = MState.valueOf(payloadArg(2))  
-								if(  !payloadArg(1).contains("N")  
-								 ){ TTPos = toPair(payloadArg(1))  
-								}
-						}
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="printNewStatus", cond=doswitch() )
-				}	 
-				state("updateRejected") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("rejrequpdate(NREJ)"), Term.createTerm("rejrequpdate(KG)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								 RejReq = payloadArg(1).toInt()  
-						}
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="printNewStatus", cond=doswitch() )
-				}	 
-				state("printNewStatus") { //this:State
-					action { //it:State
-						CommUtils.outblack("SSG | Status update:")
-						CommUtils.outblack("Transport Trolley ($TTState, $TTPos)")
-						CommUtils.outblack("ColdRoom = $CRWeight KG")
-						CommUtils.outblack("Requests rejected = $RejReq")
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="waitUpdate", cond=doswitch() )
+					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
 			}
 		}

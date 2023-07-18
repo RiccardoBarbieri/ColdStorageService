@@ -18,26 +18,15 @@ class Alarmdevice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
-			var DLIMT: Float = 10f
-				var Stopped = false
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						delay(5000) 
-						if(  (Random.nextFloat() * (0 - 50) + 50 <= DLIMT) && !Stopped  
-						 ){forward("stop", "stop(arg)" ,"transporttrolley" ) 
-						 Stopped = true  
-						}
-						if(  (Random.nextFloat() * (0 - 50) + 50 > DLIMT) && Stopped  
-						 ){forward("resume", "resume(arg)" ,"transporttrolley" ) 
-						 Stopped = false  
-						}
+						forward("distanceupdate", "distanceupdate(_)" ,"coldstorageservice" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="s0", cond=doswitch() )
 				}	 
 			}
 		}

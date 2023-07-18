@@ -18,13 +18,6 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
-			var MovementState: MState = MState.HOME
-				var ServiceState: SState = SState.WAITING
-				
-				var ServingNow: Float = 0f
-				
-				var Pos: Pair<Int,Int> = Pair(0,0)
-				var ChargeList : MutableList<Float> = mutableListOf<Float>()
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -33,84 +26,54 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="work", cond=doswitch() )
+					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
-				state("work") { //this:State
+				state("doDeposit") { //this:State
 					action { //it:State
-							ServiceState = SState.WAITING
-									MovementState = MState.HOME
-						emit("statusupdate", "statusupdate(pos(N,N),$MovementState)" ) 
+						forward("step", "step(_)" ,"basicrobot" ) 
+						forward("cmd", "cmd(_)" ,"basicrobot" ) 
+						forward("ledupdate", "ledupdate(_)" ,"warningdevice" ) 
+						forward("statusupdate", "updategui(_)" ,"servicestatusgui" ) 
+						delay(3000) 
+						forward("chargetakentt", "chargetakentt(_)" ,"coldstorageservice" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t09",targetState="addCharge",cond=whenDispatch("newcharge"))
+					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
-				state("addCharge") { //this:State
+				state("waiting") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("newcharge(FW)"), Term.createTerm("newcharge(FW)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								 ChargeList.add(payloadArg(1).toFloat())  
-						}
+						forward("statusupdate", "statusupdate(_)" ,"servicestatusgui" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
+				 	 		stateTimer = TimerActor("timer_waiting", 
+				 	 					  scope, context!!, "local_tout_transporttrolley_waiting", 2000.toLong() )
 					}	 	 
-					 transition( edgeName="goto",targetState="handleCharge", cond=doswitch() )
+					 transition(edgeName="t03",targetState="waiting",cond=whenTimeout("local_tout_transporttrolley_waiting"))   
+					transition(edgeName="t04",targetState="doDeposit",cond=whenDispatch("deposit"))
+					transition(edgeName="t05",targetState="stop",cond=whenDispatch("stop"))
 				}	 
-				state("handleCharge") { //this:State
-					action { //it:State
-						if(  ServiceState == SState.WAITING && !ChargeList.isEmpty()  
-						 ){	ServiceState = SState.SERVING
-										MovementState = MState.MOVING
-						emit("statusupdate", "statusupdate(pos(N,N),$MovementState)" ) 
-						forward("goToINDOOR", "goToINDOOR(arg)" ,"basicrobotsim" ) 
-						}
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t010",targetState="takeCharge",cond=whenDispatch("arrivedINDOOR"))
-					interrupthandle(edgeName="t011",targetState="addCharge",cond=whenDispatch("newcharge"),interruptedStateTransitions)
-				}	 
-				state("takeCharge") { //this:State
-					action { //it:State
-						if(  ServingNow == 0f  
-						 ){CommUtils.outblack("TT  | Charge taken from truck")
-						 ServingNow = ChargeList.removeAt(0)  
-						forward("goToColdRoom", "goToColdRoom(arg)" ,"basicrobotsim" ) 
-						}
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t012",targetState="notifyDeposit",cond=whenDispatch("arrivedColdRoom"))
-					interrupthandle(edgeName="t013",targetState="addCharge",cond=whenDispatch("newcharge"),interruptedStateTransitions)
-				}	 
-				state("notifyDeposit") { //this:State
-					action { //it:State
-						forward("chargedeposited", "chargedeposited($ServingNow)" ,"coldstorageservice" ) 
-						 ServingNow = 0f  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t014",targetState="work",cond=whenDispatch("arrivedHOME"))
-					interrupthandle(edgeName="t015",targetState="addCharge",cond=whenDispatch("newcharge"),interruptedStateTransitions)
-				}	 
-				state("stopped") { //this:State
+				state("stop") { //this:State
 					action { //it:State
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t016",targetState="handleCharge",cond=whenDispatch("resume"))
+					 transition(edgeName="t06",targetState="resume",cond=whenDispatch("resume"))
+				}	 
+				state("resume") { //this:State
+					action { //it:State
+						returnFromInterrupt(interruptedStateTransitions)
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 				}	 
 			}
 		}

@@ -26,28 +26,6 @@ class Warningdevice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t023",targetState="handleStatusChange",cond=whenEvent("statusupdate"))
-				}	 
-				state("handleStatusChange") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("statusupdate(POS,STATE)"), Term.createTerm("statusupdate(_,STATUS)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								if(  MState.valueOf(payloadArg(2)) == MState.HOME  
-								 ){CommUtils.outblack("WarningDevice | LED SPENTO")
-								}
-								if(  MState.valueOf(payloadArg(2)) == MState.MOVING  
-								 ){CommUtils.outblack("WarningDevice | LED LAMPEGGIANTE")
-								}
-								if(  MState.valueOf(payloadArg(2)) == MState.STOPPED  
-								 ){CommUtils.outblack("WarningDevice | LED ACCESO")
-								}
-						}
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="s0", cond=doswitch() )
 				}	 
 			}
 		}
