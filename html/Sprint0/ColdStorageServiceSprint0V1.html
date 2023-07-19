@@ -262,7 +262,7 @@
 
     <tr>
         <!-- <td><a href="#camionrefrigerato">Camion refrigerato</a></td> -->
-        <td class="green bold center" id="drives">Drives to the <a href="#INDOOR">INDOOR</a></td>
+        <td class="green bold center" id="drives">Drives to the INDOOR</td>
         <td>-</td>
         <td>Il (guidatore del) camion, in caso di richiesta accettata, va fino alla porta di INDOOR, prima della scadenza del ticket (<a href="#tickettime">TICKETTIME</a>).</td>
     </tr>
@@ -406,8 +406,11 @@
             <li>TransportTrolley</li>
             <li>ServiceAccessGUI</li>
             <li>ServiceStatusGUI</li>
-            <li>Warning device (led)</li>
-            <li>Alarm device (sonar)</li>
+            <li>RaspberryPi</li>
+            <ul>
+                <li>Warning device (led)</li>
+                <li>Alarm device (sonar)</li>
+            </ul>
         </ul>
     </p>
     <h3>Suddivisione in Sprint</h3>
@@ -427,15 +430,17 @@
 
     <h3>Valutazioni in termini di tempo</h3>
     Il fatto di aver acquisito un'ampia visione di contesto sull'applicazione (derivante dall'analisi dei requisiti) e di aver suddiviso il lavoro in macro-parti (corrispondenti agli Sprint), ci ha permesso di definire con un buon margine di errore il costo in termini di tempo per la realizzazione dell'applicazione. <br>
-    Il tempo che verrà impegato &egrave; poi strettamente dipendente da come verrà suddiviso il lavoro tra i membri del team di sviluppo (2 in questo caso), con possibilità di parallelismo nell'analisi di problematiche diverse. <br> <br>
-    Abbiamo scelto di affrontare lo <i>Sprint1</i> assieme, in modo tale da essere certi di analizzare quello che &egrave; il core business dell'applicazione nella maniera più precisa possibile (pagando però in termini di tempo). <br>
-    Per i successivi Sprint, ovviamente al netto di eventuali nuove problematiche che sorgeranno, abbiamo invece deciso di dividerci l'analisi di <i>Sprint2</i> e <i>Sprint4</i> (in quanto affrontano problematiche simili) con lo <i>Sprint3</i>, che affronta un problema differente.
-    
+    Il tempo che verrà impegato &egrave; poi strettamente dipendente da come verrà suddiviso il lavoro tra i membri del team di sviluppo (2 in questo caso), con possibilità di parallelismo nell'analisi di problematiche diverse.
+    <p>
+        Abbiamo scelto di affrontare lo <i>Sprint1</i> assieme, in modo tale da essere certi di analizzare quello che &egrave; il core business dell'applicazione nella maniera più precisa possibile (pagando però in termini di tempo). <br>
+    Per i successivi Sprint, ovviamente al netto di eventuali nuove problematiche che sorgeranno, abbiamo invece deciso di dividerci l'analisi di <i>Sprint2</i> e <i>Sprint3</i>, che affrontano problematiche differenti. Per quanto riguarda lo <i>Sprint4</i>, pensiamo possa essere svolto il parallelo allo <i>Sprint2</i>, in quanto trattano problemi molto simili. Tuttavia, decisioni defintive verranno prese e/o confermate nei successivi <i>Sprint</i>.
+    </p> 
     <p>In sintesi, per come abbiamo pensato la suddivisione del lavoro, questi sono i costi valutati in termini di tempo:
         <ol>
             <li><b>Sprint1</b>: 2 persone - 20 ore</li>
-            <li><b>Sprint2</b> e <b>Sprint4</b>: 1 persona - 16 ore</li>
+            <li><b>Sprint2</b>: 1 persona - 11 ore</li>
             <li><b>Sprint3</b>: 1 persona - 16 ore</li>
+            <li><b>Sprint4</b>: 1 persona - 5 ore</li>
         </ol>
         Impiego totale in termini di tempo: 42 ore in 2 persone.
     </p>
@@ -454,8 +459,8 @@
 <div class="remark">
     Per quanto riguarda i piani di test per l'applicazione, verranno rimandati agli <i>Sprint</i> successivi, relativamente ai particolare problemi che verranno affrontati. <br>
     <br>
-    Pensiamo sia comunque utile fare un discorso sul <i>Camion refrigerato</i> e sul suo ruolo all'interno dell'applicazione (particolarmente in fase di test). <br>
-    Come già detto in fase di analisi dei requisiti, quest'entità rappresenta l'utente umano che interagisce con il sistema (in particolar modo con la <i>ServiceAccessGUI</i>). Nonostante anche questo aspetto verrà trattato negli <i>Sprint</i> successivi, pensiamo sia utile, ai fini di test, modellare questa entità tramite una <b>mock</b> che simula l'interazione con il sistema. Successivamente, questa <i>mock</i> verrà scartata e sostituita da unità di test (ad esempio <i>JUnit</i>, <i>NUnit</i>,...) per il testing automatizzato delle varie funzioni della nostra applicazione.
+    Introduciamo un discorso sul <i>Camion refrigerato</i> e sul suo ruolo all'interno dell'applicazione (particolarmente in fase di test). <br>
+    Come già detto in fase di analisi dei requisiti, quest'entità rappresenta l'utente umano che interagisce con il sistema (in particolar modo con la <i>ServiceAccessGUI</i>). Nonostante anche questo aspetto verrà trattato negli <i>Sprint</i> successivi, consideriamo utile, ai fini di test, modellare il <i>Camion</i> come <b>entità mock</b> che simula l'interazione con il sistema. Successivamente, questa <i>mock</i> verrà scartata e sostituita da unità di test (ad esempio <i>JUnit</i>, <i>NUnit</i>,...) per il testing automatizzato delle varie funzioni della nostra applicazione.
 </div>
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
