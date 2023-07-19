@@ -44,7 +44,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 				}	 
 				state("finalizeDeposit") { //this:State
 					action { //it:State
-						request("chargetaken", "chargetaken(_)" ,"serviceaccessgui" )  
+						forward("chargetaken", "chargetaken(_)" ,"serviceaccessgui" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

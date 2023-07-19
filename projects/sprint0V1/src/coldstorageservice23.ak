@@ -7,14 +7,14 @@ Request 	storerequest		:		storerequest(arg)
 Reply		loadaccepted		:		loadaccepted(arg)
 
 //CSS -> SAG
-Dispatch	chargetaken			:		chargetaken(arg)
+Request		chargetaken			:		chargetaken(arg)
 
 //TT -> CSS
 Dispatch	chargetakentt		:		chargetaken(arg)
 
-//CSS -> SSG
+//CSS -> SSG 
 //TT -> SSG
-Dispatch	statusupdate		:		statusupdate(arg) 
+Dispatch	statusupdate		:		statusupdate(arg)
 
 //RASP -> CSS
 Dispatch	distanceupdate		:		distanceupdate(arg)
@@ -58,7 +58,7 @@ QActor coldstorageservice context ctx_coldstorageservice {
 	Transition t0 whenMsg chargetakentt -> finalizeDeposit
 	
 	State finalizeDeposit {
-		forward serviceaccessgui -m chargetaken : chargetaken(_)
+		request serviceaccessgui -m chargetaken : chargetaken(_)
 	}
 	Goto waiting
 	

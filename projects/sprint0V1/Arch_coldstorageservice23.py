@@ -16,7 +16,7 @@ eventedgeattr = {
     'color': 'red',
     'style': 'dotted'
 }
-with Diagram('chargetaken: Request-Reply', show=False, outformat='png', graph_attr=graphattr) as diag:
+with Diagram('chargetaken - Dispatch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
      with Cluster('ctx_coldstorageservice', graph_attr=nodeattr):
@@ -32,7 +32,7 @@ with Diagram('chargetaken: Request-Reply', show=False, outformat='png', graph_at
      with Cluster('ctx_basicrobot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
      coldstorageservice >> Edge(color='blue', style='solid', xlabel='deposit', fontcolor='blue') >> transporttrolley
-     coldstorageservice >> Edge(color='magenta', style='solid', xlabel='chargetaken', fontcolor='magenta') >> serviceaccessgui
+     coldstorageservice >> Edge(color='blue', style='solid', xlabel='chargetaken', fontcolor='blue') >> serviceaccessgui
      coldstorageservice >> Edge(color='blue', style='solid', xlabel='stop', fontcolor='blue') >> transporttrolley
      coldstorageservice >> Edge(color='blue', style='solid', xlabel='resume', fontcolor='blue') >> transporttrolley
      transporttrolley >> Edge(color='blue', style='solid', xlabel='step', fontcolor='blue') >> basicrobot
