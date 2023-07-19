@@ -29,12 +29,14 @@
     <a target="_blank" href="https://iss.riccardohost.space/TemaFinale23.html">Descrizione requirements a questa pagina</a><br>
 
 
-<bc>Goals dello sprint 0</bc>:
-<ol>
-    <li>Identificare i componenti principali del servizio <b>ColdStorageService</b></li>
-    <li>Formulare un modello di interazione dei componenti individuati</li>
-    <li>Modellare una architettura logica del sistema che faccia da punto di riferimento per gli sviluppi successivi</li>
-</ol>
+<p>
+    <bc>Goals dello sprint 0</bc>:
+    <ol>
+        <li>Identificare i componenti principali del servizio <b>ColdStorageService</b></li>
+        <li>Formulare un modello di interazione dei componenti individuati</li>
+        <li>Modellare una architettura logica del sistema che faccia da punto di riferimento per gli sviluppi successivi</li>
+    </ol>
+</p>
 </div>
 
 <h2>Requirement analysis</h2>
@@ -202,26 +204,22 @@
 
 <h4 id="serviceareamodel">Service area</h3>
 
-<p>
-    Data la forma quadrata (di lato <i>RD</i>) del transport trolley e rettangolare della service area, abbiamo deciso di modellare la service area come una <b>griglia di punti</b> raggiungibili dal transport trolley, assegnando cos&igrave; a ogni punto di interesse uno specifico <b>insieme di coordinate</b>.
-</p>
-    <img class="bigimglim" src="../images/servicearea.png" alt="Modello service area"><br>
+    
+    <p>
+        In base alla descrizione fornita dal cliente, abbiamo modellato la <a href="#servicearea">service area</a> come un rettangolo privo di ostacoli e circondato da 4 pareti, all'interno del quale sono presenti le 4 aree rilevanti descritte in precedenza:
+        <ul>
+            <li><span class="bold" style="color:rgb(255,0,0);">HOME</span></li>
+            <li><span class="bold" style="color:rgb(64,64,228);">ColdRoom</span></li>
+            <li><span class="bold" style="color:rgb(43,169,43);">INDOOR</span></li>
+            <li><span class="stroke" style="color:rgb(255,228,0);">PORT</span></li>
+        </ul>
+    </p>
+    <img class="bigimglim" src="../images/servicearea.png" alt="Modello service area">
+    <p>
+        In un colloquio con il committente è stata introdotta anche la presenza di <b>ostacoli</b> all'interno della service area, non meglio definiti. <br>
+    Si rimanda ad un successivo incontro con il committente la conferma della dimensione della service area e la revisione dello specifico posizionamento di ogni punto di interesse, compreso degli eventuali ostacoli.
 
-    <!-- sistemare coordina ColdRoom, chiedere a natali se PORT,HOME e INDOR sono singolo punto o no-->
-<p>
-In particolare:
-<ul>
-    <li><span class="bold" style="color:rgb(255,0,0);">HOME</span> si trova alle coordinate (0,0)</li>
-    <li><span class="bold" style="color:rgb(64,64,228);">ColdRoom</span> si estende dalle coordinate (2,9) a (3,10)</li>
-    <li><span class="bold" style="color:rgb(43,169,43);">INDOOR</span> si estende dalle coordinate (8,0) a (8,3)</li>
-    <li><span class="bold" style="color:rgb(0,0,0);">Ostacolo</span> si trova alle coordinate (5,6)</li>
-    <li><span class="stroke" style="color:rgb(255,228,0);">PORT</span> si estende dalle coordinate (4,9) a (4,11)</li>
-</ul>
-Si rimanda a incontro con il cliente la conferma della dimensione della service area e la revisione dello specifico posizionamento di ogni punto di interesse.
-</p>
-<p>
-    Questa decisione &egrave; anche mirata alla compatibilit&agrave; con il software <code class="prettyprint">basicrobot</code> che permette di muovere un DDR robot basandosi su un sistema di coordinate.
-</p>
+    </p>
 
 <h4>Transport trolley</h4>
 
@@ -234,12 +232,8 @@ Si rimanda a incontro con il cliente la conferma della dimensione della service 
 </ul>
 
 <h4>Ticket</h4>
-
-<p id="ticketnumber">
-    Per <b>identificare</b> il ticket in modo univoco abbiamo deciso di associare un <b>numero intero progressivo</b> ad ogni ticket rilasciato.
-</p>
 <p>
-    Abbiamo inoltre deciso di associare un <b>timestamp di emissione</b> ad ogni identificatore generato, allo scopo di poter calcolare quanto tempo &egrave; passato dall'emissione al momento dell'inserimento dell'identificatore.
+    Essendo che vi è presente il <a href="tickettime">TICKETTIME</a>, associamo un <b>timestamp di emissione</b> ad ogni ticket generato, allo scopo di poter calcolare quanto tempo &egrave; passato dall'emissione al momento dell'inserimento del ticket stesso.
 </p>
 
 <h4>Sonar e led</h4>
@@ -248,6 +242,9 @@ Si rimanda a incontro con il cliente la conferma della dimensione della service 
 </p>
 
 <h4>Verbs analysis</h4>
+<p>
+    La seguente tabella mette in luce le <b>azioni</b> che vengono compiute all'interno della logica applicativa, evidenziando qual è l'entità che le compie e l'oggetto che fa parte dell'azione stessa.
+</p>
 <table>
     <tr>
     <th>Soggetto</th>
@@ -260,20 +257,20 @@ Si rimanda a incontro con il cliente la conferma della dimensione della service 
     <td rowspan=5><a href="#camionrefrigerato">Camion refrigerato</a></td>
     <td class="green bold center" id="sendrequest">Sends a request</td>
     <td>Peso <a href="#FW">FW</a></td>
-    <td>Il (guidatore del) camion invia una richiesta di deposito di <b>FW</b> kg di cibo tramite la <a href="#serviceaccessgui">ServiceAccessGUI</a> .</td>
+    <td>Il (guidatore del) camion invia una richiesta di deposito di <b>FW</b> kg di cibo tramite la <a href="#serviceaccessgui">ServiceAccessGUI</a>.</td>
     </tr>
 
     <tr>
         <!-- <td><a href="#camionrefrigerato">Camion refrigerato</a></td> -->
         <td class="green bold center" id="drives">Drives to the <a href="#INDOOR">INDOOR</a></td>
         <td>-</td>
-        <td>Il (guidatore del) camion, in caso di richiesta accettata, va fino alla porta di INDOOR, prima della scadenza del ticket (<a href="#tickettime">TICKETTIME</a>) .</td>
+        <td>Il (guidatore del) camion, in caso di richiesta accettata, va fino alla porta di INDOOR, prima della scadenza del ticket (<a href="#tickettime">TICKETTIME</a>).</td>
     </tr>
 
     <tr>
         <td class="green bold center" id="enterticket">Enters the ticket number</td>
         <td><a href="#ticket">Ticket</a> number</td>
-        <td>Il (guidatore del) camion, inserisce il numero del ticket tramite la <a href="#serviceaccessgui">ServiceAccessGUI</a> .</td>
+        <td>Il (guidatore del) camion, inserisce il numero del ticket tramite la <a href="#serviceaccessgui">ServiceAccessGUI</a>.</td>
     </tr>
     
     <tr>
@@ -384,14 +381,17 @@ Si rimanda a incontro con il cliente la conferma della dimensione della service 
 
 <h4>Charge taken</h4>
     <p>
-        Nell'analisi dei requisiti abbiamo identificato una <b>discrepanza</b> riguardo al messaggio <b>charge taken</b>: non &egrave; chiaro se il messaggio charge taken debba avere semantica richiesta-risposta o semantica dispatch (non attende risposta).
-    </p>
-    <p>
-        Si rimanda a una futura discussione con il committente la scelta di una semantica per i messaggi <b>charge taken</b>.
+        Nell'analisi dei requisiti abbiamo identificato una <b>discrepanza</b> riguardo al messaggio <b>charge taken</b>: non &egrave; chiaro se il messaggio charge taken debba avere semantica richiesta-risposta o semantica dispatch (non attende risposta). <br>
+        Il committente, in un secondo colloquio, non ha dato nessuna preferenza riguardo alla tipologia di messaggio. <br>
     </p>
 
-    <img class="bigimglim" src="../images/coldstorageservice23archSprint0V1-req.png" alt="Modello dispatch">
-    <img class="bigimglim" src="../images/coldstorageservice23archSprint0V1-dis.png" alt="Modello dispatch">
+
+    <p>
+        Abbiamo quindi deciso di realizzare due versioni del <b>modello dei requisiti</b>, rimandando ad una futura discussione con il committente (mostrandogli i due schemi possibili) la scelta di una determinata semantica per i messaggi <b>charge taken</b>.
+    </p>
+
+    <img class="bigimglim" src="../images/coldstorageservice23archSprint0V1-req.png" alt="Modello dispatch" height="70%" width="70%">
+    <img class="bigimglim" src="../images/coldstorageservice23archSprint0V1-dis.png" alt="Modello dispatch" height="70%" width="70%">
 </div>
 
 <h2>Problem analysis</h2>
@@ -455,7 +455,7 @@ Si rimanda a incontro con il cliente la conferma della dimensione della service 
     Per quanto riguarda i piani di test per l'applicazione, verranno rimandati agli <i>Sprint</i> successivi, relativamente ai particolare problemi che verranno affrontati. <br>
     <br>
     Pensiamo sia comunque utile fare un discorso sul <i>Camion refrigerato</i> e sul suo ruolo all'interno dell'applicazione (particolarmente in fase di test). <br>
-    Come già detto in fase di analisi dei requisiti, quest'entità rappresenta l'utente umano che interagisce con il sistema (in particolar modo con la <i>ServiceAccessGUI</i>). Nonostante anche questo aspetto verrà trattato negli <i>Sprint</i> successivi, pensiamo sia utile, ai fini di test, modellare questa entità tramite una <b>mock</b> che simula l'interazione con il sistema. Successivamente, questa <i>mock</i> verrà scartata e sostituita da unità di test <b>JUnit</b> per il testing automatizzato delle varie funzioni della nostra applicazione.
+    Come già detto in fase di analisi dei requisiti, quest'entità rappresenta l'utente umano che interagisce con il sistema (in particolar modo con la <i>ServiceAccessGUI</i>). Nonostante anche questo aspetto verrà trattato negli <i>Sprint</i> successivi, pensiamo sia utile, ai fini di test, modellare questa entità tramite una <b>mock</b> che simula l'interazione con il sistema. Successivamente, questa <i>mock</i> verrà scartata e sostituita da unità di test (ad esempio <i>JUnit</i>, <i>NUnit</i>,...) per il testing automatizzato delle varie funzioni della nostra applicazione.
 </div>
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
