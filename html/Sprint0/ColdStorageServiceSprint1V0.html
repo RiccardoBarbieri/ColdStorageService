@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+<link rel="stylesheet" href="../_static/template.css">
+<link rel="stylesheet" href="../_static/mine.css">
+<script src="../_static/scroll.js"></script>
+
+    
+<head>
+   <title>Sprint1</title>
+</head>
+    
+<body>
+
+<div id="top">
+
+    <h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE<font size="5"></font> </h1>
+
+</div>  
+
+<div class="body"> 
+
+<h2>Introduction</h2>
+<div class="remark">
+    Aggiungere trafiletto in cui esplicitiamo che qui verrà analizzato il CORE-BUSINESS dell'applicazione
+    <p>
+        All'interno di questo <i>Sprint</i> verranno analizzati i componenti principali del sistema e le interazioni che avvengono fra essi, limitandosi al contesto di <i>ColdStorageService</i> (CSS) e <i>TransportTrolley</i> (TT).
+    </p>
+</div>
+
+<h2>Requirements</h2>
+ 
+<div class="remark">
+    <a target="_blank" href="https://iss.riccardohost.space/TemaFinale23.html">Descrizione requirements a questa pagina</a><br>
+
+    <p>
+    <bc>Goals dello sprint 1</bc>:
+    <ol>
+        <li>Definire con precisione i componenti dell'applicazione, limitandosi al contesto di <i>ColdStorageService</i> e <i>TransportTrolley</i></li>
+        <li>Formulare il modello di interazione tra <b>ColdStorageService</b> e <b>TransportTrolley</b></li>
+    </ol>
+    </p>
+</div>
+
+<h2>Requirement analysis</h2>
+
+<div class="remark">
+    <p>
+        Dal documento dei requisiti, relativamente a questo <i>Sprint</i>, consideriamo i seguenti argomenti da trattare:
+        <ul>
+            <li>Service area</li>
+            <li>DDR robot e transport trolley</li>
+            <li>Interazione tra il <i>Camion</i> ed il <i>CSS</i></li>
+            <li>Interazione tra il <i>CSS</i> ed il <i>TT</i></li>
+        </ul>
+    </p>
+
+    Tabella con tutti i <b>REQUISITI ANALIZZATI NELLO SPRINT0</b> relativamente ai componenti interessati.
+    <table>
+        <tr>
+            <th>Termine</th>
+            <th>Descrizione</th>
+        </tr>
+        <tr>
+            <td class="green bold center" id="coldstorageservice">ColdStorageService</td>
+            <td>Sistema distribuito per il deposito di prodotti alimentari all'interno di una stanza refrigerata, automatizzato tramite l'uso di un <a href="#transporttrolley">transport trolley</a>.</td>
+        </tr>
+        <tr>
+            <td class="green bold center" id="servicearea">Service area</td>
+            <td>Stanza piatta a pianta rettangolare nella quale il <a href="#transporttrolley">transport trolley</a> pu&ograve; navigare, contiene:
+            <ul>
+                <li><a href="#indoor">INDOOR</a>;</li>
+                <li><a href="#coldroom">ColdRoom</a>;</li>
+                <li><a href="#home">HOME</a>;</li>
+                <li>ostacoli con posizione e dimensione predefinita (tra i quali la ColdRoom).</li> 
+            </ul></td>
+        </tr>
+        <tr>
+            <td class="green bold center" id="transporttrolley">Transport trolley</td>
+            <td>Rappresenta un robot virtuale di forma quadrata e lato <a href="#rd">RD</a>. Astrazione che usa il <a href="#ddrrobot">DDR Robot</a> per muoversi all'interno della <a href="#servicearea">service area</a>.</td>
+        </tr>
+        <tr>
+            <td class="green bold center" id="camionrefrigerato">Camion refrigerato</td>
+            <td>Entità esterna al sistema che deposita <a href="#fw">FW</a> kg di prodotti alimentari tramite la porta <a href="#INDOOR">INDOOR</a>.</td>
+        </tr>
+        <tr>
+            <td class="green bold center" id="ddrrobot">DDR robot</td>
+            <td>Differential Drive Robot fornito dal committente insieme al software <a href="#basicrobot">BasicRobot</a> per controllarlo. Nell'ambito del <a href="#coldstorageservice">ColdStorageService</a> concretizza il comportamento del <a href="#transporttrolley">transport trolley</a>.</td>
+        </tr>
+    </table>
+
+
+    <p>
+        Tabella con tutti i <b>DATI</b> (costanti, variabili)
+    </p>
+
+    <p>
+        Tabella con tutti i <b>MESSAGGI</b> in cui inseriamo un trafiletto con la scelta di come implementare chargetaken
+    </p>
+
+    <p>
+        Chiarimenti sui <b>core-business components</b> (poche righe che chiariscono i requisiti, magari con riferimenti al documento dei requisiti).
+    </p>
+
+    <p>
+        Riportare paragrafo service area
+    </p>
+
+    <p>
+        Paragrafo sul TT, su come si interazione (sulla base dei requisiti) con il CSS. Rapporto con il DDR robot e a suoa volta con il basic robot (solo degli accenni e poi approfondiamo in analisi del problema).
+    </p>
+</div>
+
+<h2>Problem analysis</h2>
+
+<div class="remark">
+
+    <h3>Componenti</h3>
+
+    <h4>Simulatore/Mock</h4>
+
+    <h4>CSS</h4>
+
+    <h5>Service area</h5>
+
+    <h4>TT && DDR</h4>
+
+    <h5>basic robot</h5>
+
+    <h3>Interazioni</h3>
+
+    Inserire tabella interazioni presente in Sprint0v0 (togliendo la parte col raspberry). <br>
+    Rifare i diagrammi di sequenza.
+
+    <h3>Architettura logica</h3>
+    Trafiletto su contesti e attori prima dell'immagine dell'architettura.
+</div>
+
+
+<h2>Test plans</h2> 
+
+<div class="remark">
+    
+</div>
+
+
+<h2>Project</h2> 
+ 
+<div class="remark">
+
+</div>
+
+<h2>Testing</h2> 
+ 
+<div class="remark">
+
+</div>
+
+<h2>Deployment</h2> 
+
+<div class="remark">
+
+</div>
+ 
+<h2>Maintenance</h2> 
+ 
+<div class="remark">
+
+</div>
+
+<div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
+GIT repo: https://github.com/RiccardBarbieri/ColdStorageService
+</div> 
+</body>
+</html>
