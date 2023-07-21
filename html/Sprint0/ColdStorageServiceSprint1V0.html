@@ -22,9 +22,8 @@
 
 <h2>Introduction</h2>
 <div class="remark">
-    Aggiungere trafiletto in cui esplicitiamo che qui verrà analizzato il CORE-BUSINESS dell'applicazione
     <p>
-        All'interno di questo <i>Sprint</i> verranno analizzati i componenti principali del sistema e le interazioni che avvengono fra essi, limitandosi al contesto di <i>ColdStorageService</i> (CSS) e <i>TransportTrolley</i> (TT).
+        All'interno di questo <i>Sprint</i> verrà analizzato il <b>core-business</b> dell'applicazione, esplicitato nello <a href=".\ColdStorageServiceSprint0V1.html#suddivisioneSprint">Sprint0</a> come l'interazione tra <i>ColdStorageService</i> (CSS) e <i>TransportTrolley</i> (TT).
     </p>
 </div>
 
@@ -49,53 +48,106 @@
         Dal documento dei requisiti, relativamente a questo <i>Sprint</i>, consideriamo i seguenti argomenti da trattare:
         <ul>
             <li>Service area</li>
-            <li>DDR robot e transport trolley</li>
+            <li>DDR robot e TransportTrolley</li>
             <li>Interazione tra il <i>Camion</i> ed il <i>CSS</i></li>
             <li>Interazione tra il <i>CSS</i> ed il <i>TT</i></li>
         </ul>
     </p>
 
-    Tabella con tutti i <b>REQUISITI ANALIZZATI NELLO SPRINT0</b> relativamente ai componenti interessati.
-    <table>
-        <tr>
-            <th>Termine</th>
-            <th>Descrizione</th>
-        </tr>
-        <tr>
-            <td class="green bold center" id="coldstorageservice">ColdStorageService</td>
-            <td>Sistema distribuito per il deposito di prodotti alimentari all'interno di una stanza refrigerata, automatizzato tramite l'uso di un <a href="#transporttrolley">transport trolley</a>.</td>
-        </tr>
-        <tr>
-            <td class="green bold center" id="servicearea">Service area</td>
-            <td>Stanza piatta a pianta rettangolare nella quale il <a href="#transporttrolley">transport trolley</a> pu&ograve; navigare, contiene:
-            <ul>
-                <li><a href="#indoor">INDOOR</a>;</li>
-                <li><a href="#coldroom">ColdRoom</a>;</li>
-                <li><a href="#home">HOME</a>;</li>
-                <li>ostacoli con posizione e dimensione predefinita (tra i quali la ColdRoom).</li> 
-            </ul></td>
-        </tr>
-        <tr>
-            <td class="green bold center" id="transporttrolley">Transport trolley</td>
-            <td>Rappresenta un robot virtuale di forma quadrata e lato <a href="#rd">RD</a>. Astrazione che usa il <a href="#ddrrobot">DDR Robot</a> per muoversi all'interno della <a href="#servicearea">service area</a>.</td>
-        </tr>
-        <tr>
-            <td class="green bold center" id="camionrefrigerato">Camion refrigerato</td>
-            <td>Entità esterna al sistema che deposita <a href="#fw">FW</a> kg di prodotti alimentari tramite la porta <a href="#INDOOR">INDOOR</a>.</td>
-        </tr>
-        <tr>
-            <td class="green bold center" id="ddrrobot">DDR robot</td>
-            <td>Differential Drive Robot fornito dal committente insieme al software <a href="#basicrobot">BasicRobot</a> per controllarlo. Nell'ambito del <a href="#coldstorageservice">ColdStorageService</a> concretizza il comportamento del <a href="#transporttrolley">transport trolley</a>.</td>
-        </tr>
-    </table>
-
-
+    <h3>Definizione dei componenti</h3>
     <p>
-        Tabella con tutti i <b>DATI</b> (costanti, variabili)
+        <table>
+            <tr>
+                <th>Termine</th>
+                <th>Descrizione</th>
+            </tr>
+            <tr>
+                <td class="green bold center" id="coldstorageservice">ColdStorageService</td>
+                <td>Sistema distribuito per il deposito di prodotti alimentari all'interno di una stanza refrigerata, automatizzato tramite l'uso di un <a href="#transporttrolley">transport trolley</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="servicearea">Service area</td>
+                <td>Stanza piatta a pianta rettangolare nella quale il <a href="#transporttrolley">transport trolley</a> pu&ograve; navigare, contiene:
+                <ul>
+                    <li><a href="#indoor">INDOOR</a>;</li>
+                    <li><a href="#coldroom">ColdRoom</a>;</li>
+                    <li><a href="#home">HOME</a>;</li>
+                    <li>ostacoli con posizione e dimensione predefinita (tra i quali la ColdRoom).</li> 
+                </ul></td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="transporttrolley">Transport trolley</td>
+                <td>Rappresenta un robot virtuale di forma quadrata e lato <a href="#rd">RD</a>. Astrazione che usa il <a href="#ddrrobot">DDR Robot</a> per muoversi all'interno della <a href="#servicearea">service area</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="camionrefrigerato">Camion refrigerato</td>
+                <td>Entità esterna al sistema che deposita <a href="#fw">FW</a> kg di prodotti alimentari tramite la porta <a href="#INDOOR">INDOOR</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="ddrrobot">DDR robot</td>
+                <td>Differential Drive Robot fornito dal committente insieme al software <a href="#basicrobot">BasicRobot</a> per controllarlo. Nell'ambito del <a href="#coldstorageservice">ColdStorageService</a> concretizza il comportamento del <a href="#transporttrolley">transport trolley</a>.</td>
+            </tr>
+        </table>
     </p>
 
+    <h3>Dati</h3>
     <p>
-        Tabella con tutti i <b>MESSAGGI</b> in cui inseriamo un trafiletto con la scelta di come implementare chargetaken
+        Di seguito, sono elencati tutti i dati presenti nei requisiti, con annessa una breve descrizione.
+        <table>
+            <tr>
+                <th>Termine</th>
+                <th>Descrizione</th>
+            </tr>
+            <tr>
+                <td class="green bold center" id="maxw">MAXW</td>
+                <td>Limite massimo di chilogrammi che la <a href="#coldroom">ColdRoom</a> pu&ograve; contenere in un dato momento.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="rd">RD</td>
+                <td>Lunghezza del lato del <a href="#transporttrolley">transport trolley</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="dlimt">DLIMT</td>
+                <td>Limite di distanza massimo dal <a href="#sonar">sonar</a> per il quale si attivano i relativi <a target="_blank" href="https://iss.riccardohost.space/TemaFinale23.html">alarm requirements</a>: se viene rilevata una distanza minore, viene inviato un segnale di stop al <a href="#transporttrolley">transport trolley</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="tickettime">TICKETTIME</td>
+                <td>Quantit&agrave; di tempo che esprime la durata della validit&agrave; di un <a href="#ticket">ticket</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="fw">FW</td>
+                <td>Quantit&agrave; di carico che un <a href="camionrefrigerato">camion refrigerato</a> deve depositare, espressa in chilogrammi.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="statotransporttrolley">Stato transport trolley</td>
+                <td>Stato corrente del <a href="#transporttrolley">transport trolley</a>, questo include:
+        <ul>
+            <li>posizione nella <a href="#servicearea">service area</a>;</li>
+            <li>stato di movimento (<b>stopped</b>,<b>moving</b>).</li>
+        </ul>	</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="mint">MINT</td>
+                <td>Tempo minimo che deve trascorrere prima che il <a href="#transportrolley">transport trolley</a> possa nuovamente gestire un segnale di stop secondo le condizioni imposte dagli <a href="#alarmrequirements">alarm requirements</a>, espresso in millisecondi.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="ticket">Ticket</td>
+                <td>Rappresenta una prenotazione da parte dell'operatore di un camion refrigerato che identifica univocamente una azione di deposito in attesa di essere <a href="#chargetaken">presa in carico</a>, &egrave; costituito da:
+            <ul>
+                <li>codice alfanumerico univoco;</li>
+                <li>un valore <a href="#tickettime">TICKETTIME</a>;</li>
+                <li>un <b>timestamp</b> che indica il momento di emissione.</li>
+            </ul></td>
+            </tr>
+
+            <b>RICK: DLIMIT e MINT li teniamo? Forse non hanno molto senso in questa parte, ma coinvolgono il TT <br>
+            Lo stato del transport trolley lo formalizziamo come un dato? Ad esempio lo stato di movimento che è un enumerativo.</b>
+        </table>
+    </p>
+
+    <h3>Messaggi</h3>
+    <p>
+        Riferendoci al <a href="./ColdStorageServiceSprint0V1.html#modello_requisiti">modello dei requisiti</a> delineato nello <i>Sprint0</i>, e vista la totale indifferenza da parte del committente sulla tipologia di messaggio che deve essere <b>charge taken</b>, considereremo il secondo modello, in cui il messaggio ha una semantica <b>Dispatch</b>.
     </p>
 
     <p>
