@@ -108,15 +108,16 @@ h3 {
     font-size: 100%;
 }
 h4 {
-    background-color: #ccffcc;
+    background-color: #80ff80;
     font-size: 100%;
-	width: 95%;
 	border-radius: 5px;
 	padding: 2px;
 }
 h5 {
-    background-color: #d5ffb0;
-    font-size: 100%;
+    background-color: #bbffbb;
+    font-size: 93%;
+	border-radius: 5px;
+	padding: 2px;
 
 }
 div.req{
