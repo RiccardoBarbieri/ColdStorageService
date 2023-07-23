@@ -78,13 +78,6 @@ kc{
     color: #008000	;
 	font-size: 90%;
 }
-pre{
-	font-family: "Consolas";
-	font-size: 85%;
-	background-color: #f5f5f5;
-	border: 1.5px solid silver;
-	padding: 5px;
-}
 m{
 	font-family: "Helvetica";
 	line-height: 100%;
