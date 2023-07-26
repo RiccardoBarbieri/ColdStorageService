@@ -81,7 +81,7 @@
         </table>
     </p>
 
-    <h3>Dati</h3>
+    <h3 id="dati_analisi_requisiti">Dati</h3>
     <p>
         Di seguito, sono elencati tutti i dati presenti nei requisiti, con annessa una breve descrizione.
         <table>
@@ -115,20 +115,6 @@
                 <td class="green bold center">currentTTState</td>
                 <td>Variabile, enumerativo</td>
                 <td>Stato attuale del transport trolley, di tipo <code class="prettyprint">TTState</code>
-            </tr>
-            <tr>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-            </tr>
-            <tr>
-                <td><b>Da eliminare, mettiamo in tab aggiornata in analis prob dopo aver introdotto service area come griglia</b></td>
-            </tr>
-            <tr>
-                <td class="green bold center">currentTTPosition</td>
-                <td>Variabile, tupla di interi</td>
-                <td>Posizione del transport trolley nella service area, in coordinate x e y secondo lo schema del modello della service area.</td>
             </tr>
         </table>
     </p>
@@ -181,25 +167,40 @@
     </table>
 
     <p>
-        Dopo un incontro con il committente, che comunica di non avere preferenze a riguardo, abbiamo deciso di proseguire l'analisi basandoci sul secondo modello proposto nel <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V1.html#modello_requisiti">modello dei requisiti</a> delineato nello <i>Sprint0</i>: il messaggio <b>charge taken</b> sar&agrave; modellato con semantica <b>dispatch</b>.
+        Dopo un incontro con il committente, che comunica di non avere preferenze a riguardo, abbiamo deciso di proseguire l'analisi basandoci sul secondo modello proposto nel <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V1.html#modello_requisiti">modello dei requisiti</a> delineato nello <i>Sprint0</i>: il messaggio <b>charge taken</b> sar&agrave; quindi modellato con semantica <b>dispatch</b>.
     </p>
-
+    <p>
+        Vediamo che l'unico messaggio che viene inviato dalla <i>ServiceAccessGUISim</i> corrisponde alla richiesta di deposito (<i>storerequest(FW)</i>). Questa decisione si basa sul fatto che in questo <i>Sprint</i> non verrrà trattata la questione dei <b>ticket</b> (fuori dalla core-business logic); perciò avremo che, a seguito di un'eventuale accettazione della richiesta di deposito (<i>storeaccept()</i>), si passerà direttamente alla logica applicativa che la implementa.
+    </p>
     <h3>Componenti</h3>
 
     <h4>ServiceAccessGUISim</h4>
 
     <p>
-        In questo sprint concentreremo l'attenzione sui componenti che implementano la core business logic del sistema, in questo contesto la ServiceAccessGUI verr&agrave; modellata come un <b>simulatore</b> che invia una storerequest al ColdStorageService ai fini di <b>testarne</b> il funzionamento.
+        Come detto, in questo Sprint concentreremo l'attenzione sui componenti che implementano la core business logic del sistema e, nonostante non ne faccia direttamente parte, avremo necessità di definire la ServiceAccessGUI per <b>testare</b> il funzionamento della logica applicativa. Ecco perchè, come anticipato nello <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V1.html#test_plans">Sprint0</a>, verr&agrave; modellata come un <b>simulatore</b> che invia una <i>storerequest</i> al ColdStorageService. <br>
+        L'analisi approfondita di questo componente sarà considerata negli sprint successivi.
     </p>
 
 
     <h4>TransportTrolley e DDRRobot</h4>
+    <p>      
+        Il <i>TT</i> &egrave; una entit&agrave; astratta che aggiunge funzionalit&agrave; di pi&ugrave; alto livello ad un DDR robot (come riportato dai requisiti). Queste funzionalit&agrave; sono:
+        <ul>
+            <li>trasportare un carico di cibo da INDOOR a ColdRoom;</li>
+            <li>recarsi in HOME quando non sono presenti richieste;</li>
+            <li>comunicare il proprio <b>stato</b> a entit&agrave; interessate.</li>
+            <li>comunicare all'utente <i>Camion refrigerato</i> che &egrave; stato prelevato il carico</li>
+        </ul><br>
+
+        Queste funzionalit&agrave; condividono un requisito fondamentale: la possibilit&agrave; di navigare la service area. Sar&agrave; quindi necessario crearne una rappresentazione comprensibile al componente che controller&agrave; il robot concreto. Nei successivi paragrafi verrà affrontato questo aspetto.<br>
+
+    </p>
     <p>
-        In questa fase dello sviluppo il DDR Robot sar&agrave; rappresentato da un robot virtuale, disponibile alla nostra software house, che offre una visualizzazione di un robot virtuale che naviga una service area virtuale e gestisce gli stessi comandi di "medio livello" che il DDR Robot &egrave; in grado di gestire.
+        In questa fase dello sviluppo il DDR Robot sar&agrave; rappresentato da un robot virtuale, disponibile alla nostra software house, che offre una visualizzazione di un robot virtuale che naviga una service area (anch'essa virtuale) e gestisce gli stessi comandi di "medio livello" che il DDR Robot &egrave; in grado di gestire.
     </p>
 
 
-    <h4>ColdStorageService</h4>
+    <h4 id="components_CSS">ColdStorageService</h4>
 
     <p>
         &Egrave; stata discussa con il committente la questione dell'allontanamento del camion refrigerato dalla INDOOR: il messaggio <b>chargetaken</b> conferma il completamento del ritiro del carico da parte del transport trolley, in tal momento il camion <b>deve allontanarsi immediatamente</b>. In caso di richiesta rifiutata il camion si deve allontanare alla ricezione del messaggio <b>storerejected</b>.
@@ -228,15 +229,74 @@
 
     <h3>Componenti</h3>
 
-    <h4>Simulatore/Mock</h4>
+    <h4>ServiceAccessGUISim</h4>
 
-    <h4>CSS</h4>
+    <p>
+        Dobbiamo realizzare un componente software che permetta di simulare molteplici richieste di deposito presso il <i>CSS</i>. In particolare, avremo bisogno di un'applicativo che ci permetta di:
+        <ol>
+            <li>
+                effettuare una <i>storerequest</i> verso il <i>CSS</i>, specificando la quantità di chilogrammi di cibo <b>FW</b> 
+            </li>
+            <li>
+                visualizzare la risposta relativa alla richiesta appena effettuata (<i>storeaccept()</i> o <i>storereject()</i>)
+            </li>
+            <li>solo in caso di <b>richiesta accettata</b>, visualizzare il messaggio <i>chargetaken()</i></li>
+        </ol>
+        Questi tre passaggi rappresentano il flusso di attività che vogliamo vengano simulate. Alla fine di questi step si realizza l'uscita dalla <i>INDOOR</i> da parte del <i>Camion</i>, aggiornando la vista dell'applicazione per permettere una nuova interazione (da zero). <br>
+        Come anticipato precedentemente nella sezione <a href="#components_CSS" target="_blank">componenti</a>, il Camion si deve allontanare anche in caso di <b>richiesta rifiutata</b>, quindi anche in questo casò si dovrà aggiornare la vista dell'applicazione per permettere una nuova interazione. <br>
+    </p>
+    <p>Per quanto riguarda le <b>tecnologie</b> d'implementazione, pensiamo che un applicazione web sia l'ideale per realizzare questo componente software, per via della sua comodità d'uso e per la possibilità di passare ad un contesto distribuito in modo molto semplice.</p>
+
+    <h4>ColdStorageService</h4>
+    <p>
+        Il <i>CSS</i> si occupa solo di:
+        <ul>
+            <li>accettare/rifiutare la richiesta di deposito</li>
+            <li>notificare il <i>TransportTrolley</i> della presenza di un nuovo carico</li>
+            <li>notificare la <i>ServiceAccessGUISim</i> della presa in carico da parte del <i>TT</i> (messaggio <b>chargetaken</b>)</li>
+        </ul>
+        Il <i>ColdStorageService</i> non si interessa del raggiungimento dei particolari landmark nella Service Area (<i>HOME</i>,
+        <i>INDOOR</i>, <i>ColdRoom</i>), in quanto l'operazione è delegata al <i>TransportTrolley</i>. In questo modo il <i>CSS</i> risulterà completamente indipendente dalla particolare disposizione dell'area di servizio (come le possibili diverse posizioni dei punti di interesse e degli ostacoli).
+
+    </p>
+    <p>
+        Uno dei principali problemi riguarda appunto la rappresentazione dell'area di servizio, che influisce sull'interazione con il robot e su come esso si muove all'interno della stanza.
+    </p>
 
     <h5>Service area</h5>
 
-    <h4>TT && DDR</h4>
+    <p>
+        A seguito di questa analisi approfondita sull'area di servizio, possiamo aggiungere un nuovo dato, oltre a quelli presenti nella <a href="#dati_analisi_requisiti" target="_blank">tabella dei dati</a> sopra riportata.
+        <table>
+            <tr>
+                <th>Dato</th>
+                <th>Tipologia</th>
+                <th>Descrizione</th>
+            </tr>
+            <tr>
+                <td class="green bold center">currentTTPosition</td>
+                <td>Variabile, tupla di interi</td>
+                <td>Posizione del transport trolley nella service area, in coordinate x e y secondo lo schema del modello della service area.</td>
+            </tr>
+        </table>
+    </p>
 
-    <h5>basic robot</h5>
+    <h4>TransportTrolley & DDR Robot</h4>
+
+    <b>DA METTERE A POSTO</b> <br>
+    <br>
+    L'analisi di questa problematica si rimanda a sprint successivi, abbiamo per&ograve; individuato una serie di componenti che saranno necessari:
+    <ul>
+        <li><b>transport trolley</b> come astrazione di DDR robot;</li>
+        <li><b>mapper</b> per creare la rappresentazione della service area;</li>
+        <li><b>planner</b> per decidere il percorso (ottimale o meno) per raggiungere un punto nella rappresentazione della service area;</li>
+        <li><b>controller</b> che invia istruzioni di movimento comprensibili dal DDR robot;</li>
+        <li>DDR robot concreto, fornito dal committente.</li>
+    </ul>
+
+    Queste funzionalit&agrave; sono implementate dal software fornito dal cliente <code class="prettyprint">basicrobot</code>: esso permette di muovere un robot generico (DDR robot, robot virtuale) seguendo percorsi preparati (non necessariamente ottimali) per spostarsi nella service area.<br>
+
+    <h5>Basic robot</h5>
 
     <h3>Interazioni</h3>
 
