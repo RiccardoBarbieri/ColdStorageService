@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="../_static/template.css">
 <link rel="stylesheet" href="../_static/mine.css">
 <link rel="stylesheet" href="../_static/code.css">
+<link rel="stylesheet" href="../_static/colors.css">
 <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
 
 
@@ -56,30 +57,28 @@
     </p>
 
     <h3>Entit&agrave;</h3>
-    <p>
-        <table>
-            <tr>
-                <th>Entit&agrave;</th>
-                <th>Comportamento</th>
-            </tr>
-            <tr>
-                <td class="green bold center">coldstorageservice</td>
-                <td>Gestisce le richieste di deposito e comanda il transport trolley con istruzioni di alto livello, mantiene la rappresentazione della service area</td>
-            </tr>
-            <tr>
-                <td class="green bold center">transporttrolley</td>
-                <td>Gestisce le richieste del ColdStorageService inviando comandi di basso livello al basicRobot</td>
-            </tr>
-            <tr>
-                <td class="green bold center">serviceaccessguisim</td>
-                <td>Entit&agrave; adibita al testing, l'arrivo di un camion a INDOOR e invia una richiesta a coldstorageservice per dare inizio alla fase di deposito.</td>
-            </tr>
-            <tr>
-                <td class="green bold center">basicrobot</td>
-                <td>Entit&agrave; che riceve istruzioni di "medio livello" e le traduce in istruzioni di basso livello per guidare il DDR robot.</td>
-            </tr>
-        </table>
-    </p>
+    <table>
+        <tr>
+            <th>Entit&agrave;</th>
+            <th>Comportamento</th>
+        </tr>
+        <tr>
+            <td class="green bold center">coldstorageservice</td>
+            <td>Gestisce le richieste di deposito e comanda il transport trolley con istruzioni di alto livello, mantiene la rappresentazione della service area</td>
+        </tr>
+        <tr>
+            <td class="green bold center">transporttrolley</td>
+            <td>Gestisce le richieste del ColdStorageService inviando comandi di basso livello al basicRobot</td>
+        </tr>
+        <tr>
+            <td class="green bold center">serviceaccessguisim</td>
+            <td>Entit&agrave; adibita al testing, l'arrivo di un camion a INDOOR e invia una richiesta a coldstorageservice per dare inizio alla fase di deposito.</td>
+        </tr>
+        <tr>
+            <td class="green bold center">basicrobot</td>
+            <td>Entit&agrave; che riceve istruzioni di "medio livello" e le traduce in istruzioni di basso livello per guidare il DDR robot.</td>
+        </tr>
+    </table>
 
     <h3 id="dati_analisi_requisiti">Dati</h3>
     <p>
@@ -108,13 +107,12 @@
             <tr>
                 <td class="green bold center">TTState</td>
                 <td>Enumerativo</td>
-                <td>Tre valori che rappresentano i possibili stati in cui si pu&agrave; trovare il transport trolley (in HOME, in movimento e fermo):
-                    <pre>HOME, MOVING, STOPPED</pre><td>
+                <td>Tre valori che rappresentano i possibili stati in cui si pu&agrave; trovare il transport trolley (in HOME, in movimento e fermo): <pre>HOME, MOVING, STOPPED</pre></td>
             </tr>
             <tr>
                 <td class="green bold center">currentTTState</td>
                 <td>Variabile, enumerativo</td>
-                <td>Stato attuale del transport trolley, di tipo <code class="prettyprint">TTState</code>
+                <td>Stato attuale del transport trolley, di tipo <code class="prettyprint">TTState</code></td>
             </tr>
         </table>
     </p>
@@ -267,19 +265,88 @@
 
     <p>
         A seguito di questa analisi approfondita sull'area di servizio, possiamo aggiungere un nuovo dato, oltre a quelli presenti nella <a href="#dati_analisi_requisiti" target="_blank">tabella dei dati</a> sopra riportata.
-        <table>
-            <tr>
-                <th>Dato</th>
-                <th>Tipologia</th>
-                <th>Descrizione</th>
-            </tr>
-            <tr>
-                <td class="green bold center">currentTTPosition</td>
-                <td>Variabile, tupla di interi</td>
-                <td>Posizione del transport trolley nella service area, in coordinate x e y secondo lo schema del modello della service area.</td>
-            </tr>
-        </table>
     </p>
+    <table>
+        <tr>
+            <th>Dato</th>
+            <th>Tipologia</th>
+            <th>Descrizione</th>
+        </tr>
+        <tr>
+            <td class="green bold center">currentTTPosition</td>
+            <td>Variabile, tupla di interi</td>
+            <td>Posizione del transport trolley nella service area, in coordinate x e y secondo lo schema del modello della service area.</td>
+        </tr>
+    </table>
+
+    <p>
+        Abbiamo deciso di suddividere la <b>service area</b> in una griglia di quadrati di lato <b>RD</b>: ogni posizione sulla griglia pu&ograve; contenere il DDR robot.
+    </p>
+
+    <p>
+        La rappresentazione della service area diventa quindi come in figura, si noti il sistema di assi cartesiani che pone il punto (0, 0) in corrispondenza della posizione <b>HOME</b>, che corrisponde alla posizione di partenza.
+    </p>
+
+    <p>
+        I <i>punti di interesse</i> <b>INDOOR</b> e <b>PORT</b> finora sono stati modellati come posizioni monodimensionali, in quanto si tratta di "aperture" al quale il robot pu&agrave; accedere, in questo modello verranno indicati come "<i>la posizione in cui il robot deve trovarsi per potervi accedere</i>".
+    </p>
+
+    <p>
+        Dal punto di vista del <b>transport trolley</b> la service area sar&agrave; rappresentata da una <b>matrice NxM</b>. 
+    </p>
+
+    <p>
+    <figure>
+        <figcaption>Modello service area - non rispecchia le dimensione effettive</figcaption>
+        <img class="bigimglim" src="../images/serviceareagrid.png" alt="Modello service area">
+    </figure>
+    </p>
+
+    <p>
+        Per generare una mappa della service area abbiamo sfruttato il software <code class="prettyprint">unibo.mapperQak23</code> che sfrutta <code class="prettyprint">basicrobot</code> per esplorare la service area e creare una rappresentazione della service area.
+    </p>
+
+    <h5>Utilizzo del mapper</h5>
+
+    Per utilizzare il mapper per generare la matrice che rappresenta la service area, senza considerare gli ostacoli:
+
+    <ol>
+        <li>
+            Avviare WEnv, l'ambiente virtuale che simula il DDR robot:
+            <pre>docker compose -f projects/it.unibo.virtualRobot2023/virtualRobot23.yaml up</pre>
+        </li>
+        <li>
+            Avviare basicrobot:
+            <pre>projects/unibo.basicrobot23/gradlew run</pre>
+        </li>
+        <li>
+            Avviare il mapper:
+            <pre>projects/unibo.mapperQak23/gradlew run</pre>
+        </li>
+        
+    </ol>
+
+    Il mapper produce:
+
+    <ol>
+        <li>Un <a href="">file testuale</a> contenente una rappresentazione della mappa.<pre>|r, 1, 1, 1, 1, 1, 1,
+|1, 0, 0, 0, 0, 0, 1,
+|1, 0, 0, 0, 0, 0, 1,
+|1, 0, 0, 0, 0, 0, 1,
+|1, 1, 1, 1, 1, 1, 1,</pre></li>
+        <li>Un <a>file binario</a> contenente una istanza della classe <code class="prettyprint">unibo.planner23.model.RoomMap</code>, utilizzabile in coppia con una istanza della classe <code class="prettyprint">unibo.planner23.Planner23Util</code></li>
+    </ol>
+    
+    <h5>Configurazione landmark</h5>
+    <p>
+        Per configurare la posizione dei punti di interesse nella service area verr&agrave; messo a disposizione un software utile a creare una configurazione della service area. Si propone qui la configurazione di base emersa dall'immagine presente nei requisiti:
+        <pre>|<span class="bold homecolor">H</span>, 1, 1, 1, 1, 1, 1,
+|1, 0, 0, 0, <span class="bold coldcolor">C</span>, <span class="bold coldcolor">C</span>, 1,
+|1, 0, 0, 0, <span class="bold coldcolor">C</span>, <span class="bold coldcolor">C</span>, 1,
+|1, 0, 0, 0, <span class="bold stroke portcolor">P</span>, <span class="bold stroke portcolor">P</span>, 1,
+|<span class="bold indoorcolor">I</span>, <span class="bold indoorcolor">I</span>, <span class="bold indoorcolor">I</span>, 1, 1, 1, 1,</pre>
+    </p>
+
 
     <h4>TransportTrolley & DDR Robot</h4>
 

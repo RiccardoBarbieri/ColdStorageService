@@ -53,6 +53,7 @@ td.center {
 
 figure {
     display: table;
+    margin: 0px;
 }
 
 figcaption {
@@ -67,4 +68,12 @@ figcaption {
     -1px 1px 0 #560,
     1px 1px 0 #560;  
 
+}
+
+
+td {
+    padding: 5px;
+}
+th {
+    padding: 5px;
 }
