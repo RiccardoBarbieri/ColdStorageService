@@ -1,0 +1,174 @@
+System coldstorageservice23
+
+//SAG -> CSS
+Request 	storerequest		:		storerequest(arg)
+
+//CSS -> SAG
+Reply		loadaccepted		:		loadaccepted(arg)
+
+//CSS -> SAG
+Dispatch	chargetaken			:		chargetaken(arg)
+
+//TT -> CSS
+Dispatch	chargetakentt		:		chargetaken(arg)
+
+//CSS -> SSG
+//TT -> SSG 
+Dispatch	statusupdate		:		statusupdate(arg) 
+
+//RASP -> CSS
+Dispatch	distanceupdate		:		distanceupdate(arg)
+
+//CSS -> RASP
+Dispatch	ledupdate			:		ledupdate(arg)
+
+//CSS -> TT
+Dispatch	stop				:		stop(arg)
+Dispatch	resume				:		resume(arg)
+Dispatch	deposit				:		deposit(arg)
+
+//TT -> BASICROBOT
+Dispatch	cmd					:		cmd(arg)
+Dispatch	step				:		step(arg)
+
+
+
+
+
+Context ctx_coldstorageservice ip [host="localhost" port=8021]
+Context ctx_access ip [host="localhost" port=8022]
+Context ctx_status ip [host="localhost" port=8023]
+Context ctx_raspberry ip [host="localhost" port=8024]
+
+Context ctx_basicrobot ip [host="127.0.0.1" port=8020]
+
+QActor coldstorageservice context ctx_coldstorageservice {
+	
+	State s0 initial {
+		
+	}
+	Goto waiting
+	
+	State handleRequest {
+		onMsg (storerequest : storerequest(_)) {
+			replyTo storerequest with loadaccepted : loadaccepted(_)
+			forward transporttrolley -m deposit : deposit(_)
+		}
+	}
+	Transition t0 whenMsg chargetakentt -> finalizeDeposit
+	
+	State finalizeDeposit {
+		forward serviceaccessgui -m chargetaken : chargetaken(_)
+	}
+	Goto waiting
+	
+	State waiting {
+		
+	}
+	Transition t0 whenRequest storerequest -> handleRequest
+				  whenMsg distanceupdate -> distance
+	
+	State distance {
+		if [# True #] {
+			forward transporttrolley -m stop : stop(_)
+		} else {
+			forward transporttrolley -m resume : resume(_)
+		}
+	}
+	Goto waiting
+	
+}
+
+
+QActor transporttrolley context ctx_coldstorageservice {
+	
+	State s0 initial {
+		
+	}
+	Goto waiting
+	
+	State doDeposit {
+		
+		forward basicrobot -m step : step(_)
+		forward basicrobot -m cmd : cmd(_)
+		
+		forward warningdevice -m ledupdate : ledupdate(_)
+		forward servicestatusgui -m statusupdate : updategui(_)
+		
+		delay 3000
+		
+		forward coldstorageservice -m chargetakentt : chargetakentt(_)
+	}
+	Goto waiting
+	
+	State waiting {
+		forward servicestatusgui -m statusupdate : statusupdate(_)
+	}
+	Transition t0 whenTime 2000 -> waiting
+				  whenMsg deposit -> doDeposit
+				  whenMsg stop -> stop
+				  
+	State stop {
+		
+	}
+	Transition t0 whenMsg resume -> resume
+	
+	State resume {
+		returnFromInterrupt
+	}
+	
+}
+
+
+
+QActor serviceaccessgui context ctx_access {
+	
+	State s0 initial {
+		request coldstorageservice -m storerequest : storerequest(_)
+	}
+	Transition t0 whenTime 10000 -> s0
+	
+}
+
+
+
+QActor servicestatusgui context ctx_status {
+	
+	State s0 initial {
+		
+	}
+	Goto waiting
+	
+	State waiting {
+		
+	}
+	Transition t0 whenMsg statusupdate -> updateStatus
+	
+	State updateStatus {
+		
+	}
+	Goto waiting
+	
+}
+
+
+QActor alarmdevice context ctx_raspberry {
+	
+	State s0 initial {
+		forward coldstorageservice -m distanceupdate : distanceupdate(_)
+		
+	}
+	
+}
+
+
+
+QActor warningdevice context ctx_raspberry {
+	
+	State s0 initial {
+	}
+	
+}
+
+ExternalQActor basicrobot context ctx_basicrobot
+

@@ -14,7 +14,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
 }
 
-version '2.0'
+version '1.0'
 sourceCompatibility = 11
 
 repositories {
@@ -24,10 +24,6 @@ repositories {
 }
 
 dependencies {
-    //jssc NON VIENE RIPORTATO NEL GENERATO
-    implementation("io.github.java-native:jssc:2.9.4")
-
-
     // Align versions of all Kotlin components
     implementation platform('org.jetbrains.kotlin:kotlin-bom')
 
@@ -121,7 +117,7 @@ eclipse {
 
 application {
     // Define the main class for the application.
-    mainClass = 'it.unibo.ctxbasicrobot.MainCtxbasicrobotKt'
+    mainClass = 'it.unibo.ctx_basicrobot.MainCtx_basicrobotKt'
 }
 
 jar {

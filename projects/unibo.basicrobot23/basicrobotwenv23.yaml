@@ -1,0 +1,28 @@
+version: '3'
+services:
+  wenv:
+    image: docker.io/natbodocker/virtualrobotdisi23:1.0
+    ports:
+      - 8090:8090 
+      - 8091:8091/tcp
+      - 8091:8091/udp
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "8091"]
+      interval: 30s # check run interval seconds after start, again interval seconds after
+      timeout: 10s # if single run takes more than timeout, check fails
+      retries: 5 # retries consecutive failures for the service to be deemed unhealthy
+  basicrobot23:
+    image: basicrobot23:2.0
+    ports:
+      - 8020:8020/tcp
+      - 8020:8020/udp
+    depends_on:
+      wenv:
+        condition: service_healthy
+
+## -------------------------------------------------------------
+## TODO See https://docs.docker.com/compose/startup-order/
+## -------------------------------------------------------------
+## docker-compose -f basicrobot23.yaml  up
+## docker-compose run --service-ports wenv
+## docker-compose run --service-ports vrobotclient  ATTIVA ANCHE wenv
