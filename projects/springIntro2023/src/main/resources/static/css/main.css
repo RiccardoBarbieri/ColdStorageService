@@ -1,0 +1,21 @@
+div.content {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    height: 100px;
+    min-width: 700px;
+}
+
+.block-text {
+    user-select: none;
+}
+
+span.big {
+    font-size: 1.5em;
+}
+
+span.bold {
+    font-weight: bold;
+}

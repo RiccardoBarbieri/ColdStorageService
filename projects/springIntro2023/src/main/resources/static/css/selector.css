@@ -1,0 +1,45 @@
+div.blocks {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    column-gap: 20px;
+    /* da valutare */
+    margin: 0px 50px 0px 0px;
+}
+
+div.block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70px;
+    height: 70px;
+    border: 1px solid #000;
+}
+
+.draggable {
+    cursor: grab;
+}
+
+div.highlight {
+    /*
+    stile highlight per drop zone
+     */
+}
+
+div.home {
+    background-color: rgb(255,0,0);
+}
+
+div.cold {
+    background-color: rgb(64,64,228);
+}
+
+div.indoor {
+    background-color: rgb(43,169,43);
+}
+
+div.port {
+    background-color: rgb(255,228,0);
+}
+
