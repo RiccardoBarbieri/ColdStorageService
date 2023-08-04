@@ -160,7 +160,6 @@ function clearAndAttachListeners() {
                 // prevent default to allow drop
                 event.preventDefault();
 
-                console.log(event.target.parentNode)
                 if (event.target.classList.contains("dragging")) {
                     event.target.classList.remove("dragging");
                 }

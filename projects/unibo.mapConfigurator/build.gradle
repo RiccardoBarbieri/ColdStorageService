@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.1.2'
+	id 'org.springframework.boot' version '2.7.8'
 	id 'io.spring.dependency-management' version '1.1.2'
 	id 'application'
 }
@@ -9,7 +9,7 @@ group = 'unibo'
 version = '1.0'
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = '11'
 }
 
 repositories {
@@ -28,7 +28,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	//implementation 'jakarta.annotation:jakarta.annotation-api:2.0.0'
+	implementation 'jakarta.validation:jakarta.validation-api:3.0.0'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	//kotlin runtime
@@ -61,15 +63,15 @@ dependencies {
 
 }
 
-mainClassName = 'unibo.mapConfigurator.MapConfiguratorApplication'
+//mainClassName = 'unibo.mapConfigurator.MapConfiguratorApplication'
 
-jar {
-	println("executing jar")
-	from sourceSets.main.allSource
-	manifest {
-		attributes 'Main-Class': "$mainClassName"
-	}
-}
+//jar {
+//	println("executing jar")
+//	from sourceSets.main.allSource
+//	manifest {
+//		attributes 'Main-Class': "$mainClassName"
+//	}
+//}
 
 tasks.named('test') {
 	useJUnitPlatform()

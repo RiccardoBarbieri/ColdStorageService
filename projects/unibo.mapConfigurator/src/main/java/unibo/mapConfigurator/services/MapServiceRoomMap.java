@@ -1,5 +1,6 @@
 package unibo.mapConfigurator.services;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import unibo.planner23.Planner23Util;
 import unibo.planner23.model.Box;
@@ -12,6 +13,9 @@ import java.io.IOException;
 
 @Service("gridServiceRoomMap")
 public class MapServiceRoomMap implements MapService {
+
+    @Value("${mapservice.destination}")
+    private String destination;
 
     @Override
     public boolean compileMap(MapConfiguration mapConfiguration) {
@@ -30,7 +34,9 @@ public class MapServiceRoomMap implements MapService {
                     case 'H': //Home is Robot initial position
                         tempBox = new Box(false, false, true);
                         break;
-                    case '1', 'I', 'P': //1, I and P are explored and not obstacle
+                    case '1': //1, I and P are explored and not obstacles
+                    case 'I':
+                    case 'P':
                         tempBox = new Box(false, false, false);
                         break;
                     default:
@@ -46,7 +52,7 @@ public class MapServiceRoomMap implements MapService {
     public boolean dumpMap(MapConfiguration mapConfiguration) {
         Planner23Util planner = new Planner23Util();
         try {
-            planner.saveRoomMap(mapConfiguration.getName());
+            planner.saveRoomMap(destination + mapConfiguration.getName());
         } catch (IOException e) {
             e.printStackTrace();
             return false;

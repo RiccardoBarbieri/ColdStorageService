@@ -1,0 +1,10 @@
+version: '3'
+services:
+  mapconfigurator:
+    image: mapconfigurator:1.0
+    ports:
+      - 8015:8015
+    volumes:
+      - map_volume:/data
+volumes:
+  map_volume:
