@@ -42,3 +42,12 @@ h3 {
     font-size: 18px;
 }
 
+#countdown {
+    font-size: 22px;
+    color: #1d2dc0;
+}
+
+#countdownChargeTaken {
+    font-size: 22px;
+    color: #05422b;
+}

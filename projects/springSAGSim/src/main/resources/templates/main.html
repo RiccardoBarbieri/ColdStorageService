@@ -31,6 +31,7 @@
 
     <div id="responseBody" style="display: none;">
         <label id="responseText" class="form-label"></label>
+        <div id="countdown"></div>
     </div>
 </div>
 
@@ -48,11 +49,13 @@
 
 <div id="chargeTaken" class="popup" style="display: none;">
     <label class="alert-label">The load has been picked up. <br>The page will be restored shortly.</label>
+    <div id="countdownChargeTaken"></div>
 </div>
 
 <div id="timeout" class="popup" style="display: none;">
     <label class="alert-label">The timeout for handling the load has expired. <br>The page will be restored shortly.</label>
 </div>
+
 <script>connect()</script>
 </body>
 </html>

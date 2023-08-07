@@ -1,5 +1,6 @@
 // Definisci la variabile globale
 window.chargeTaken = false;
+window.reloadTime = 7000;
 
 function sendRequest(quantityFw) {
     const saveButton = document.querySelector("#save");
@@ -36,7 +37,7 @@ function sendRequest(quantityFw) {
                 saveButton.firstElementChild.hidden = "hidden";
                 saveButton.lastElementChild.textContent = 'Request sent';
                 saveButton.disabled = true;
-            }, 1200);
+            }, 1700);
         } else {
             //Saving animation end ERROR
             setTimeout(() => {
@@ -45,7 +46,7 @@ function sendRequest(quantityFw) {
                 spinner.setAttribute('hidden', 'hidden');
                 saveButton.firstElementChild.hidden = "hidden";
                 saveButton.lastElementChild.textContent = "Error!";
-            }, 1000);
+            }, 1700);
         }
         return response;
     }).then(response => {
@@ -55,19 +56,19 @@ function sendRequest(quantityFw) {
                 showError(response.text());
             }
             else {
-                if (resolvedValue.includes("loadaccepted")) {
-                    showResponse("accepted")
-                }
-                else if (resolvedValue.includes("loadrejected")) {
-                    showResponse("rejected")
-                }
-                else {
-                    showResponse("KO")
-                }
+                setTimeout(() => {
+                    if (resolvedValue.includes("loadaccepted")) {
+                        showResponse("accepted")
+                    }
+                    else if (resolvedValue.includes("loadrejected")) {
+                        showResponse("rejected")
+                    }
+                    else {
+                        showResponse("KO")
+                    }
+                }, 2000);
             }
-            
         });
-        
         
     }).catch(error => {
         console.log(error);
@@ -78,22 +79,24 @@ function showResponse(response) {
     responseBody.style.display = "block";
     const responseText = document.getElementById('responseText');
     if (response == "accepted") {
-        responseText.innerHtml = "The request has been accepted! <br>Please wait for the service to take care of it."
+        responseText.innerHTML = "The request has been accepted! <br>Please wait for the service to take care of it."
         setTimeout(() => {
             checkChargeTaken();
-        }, 15000); // timeout di 5 secondi
+        }, 15000); // timeout di 15 secondi
     }
     else if (response == "rejected") {
-        responseText.innerHtml = "The request has been rejected! <br>The page will be restored shortly."
+        responseText.innerHTML = "The request has been rejected! <br>The page will be restored shortly."
+        countdownFail(reloadTime);
         setTimeout(() => {
             location.reload();
-        }, 6000);
+        }, reloadTime);
     }
     else {
-        responseText.innerHtml = "Error during processing the deposit! <br>The page will be restored shortly."
+        responseText.innerHTML = "Error during processing the deposit! <br>The page will be restored shortly."
+        countdownFail(reloadTime)
         setTimeout(() => {
             location.reload();
-        }, 6000);
+        }, reloadTime);
     }
 }
 
@@ -131,8 +134,36 @@ function checkChargeTaken() {
     if (!window.chargeTaken) {
         const timeout = document.getElementById('timeout');
         timeout.style.display = "block";
+        countdownChargeTaken(reloadTime)
         setTimeout(() => {
             location.reload();
-        }, 6000);
+        }, reloadTime);
     }
+}
+
+
+function countdown(time, element) {
+    const countdownDate = new Date().getTime() + time - 1000;
+
+    // Aggiorna il conto alla rovescia ogni secondo
+    const countdownInterval = setInterval(() => {
+        const now = new Date().getTime();
+        const timeLeft = countdownDate - now;
+
+        if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+            element.innerHTML = "Updating the page ...";
+        } else {
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+            element.innerHTML = `${seconds} seconds left ...`;
+        }
+    }, 1000);
+}
+
+function countdownFail(time) {
+    countdown(time - 1000, document.getElementById('countdown'));
+}
+
+function countdownChargeTaken(time) {
+    countdown(time - 1000, document.getElementById('countdownChargeTaken'));
 }

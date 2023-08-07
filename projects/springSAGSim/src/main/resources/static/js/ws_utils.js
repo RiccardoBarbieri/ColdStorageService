@@ -22,9 +22,10 @@ function connect() {
             setTimeout(() => {
                 const chargeTaken = document.getElementById('chargeTaken');
                 chargeTaken.style.display = "block";
+                countdownChargeTaken(reloadTime);
                 setTimeout(() => {
                     location.reload();
-                }, 6000);
+                }, window.reloadTime);
             }, 3000);
         }
 

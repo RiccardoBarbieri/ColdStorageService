@@ -7,7 +7,7 @@
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     /* Soft shadow effect */
     position: fixed;
-    top: 25%;
+    top: 40%;
     /* Center vertically */
     left: 50%;
     /* Center horizontally */
@@ -37,7 +37,7 @@
 }
 
 #chargeTaken button:hover {
-    background-color: #a7e9b8e5;
+    background-color: #a7e9b8f3;
 }
 
 #timeout button:hover {
@@ -45,7 +45,7 @@
 }
 
 #chargeTaken {
-    background-color: #a7e9b8e5;
+    background-color: #a7e9b8f3;
 }
 
 #timeout {
