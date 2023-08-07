@@ -68,6 +68,7 @@ dependencies {
     //AIMA
     implementation("com.googlecode.aima-java:aima-core:3.0.0")
 
+
 }
 
 tasks.register<Dockerfile>("createDockerfile") {
@@ -93,7 +94,8 @@ tasks.register<DockerBuildImage>("dockerize") {
     group = "docker"
     description = "Dockerize the spring boot application"
     inputDir.set(layout.projectDirectory.dir("build/docker"))
-    images.add("mapconfigurator:latest")
+    images.add(displayName.split("'").elementAt(1).replace(".","").lowercase() +
+        ":latest")
 }
 
 
