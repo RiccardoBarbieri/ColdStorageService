@@ -57,7 +57,7 @@ public class Controller {
         }
 
         HttpHeaders headers = new HttpHeaders();
-        return new ResponseEntity<>("ControllerDemo " + appName, headers, HttpStatus.OK);
+        return new ResponseEntity<>("ASDASDASDControllerDemo " + appName, headers, HttpStatus.OK);
 
     }
 
