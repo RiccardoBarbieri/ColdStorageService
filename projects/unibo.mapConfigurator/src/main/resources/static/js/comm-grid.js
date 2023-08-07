@@ -15,8 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
         //creating grid string
         let mapCompact = compileGridString(grid);
 
+//TODO prima volta che connetti non c'è un valore
         const mapHeight = localStorage.getItem("mapHeight");
         const mapWidth = localStorage.getItem("mapWidth");
+        if (!mapWidth || !mapHeight) {
+        console.log("test")
+            mapHeight = document.querySelector("#height").value
+            mapWidth = document.querySelector("#width").value
+            localStorage.setItem("mapHeight", mapHeight)
+            localStorage.setItem("mapWidth", mapWidth)
+        }
 
         const mapName = document.querySelector("#mapname").value;
 

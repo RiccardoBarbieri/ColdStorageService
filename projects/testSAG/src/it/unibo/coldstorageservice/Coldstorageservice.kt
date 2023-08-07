@@ -43,7 +43,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("storerequest(FW)"), Term.createTerm("storerequest(FW)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								if(  false  
+								if(  true  
 								 ){forward("deposit", "deposit" ,"transporttrolley" ) 
 								answer("storerequest", "loadaccepted", "loadaccepted"   )  
 								CommUtils.outblue("CSS: load accepted")
