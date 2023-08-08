@@ -298,12 +298,12 @@
     <p>
     <figure>
         <figcaption>Modello service area - non rispecchia le dimensione effettive</figcaption>
-        <img class="bigimglim" src="../images/serviceareagrid.png" alt="Modello service area">
+        <img class="bigimglim" src="../images/serviceareagridaxes.png" alt="Modello service area">
     </figure>
     </p>
 
     <p>
-        Per generare una mappa della service area abbiamo sfruttato il software <code class="prettyprint">unibo.mapperQak23</code> che sfrutta <code class="prettyprint">basicrobot</code> per esplorare la service area e creare una rappresentazione della service area.
+        Per generare una mappa della service area abbiamo sfruttato il software <code class="prettyprint">unibo.mapperQak23</code> che si avvale di <code class="prettyprint">basicrobot</code> per esplorare ottenere la dimensione dell'area e individuare eventuali ostacoli lungo i bordi, generando una rappresentazione della service area.
     </p>
 
     <h5>Utilizzo del mapper</h5>
@@ -338,15 +338,25 @@
     </ol>
     
     <h5>Configurazione landmark</h5>
+
     <p>
-        Per configurare la posizione dei punti di interesse nella service area verr&agrave; messo a disposizione un software utile a creare una configurazione della service area. Si propone qui la configurazione di base emersa dall'immagine presente nei requisiti:
+        Per permettere a un utente di configurare la posizione dei landmark di interesse nella service area verr&agrave; messo a disposizione un applicativo che espone una interfaccia grafica per posizionare i punti di interesse in una <b>griglia</b>.
+    </p>
+
+    <p>
+        Questo applicativo generer&agrave; rappresentazioni testuali e un file binario utilizzabile dal planner per creare i percorsi di movimento del transport trolley.
+    </p>
+
+    <p>
+        Di seguito &egrave; riportato un esempio del contenuto del file di testo che verr&agrave; generato dall'applicativo. Questo file in particolare non sar&agrave; utilizzato da nessun componente del sistema, ma rappresenta la configurazione creata dall'utente.
+    </p>
+
         <pre>|<span class="bold homecolor">H</span>, 1, 1, 1, 1, 1, 1,
 |1, 0, 0, 0, <span class="bold coldcolor">C</span>, <span class="bold coldcolor">C</span>, 1,
 |1, 0, 0, 0, <span class="bold coldcolor">C</span>, <span class="bold coldcolor">C</span>, 1,
 |1, 0, 0, 0, <span class="bold stroke portcolor">P</span>, <span class="bold stroke portcolor">P</span>, 1,
 |<span class="bold indoorcolor">I</span>, <span class="bold indoorcolor">I</span>, <span class="bold indoorcolor">I</span>, 1, 1, 1, 1,</pre>
     </p>
-
 
     <h4>TransportTrolley & DDR Robot</h4>
 
@@ -438,6 +448,7 @@
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
 GIT repo: https://github.com/RiccardBarbieri/ColdStorageService
-</div> 
+</div>
+</div>
 </body>
 </html>
