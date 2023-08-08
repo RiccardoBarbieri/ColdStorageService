@@ -1,6 +1,5 @@
-package unibo.mapConfigurator;
+package unibo.mapConfigurator.controllers;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,17 +15,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import unibo.mapConfigurator.interfaces.MapService;
 import unibo.mapConfigurator.model.MapConfiguration;
+import org.springframework.stereotype.Controller;
 
-@org.springframework.stereotype.Controller
-public class Controller {
+@Controller
+public class DumpController {
 
-    public static final Logger logger = LoggerFactory.getLogger(Controller.class);
     private final MapService mapService;
     @Value("${spring.application.name}")
     String appName;
 
     @Autowired
-    public Controller(@Qualifier("gridServiceRoomMap") MapService mapService) {
+    public DumpController(@Qualifier("gridServiceRoomMap") MapService mapService) {
         this.mapService = mapService;
     }
 
@@ -42,16 +41,16 @@ public class Controller {
             return new ResponseEntity<>("ControllerDemo ERROR " + result.getAllErrors(), headers, HttpStatus.BAD_REQUEST);
         }
 
-        LoggerFactory.getLogger(Controller.class).info("Compiling map \"" + mapConfiguration.getName() + "\"");
+        LoggerFactory.getLogger(DumpController.class).info("Compiling map \"" + mapConfiguration.getName() + "\"");
         if (!mapService.compileMap(mapConfiguration)) {
-            LoggerFactory.getLogger(Controller.class).error("Invalid map representation \"" + mapConfiguration.getCompact() + "\"");
+            LoggerFactory.getLogger(DumpController.class).error("Invalid map representation \"" + mapConfiguration.getCompact() + "\"");
             HttpHeaders headers = new HttpHeaders();
             return new ResponseEntity<>("ControllerDemo ERROR " + "Invalid character in map representation", headers, HttpStatus.BAD_REQUEST);
         }
 
-        LoggerFactory.getLogger(Controller.class).info("Dumping map \"" + mapConfiguration.getName() + "\"");
+        LoggerFactory.getLogger(DumpController.class).info("Dumping map \"" + mapConfiguration.getName() + "\"");
         if (!mapService.dumpMap(mapConfiguration)) {
-            LoggerFactory.getLogger(Controller.class).error("IOException dumping map \"" + mapConfiguration.getName() + "\"");
+            LoggerFactory.getLogger(DumpController.class).error("IOException dumping map \"" + mapConfiguration.getName() + "\"");
             HttpHeaders headers = new HttpHeaders();
             return new ResponseEntity<>("ControllerDemo ERROR " + "Error while saving map", headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
