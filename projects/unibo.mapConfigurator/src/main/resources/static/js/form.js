@@ -5,8 +5,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const heightInput = document.querySelector('#height')
     const widthInput = document.querySelector('#width')
 
-    heightInput.value = localStorage.getItem('mapHeight')
-    widthInput.value = localStorage.getItem('mapWidth')
+    const mapHeight= localStorage.getItem('mapHeight')
+    const mapWidth= localStorage.getItem('mapWidth')
+
+    if (mapHeight) {
+        heightInput.value = mapHeight
+    }
+    if (mapWidth) {
+        widthInput.value = mapWidth
+    }
+
     heightLabel.innerText = "Height: " + heightInput.value
     widthLabel.innerText = "Width: " + widthInput.value
 

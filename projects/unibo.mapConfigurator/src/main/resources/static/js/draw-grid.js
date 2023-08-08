@@ -29,11 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // draw grid first time
         redrawGrid(0, widthInput.value, heightInput.value, widthInput.value, template);
     }
+    let oldHeight = mapHeight ? mapHeight : heightInput.value;
+    let oldWidth = mapWidth ? mapWidth : widthInput.value;
 
 
     // sets listeners for change on height and width
-    let oldHeight = heightInput.value;
-    let oldWidth = widthInput.value;
     heightInput.addEventListener('input', (event) => {
         const newHeight = event.target.value;
 
@@ -41,11 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         redrawGrid(oldHeight, oldWidth, newHeight, oldWidth, template);
 
-        localStorage.setItem("mapWidth", oldWidth)
-        localStorage.setItem("mapHeight", newHeight)
         localStorage.setItem("mapCompact", compileGridString(grid))
-
-        // restoreBlocks(grid, blockMap);
 
         oldHeight = newHeight;
     });
@@ -57,8 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         redrawGrid(oldHeight, oldWidth, oldHeight, newWidth, template);
 
-        localStorage.setItem("mapWidth", newWidth)
-        localStorage.setItem("mapHeight", oldHeight)
         localStorage.setItem("mapCompact", compileGridString(grid))
 
         // restoreBlocks(grid, blockMap);

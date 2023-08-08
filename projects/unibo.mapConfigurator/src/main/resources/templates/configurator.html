@@ -16,7 +16,7 @@
     <script th:src="@{/js/utils.js}" type="module"></script>
     <script th:src="@{/js/draw-grid.js}" type="module"></script>
     <script th:src="@{/js/comm-grid.js}" type="module"></script>
-    <script th:src="@{/js/form.js}" type="javascript"></script>
+    <script th:src="@{/js/form.js}" type="module"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
@@ -33,9 +33,9 @@
 <div class="content">
     <div class="values">
         <label for="height" class="form-label">Height</label>
-        <input id="height" name="height" class="form-range" type="range" step="1" min="0" max="15" value="5">
+        <input id="height" name="height" class="form-range" type="range" step="1" min="1" max="15" value="5">
         <label for="width">Width</label>
-        <input id="width" name="width" class="form-range" type="range" step="1" min="0" max="15" value="7">
+        <input id="width" name="width" class="form-range" type="range" step="1" min="1" max="15" value="7">
     </div>
 
     <div class="selector">
