@@ -5,7 +5,7 @@ plugins {
     id("java")
     id("org.springframework.boot") version "2.7.8"
     id("io.spring.dependency-management") version "1.1.2"
-    id("com.bmuschko.docker-spring-boot-application") version "6.1.4"
+    id("com.bmuschko.docker-spring-boot-application") version "9.3.2"
     id("application")
 }
 
@@ -72,7 +72,7 @@ dependencies {
 
 tasks.register<Dockerfile>("createDockerfile") {
     dependsOn("bootDistTar")
-    val fileRegex: Regex = Regex("unibo.mapConfigurator-boot(.*)\\.tar")
+    val fileRegex = Regex("unibo.mapConfigurator-boot(.*)\\.tar")
     val inputDir: Directory = layout.projectDirectory.dir("build/distributions")
     group = "docker"
     description = "Create Dockerfile"
