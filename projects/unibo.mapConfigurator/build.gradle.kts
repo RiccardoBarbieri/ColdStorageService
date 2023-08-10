@@ -6,12 +6,11 @@ plugins {
     id("org.springframework.boot") version "2.7.8"
     id("io.spring.dependency-management") version "1.1.2"
     id("com.bmuschko.docker-spring-boot-application") version "6.1.4"
-
     id("application")
 }
 
 group = "unibo"
-version = "2.0"
+version = "2.2"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
