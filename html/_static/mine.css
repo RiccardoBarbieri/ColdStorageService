@@ -10,6 +10,13 @@ pre {
     border-left: none;
     border-right: none;
 }
+code {
+    padding: 0 3px 0 3px;
+    background-color: #f5f5f5;
+    color: hsl(210,8%,15%);
+    border-radius: 4px;
+}
+
 .highlight { background: #eeffcc; }
 
 .blue {
@@ -36,6 +43,10 @@ td.center {
     color: darkgreen;
 }
 
+.img-border {
+    border: 2px solid #aaa;
+}
+
 .imglim {
     max-width: 390px;
 }
@@ -53,7 +64,7 @@ td.center {
 
 figure {
     display: table;
-    margin: 0px;
+    margin: 0;
 }
 
 figcaption {
