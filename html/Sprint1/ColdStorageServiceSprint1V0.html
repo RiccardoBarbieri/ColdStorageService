@@ -216,7 +216,7 @@
             <li><span class="bold" style="color:rgb(43,169,43);">INDOOR</span>: posizione lungo la parete inferiore adiacente alla parete sinistra, il transport trolley deve recarsi in quest'area per prelevare i carichi da i camion;</li>
             <li><span class="stroke" style="color:rgb(255,228,0);">PORT</span>: posizione lungo il bordo inferiore dell'area della ColdRoom, il transport trolley deve posizionarsi in questa area per scaricare i carichi nella ColdRoom</li>
         </ul>
-    <img class="bigimglim" src="../images/servicearea.png" alt="Modello service area">
+    <img class="bigimglim" src="../images/sprint1/servicearea.png" alt="Modello service area">
     </p>
 
 </div>
@@ -298,7 +298,7 @@
     <p>
     <figure>
         <figcaption>Modello service area - non rispecchia le dimensione effettive</figcaption>
-        <img class="bigimglim" src="../images/serviceareagridaxes.png" alt="Modello service area">
+        <img class="bigimglim" src="../images/sprint1/serviceareagridaxes.png" alt="Modello service area">
     </figure>
     </p>
 
@@ -405,7 +405,7 @@
     <p>
         Nell'immagine seguente viene mostrata la struttura del back-end dell'applicazione Web. 
     </p>
-    <img class="bigimglim" src="../images/architettura_logica_SAGSim.png" alt="Architettura logica Service Access Gui Simulata, realizzata in Spring">
+    <img class="bigimglim" src="../images/sprint1/architettura_logica_SAGSim.png" alt="Architettura logica Service Access Gui Simulata, realizzata in Spring">
     <p>
         Prendiamo in analisi i singoli componenti:
         <ul>
@@ -422,8 +422,8 @@
     </p>
     <h5>Comunicazione con il ColdStorageService</h5>
     <h5>Configurazione</h5>
-    <p>L'applicazione può essere configurata interamente dal file <b>application.properties</b>.</p>
-    <img class="bigimglim" src="../images/application_properties.png" alt="File di configurazione application.properties">
+    <p>Alcuni importanti parametri dell'applicazione possono essere configurati dal file <b>application.properties</b>.</p>
+    <img class="imglim" src="../images/sprint1/application_properties.png" alt="File di configurazione application.properties">
     <p>
         Oltre a poter configurare il nome dell'applicazione che apparirà in alto nella pagina web e il banner da mostrare in console, sono presenti:
         <ul>
@@ -433,7 +433,7 @@
         </ul>
     </p>
     <h4>Front-end</h4>
-    <img class="bigimglim" src="../images/frontend_SAGSim.png" alt="Frontend Service Access Gui Simulata">
+    <img class="bigimglim" src="../images/sprint1/frontend_SAGSim.png" alt="Frontend Service Access Gui Simulata">
     <p>
         L'applicazione permette di inserire una quantità numerica che rappresenta i kg di carico da depositare e, previa validazione dell'input con eventuale toast di errore, invia la richiesta al CSS. <br>
         A questo punto possono presentarsi tre casi:
@@ -468,7 +468,49 @@
         </b>
     </p>
 
-    <h3>Applicazione per la mappa di rick</h3>
+    <h3>MapConfigurator</h3>
+
+    <p>
+        MapConfigurator &egrave; una <b>applicazione grafica web</b> che permette a un utente di creare una configurazione per la disposizione dei punti di interesse nella service area.
+    </p>
+    <p>
+        Abbiamo deciso di sviluppare l'applicazione utilizzando il framework <b>Spring Boot</b> dato che permette di <i>aggiungere funzionalit&agrave;</i> in poco tempo e allo scopo di <i>uniformare lo stack tecnologico</i> utilizzato dal progetto nel suo insieme (utilizziamo Spring anche nel simulatore della Service Access GUI).
+    </p>
+
+    <div class="imgslide">
+        <figure>
+            <img class="imglim img-border" src="../images/sprint1/mapconfempty.png" alt="Interfaccia MapConfigurator">
+        </figure>
+        <figure>
+            <img class="imglim img-border" src="../images/sprint1/mapconf.png" alt="Interfaccia MapConfigurator">
+        </figure>
+    </div>
+
+    <p>
+        Le feature principali dell'applicazione includono:
+        <ul>
+            <li><b>blocchi trascinabili</b>: la griglia viene compilata trascinando i blocchi che rappresentano i landmark con una funzionalit&agrave; di <b>drag and drop</b>;</li>
+            <li><b>griglia ridimensionabile</b>: &egrave; possibile ridimensionare la griglia tramite gli slider in alto, la dimensione di <i>default</i> &egrave; quella individuata utilizzando <code class="prettyprint">unibo.mapperQak23</code></li>
+            <li><b>persistenza</b>: l'utente trover&agrave; la configurazione creata salvata tra sessioni, permettendo di riprendere la modifica dove era stata lasciata</li>
+            <li><b>utilizzo intuitivo</b>: l'applicazione deve essere semplice da utilizzare nascondendo i dettagli della rappresentazione utilizzata dal planner</li>
+        </ul>
+    </p>
+
+    <p>
+        I blocchi trascinati sulla mappa vengono considerati come <b>esplorati</b> e, nel caso del blocco della <span class="bold" style="color:rgb(64,64,228);">ColdRoom</span> marcati come <b>ostacoli</b> nella rappresentazione sotto forma di <code class="prettyprint">unibo.planner23.model.RoomMap</code>.
+    </p>
+
+    <p>
+        Questa applicazione &egrave; completa nel rispetto delle funzionalit&agrave; di base che abbiamo considerato necessarie, &egrave; possibile tuttavia che in futuro verr&agrave; estesa con feature di utilit&agrave; aggiuntive.
+    </p>
+    
+    <h5>Diagramma delle classi</h5>
+
+    <p>
+        Di seguito si riporta il <b>diagramma UML</b> delle classi dell'applicazione.
+    </p>
+        <img class="bigimglim" src="../images/sprint1/mapConfiguratorUML.png" alt="Diagramma UML">
+
 
 </div>
 
@@ -479,6 +521,8 @@
 </div>
 
 <h2>Deployment</h2> 
+
+    
 
 <div class="remark">
 
