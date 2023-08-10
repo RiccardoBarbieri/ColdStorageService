@@ -398,31 +398,45 @@
  
 <div class="remark">
 
-    <h3>ServiceAccessGUISim</h3>
+    <h3 id="sagsim_project">ServiceAccessGUISim</h3>
     <p>
-        Come anticipato in fase di analisi del problema, si è pensato di implementare questo componente software come un'applicazione Web. <br>
-        In particolare, abbiamo optato per l'utilizzo del framework <b>Spring</b>. 
+        Come anticipato in fase di analisi del problema, si è pensato di implementare questo componente software come un'<b>applicazione web</b>. <br>
     </p>
-    <h4>Architettura dell'applicazione</h4>
     <p>
-        Nell'immagine seguente viene mostrata la struttura del back-end dell'applicazione Web. 
+        Abbiamo deciso di sviluppare l'applicazione utilizzando il framework <b>Spring Boot</b>, sia poiché permette di aggiungere funzionalità in poco tempo, sia allo scopo di uniformare lo stack tecnologico utilizzato dal progetto nel suo insieme (utilizzeremo <i>Spring</i> anche all'interno del <a href="#mapconfigurator_project">MapConfigurator</a>). 
+    </p>
+    <h5>Architettura dell'applicazione</h5>
+    <h6>Comunicazione con il ColdStorageService</h6>
+<p>
+    Questa applicazione serve per accedere ai servizi forniti dal <i>ColdStorageService</i>. La comunicazione con esso è quindi di cruciale importanza.
+</p>
+    <p>
+        Abbiamo decisio di implementare la comunicazione tra le due componenti software tramite il protocollo <b>Coap</b>. Questa scelta è stata mossa dal fatto che la nostra software house ha già sviluppato classi e interfacce per implementare un concetto generale di connessione tramite appunto il protocollo <i>Coap</i>, all'interno della libreria <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code>.
+    </p>
+    <p>
+        Nello <a href="../Sprint0/ColdStorageServiceSprint0V1.html">Sprint0</a> abbiamo poi parlato del concetto di attori e del linguaggio <b>Qak</b>. Infatti, un fattore fondamentale che ci ha spinto a scegliere <i>Coap</i> come protocollo di comunicazione è che ogni attore è definito come una risorsa <b>CoapObservable</b> (osservabile tramite la classe <i>CoapObserver</i> definita nella suddetta libreria).
+    </p>
+    <h6>Diagramma delle classi</h6>
+    <p>
+        Nell'immagine seguente viene mostrato il <b>diagramma UML</b> delle classi del back-end dell'applicazione Web. 
     </p>
     <img class="bigimglim" src="../images/sprint1/architettura_logica_SAGSim.png" alt="Architettura logica Service Access Gui Simulata, realizzata in Spring">
     <p>
         Prendiamo in analisi i singoli componenti:
         <ul>
-            <li><b>SagController</b>: controller dell'applicazione definito tramite annotazione del framework <i>Spring</i>. Si occupa di inizializzare l'applicazione definendo un osservatore sull'attore interessato; funge poi da mediatore tra UI e back-end per l'invio al ColdStorageService della richiesta di deposito.</li>
-            <li><b>SagConnection</b>: componente dell'applicazione che si occupa di stabilire una connessione Coap con l'attore interessato nel progetto <i>ColdStorageService</i> e di implementare la comunicazione con l'attore stesso relativamente alla richiesta di deposito.</li>
+            <li><b>SagController</b>: WebServer Controller dell'applicazione definito tramite annotazione del framework <i>SpringBoot</i>. Si occupa di inizializzare l'applicazione definendo un osservatore sull'attore interessato; funge poi da mediatore tra UI e back-end per l'invio al <i>ColdStorageService</i> della richiesta di deposito.</li>
+            <li><b>SagConnection</b>: componente che si occupa di stabilire, tramite <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code>, una connessione <b>Coap</b> con l'attore interessato nel progetto <i>ColdStorageService</i>; permette poi di implementare la comunicazione con l'attore stesso relativamente alla richiesta di deposito.</li>
             <li><b>ConnectionUtils</b>: definisce una nuova <i>CoapConnection</i>.</li>
-            <li><b>CoapObserver</b>: osservatore che, ad ogni aggiornamento emesso dal ColdStorageService, avvisa tutte le entità registrate ad esso tramite <i>WebSocket</i></li>
-            <li><b>WebSocketConfiguration</b>: </li>
-            <li><b>WebSocketHandler</b>: </li>
+            <li><b>CoapObserver</b>: osservatore che, ad ogni aggiornamento emesso dal ColdStorageService, avvisa tutte le entità registrate ad esso tramite <i>WebSocket</i>.</li>
         </ul>
         <p>
-            <b>AGGIUNGERE PARTE SU SPRING PRESA DA SPRINGBOOTINTRO.HTML</b>
+            Per l'aggiornamento automatico della pagina da parte del server utilizziamo le <b>WebSocket</b>. Abbiamo infatti un file <a href="../../projects/springSAGSim/src/main/resources/static/js/ws_utils.js">ws_utils.js</a> che definisce la connessione e gestisce i messaggi in arrivo in maniera opportuna. <br>
+            <ul>
+                <li><b>WebSocketConfiguration</b>: implementa la classe <i>WebSocketConfigurer</i> di <code class="docutils literal notranslate"><span class="pre">org.springframework.web.socket.config.annotation</span></code>.</li>
+                <li><b>WebSocketHandler</b>: memorizza le sessioni registrate e alle quali inviare i messaggi.</li>
+            </ul>
         </p>
     </p>
-    <h5>Comunicazione con il ColdStorageService</h5>
     <h5>Configurazione</h5>
     <p>Alcuni importanti parametri dell'applicazione possono essere configurati dal file <b>application.properties</b>.</p>
     <img class="imglim" src="../images/sprint1/application_properties.png" alt="File di configurazione application.properties">
@@ -434,13 +448,16 @@
             <li>actor.ctx.*, per specificare tutte le informazioni relative al contesto in cui è presente l'attore d'interesse</li>
         </ul>
     </p>
-    <h4>Front-end</h4>
+    <h5>Front-end</h5>
+    <p>
+        Per la realizzazione della grafica dell'applicazione si fa uso di <b>Bootstrap</b>, una libreria utile per realizzare pagine web reattive e mobile-first, con HTML, CSS e JavaScript;
+    </p>
     <img class="bigimglim" src="../images/sprint1/frontend_SAGSim.png" alt="Frontend Service Access Gui Simulata">
     <p>
-        L'applicazione permette di inserire una quantità numerica che rappresenta i kg di carico da depositare e, previa validazione dell'input con eventuale toast di errore, invia la richiesta al CSS. <br>
+        L'applicazione permette di inserire una quantità numerica che rappresenta i kg di carico da depositare e, previa validazione dell'input con eventuale toast di errore, invia la richiesta al <i>ColdStorageService</i>. <br>
         A questo punto possono presentarsi tre casi:
         <ul>
-            <li>richiesta accettata: l'utente viene notificato dell'accettazione della richiesta, indicandogli di attendere la presa in carico. 
+            <li>richiesta <b>accettata</b>: l'utente viene notificato dell'accettazione della richiesta, indicandogli di attendere la presa in carico. 
                 <p>
                     In questo contesto, due casi sono possibili:
                 <ul>
@@ -449,14 +466,11 @@
                 </ul>
             </li>
                 </p>
-            <li>richiesta rifiutata: l'utente viene avviso del rifiuto e la pagina web si ricarica, permettendo una nuova interazione.</li>
-            <li>errore in fase di richiesta: se la richiesta non va a buon fine o passa troppo tempo, l'utente viene notificato e la pagina web si ricarica, permettendo una nuova interazione.</li>
+            <li>richiesta <b>rifiutata</b>: l'utente viene avvisato del rifiuto e la pagina web si ricarica, permettendo una nuova interazione.</li>
+            <li><b>errore</b> in fase di richiesta: se la richiesta non va a buon fine o passa troppo tempo, l'utente viene notificato e la pagina web si ricarica, permettendo una nuova interazione.</li>
         </ul>
     </p>
-    <p>
-        <b>AGGIUNGERE PARTE SU BOOTSTRAP E SU JS</b>
-    </p>
-
+    
     <h3>ColdStorageService</h3>
     <p>        <b>Parliamo di come abbiamo implementato il CSS (in pratica il file .qak)</b>
     </p>
@@ -470,13 +484,13 @@
         </b>
     </p>
 
-    <h3>MapConfigurator</h3>
+    <h3 id="mapconfigurator_project">MapConfigurator</h3>
 
     <p>
         MapConfigurator &egrave; una <b>applicazione grafica web</b> che permette a un utente di creare una configurazione per la disposizione dei punti di interesse nella service area.
     </p>
     <p>
-        Abbiamo deciso di sviluppare l'applicazione utilizzando il framework <b>Spring Boot</b> dato che permette di <i>aggiungere funzionalit&agrave;</i> in poco tempo e allo scopo di <i>uniformare lo stack tecnologico</i> utilizzato dal progetto nel suo insieme (utilizziamo Spring anche nel simulatore della Service Access GUI).
+        Come per la <a href="#sagsim_project">ServiceAccessGUI Simulata</a> utilizziamo il framework <b>Spring Boot</b>.
     </p>
 
     <div class="imgslide">
