@@ -72,29 +72,51 @@ dependencies {
 
 tasks.register<Dockerfile>("createDockerfile") {
     dependsOn("bootDistTar")
-    val fileRegex = Regex("unibo.mapConfigurator-boot(.*)\\.tar")
-    val inputDir: Directory = layout.projectDirectory.dir("build/distributions")
     group = "docker"
     description = "Create Dockerfile"
-    val lastModified = inputDir.asFileTree.files.filter {
-        it.name.matches(fileRegex)
-    }.maxByOrNull { it.lastModified() }
+    doLast {
 
-    from("openjdk:11")
-    exposePort(8015)
-    volume("/data")
-    addFile("./build/distributions/" + lastModified!!.name, "/")
-    workingDir(lastModified.name.removeSuffix(".tar") + "/bin")
-    defaultCommand("bash" ,"./" + lastModified.name.split("-")[0])
+        val fileRegex = Regex(".*-boot-(.*)\\.tar")
+        val inputDir: Directory = layout.projectDirectory.dir("build/distributions")
+        val lastModified = inputDir.asFileTree.files.filter {
+            it.name.matches(fileRegex)
+        }.maxByOrNull { it.lastModified() }
+
+        //nessuna distribuzione disponibile
+        if (lastModified == null) {
+            println("No file found")
+            return@doLast
+        }
+        //controllo che file scelto sia della versione corrente
+        println("___________" + fileRegex.matchEntire(lastModified.name)?.groupValues?.get(1))
+        if (fileRegex.matchEntire(lastModified.name)?.groupValues?.get(1)?.contains(project.version.toString()) == false) {
+            println("Mismatched version, check distribution files")
+            return@doLast
+        }
+
+        from("openjdk:11")
+        exposePort(8015)
+        volume("/data")
+        addFile("./build/distributions/" + lastModified.name, "/")
+        workingDir(lastModified.name.removeSuffix(".tar") + "/bin")
+        defaultCommand("bash", "./" + lastModified.name.split("-")[0])
+    }
 }
 
-tasks.register<DockerBuildImage>("dockerize") {
-    dependsOn("createDockerfile")
-    group = "docker"
-    description = "Dockerize the spring boot application"
-    inputDir.set(layout.projectDirectory.dir("build/docker"))
-    images.add(displayName.split("'").elementAt(1).replace(".","").lowercase() +
-        ":latest")
+//tasks.register<DockerBuildImage>("dockerize") {
+//    dependsOn("createDockerfile")
+//    group = "docker"
+//    description = "Dockerize the spring boot application"
+//    doLast {
+//        inputDir.set(layout.projectDirectory.dir("build/docker"))
+//        images.add(project.name.split(".").last().lowercase() + ":latest")
+//    }
+//}
+
+tasks.register("testTask") {
+    group = "abc"
+    doLast {
+    }
 }
 
 
