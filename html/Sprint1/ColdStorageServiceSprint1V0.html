@@ -1,16 +1,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-
+<head>
 <link rel="stylesheet" href="../_static/template.css">
 <link rel="stylesheet" href="../_static/mine.css">
 <link rel="stylesheet" href="../_static/code.css">
 <link rel="stylesheet" href="../_static/colors.css">
 <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/dockerfile.min.js"></script>
 
 
-    
-<head>
-   <title>Sprint1</title>
+<script>hljs.highlightAll();</script>
+<title>Sprint1</title>
 </head>
     
 <body>
@@ -522,9 +524,44 @@
 
 <h2>Deployment</h2> 
 
-    
+
 
 <div class="remark">
+
+    <h4>Distribuzione</h4>
+
+    <p>
+        Per il deployment di queste applicazioni si &egrave; deciso di utilizzare <a href="https://www.docker.com/">Docker</a>, questo ci permetter&agrave; di <i>uniformare</i> la metodologia di gestione della distribuzione dei vari componenti del servizio.
+    </p>
+
+    <p>
+        In particolare abbiamo creato dei Dockerfile, utilizzando l'apposito linguaggio dichiarativo, usati poi per creare le <a href="https://docs.docker.com/glossary/#image">immagini</a> che faranno parte dei <a href="https://docs.docker.com/glossary/#container">container</a> che eseguono i servizi.
+    </p>
+
+    <p>
+        Si riporta di seguito il Dockerfile usato per generare l'immagine di mapConfigurator.
+    </p>
+
+    <pre><code class="language-docker">FROM openjdk:11
+EXPOSE 8015
+VOLUME ["/data"]
+ADD ./build/distributions/unibo.mapConfigurator-boot-2.2.tar /
+WORKDIR unibo.mapConfigurator-boot-2.2/bin
+CMD ["bash", "./unibo.mapConfigurator"]</code></pre>
+
+    <p>
+        Allo scopo di velocizzare la creazione dei Dockerfile e delle rispettive immagini abbiamo implementato una serie di task Gradle che automatizzano questo compito, &egrave; possibile visualizzare queste task in un qualsiasi file build.gradle.kts (<a about="_blank" href="../../projects/unibo.mapConfigurator/build.gradle.kts">esempio</a>)
+    </p>
+
+    <p>
+        Tutte le immagini relative a questo progetto saranno rese disponibili online a questo profilo <a about="_blank" href="https://hub.docker.com/u/riccardoob">Docker Hub</a>
+    </p>
+
+    <h5>Controllo</h5>
+    
+    <p>
+        Dato il numero elevato di servizi da gestire verr&agrave; progettata e messa a disposizione del cliente una applicazione dedicata alla gestione dei componenti del servizio, permetter&agrave; di manipolare impostazioni e valori di default delle applicazioni tramite una interfaccia grafica.
+    </p>
 
 </div>
  
