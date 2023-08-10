@@ -233,12 +233,12 @@
         Dobbiamo realizzare un componente software che permetta di simulare molteplici richieste di deposito presso il <i>CSS</i>. In particolare, avremo bisogno di un'applicativo che ci permetta di:
         <ol>
             <li>
-                effettuare una <i>storerequest</i> verso il <i>CSS</i>, specificando la quantità di chilogrammi di cibo <b>FW</b> 
+                effettuare una <i>richiesta di deposito</i> verso il <i>CSS</i>, specificando la quantità di chilogrammi di cibo <b>FW</b> 
             </li>
             <li>
-                visualizzare la risposta relativa alla richiesta appena effettuata (<i>storeaccept()</i> o <i>storereject()</i>)
+                visualizzare la risposta relativa alla richiesta appena effettuata (<i>accettata</i> o <i>rifiutata</i>)
             </li>
-            <li>solo in caso di <b>richiesta accettata</b>, visualizzare il messaggio <i>chargetaken()</i></li>
+            <li>solo in caso di <b>richiesta accettata</b>, visualizzare il messaggio di <i>presa in carico</i></li>
         </ol>
         Questi tre passaggi rappresentano il flusso di attività che vogliamo vengano simulate. Alla fine di questi step si realizza l'uscita dalla <i>INDOOR</i> da parte del <i>Camion</i>, aggiornando la vista dell'applicazione per permettere una nuova interazione (da zero). <br>
         Come anticipato precedentemente nella sezione <a href="#components_CSS" target="_blank">componenti</a>, il Camion si deve allontanare anche in caso di <b>richiesta rifiutata</b>, quindi anche in questo casò si dovrà aggiornare la vista dell'applicazione per permettere una nuova interazione. <br>
@@ -399,16 +399,60 @@
     <h3>ServiceAccessGUISim</h3>
     <p>
         Come anticipato in fase di analisi del problema, si è pensato di implementare questo componente software come un'applicazione Web. <br>
-        In particolare, abbiamo optato per l'utilizzo di <b>Spring</b>. 
+        In particolare, abbiamo optato per l'utilizzo del framework <b>Spring</b>. 
     </p>
-    <p>
-        Dobbiamo anche capire come far inviare la risposta ad una sola SAG (il messaggio chargeTaken si intende). Infatti noi usiamo l'evento, ma è corretto? Perchè l'evento lo possono vedere tutti.
-    </p>
-    
     <h4>Architettura dell'applicazione</h4>
     <p>
-        <b>PARLO DI COME E' FATTTA L'APPLICAZIONE, INSERENDO DEI GRAFICI UML (O SIMILI) CHE SPIEGANO LA CONNESSIONE CON IL CSS E TUTTO IL CONCETTO DELLE WEBSOCKET</b> <br>
-        Aggiungere un piccolo trafieltto in cui si parla di Spring così che lo possa usare anche rick quando parla della sua applicazione
+        Nell'immagine seguente viene mostrata la struttura del back-end dell'applicazione Web. 
+    </p>
+    <img class="bigimglim" src="../images/architettura_logica_SAGSim.png" alt="Architettura logica Service Access Gui Simulata, realizzata in Spring">
+    <p>
+        Prendiamo in analisi i singoli componenti:
+        <ul>
+            <li><b>SagController</b>: controller dell'applicazione definito tramite annotazione del framework <i>Spring</i>. Si occupa di inizializzare l'applicazione definendo un osservatore sull'attore interessato; funge poi da mediatore tra UI e back-end per l'invio al ColdStorageService della richiesta di deposito.</li>
+            <li><b>SagConnection</b>: componente dell'applicazione che si occupa di stabilire una connessione Coap con l'attore interessato nel progetto <i>ColdStorageService</i> e di implementare la comunicazione con l'attore stesso relativamente alla richiesta di deposito.</li>
+            <li><b>ConnectionUtils</b>: definisce una nuova <i>CoapConnection</i>.</li>
+            <li><b>CoapObserver</b>: osservatore che, ad ogni aggiornamento emesso dal ColdStorageService, avvisa tutte le entità registrate ad esso tramite <i>WebSocket</i></li>
+            <li><b>WebSocketConfiguration</b>: </li>
+            <li><b>WebSocketHandler</b>: </li>
+        </ul>
+        <p>
+            <b>AGGIUNGERE PARTE SU SPRING PRESA DA SPRINGBOOTINTRO.HTML</b>
+        </p>
+    </p>
+    <h5>Comunicazione con il ColdStorageService</h5>
+    <h5>Configurazione</h5>
+    <p>L'applicazione può essere configurata interamente dal file <b>application.properties</b>.</p>
+    <img class="bigimglim" src="../images/application_properties.png" alt="File di configurazione application.properties">
+    <p>
+        Oltre a poter configurare il nome dell'applicazione che apparirà in alto nella pagina web e il banner da mostrare in console, sono presenti:
+        <ul>
+            <li>server.port, per configurare la porta sulla quale apparirà la pagina web</li>
+            <li>actor.name, per definire il nome dell'attore da osservare e al quale verrà inviata la richiesta di deposito</li>
+            <li>actor.ctx.*, per specificare tutte le informazioni relative al contesto in cui è presente l'attore d'interesse</li>
+        </ul>
+    </p>
+    <h4>Front-end</h4>
+    <img class="bigimglim" src="../images/frontend_SAGSim.png" alt="Frontend Service Access Gui Simulata">
+    <p>
+        L'applicazione permette di inserire una quantità numerica che rappresenta i kg di carico da depositare e, previa validazione dell'input con eventuale toast di errore, invia la richiesta al CSS. <br>
+        A questo punto possono presentarsi tre casi:
+        <ul>
+            <li>richiesta accettata: l'utente viene notificato dell'accettazione della richiesta, indicandogli di attendere la presa in carico. 
+                <p>
+                    In questo contesto, due casi sono possibili:
+                <ul>
+                    <li>se passa troppo tempo, il messaggio viene dato per perso, avvisando l'utente e ricaricando la pagina</li>
+                    <li>arriva il messaggio di presa in carico, che viene mostrato in pagina, per poi ricaricarla</li>
+                </ul>
+            </li>
+                </p>
+            <li>richiesta rifiutata: l'utente viene avviso del rifiuto e la pagina web si ricarica, permettendo una nuova interazione.</li>
+            <li>errore in fase di richiesta: se la richiesta non va a buon fine o passa troppo tempo, l'utente viene notificato e la pagina web si ricarica, permettendo una nuova interazione.</li>
+        </ul>
+    </p>
+    <p>
+        <b>AGGIUNGERE PARTE SU BOOTSTRAP E SU JS</b>
     </p>
 
     <h3>ColdStorageService</h3>
