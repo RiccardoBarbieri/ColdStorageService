@@ -88,7 +88,6 @@ tasks.register<Dockerfile>("createDockerfile") {
             return@doLast
         }
         //controllo che file scelto sia della versione corrente
-        println("___________" + fileRegex.matchEntire(lastModified.name)?.groupValues?.get(1))
         if (fileRegex.matchEntire(lastModified.name)?.groupValues?.get(1)?.contains(project.version.toString()) == false) {
             println("Mismatched version, check distribution files")
             return@doLast

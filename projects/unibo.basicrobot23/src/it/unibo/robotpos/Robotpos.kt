@@ -20,7 +20,7 @@ class Robotpos ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		 val planner = unibo.planner23.Planner23Util()
 			    //val MapName = "mapEmpty23"
-			    val MapName = "mapCompleteWithObst23ok"
+			    val MapName = "servicearea"
 			    val MyName    = name //upcase var
 				var OwnerMngr = supports.OwnerManager //Kotlin object
 				var IsOwner   = false

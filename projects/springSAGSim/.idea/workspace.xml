@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f4bd857c-0e0e-4cec-bbd5-433f4fae8ff9" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../unibo.planner23/.idea/unibo.planner23.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../unibo.planner23/unibo.planner22.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../it.unibo.virtualRobot2023/node/WEnv/WebGLScene/sceneConfig.js" beforeDir="false" afterPath="$PROJECT_DIR$/../it.unibo.virtualRobot2023/node/WEnv/WebGLScene/sceneConfig.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Californium3.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/unibo/springSAGSim/SagController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/unibo/springSAGSim/SagSimAppl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/unibo/springSAGSim/connection/CoapObserver.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/unibo/springSAGSim/connection/ConnectionUtils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/unibo/springSAGSim/connection/SagConnection.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/unibo/springSAGSim/connection/websocket/WebSocketConfiguration.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/unibo/springSAGSim/connection/websocket/WebSocketHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/unibo/springSAGSim/model/FWRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/banner.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/main.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/popup.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/toast.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/main.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/sockjs.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/ws_utils.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/main.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/unibo/springSAGSim/SagSimApplTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/Api_coldstorageservice23.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../sprint1V0/Api_coldstorageservice23.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/Arch_coldstorageservice23.py" beforeDir="false" afterPath="$PROJECT_DIR$/../sprint1V0/Arch_coldstorageservice23.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../sprint1V0/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/build2022.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../sprint1V0/build2022.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/coldstorageservice23.pl" beforeDir="false" afterPath="$PROJECT_DIR$/../sprint1V0/coldstorageservice23.pl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/qakrestappl_Transitions.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../sprint1V0/qakrestappl_Transitions.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/src/coldstorageservice23.qak" beforeDir="false" afterPath="$PROJECT_DIR$/../sprint1V0/src/coldstorageservice23.qak" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/src/it/unibo/alarmdevice/Alarmdevice.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/src/it/unibo/coldstorageservice/Coldstorageservice.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/src/it/unibo/ctx_access/MainCtx_access.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/src/it/unibo/ctx_basicrobot/MainCtx_basicrobot.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/src/it/unibo/ctx_coldstorageservice/MainCtx_coldstorageservice.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/src/it/unibo/ctx_raspberry/MainCtx_raspberry.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/src/it/unibo/ctx_status/MainCtx_status.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/src/it/unibo/serviceaccessgui/Serviceaccessgui.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/src/it/unibo/servicestatusgui/Servicestatusgui.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/src/it/unibo/transporttrolley/Transporttrolley.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sprint1V0/src/it/unibo/warningdevice/Warningdevice.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../testSAG/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../testSAG/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../testSAG/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../testSAG/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../testSAG/Api_testsag.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../testSAG/Api_testsag.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../testSAG/src/it/unibo/coldstorageservice/Coldstorageservice.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../testSAG/src/it/unibo/coldstorageservice/Coldstorageservice.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../testSAG/src/testSAG.qak" beforeDir="false" afterPath="$PROJECT_DIR$/../testSAG/src/testSAG.qak" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot23/Api_basicrobot23.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.basicrobot23/Api_basicrobot23.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot23/Dockerfileforrasp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot23/basicrobot23.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.basicrobot23/basicrobot23.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot23/basicrobotConfigMbot.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot23/mapEmpty23.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot23/mapEmpty23.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot23/mystepTimeConfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot23/src/basicrobot.qak" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.basicrobot23/src/basicrobot.qak" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.basicrobot23/src/it/unibo/robotpos/Robotpos.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.basicrobot23/src/it/unibo/robotpos/Robotpos.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.mapConfigurator/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../unibo.mapConfigurator/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.mapConfigurator/themap.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.mapConfigurator/themap.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../unibo.mapConfigurator/themapLandmark.txt" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="2TpmQzKcN85WYMqlAZFNgLLXfod" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="openDirectoriesWithSingleClick" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "android.gradle.sync.needed": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/home/riccardoob/ColdStorageService/projects/it.unibo.virtualRobot2023",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
+    "spring.configuration.checksum": "5191c96e275d4851e1f1c7c9fbffdc51",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Gradle.springSAGSim [bootRun]">
+    <configuration name="springSAGSim [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="bootRun" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="SagSimAppl" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="springSAGSim.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="unibo.springSAGSim.SagSimAppl" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.springSAGSim [bootRun]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f4bd857c-0e0e-4cec-bbd5-433f4fae8ff9" name="Changes" comment="" />
+      <created>1691748383920</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1691748383920</updated>
+      <workItem from="1691748384929" duration="623000" />
+      <workItem from="1691749027425" duration="1404000" />
+      <workItem from="1691756968009" duration="2000" />
+      <workItem from="1691763874762" duration="815000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

@@ -47,7 +47,7 @@ QActor coldstorageservice context ctx_coldstorageservice {
 	
 	State finalizeDeposit {
 		println("CSS: charge taken") color blue
-		updateResource [# "chargetaken" #] 
+		updateResource [# "chargetaken" #]
 	}
 	Goto waiting
 }

@@ -50,9 +50,6 @@ Reply robotstate      : robotstate(POS,DIR)
 
 Context ctxbasicrobot ip [host="localhost" port=8020]  
 
-//CodedQActor datacleaner    context ctxbasicrobot className "rx.dataCleaner"
-//CodedQActor distancefilter context ctxbasicrobot className "rx.distanceFilter"
-
 /* 
  * ------------------------------
  * engager 
@@ -479,7 +476,7 @@ QActor planexec context ctxbasicrobot{
 QActor robotpos context ctxbasicrobot{
 	[# val planner = unibo.planner23.Planner23Util()
 	    //val MapName = "mapEmpty23"
-	    val MapName = "mapCompleteWithObst23ok"
+	    val MapName = "servicearea"
 	    val MyName    = name //upcase var
 		var OwnerMngr = supports.OwnerManager //Kotlin object
 		var IsOwner   = false
@@ -513,7 +510,7 @@ QActor robotpos context ctxbasicrobot{
 				  whenMsg setdirection  -> checkTheOwnerForSetDir  //setTheRobotState
 
     //Non fa check su owner: risponde a tutti
-    State getRoboSstate{
+    State getRoboSstate {
     	[# val PX   = planner.getPosX() 
     		val PY  = planner.getPosY()
     		val DIR = ""+planner.getDir()

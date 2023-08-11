@@ -1,64 +1,51 @@
 System coldstorageservice23
 
 //SAG -> CSS
-Request 	storerequest		:		storerequest(arg)
+Request 	storerequest		:		storerequest(FW)
 
 //CSS -> SAG
 Reply		loadaccepted		:		loadaccepted(arg)
-
-//CSS -> SAG
+Reply		loadrejected		:		loadrejected(arg)
 Dispatch	chargetaken			:		chargetaken(arg)
 
 //TT -> CSS
 Dispatch	chargetakentt		:		chargetaken(arg)
- 
-//CSS -> SSG 
-//TT -> SSG 
-Dispatch	statusupdate		:		statusupdate(arg) 
-
-//RASP -> CSS
-Dispatch	distanceupdate		:		distanceupdate(arg)
-
-//CSS -> RASP
-Dispatch	ledupdate			:		ledupdate(arg)
 
 //CSS -> TT
 Dispatch	stop				:		stop(arg)
 Dispatch	resume				:		resume(arg)
 Dispatch	deposit				:		deposit(arg)
 
-//TT -> BASICROBOT
+//BASICROBOT
 Dispatch	cmd					:		cmd(arg)
 Dispatch	step				:		step(arg)
 
+Request		engage				:		engage(OWNER, STEPTIME)	
+Reply		engagedone			:		engagedone(ARG)
+Reply		engagerefused		:		engagerefused(ARG)
+Dispatch	disengage			:		disengage(ARG)
+
+Request		moverobot			:		moverobot(TARGETX, TARGETY)
+Reply		moverobotdone		:		moverobotok(ARG)
+Reply		moverobotfailed		:		moverobotfailed(PLANDONE, PLANTODO)
+
+Dispatch	setrobotstate		:		setpos(X,Y,D)
+
+//
+//Request  doplan     : doplan( PATH, OWNER, STEPTIME )
+//Reply doplandone    : doplandone( ARG ) 
+//Reply doplanfailed  : doplanfailed( ARG )
 
 
-
-
+Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
 Context ctx_coldstorageservice ip [host="localhost" port=8021]
-Context ctx_access ip [host="localhost" port=8022]
-Context ctx_status ip [host="localhost" port=8023]
-Context ctx_raspberry ip [host="localhost" port=8024]
-
-Context ctx_basicrobot ip [host="127.0.0.1" port=8020]
 
 QActor coldstorageservice context ctx_coldstorageservice {
 	
+	
+	
 	State s0 initial {
-		
-	}
-	Goto waiting
-	
-	State handleRequest {
-		onMsg (storerequest : storerequest(_)) {
-			replyTo storerequest with loadaccepted : loadaccepted(_)
-			forward transporttrolley -m deposit : deposit(_)
-		}
-	}
-	Transition t0 whenMsg chargetakentt -> finalizeDeposit
-	
-	State finalizeDeposit {
-		forward serviceaccessgui -m chargetaken : chargetaken(_)
+		println("CSS: started") color blue
 	}
 	Goto waiting
 	
@@ -66,109 +53,111 @@ QActor coldstorageservice context ctx_coldstorageservice {
 		
 	}
 	Transition t0 whenRequest storerequest -> handleRequest
-				  whenMsg distanceupdate -> distance
+					whenMsg chargetakentt -> finalizeDeposit
 	
-	State distance {
-		if [# True #] {
-			forward transporttrolley -m stop : stop(_)
-		} else {
-			forward transporttrolley -m resume : resume(_)
-		}
+	State handleRequest {
+		onMsg (storerequest : storerequest(FW)) {
+			
+			if [# true #] {
+				forward transporttrolley -m deposit : deposit
+				replyTo storerequest with loadaccepted : loadaccepted
+				println("CSS: load accepted") color blue
+			} else {
+				replyTo storerequest with loadrejected : loadrejected
+				println("CSS: load rejected") color blue
+			}
+		}	
+	}
+	Goto waiting
+	
+	State finalizeDeposit {
+		println("CSS: charge taken") color blue
+		updateResource [# "chargetaken" #]
 	}
 	Goto waiting
 	
 }
+
 
 
 QActor transporttrolley context ctx_coldstorageservice {
 	
 	State s0 initial {
-		
-	}
-	Goto waiting
-	
-	State doDeposit {
-		
-		forward basicrobot -m step : step(_)
-		forward basicrobot -m cmd : cmd(_)
-		
-		forward warningdevice -m ledupdate : ledupdate(_)
-		forward servicestatusgui -m statusupdate : updategui(_)
-		
-		delay 3000
-		
-		forward coldstorageservice -m chargetakentt : chargetakentt(_)
+		println("TT: started") color green
+		request basicrobot -m engage : engage(transporttrolley, 330)
 	}
 	Goto waiting
 	
 	State waiting {
-		forward servicestatusgui -m statusupdate : statusupdate(_)
+		
 	}
-	Transition t0 whenTime 2000 -> waiting
-				  whenMsg deposit -> doDeposit
-				  whenMsg stop -> stop
+	Transition t0 whenMsg deposit -> doDeposit
 				  
-	State stop {
-		
-	}
-	Transition t0 whenMsg resume -> resume
-	
-	State resume {
-		returnFromInterrupt
-	}
-	
-}
-
-
-
-QActor serviceaccessgui context ctx_access {
-	
-	State s0 initial {
-		request coldstorageservice -m storerequest : storerequest(_)
-	}
-	Transition t0 whenTime 10000 -> s0
-	
-}
-
-
-
-QActor servicestatusgui context ctx_status {
-	
-	State s0 initial {
-		
+	State doDeposit {
+		delay 6000
+		forward basicrobot -m setrobotstate : setpos(0,0,d)
+		println("TT: charge taken, moving robot") color green	
+		request basicrobot -m moverobot : moverobot(3,3)
+		forward coldstorageservice -m chargetakentt : chargetakentt
 	}
 	Goto waiting
 	
-	State waiting {
-		
-	}
-	Transition t0 whenMsg statusupdate -> updateStatus
-	
-	State updateStatus {
-		
-	}
-	Goto waiting
 	
 }
 
 
-QActor alarmdevice context ctx_raspberry {
-	
-	State s0 initial {
-		forward coldstorageservice -m distanceupdate : distanceupdate(_)
-		
-	}
-	
-}
+ExternalQActor basicrobot context ctxbasicrobot
 
 
+//QActor transporttrolley context ctx_coldstorageservice {
+//	
+//	State s0 initial {
+//		
+//	}
+//	Goto waiting
+//	
+//	State doDeposit {
+//		
+//		forward basicrobot -m step : step(_)
+//		forward basicrobot -m cmd : cmd(_)
+//		
+//		forward warningdevice -m ledupdate : ledupdate(_)
+//		forward servicestatusgui -m statusupdate : updategui(_)
+//		
+//		delay 3000
+//		
+//		forward coldstorageservice -m chargetakentt : chargetakentt(_)
+//	}
+//	Goto waiting
+//	
+//	State waiting {
+//		forward servicestatusgui -m statusupdate : statusupdate(_)
+//	}
+//	Transition t0 whenTime 2000 -> waiting
+//				  whenMsg deposit -> doDeposit
+//				  whenMsg stop -> stop
+//				  
+//	State stop {
+//		
+//	}
+//	Transition t0 whenMsg resume -> resume
+//	
+//	State resume {
+//		returnFromInterrupt
+//	}
+//	
+//}
+//
+//
+//
+//
+//QActor serviceaccessgui context ctx_access {
+//	
+//	State s0 initial {
+//		request coldstorageservice -m storerequest : storerequest(_)
+//	}
+//	Transition t0 whenTime 10000 -> s0
+//	
+//}
 
-QActor warningdevice context ctx_raspberry {
-	
-	State s0 initial {
-	}
-	
-}
-
-ExternalQActor basicrobot context ctx_basicrobot
 

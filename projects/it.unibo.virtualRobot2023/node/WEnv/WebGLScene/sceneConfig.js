@@ -34,15 +34,10 @@ const config = {
          } */
     ],
    staticObstacles: [
-        {
-            name: "plasticBox",
-            centerPosition: { x: 0.34, y: 0.35},
-            size: { x: 0.03, y: 0.07}
-        },
  
 
         {
-            name: "table",
+            name: "coldroom",
             centerPosition: { x: 0.65, y: 0.60},
             size: { x: 0.16, y: 0.14      }
 		},

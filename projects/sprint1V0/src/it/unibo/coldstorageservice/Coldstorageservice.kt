@@ -21,30 +21,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
-				}	 
-				state("handleRequest") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("storerequest(arg)"), Term.createTerm("storerequest(_)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								answer("storerequest", "loadaccepted", "loadaccepted(_)"   )  
-								forward("deposit", "deposit(_)" ,"transporttrolley" ) 
-						}
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t00",targetState="finalizeDeposit",cond=whenDispatch("chargetakentt"))
-				}	 
-				state("finalizeDeposit") { //this:State
-					action { //it:State
-						forward("chargetaken", "chargetaken(_)" ,"serviceaccessgui" ) 
+						CommUtils.outblue("CSS: started")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -59,17 +36,35 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t01",targetState="handleRequest",cond=whenRequest("storerequest"))
-					transition(edgeName="t02",targetState="distance",cond=whenDispatch("distanceupdate"))
+					 transition(edgeName="t00",targetState="handleRequest",cond=whenRequest("storerequest"))
+					transition(edgeName="t01",targetState="finalizeDeposit",cond=whenDispatch("chargetakentt"))
 				}	 
-				state("distance") { //this:State
+				state("handleRequest") { //this:State
 					action { //it:State
-						if(  True  
-						 ){forward("stop", "stop(_)" ,"transporttrolley" ) 
+						if( checkMsgContent( Term.createTerm("storerequest(FW)"), Term.createTerm("storerequest(FW)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								if(  true  
+								 ){forward("deposit", "deposit" ,"transporttrolley" ) 
+								answer("storerequest", "loadaccepted", "loadaccepted"   )  
+								CommUtils.outblue("CSS: load accepted")
+								}
+								else
+								 {answer("storerequest", "loadrejected", "loadrejected"   )  
+								 CommUtils.outblue("CSS: load rejected")
+								 }
 						}
-						else
-						 {forward("resume", "resume(_)" ,"transporttrolley" ) 
-						 }
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
+				}	 
+				state("finalizeDeposit") { //this:State
+					action { //it:State
+						CommUtils.outblue("CSS: charge taken")
+						updateResourceRep( "chargetaken"  
+						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

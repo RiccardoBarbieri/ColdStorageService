@@ -21,21 +21,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
-				}	 
-				state("doDeposit") { //this:State
-					action { //it:State
-						forward("step", "step(_)" ,"basicrobot" ) 
-						forward("cmd", "cmd(_)" ,"basicrobot" ) 
-						forward("ledupdate", "ledupdate(_)" ,"warningdevice" ) 
-						forward("statusupdate", "updategui(_)" ,"servicestatusgui" ) 
-						delay(3000) 
-						forward("chargetakentt", "chargetakentt(_)" ,"coldstorageservice" ) 
+						CommUtils.outgreen("TT: started")
+						request("engage", "engage(transporttrolley,330)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -45,35 +32,26 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("waiting") { //this:State
 					action { //it:State
-						forward("statusupdate", "statusupdate(_)" ,"servicestatusgui" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
-				 	 		stateTimer = TimerActor("timer_waiting", 
-				 	 					  scope, context!!, "local_tout_transporttrolley_waiting", 2000.toLong() )
 					}	 	 
-					 transition(edgeName="t03",targetState="waiting",cond=whenTimeout("local_tout_transporttrolley_waiting"))   
-					transition(edgeName="t04",targetState="doDeposit",cond=whenDispatch("deposit"))
-					transition(edgeName="t05",targetState="stop",cond=whenDispatch("stop"))
+					 transition(edgeName="t02",targetState="doDeposit",cond=whenDispatch("deposit"))
 				}	 
-				state("stop") { //this:State
+				state("doDeposit") { //this:State
 					action { //it:State
+						delay(6000) 
+						forward("setrobotstate", "setpos(0,0,d)" ,"basicrobot" ) 
+						CommUtils.outgreen("TT: charge taken, moving robot")
+						request("moverobot", "moverobot(3,3)" ,"basicrobot" )  
+						forward("chargetakentt", "chargetakentt" ,"coldstorageservice" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t06",targetState="resume",cond=whenDispatch("resume"))
-				}	 
-				state("resume") { //this:State
-					action { //it:State
-						returnFromInterrupt(interruptedStateTransitions)
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
+					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
 			}
 		}
