@@ -24,7 +24,6 @@ with Diagram('coldstorageservice23Arch', show=False, outformat='png', graph_attr
      with Cluster('ctx_coldstorageservice', graph_attr=nodeattr):
           coldstorageservice=Custom('coldstorageservice','./qakicons/symActorSmall.png')
           transporttrolley=Custom('transporttrolley','./qakicons/symActorSmall.png')
-     coldstorageservice >> Edge(color='blue', style='solid', xlabel='deposit', fontcolor='blue') >> transporttrolley
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='engage', fontcolor='magenta') >> basicrobot
      transporttrolley >> Edge(color='blue', style='solid', xlabel='setrobotstate', fontcolor='blue') >> basicrobot
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='moverobot', fontcolor='magenta') >> basicrobot

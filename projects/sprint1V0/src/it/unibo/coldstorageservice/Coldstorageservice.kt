@@ -18,6 +18,9 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+			val maxColdRoom: Float = 10F
+				var currentColdRoom: Float = 0F
+				
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -36,21 +39,20 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t00",targetState="handleRequest",cond=whenRequest("storerequest"))
+					 transition(edgeName="t00",targetState="checkAvail",cond=whenRequest("storerequest"))
 					transition(edgeName="t01",targetState="finalizeDeposit",cond=whenDispatch("chargetakentt"))
 				}	 
-				state("handleRequest") { //this:State
+				state("checkAvail") { //this:State
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("storerequest(FW)"), Term.createTerm("storerequest(FW)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								if(  true  
-								 ){forward("deposit", "deposit" ,"transporttrolley" ) 
-								answer("storerequest", "loadaccepted", "loadaccepted"   )  
-								CommUtils.outblue("CSS: load accepted")
+								if(  (currentColdRoom + payloadArg(0).toFloat()) <= maxColdRoom  
+								 ){answer("storerequest", "loadaccepted", "loadaccepted"   )  
+								CommUtils.outblue("CSS: load ${payloadArg(0)} accepted")
 								}
 								else
 								 {answer("storerequest", "loadrejected", "loadrejected"   )  
-								 CommUtils.outblue("CSS: load rejected")
+								 CommUtils.outblue("CSS: load ${payloadArg(0)} rejected")
 								 }
 						}
 						//genTimer( actor, state )
@@ -58,19 +60,25 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
+					 transition( edgeName="goto",targetState="requestDeposit", cond=doswitch() )
 				}	 
-				state("finalizeDeposit") { //this:State
+				state("requestDeposit") { //this:State
 					action { //it:State
-						CommUtils.outblue("CSS: charge taken")
-						updateResourceRep( "chargetaken"  
-						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
+					 transition( edgeName="goto",targetState="finalizeDeposit", cond=doswitch() )
+				}	 
+				state("finalizeDeposit") { //this:State
+					action { //it:State
+						CommUtils.outblue("CSS: charge taken")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 				}	 
 			}
 		}

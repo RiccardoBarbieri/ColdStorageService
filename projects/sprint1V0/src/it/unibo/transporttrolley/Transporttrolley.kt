@@ -18,11 +18,43 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+			val landmarkConf = utils.MapUtils.loadMapConfiguration("servicearea")
+				var lastPos: Pair<Int, Int> = Pair(0,0)
+				val HomeToIndoorCoord = landmarkConf.getCoordinateClosestToFor("I", Pair(0,0))
+				val IndoorToPortCoord = landmarkConf.getCoordinateClosestToFor("P", HomeToIndoorCoord)
+				val PortToHomeCoord = landmarkConf.getCoordinateClosestToFor("H", IndoorToPortCoord)
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						CommUtils.outgreen("TT: started")
 						request("engage", "engage(transporttrolley,330)" ,"basicrobot" )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t02",targetState="setRobot",cond=whenReply("engagedone"))
+					transition(edgeName="t03",targetState="engageFailed",cond=whenReply("engagerefused"))
+				}	 
+				state("engageFailed") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+				}	 
+				state("chargeFailed") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+				}	 
+				state("setRobot") { //this:State
+					action { //it:State
+						forward("setrobotstate", "setpos(0,0,d)" ,"basicrobot" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -37,21 +69,76 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t02",targetState="doDeposit",cond=whenDispatch("deposit"))
+					 transition(edgeName="t04",targetState="moveToIndoorFromHome",cond=whenDispatch("deposit"))
 				}	 
-				state("doDeposit") { //this:State
+				state("moveToIndoorFromHome") { //this:State
 					action { //it:State
-						delay(6000) 
-						forward("setrobotstate", "setpos(0,0,d)" ,"basicrobot" ) 
-						CommUtils.outgreen("TT: charge taken, moving robot")
-						request("moverobot", "moverobot(3,3)" ,"basicrobot" )  
+						CommUtils.outgreen("TT: moving robot to indoor")
+							val X = HomeToIndoorCoord.first
+									val Y = HomeToIndoorCoord.second
+						request("moverobot", "moverobot($X,$Y)" ,"basicrobot" )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t05",targetState="chargeTaken",cond=whenReply("moverobotdone"))
+					transition(edgeName="t06",targetState="chargeFailed",cond=whenReply("moverobotfailed"))
+				}	 
+				state("chargeTaken") { //this:State
+					action { //it:State
 						forward("chargetakentt", "chargetakentt" ,"coldstorageservice" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
+					 transition( edgeName="goto",targetState="toPort", cond=doswitch() )
+				}	 
+				state("toPort") { //this:State
+					action { //it:State
+						CommUtils.outgreen("TT: charge taken, moving robot to port")
+							val X = IndoorToPortCoord.first
+									val Y = IndoorToPortCoord.second
+						request("moverobot", "moverobot($X,$Y)" ,"basicrobot" )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t07",targetState="chargeTaken",cond=whenReply("moverobotdone"))
+					transition(edgeName="t08",targetState="chargeFailed",cond=whenReply("moverobotfailed"))
+				}	 
+				state("depositInColdRoom") { //this:State
+					action { //it:State
+						delay(1500) 
+						CommUtils.outgreen("TT: charge deposited, returning home")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="returnHome", cond=doswitch() )
+				}	 
+				state("returnHome") { //this:State
+					action { //it:State
+							val X = PortToHomeCoord.first
+									val Y = PortToHomeCoord.second
+						request("moverobot", "moverobot($X,$Y)" ,"basicrobot" )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="waitInterrupt", cond=doswitch() )
+				}	 
+				state("waitInterrupt") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 				}	 
 			}
 		}

@@ -92,6 +92,8 @@ dependencies {
     implementation name: '2p301'
     implementation name: 'unibo.qakactor23-3.5'
     implementation name: 'unibo.basicomm23-1.0'
+    implementation name: 'landmarks'
+
 
     /* AIMA **************************************************************************************************************** */
     //PLANNER
