@@ -1,8 +1,11 @@
 package unibo.mapConfigurator.services;
 
+import kotlin.Pair;
+import org.json.simple.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import unibo.landmarks.LandmarkCoordinates;
 import unibo.planner23.Planner23Util;
 import unibo.planner23.model.Box;
 import unibo.planner23.model.RoomMap;
@@ -23,10 +26,14 @@ public class MapServiceRoomMap implements MapService {
 
     private String landmarkRoomMap;
 
+    private LandmarkCoordinates coordinates;
+
     @Override
     public boolean compileMap(MapConfiguration mapConfiguration) {
         RoomMap roomMap = RoomMap.getRoomMap();
         StringBuilder sb = new StringBuilder();
+
+        this.coordinates = new LandmarkCoordinates();
 
         Box tempBox;
         for (int i = 0; i < mapConfiguration.getHeight(); i++) {
@@ -36,6 +43,7 @@ public class MapServiceRoomMap implements MapService {
                     case 'C': //ColdRoom is Obstacle
                         tempBox = new Box(true, false, false);
                         sb.append("C, ");
+                        coordinates.addCoordinate("C", new Pair<>(j, i));
                         break;
                     case '0': //0 is Dirty
                         tempBox = new Box(false, true, false);
@@ -44,6 +52,7 @@ public class MapServiceRoomMap implements MapService {
                     case 'H': //Home is Robot initial position
                         tempBox = new Box(false, false, true);
                         sb.append("r, ");
+                        coordinates.addCoordinate("H", new Pair<>(j, i));
                         break;
                     case '1': //1, I and P are explored and not obstacles
                         tempBox = new Box(false, false, false);
@@ -52,10 +61,12 @@ public class MapServiceRoomMap implements MapService {
                     case 'I':
                         tempBox = new Box(false, false, false);
                         sb.append("I, ");
+                        coordinates.addCoordinate("I", new Pair<>(j, i));
                         break;
                     case 'P':
                         tempBox = new Box(false, false, false);
                         sb.append("P, ");
+                        coordinates.addCoordinate("P", new Pair<>(j, i));
                         break;
                     default:
                         return false;
@@ -77,6 +88,7 @@ public class MapServiceRoomMap implements MapService {
             PrintWriter writer = new PrintWriter(file);
             writer.print(landmarkRoomMap);
             writer.close();
+            coordinates.dump(destination + mapConfiguration.getName());
         } catch (IOException e) {
             LoggerFactory.getLogger(MapServiceRoomMap.class).error("IOException dumping map \"" + mapConfiguration.getName() + "\""
                     + System.lineSeparator() + e.getMessage());

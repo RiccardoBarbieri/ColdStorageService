@@ -31,6 +31,11 @@ Reply		moverobotfailed		:		moverobotfailed(PLANDONE, PLANTODO)
 
 Dispatch	setrobotstate		:		setpos(X,Y,D)
 
+Event		alarm				:		alarm(X)
+
+Request		getrobotstate		:		getrobotstate(ARG)
+Reply		robotstate			:		robotstate(POS,DIR)
+
 //
 //Request  doplan     : doplan( PATH, OWNER, STEPTIME )
 //Reply doplandone    : doplandone( ARG ) 
@@ -42,7 +47,10 @@ Context ctx_coldstorageservice ip [host="localhost" port=8021]
 
 QActor coldstorageservice context ctx_coldstorageservice {
 	
-	
+	[#	val maxColdRoom: Float = 10F
+		var currentColdRoom: Float = 0F
+		
+	#]
 	
 	State s0 initial {
 		println("CSS: started") color blue
@@ -52,55 +60,117 @@ QActor coldstorageservice context ctx_coldstorageservice {
 	State waiting {
 		
 	}
-	Transition t0 whenRequest storerequest -> handleRequest
-					whenMsg chargetakentt -> finalizeDeposit
+	Transition t0	whenRequest	storerequest	->	checkAvail
+					whenMsg 	chargetakentt	->	finalizeDeposit
 	
-	State handleRequest {
+	State checkAvail {
 		onMsg (storerequest : storerequest(FW)) {
 			
-			if [# true #] {
-				forward transporttrolley -m deposit : deposit
+			if [# (currentColdRoom + payloadArg(0).toFloat()) <= maxColdRoom #] {
 				replyTo storerequest with loadaccepted : loadaccepted
-				println("CSS: load accepted") color blue
+				println("CSS: load ${payloadArg(0)} accepted") color blue
 			} else {
 				replyTo storerequest with loadrejected : loadrejected
-				println("CSS: load rejected") color blue
+				println("CSS: load ${payloadArg(0)} rejected") color blue
 			}
-		}	
+		}
 	}
-	Goto waiting
+	Goto requestDeposit
+	
+	State requestDeposit {
+				
+	}
+	Goto finalizeDeposit
+	
+	
 	
 	State finalizeDeposit {
 		println("CSS: charge taken") color blue
-		updateResource [# "chargetaken" #]
+//		updateResource [# "chargetaken" #]
 	}
-	Goto waiting
 	
 }
 
 
-
 QActor transporttrolley context ctx_coldstorageservice {
+	
+	[#	val landmarkConf = utils.MapUtils.loadMapConfiguration("servicearea")
+		var lastPos: Pair<Int, Int> = Pair(0,0)
+		val HomeToIndoorCoord = landmarkConf.getCoordinateClosestToFor("I", Pair(0,0))
+		val IndoorToPortCoord = landmarkConf.getCoordinateClosestToFor("P", HomeToIndoorCoord)
+		val PortToHomeCoord = landmarkConf.getCoordinateClosestToFor("H", IndoorToPortCoord)
+	#]
 	
 	State s0 initial {
 		println("TT: started") color green
 		request basicrobot -m engage : engage(transporttrolley, 330)
 	}
-	Goto waiting
+	Transition t0	whenReply engagedone	->	setRobot
+					whenReply engagerefused	->	engageFailed
+					
+	State engageFailed {
+		//TODO: dobbiamo mettere un protocollo di rifiuto in caso di problemi di engage
+	}
 	
+	State chargeFailed {
+		//TODO: dobbiamo mettere un protocollo di rifiuto in caso di problemi di movimento
+	}
+	
+	State setRobot {
+		forward basicrobot -m setrobotstate : setpos(0,0,d)
+	}
+	Goto waiting
+		
 	State waiting {
 		
 	}
-	Transition t0 whenMsg deposit -> doDeposit
+	Transition t0 whenMsg	deposit	->	moveToIndoorFromHome
 				  
-	State doDeposit {
-		delay 6000
-		forward basicrobot -m setrobotstate : setpos(0,0,d)
-		println("TT: charge taken, moving robot") color green	
-		request basicrobot -m moverobot : moverobot(3,3)
+	State moveToIndoorFromHome {
+		println("TT: moving robot to indoor") color green
+		[#	val X = HomeToIndoorCoord.first
+			val Y = HomeToIndoorCoord.second
+		#]
+		request basicrobot -m moverobot : moverobot($X,$Y)
+	}
+	Transition t0	whenReply moverobotdone		->	chargeTaken
+					whenReply moverobotfailed	->	chargeFailed
+	
+	State chargeTaken {
 		forward coldstorageservice -m chargetakentt : chargetakentt
 	}
-	Goto waiting
+	Goto toPort
+	
+	State toPort {
+		println("TT: charge taken, moving robot to port") color green
+		[#	val X = IndoorToPortCoord.first
+			val Y = IndoorToPortCoord.second
+		#]
+		request basicrobot -m moverobot : moverobot($X,$Y)
+	}
+	Transition t0	whenReply moverobotdone		->	chargeTaken
+					whenReply moverobotfailed	->	chargeFailed
+					
+	State depositInColdRoom {
+		delay 1500
+		println("TT: charge deposited, returning home") color green
+		
+	}
+	Goto returnHome
+	
+	State returnHome {
+		[#	val X = PortToHomeCoord.first
+			val Y = PortToHomeCoord.second
+		#]
+		request basicrobot -m moverobot : moverobot($X,$Y)
+	}
+	Goto waitInterrupt
+	
+	//stato in cui gestire una nuova deposit mentre torna home
+	//se non arriva una nuova deposit va in waiting
+	State waitInterrupt {
+		
+	}
 	
 	
 }
