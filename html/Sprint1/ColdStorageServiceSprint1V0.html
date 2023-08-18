@@ -182,7 +182,7 @@
     </p>
 
 
-    <h4>TransportTrolley e DDRRobot</h4>
+    <h4 id="tt_analisi_requisiti">TransportTrolley e DDRRobot</h4>
     <p>      
         Il <i>TT</i> &egrave; una entit&agrave; astratta che aggiunge funzionalit&agrave; di pi&ugrave; alto livello ad un DDR robot (come riportato dai requisiti). Queste funzionalit&agrave; sono:
         <ul>
@@ -263,7 +263,7 @@
         Uno dei principali problemi riguarda appunto la rappresentazione dell'area di servizio, che influisce sull'interazione con il robot e su come esso si muove all'interno della stanza.
     </p>
 
-    <h5>Service area</h5>
+    <h5 id="servicearea_analisi_problema">Service area</h5>
 
     <p>
         A seguito di questa analisi approfondita sull'area di servizio, possiamo aggiungere un nuovo dato, oltre a quelli presenti nella <a href="#dati_analisi_requisiti" target="_blank">tabella dei dati</a> sopra riportata.
@@ -366,22 +366,40 @@
 
     <h4>TransportTrolley & DDR Robot</h4>
 
-    <b>DA METTERE A POSTO</b> <br>
-    <br>
-    L'analisi di questa problematica si rimanda a sprint successivi, abbiamo per&ograve; individuato una serie di componenti che saranno necessari:
-    <ul>
-        <li><b>transport trolley</b> come astrazione di DDR robot;</li>
-        <li><b>mapper</b> per creare la rappresentazione della service area;</li>
-        <li><b>planner</b> per decidere il percorso (ottimale o meno) per raggiungere un punto nella rappresentazione della service area;</li>
-        <li><b>controller</b> che invia istruzioni di movimento comprensibili dal DDR robot;</li>
-        <li>DDR robot concreto, fornito dal committente.</li>
-    </ul>
+    <p>
+        Il <b>DDR Robot</b> è il punto finale della catena di core-business, l'entità che esegue le azioni di deposito. Possiamo quindi pensarlo come il vero "robot", che potrebbe essere reale o virtuale. <br> 
+        D'altra parte, il <b>Transport Trolley</b> è un concetto più astratto, che racchiude la logica e controlla il Robot DDR.
+    </p>
+    <p>
+        All'interno del <i>ColdStorageService</i> opererà quindi l'entità <i>TransportTrolley</i>, occupandosi di tutte le funzionalità descritte in fase di <a href="#tt_analisi_requisiti">analisi dei requisiti</a>. Questa entità astratta dovrà comunicare con il "vero" robot per implementare il movimento e le azioni da compiere. <br>
+        Entra quindi in gioco l'attore QAK BasicRobot, fornito dal committente all'interno del progetto <code class="prettyprint">unibo.basicroboot23</code>. In questo modo, otteniamo anche un <b>ambiente virtuale</b> per simulare il comportamento del <i>DDR Robot</i> (WEnv/VirtualRobot).
+    </p>
 
-    Queste funzionalit&agrave; sono implementate dal software fornito dal cliente <code class="prettyprint">basicrobot</code>: esso permette di muovere un robot generico (DDR robot, robot virtuale) seguendo percorsi preparati (non necessariamente ottimali) per spostarsi nella service area.<br>
+    <b>AGGIUNGERE QUALCOSA QUI SU TT E DDR</b>
 
     <h5>Basic robot</h5>
+    <p>
+        L'attore QAK BasicRobot, contestualmente alla core-business di questo <i>Sprint</i>, si occuperà di implementare il movimento tra i vari <i>landmarks</i> della <a href="#servicearea_analisi_problema">Service Area</a>. <br>
+    Tra le entità da noi definite, il <i>TransportTrolley</i> è l'unico a comunicare con il suddetto attore: necessiterà di due messaggi:
+    <ul>
+        <li><b>engage(OWNER, STEPTIME)</b>: in fase di inizializzazione, specificando al basicrobot chi lo sta usando (per ottenere l'accesso esclusivo) e qual è lo <i>STEPTIME</i></li>
+        <li><b>moverobot(TARGETX, TARGETY)</b>: per realizzare il movimento all'interno della <i>Service Area</i>.</li>
+    </ul>
+    </p>
+    <p>
+        <b>Nota</b>  Essendo che il <i>BasicRobot</i> necessità di coordinate per muoversi, il <i>TransportTrolley</i> deve conoscerle obbligatoriamente. In particolare, deve avere a disposizione il mapping <i>landmarks</i>-<i>coordinate</i>.
+    </p>
 
     <h3>Interazioni</h3>
+
+    <h5>Diagrammi di sequenza</h5>
+    <p>
+        Per far partire il servizio è necessario che venga generata la mappa all'interno del quale agisce il <i>TT</i>; deve poi essere caricata all'interno del <i>CSS</i> che sarà quindi l'unica entità a conoscere il mapping tra i landmarks e le coordinate effettive necessarire all'attore <code class="prettyprint">basicrobot</code> per muoversi. <br>
+        Questa configurazione implica che, allo startup, il <i>CSS</i> comunichi al <i>TT</i> le coordinate dei vari landmarks, così che quest'ultimo possa inviarle a sua volta al DDR robot. <br>
+        <br>
+        Introduciamo quind un nuovo messaggio
+    </p>   
+    Al momento, <i>ColdStorageService</i> e <i>TransportTrolley</i> 
 
     Inserire tabella interazioni presente in Sprint0v0 (togliendo la parte col raspberry). <br>
     Rifare i diagrammi di sequenza.
