@@ -79,7 +79,6 @@
             Il <b>ticket</b> è quindi l'elemento che il servizio <i>ColdStorageService</i> dovrà inizialmente fornire all'utilizzatore, per poi controllarne la validità in fase di inserimento.
         </p>
         <p class="nota">
-            <b>Nota</b> <br> 
             Parlando con il committente si è scoperto non essere necessario che il <i>"numero"</i> del ticket sia propriamente un numero: intendiamolo quindi come un <b>codice</b>.
         </p>
     </p>
@@ -162,23 +161,42 @@
 
         <h4>Associazione ticket-richiesta</h4>
         <p>
-            Ad ogni richiesta di deposito accettata deve essere associato un ticket univoco. Questa corrispondenza deve essere memorizzata<br>
+            Quando il <i>CSS</i> emette il ticket deve aver associato la richiesta di deposito così che, quando l'utente inserisce il codice, sia possibile risalire alla richiesta e alla quantità di kg <b>FW</b> da depositare. <br>
         </p>
     </p>
 
     <h3>ServiceAccessGUI</h3>
     <p>
-        Quando il <i>CSS</i> emette il ticket deve aver associato la richiesta di deposito così che, quando l'utente inserisce il codice, sia possibile risalire alla richiesta e alla quantità di kg <b>FW</b> da depositare. <br>
+        Questo componente sarà un applicazione web realizzata tramite il framework <b>SpringBoot</b>, già presentato all'interno dello <a href="../Sprint1/ColdStorageServiceSprint1V0.html">Sprint1</a> per la realizzazione della <i>ServiceAccessGUISim</i>. Quest'ultima sarà il punto di partenza per la realizzazione dell'applicazione definitiva.
     </p>
 
     <h4>Visualizzazione della presa in carico</h4>
     <p>
-        La <i>SAG</i> dovrà notificare l'utente della presa in carico del proprio deposito. <br>
-        Per farlo abbiamo pensato a diverse strade:
-        <ul>
-            <li>il <i>CSS</i> memorizza l'indirizzo della <i>SAG</i> da cui è stata generata una certa richiesta ed invia il messaggio <b>charge taken</b> al suddetto indirizzo</li>
-            <li>il <i>CSS</i> emette l'evento di presa in carico specificando il numero della richiesta a cui è associato. Questo implica che questo numero (che potrebbe essere il codice del ticket) debba essere reso disponibile anche alla <i>SAG</i> per raccogliere la risposta. IN questo caso avrebbe senso che sia il codice del ticket essendo che questa situazione ènecessaria solo in caso di richiesta accettata</li>
-        </ul>
+        La <i>SAG</i> dovrà notificare l'utente della presa in carico del proprio deposito. Abbiamo quindi bisogna di separare le risposte in base agli utenti (o meglio alle istanze di applicazioni <i>SAG</i> aperte).<br>
+        Per farlo abbiamo pensato a due strade:
+        <ol>
+            <li>il <i>CSS</i> memorizza l'indirizzo della <i>SAG</i> da cui è stata generata una certa richiesta ed invia il messaggio <b>charge taken</b> al suddetto indirizzo.</li>
+            <li>il <i>CSS</i> emette l'evento di presa in carico specificando l'<b>identificativo</b> della richiesta a cui è associato. Questo implica che l'identificativo (che potrebbe essere il codice del ticket) debba essere reso disponibile anche alla <i>SAG</i> per raccogliere la risposta. <br> 
+                In questo caso avrebbe senso che sia il codice del ticket essendo che questa situazione è necessaria solo in caso di richiesta accettata.</li>
+        </ol>
+
+        <p>
+            Abbiamo scelto la seconda soluzione per i seguenti motivi:
+            <ul>
+                <li>il <i>CSS</i> non si deve preoccupare di mantenere l'indirizzo di rete della <i>SAG</i>, ma solamente un codice identificativo (coerente con la separazione delle responsabilità)</li>
+                <li>il codice identificativo, oltre a poter essere potenzialmente più breve, viene inviato dalla <i>SAG</i> all'interno della richiesta di deposito</li>
+            </ul>
+            
+            A questa soluzione aggiungiamo però un'accortezza. <br>
+            Al fine di separare correttamente i compiti di ciascun componente dell'applicazione e seguire il principio di <i>singola responsabilità</i>, non useremo il <b>codice del ticket</b> come identificativo della richiesta di deposito, ma ne creeremo uno ad hoc.
+        </p>
+        <p>
+            Insomma, ci sarà un codice che identificherà un certa istanza dell'applicazione <i>ServiceAccessGUI</i> (e di conseguenza una certa richiesta di deposito). <br>
+            Quest'ultimo concetto implica che all'interno di una certa istanza dell'applicazione possa essere effettuata una sola richiesta per volta: ad ogni nuova interazione la pagina verrà ricaricata, generando un nuovo identificativo.
+        </p>
+        <p class="nota">
+            Con il termine <b>istanza</b> dell'applicazione si intende una pagina web; possono esserci quindi più istanze contemporanee all'interno dello stesso dispositivo.
+        </p>
     </p>
 </div>
 
