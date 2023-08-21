@@ -204,7 +204,20 @@
 <h2>Test plans</h2> 
 
 <div class="remark">
-    
+    <p>
+        Per quanto riguarda i piani di test da implementare, rimanendo ad un <b>livello logico</b>, bisogna effettuare i seguenti controlli:
+        <ul>
+            <li>ogni istanza deve gestire la visualizzazione in base agli aggiornamenti relativi solo ed esclusivamene alla sua sessione. In particolare:
+                <ul>
+                    <li>ad ogni richiesta di deposito deve arrivare la risposta (accettata, rifiutata o un errore come il timeout)</li>
+                    <li>in caso di richiesta accettata deve essere essere visualizzato il messaggio di presa in carico</li>
+                    <li>la pagina web non deve permettere di effettuare due richieste all'interno della stessa sessione/istanza</li>
+                </ul>
+            </li>
+            <li>se arrivano due richieste di deposito con lo stesso identificativo, la seconda in ordine temporale deve essere rifiutata</li>
+            <li>non devono essere generati dal CSS dei codici di ticket uguali la cui validità temporale possa sovrapporsi</li>
+        </ul>
+    </p>
 </div>
 
 
