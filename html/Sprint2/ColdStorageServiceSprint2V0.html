@@ -30,7 +30,7 @@
 
 <div class="remark">
     <p>
-        All'interno dello <a href="../Sprint1/ColdStorageServiceSprint1V0.html">Sprint1</a> è stato analizzato il <b>core-business</b> dell'applicazione, ovvero le funzionalità offerte dal <i>ColdStorageService</i>, usando la <a href="">ServiceAccessGUISim</a> come prompt per utilizzare i servizi. In questa fase, ci siamo occupati della logica del <i>ColdStorageService</i> usando un contesto semplificativo in cui vi fosse un'interazione per volta. <br>
+        All'interno dello <a href="../Sprint1/ColdStorageServiceSprint1V0.html">Sprint1</a> è stato analizzato il <b>core-business</b> dell'applicazione, ovvero le funzionalità offerte dal <i>ColdStorageService</i>, usando la <a href="../Sprint1/ColdStorageServiceSprint1V0.html">ServiceAccessGUISim</a> come prompt per utilizzare i servizi. In questa fase, ci siamo occupati della logica del <i>ColdStorageService</i> usando un contesto semplificativo in cui vi fosse un'interazione per volta. <br>
         In questo Sprint gestiremo invece la presenza di più utilizzatori simultanei, analizzando quindi il concetto di <b>ticket</b> e costruendo la <b>ServiceAccessGUI</b>.
     </p>
 </div>
@@ -55,6 +55,59 @@
 
 <div class="remark">
 
+    <p>
+        Vengono riportati di seguito i requisiti definiti nello <a href="../Sprint0/ColdStorageServiceSprint0V1.html">Sprint0</a>
+    </p>
+
+    <h3>Ticket</h3>
+    <p>
+        <table>
+            <tr>
+                <th>Termine</th>
+                <th>Descrizione</th>
+            </tr>
+            <tr>
+                <td class="green bold center" id="tickettime">TICKETTIME</td>
+                <td>Quantit&agrave; di secondi che esprime la durata della validit&agrave; di un <a href="#ticket">ticket</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="ticket">Ticket</td>
+                <td>Rappresenta una prenotazione da parte dell'operatore di un camion refrigerato che identifica univocamente una azione di deposito in attesa di <i>charge taken</i>, &egrave; identificato da un <b>numero univoco</b>.</td>
+            </tr>
+        </table>
+        <p>
+            Il <b>ticket</b> è quindi l'elemento che il servizio <i>ColdStorageService</i> dovrà inizialmente fornire all'utilizzatore, per poi controllarne la validità in fase di inserimento.
+        </p>
+        <p class="nota">
+            <b>Nota</b> <br> 
+            Parlando con il committente si è scoperto non essere necessario che il <i>"numero"</i> del ticket sia propriamente un numero: intendiamolo quindi come un <b>codice</b>.
+        </p>
+    </p>
+
+    <h3>ServiceAccessGUI</h3>
+    <p>
+        <table>
+            <tr>
+                <th>Termine</th>
+                <th>Descrizione</th>
+            </tr>
+            <tr>
+                <td class="green bold center" id="serviceaccessgui">ServiceAccessGUI</td>
+                <td>Interfaccia grafica che permette a un utente di: 
+                    <ul>
+                        <li>visualizzare il peso corrente del materiale immagazzinato nella <a href="#coldroom">Cold Room</a>;</li>
+                        <li>inviare la richiesta di deposito di una <b>FoodLoad</b> <a href="#fw">FW</a> kg di prodotti alimentari, comunicando un <a href="#ticket">ticket</a> in caso di richiesta accettata;</li>
+                        <li>immettere il codice del ticket quando il <a href="#camionrefrigerato">camion refrigerato</a> si trova alla porta <a href="#INDOOR">INDOOR</a>, all'esterno della service area;</li>
+                        <li>visualizzare il messaggio di <a href="#chargetaken">charge taken</a>.</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+        <p>
+            La <i>ServiceAccessGUI</i> è quindi l'applicazione che verrà messa a disposizione dell'utente per accedere ai servizi forniti dal <i>ColdStorageService</i>. <br>
+            L'applicazione deve mostrare visualizzazioni separate per ogni utente (operiamo in un contesto distribuito). Quindi, un'utente dovrà visualizzare l'accettazione (o rifiuto) della richiesta e l'eventuale presa in carico solo relativamente alla sua richiesta di deposito. 
+        </p>
+    </p>
 </div>
 
 
