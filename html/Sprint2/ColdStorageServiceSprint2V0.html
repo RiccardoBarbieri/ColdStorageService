@@ -114,7 +114,72 @@
 <h2>Problem analysis</h2>
 
 <div class="remark">
+    <h3>Ticket</h3>
+    <p>
+        Dall'analisi dei requisiti vediamo che, oltre al <b>codice</b>, un'altro elemento costituente dell'entità <b>ticket</b> è il <b>TICKETTIME</b>. <br>
+        Dobbiamo pensare quindi come gestire la scadenza del ticket. <br>
 
+        <h4>Validità temporale del ticket</h4>
+        <p>
+            Trattiamo il tempo di validità del ticket come un parametro configurabile alla definizione del <i>ColdStorageService</i>; quindi ogni ticket all'interno della stessa istanza del servizio avrà la stessa durata temporale di validità. <br>
+            Sappiamo poi che è il <i>ColdStorageService</i> a controllare la conformità del ticket (correttezza del codice e validità temporale). <br>
+            Decidiamo quindi di utilizzare la <b>data di emissione</b> come attributo del ticket, così che il <i>CSS</i> possa controllarne la validità calcolando il tempo attuale meno quello di emissione e vedere se è maggiore o meno del <b>TICKETTIME</b>.
+        </p>
+
+        <h4>Codice univoco</h4>
+        <p>
+            Per quanto riguarda il <b>codice</b> abbiamo bisogno che sia univoco, così da non avere collisioni tra diverse richieste di deposito. <br>
+            Dobbiamo quindi pensare a:
+            <ul>
+                <li>che tipo di codice deve essere</li>
+                <li>come generarlo e garantire che non collida con altri</li>
+                <li>come memorizzarlo ed effettuare il controllo di validità in fase di inserimento dalla <i>SAG</i></li>
+            </ul>
+
+            <h5>Codice alfanumerico</h5>
+            <p>
+                Il fatto di usaro un numero vero e proprio come codice sarebbe un limite molto forte, in quanto lo spazio di valori non sarebbe così ampio da garantire sicurezza (a meno di non usare un numero di cifre molto elevato). <br>
+                Abbiamo optato per l'utilizzo di un <b>codice alfanumerico</b> di <b>16 caratteri</b>, in modo da ottenere un buon trade-off tra costi di computazione e possibilità di collisione: abbiamo infatti uno spazio di valori possibili di  ... <b>FINIRE CON UN TRAFILETTO SULLO SPAZIO DI VALORI POSSIBILI</b>.
+            </p>
+
+            <h5>Generazione</h5>
+            <p>
+                La generazione del codice deve avere i requisiti di univocità e di imprevedibilità. Nonostante non si stiano trattando dati sensibili è bene che per utente malevolo sia computazionalmente impossibile prevedere quale sia il prossimo codice che verrà generato; se così non fosse, l'utente potrebbe calcolare il codice ed immetterlo nella <i>SAG</i> prima che l'utente originale arrivi alla <i>INDOOR</i>, depositando al posto suo. <br>
+                Conseguentemente a questi requisiti, dovremo usare uno <b>Pseudo Random Number Generator</b> crittograficamente sicuro (la sua implementazione sarà meglio trattata in fase di progettazione).
+            </p>
+
+            <h5>Memorizzazione e controllo</h5>
+            <p>
+                Per questioni di sicurezza il <b>ticket</b> deve essere memorizzato in modo tale da non poter essere scoperto o dedotto dall'esterno. Per ottenere questo risultato possiamo usare una funzione <b>hash</b>: in questo modo memorizzeremo solamente l'impronta generata dalla suddetta funzione, risparmiando molto in termini di memoria occupata. <br>
+                Per effettuare il controllo, al momento dell'inserimento del codice il <i>CSS</i> ricalcolerà l'impronta tramite la stessa funzione hash per vedere se trova corrispondenza. <br>
+
+                <p class="nota"> 
+                    <b>Funzione hash</b> <br>
+                    Anche qui necessitiamo di una funzione crittograficamente sicura, che sia efficiente, che non permetta il calcolo a ritroso e che soprattutto sia resistente alle collisioni (l'implementazione verrà discussa in fase di progettazione).
+                </p>
+            </p>
+        </p>
+
+        <h4>Associazione ticket-richiesta</h4>
+        <p>
+            Ad ogni richiesta di deposito accettata deve essere associato un ticket univoco. Questa corrispondenza deve essere memorizzata<br>
+        </p>
+    </p>
+
+    <h3>ServiceAccessGUI</h3>
+    <p>
+        Quando il <i>CSS</i> emette il ticket deve aver associato la richiesta di deposito così che, quando l'utente inserisce il codice, sia possibile risalire alla richiesta e alla quantità di kg <b>FW</b> da depositare. <br>
+    </p>
+
+    <h4>Visualizzazione della presa in carico</h4>
+    <p>
+        La <i>SAG</i> dovrà notificare l'utente della presa in carico del proprio deposito. <br>
+        Per farlo abbiamo pensato a diverse strade:
+        <ul>
+            <li>il <i>CSS</i> memorizza l'indirizzo della <i>SAG</i> da cui è stata generata una certa richiesta ed invia il messaggio <b>charge taken</b> al suddetto indirizzo</li>
+            <li>il <i>CSS</i> emette l'evento di presa in carico specificando il numero della richiesta a cui è associato. Questo implica che questo numero (che potrebbe essere il codice del ticket) debba essere reso disponibile anche alla <i>SAG</i> per raccogliere la risposta. IN questo caso avrebbe senso che sia il codice del ticket essendo che questa situazione ènecessaria solo in caso di richiesta accettata</li>
+        </ul>
+    </p>
 </div>
 
 
