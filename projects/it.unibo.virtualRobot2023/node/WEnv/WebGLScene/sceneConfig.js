@@ -6,7 +6,7 @@ const config = {
         //position: { x: 0.5, y: 0.5 },		//CENTER
         position: { x: 0.10, y: 0.18 },		//INIT
         //position: { x: 0.8, y: 0.85 },		//END
-        speed: 0.2
+        speed: 0.1,
     },
     sonars: [
 
@@ -34,7 +34,6 @@ const config = {
          } */
     ],
    staticObstacles: [
- 
 
         {
             name: "coldroom",
