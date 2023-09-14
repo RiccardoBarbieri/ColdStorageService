@@ -1,6 +1,6 @@
 const config = {
     floor: {
-        size: { x: 31, y: 24                   }
+        size: { x: 33, y: 24                   }
     },
     player: {
         //position: { x: 0.5, y: 0.5 },		//CENTER
@@ -37,8 +37,8 @@ const config = {
 
         {
             name: "coldroom",
-            centerPosition: { x: 0.65, y: 0.60},
-            size: { x: 0.16, y: 0.14      }
+            centerPosition: { x: 0.68, y: 0.54},
+            size: { x: 0.27, y: 0.24      }
 		},
   /*
         {
