@@ -23,7 +23,7 @@ class Basicrobot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name,
 		  var StartTime     = 0L     
 		  var Duration      = 0L   
 		  var RobotType     = "" 
-		  var CurrentMove   = "unkknown"
+		  var CurrentMove   = "unknown"
 		  var StepSynchRes  = false
 		  var OwnerMngr     = supports.OwnerManager //Kotlin object
 		  var AnswerKo      = ""

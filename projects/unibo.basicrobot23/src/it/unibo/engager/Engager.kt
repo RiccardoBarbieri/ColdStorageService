@@ -19,7 +19,7 @@ class Engager ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		     
-		  //var Owner           = "unkknown"
+		  //var Owner           = "unknown"
 		  var EngageCaller    = ""
 		  var EngageDone      = false
 		  var curConn : Interaction? = null 

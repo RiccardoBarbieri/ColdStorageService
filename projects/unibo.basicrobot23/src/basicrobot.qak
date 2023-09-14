@@ -57,7 +57,7 @@ Context ctxbasicrobot ip [host="localhost" port=8020]
  */ 
 QActor engager context ctxbasicrobot{
 [#     
-  //var Owner           = "unkknown"
+  //var Owner           = "unknown"
   var EngageCaller    = ""
   var EngageDone      = false
   var curConn : Interaction? = null 
@@ -150,7 +150,7 @@ QActor basicrobot context ctxbasicrobot{
   var StartTime     = 0L     
   var Duration      = 0L   
   var RobotType     = "" 
-  var CurrentMove   = "unkknown"
+  var CurrentMove   = "unknown"
   var StepSynchRes  = false
   var OwnerMngr     = supports.OwnerManager //Kotlin object
   var AnswerKo      = ""
@@ -475,7 +475,6 @@ QActor planexec context ctxbasicrobot{
    	
 QActor robotpos context ctxbasicrobot{
 	[# val planner = unibo.planner23.Planner23Util()
-	    //val MapName = "mapEmpty23"
 	    val MapName = "servicearea"
 	    val MyName    = name //upcase var
 		var OwnerMngr = supports.OwnerManager //Kotlin object
