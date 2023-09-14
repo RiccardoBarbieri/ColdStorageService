@@ -78,13 +78,13 @@ function showResponse(response) {
     const responseBody = document.getElementById('responseBody');
     responseBody.style.display = "block";
     const responseText = document.getElementById('responseText');
-    if (response == "accepted") {
+    if (response === "accepted") {
         responseText.innerHTML = "The request has been accepted! <br>Please wait for the service to take care of it."
         setTimeout(() => {
             checkChargeTaken();
         }, 15000); // timeout di 15 secondi
     }
-    else if (response == "rejected") {
+    else if (response === "rejected") {
         responseText.innerHTML = "The request has been rejected! <br>The page will be restored shortly."
         countdownFail(reloadTime);
         setTimeout(() => {
