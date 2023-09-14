@@ -6,10 +6,22 @@
  * User Manual available at https://docs.gradle.org/8.1/userguide/building_java_projects.html
  */
 
+import org.jetbrains.kotlin.konan.properties.loadProperties
+import java.util.Properties
+
+val versions: Properties = loadProperties("gradle.properties")
+
+
 plugins {
+
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
+    kotlin("jvm") version "1.6.0"
+    id("application")
+
 }
+
+version = "2.0"
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -27,15 +39,15 @@ dependencies {
     implementation("com.google.guava:guava:31.1-jre")
 
     //kotlin runtime
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions["kotlinVersion"]}")
 }
 
 //create a task that depends in "jar" task and copies the generated file into ../unibolibs
 task<Copy>("toUnibolibs") {
     group = "build"
     dependsOn("jar")
-    from("$buildDir/libs")
-    rename("lib.jar", "landmarks.jar")
+    from("$buildDir/libs/lib-$version.jar")
+    rename("lib-$version.jar", "landmarks.jar")
     into("../../unibolibs")
 }
 
@@ -44,4 +56,8 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(11))
     }
+}
+
+application {
+    mainClass.set("MainKt")
 }
