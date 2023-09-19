@@ -59,6 +59,9 @@
     </p>
 
     <h3>Entit&agrave;</h3>
+    <p>
+        
+    </p>
     <table>
         <tr>
             <th>Entit&agrave;</th>
@@ -85,6 +88,7 @@
     <h3 id="dati_analisi_requisiti">Dati</h3>
     <p>
         Di seguito, sono elencati tutti i dati presenti nei requisiti, con annessa una breve descrizione.
+    </p>
         <table>
             <tr>
                 <th>Dato</th>
@@ -117,9 +121,11 @@
                 <td>Stato attuale del transport trolley, di tipo <code class="prettyprint">TTState</code></td>
             </tr>
         </table>
-    </p>
 
     <h3>Messaggi</h3>
+    <p>
+        
+    </p>
 
     <table>
         <tr>
@@ -140,14 +146,14 @@
             <td class="orange bold center">coldstorageservice</td>
             <td class="orange bold center">serviceaccessguisim</td>
             <td class="blue bold center">Reply</td>
-            <td>storeaccept()</td>
+            <td>loadaccept()</td>
             <td>La richiesta di deposito &egrave; stata accettata.</td>
         </tr>
         <tr>
             <td class="orange bold center">coldstorageservice</td>
             <td class="orange bold center">serviceaccessguisim</td>
             <td class="blue bold center">Reply</td>
-            <td>storereject()</td>
+            <td>loadreject()</td>
             <td>La richiesta &egrave; stata rifiutata.</td>
         </tr>
         <tr>
@@ -163,6 +169,20 @@
             <td class="blue bold center">Dispatch</td>
             <td>chargetakentt()</td>
             <td>Il carico &egrave; stato prelevato dal transport trolley.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">transporttrolley</td>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="blue bold center">Dispatch</td>
+            <td>chargedeposited()</td>
+            <td>Il carico &egrave; stato depositato nella ColdRoom.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="orange bold center">transporttrolley</td>
+            <td class="blue bold center">Dispatch</td>
+            <td>deposit()</td>
+            <td>Il CSS comunica al TransportTrolley che deve recarsi a INDOOR, prendere il carico e portare alla ColdRoom</td>
         </tr>
     </table>
 
@@ -361,7 +381,7 @@
     </p>
     
     <p>
-        <b>SPIEGARE IL FATTO CHE CI CONCENTRIAMO SOLO SULLA BUSINESS LOGIC E, PER SEMPLIFICARE, AVVIENE UNA RICHIESTA PER VOLTA. IL DISCRIMINANTE FRA LE RICHIESTE VERRA' DEFINITO NEI PROSSIMI SPRINTI CON IL CONCETTO DI TICKET</b>
+        In questo sprint verr&agrave; implementato un simulatore si ServiceAccessGUI che non gestir&agrave; l'inserimento del ticket, questa funzionalit&agrave; verr&agrave; analizzata nel prossimo sprint, tuttavia verr&agrave; implementata una versione del ColdStorageService in grado di gestire richieste di deposito concorrenti.
     </p>
 
     <h4>TransportTrolley & DDR Robot</h4>
@@ -375,14 +395,13 @@
         Entra quindi in gioco l'attore QAK BasicRobot, fornito dal committente all'interno del progetto <code class="prettyprint">unibo.basicroboot23</code>. In questo modo, otteniamo anche un <b>ambiente virtuale</b> per simulare il comportamento del <i>DDR Robot</i> (WEnv/VirtualRobot).
     </p>
 
-    <b>AGGIUNGERE QUALCOSA QUI SU TT E DDR</b>
-
     <h5>Basic robot</h5>
     <p>
         L'attore QAK BasicRobot, contestualmente alla core-business di questo <i>Sprint</i>, si occuperà di implementare il movimento tra i vari <i>landmarks</i> della <a href="#servicearea_analisi_problema">Service Area</a>. <br>
-    Tra le entità da noi definite, il <i>TransportTrolley</i> è l'unico a comunicare con il suddetto attore: necessiterà di due messaggi:
+    Tra le entità da noi definite, il <i>TransportTrolley</i> è l'unico a comunicare con il suddetto attore: necessiterà di tre messaggi per attuare gli spostamenti:
     <ul>
         <li><b>engage(OWNER, STEPTIME)</b>: in fase di inizializzazione, specificando al basicrobot chi lo sta usando (per ottenere l'accesso esclusivo) e qual è lo <i>STEPTIME</i></li>
+        <li><b>setrobotstate(X,Y,D)</b>: al successo dell'engage il transportrolley invia questo messaggio al basicrobot per comunicare la posizione e direzione attuali del virtualrobot: il basicrobot manterr&agrave; internamento lo stato del robot basandosi su questa inizializzazione</li>
         <li><b>moverobot(TARGETX, TARGETY)</b>: per realizzare il movimento all'interno della <i>Service Area</i>.</li>
     </ul>
     </p>
@@ -393,22 +412,13 @@
     <h3>Interazioni</h3>
 
     <h5>Diagrammi di sequenza</h5>
-    <p>
-        Per far partire il servizio è necessario che venga generata la mappa all'interno del quale agisce il <i>TT</i>; deve poi essere caricata all'interno del <i>CSS</i> che sarà quindi l'unica entità a conoscere il mapping tra i landmarks e le coordinate effettive necessarire all'attore <code class="prettyprint">basicrobot</code> per muoversi. <br>
-        Questa configurazione implica che, allo startup, il <i>CSS</i> comunichi al <i>TT</i> le coordinate dei vari landmarks, così che quest'ultimo possa inviarle a sua volta al DDR robot. <br>
-        <br>
-        Introduciamo quind un nuovo messaggio
     </p>   
-    Al momento, <i>ColdStorageService</i> e <i>TransportTrolley</i> 
 
     Inserire tabella interazioni presente in Sprint0v0 (togliendo la parte col raspberry). <br>
     Rifare i diagrammi di sequenza.
 
     <h3>Architettura logica</h3>
     Trafiletto su contesti e attori prima dell'immagine dell'architettura.
-    <p>
-        <b>ARCHITETTURA LOGICA CON CONTESTO DIVISO PER CSS E TT</b>
-    </p>
 </div>
 
 
@@ -489,15 +499,55 @@
                     <li>se passa troppo tempo, il messaggio viene dato per perso, avvisando l'utente e ricaricando la pagina</li>
                     <li>arriva il messaggio di presa in carico, che viene mostrato in pagina, per poi ricaricarla</li>
                 </ul>
-            </li>
                 </p>
+            </li>
             <li>richiesta <b>rifiutata</b>: l'utente viene avvisato del rifiuto e la pagina web si ricarica, permettendo una nuova interazione.</li>
             <li><b>errore</b> in fase di richiesta: se la richiesta non va a buon fine o passa troppo tempo, l'utente viene notificato e la pagina web si ricarica, permettendo una nuova interazione.</li>
         </ul>
     </p>
     
     <h3>ColdStorageService</h3>
-    <p>        <b>Parliamo di come abbiamo implementato il CSS (in pratica il file .qak)</b>
+
+    <p>
+        Si riporta di seguito l'architettura logica del ColdStorageService.
+    </p>
+
+    <img class="imglim imgborder" src="../images/sprint1/coldstorageservice23arch.png"></img>
+
+    <p>
+        Gli attori <b>coldstorageservice</b> e <b>transporttrolley</b> in questa versione risiedono nello stesso contesto.
+    </p>
+
+    <h5>coldstorageservice</h5>
+
+    <p>
+        <b>coldstorageservice</b> &egrave; incaricato di comunicare con la ServiceAccessGUISim: gestisce la richiesta di deposito accettandola se la ColdRoom pu&ograve; contenere il carico richiesto, rifiutandola altrimenti.
+
+        A questo scopo si utilizzano le variabili e constanti:
+        <ul>
+            <li><code class="docutils literal notranslate"><span class="pre">val maxColdRoom: Float</span></code>: mantiene il peso massimo che la ColdRoom pu&ograve; contenere</li> 
+            <li><code class="docutils literal notranslate"><span class="pre">var currentColdRoom: Float</span></code>: memorizza il peso corrente contenuto nella ColdRoom</li> 
+        </ul>
+
+        Se la richiesta viene accettata il <b>coldstorageservice</b> invia il messaggio <b>deposit</b> al <b>transporttrolley</b> e si mette in attesa di altre richieste; quando e se riceve un messaggio <b>chargetakentt</b> dal transporttrolley utilizza il comando <code class="docutils literal notranslate"><span class="pre">updateResource</span></code> per notificare gli observer, e quindi la ServiceAccessGUISim, che il carico &egrave; stato prelevato.
+    </p>
+
+    <h5>transporttrolley</h5>
+
+    <p>
+        Il <b>transporttrolley</b> &egrave; incaricato di comunicare al basicrobot dove dovr&agrave; spostare il VirtualRobot.
+    </p>
+
+    <p>
+        All'inizializzazione viene ingaggiato il basicrobot tramite <b>engage</b>, viene poi usato <b>setrobotstate</b> per impostare la posizione iniziale a (0,0) direzione d.
+    </p>
+
+    <p>
+        Quando riceve un messaggio <b>deposit</b> l'attore comunica al basicrobot di spostarsi a INDOOR tramite il messaggio <b>moverobot</b>, successivamente comunica a coldstorageservice che il carico &egrave; stato prelevato con il messaggio <b>chargetakentt</b>, muove poi il basicrobot in ColdRoom, comunincando infine l'avvenuto deposito con il messaggio <b>chargedeposited</b>.
+    </p>
+
+    <p>
+        Durante uno qualsiasi degli stati che l'attore assume durante lo spostamento &egrave; in grado di gestire un messaggio <b>deposit</b> tramite interrupt, aggiungendolo a una coda per gestirlo quando possibile.
     </p>
 
     <p>
