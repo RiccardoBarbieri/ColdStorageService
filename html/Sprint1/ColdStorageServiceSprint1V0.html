@@ -395,13 +395,13 @@
         Entra quindi in gioco l'attore QAK BasicRobot, fornito dal committente all'interno del progetto <code class="prettyprint">unibo.basicroboot23</code>. In questo modo, otteniamo anche un <b>ambiente virtuale</b> per simulare il comportamento del <i>DDR Robot</i> (WEnv/VirtualRobot).
     </p>
 
-    <h5>Basic robot</h5>
+    <h5 id="basicRobot_analisi">Basic robot</h5>
     <p>
         L'attore QAK BasicRobot, contestualmente alla core-business di questo <i>Sprint</i>, si occuperà di implementare il movimento tra i vari <i>landmarks</i> della <a href="#servicearea_analisi_problema">Service Area</a>. <br>
     Tra le entità da noi definite, il <i>TransportTrolley</i> è l'unico a comunicare con il suddetto attore: necessiterà di tre messaggi per attuare gli spostamenti:
     <ul>
         <li><b>engage(OWNER, STEPTIME)</b>: in fase di inizializzazione, specificando al basicrobot chi lo sta usando (per ottenere l'accesso esclusivo) e qual è lo <i>STEPTIME</i></li>
-        <li><b>setrobotstate(X,Y,D)</b>: al successo dell'engage il transportrolley invia questo messaggio al basicrobot per comunicare la posizione e direzione attuali del virtualrobot: il basicrobot manterr&agrave; internamento lo stato del robot basandosi su questa inizializzazione</li>
+        <li><b>setpos(X,Y,D)</b>: al successo dell'engage il transportrolley invia questo messaggio al basicrobot per comunicare la posizione e direzione attuali del virtualrobot: il basicrobot manterr&agrave; internamento lo stato del robot basandosi su questa inizializzazione</li>
         <li><b>moverobot(TARGETX, TARGETY)</b>: per realizzare il movimento all'interno della <i>Service Area</i>.</li>
     </ul>
     </p>
@@ -411,11 +411,98 @@
 
     <h3>Interazioni</h3>
 
-    <h5>Diagrammi di sequenza</h5>
-    </p>   
+    <p>
+        Di seguito, vengono riportare le interazioni presenti tra le componenti d'interesse, che realizzano il core-business dell'applicazione.
+    </p>
+    <table>
+        <tr>
+            <th>Mittente</th>
+            <th>Destinatario</th>
+            <th>Tipologia messaggio</th>
+            <th>Formato</th>
+            <th>Significato</th>
+        </tr>
+        <tr>
+            <td class="orange bold center">ServiceAccessGUI</td>
+            <td class="orange bold center">ColdStorageService</td>
+            <td class="blue bold center">Request</td>
+            <td>loadrequest(FW)</td>
+            <td>Richiesta di <b>storage</b> di <b>FW</b> chili di cibo</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">ColdStorageService</td>
+            <td class="orange bold center">ServiceAccessGUI</td>
+            <td class="blue bold center">Reply</td>
+            <td>loadaccepted</td>
+            <td>La richiesta &egrave; stata processata ed accettata</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">ColdStorageService</td>
+            <td class="orange bold center">ServiceAccessGUI</td>
+            <td class="blue bold center">Reply</td>
+            <td>loadrejected</td>
+            <td>La richiesta &egrave; stata processata e respinta</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">ColdStorageService</td>
+            <td class="orange bold center"> - </td>
+            <td class="blue bold center">Event</td>
+            <td>chargetaken</td>
+            <td>Il carico &egrave; stato prelevato dal transport trolley, il camion pu&ograve; spostarsi da INDOOR</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">ColdStorageService</td>
+            <td class="orange bold center">TransportTrolley</td>
+            <td class="blue bold center">Dispatch</td>
+            <td>deposit(FW)</td>
+            <td>E' presente alla INDOOR un nuovo carico da prelevare</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">TransportTrolley</td>
+            <td class="orange bold center">ColdStorageService</td>
+            <td class="blue bold center">Dispatch</td>
+            <td>chargetakentt()</td>
+            <td>Il carico presente alla INDOOR &egrave; stato prelevato dal transport trolley</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">TransportTrolley</td>
+            <td class="orange bold center">ColdStorageService</td>
+            <td class="blue bold center">Dispatch</td>
+            <td>chargedeposited(FW)</td>
+            <td>Il carico preso dal transport trolley è stato depositato nella ColdRoom</td>
+        </tr>
+    </table>
 
-    Inserire tabella interazioni presente in Sprint0v0 (togliendo la parte col raspberry). <br>
-    Rifare i diagrammi di sequenza.
+    <p>
+        A queste, vengono aggiunte le interazioni presenti tra <b>TransportTrolley</b> e <b>DDR Robot</b> per realizzare il movimento vero e proprio (descritte nella sezione <a href="#basicRobot_analisi">Basic robot</a>).
+    </p>
+
+    <h5>Diagrammi di sequenza</h5>
+    <p>
+        Le frecce sono colorate in base al tipo di messaggio:
+        <ul>
+            <li><span class="bold" style="color:rgb(231, 48, 48);">request/reply</span></li>
+            <li><span class="bold" style="color:rgb(48, 79, 231);">dispatch</span></li>
+            <li><span class="bold" style="color:rgb(48, 231, 109);">event</span></li>
+        </ul>
+    </p>
+    <p>
+        Si riporta lo schema di funzionamento del core-business, supponendo che il carico venga accettato (in caso contrario il flusso si ferma). <br>
+        Sono presenti anche i messaggi per i 3 movimenti che dovrà compiare il robot: 
+        <ol>
+            <li>raggiungere la <b>INDOOR</b></li>
+            <li>raggiungere la <b>ColdRoom</b></li>
+            <li>ritornare in posizione <b>HOME</b></li>
+        </ol>
+    </p>
+    <img class="bigimglim" src="../images/sprint1/diag_sequenza.png" alt="Diagramma di sequenza core-business">
+
+    <p>
+        Di seguito, è presente invece la fase di inizializzazione tra <i>TransportTrolley</i> e <i>DDR Robot</i>.
+    </p>
+    <img class="bigimglim" src="../images/sprint1/diag_sequenza_TT_DDR.png" alt="Diagramma di sequenza TT - DDR">
+
+</p>   
 
     <h3>Architettura logica</h3>
     Trafiletto su contesti e attori prima dell'immagine dell'architettura.
