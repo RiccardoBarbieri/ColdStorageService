@@ -126,7 +126,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 												
 												val X = AnywhereToIndoorCoord.first
 												val Y = AnywhereToIndoorCoord.second
-								request("moverobot", "moverobot(X,Y)" ,"basicrobot" )  
+								request("moverobot", "moverobot($X,$Y)" ,"basicrobot" )  
 						}
 						CommUtils.outgreen("TT: new request, returning to indoor")
 						//genTimer( actor, state )
