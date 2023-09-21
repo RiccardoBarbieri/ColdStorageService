@@ -504,8 +504,6 @@
 
 </p>   
 
-    <h3>Architettura logica</h3>
-    Trafiletto su contesti e attori prima dell'immagine dell'architettura.
 </div>
 
 
@@ -638,6 +636,26 @@
     </p>
 
     <p>
+        All'arrivo di una richiesta, il transporttrolley indica al basicrobot di spostarsi in INDOOR, prelevare il carico e spostarsi in PORT per depositare il carico. Un volta raggiunto questo stato, viene valutata la presenza di richieste in coda: se ce ne sono il transporttrolley indica al basicrobot di tornare in INDOOR, altrimenti in HOME.
+    </p>
+
+    <p>
+        Durante il ritorno in HOME il transporttrolley &egrave; in grado di ricevere nuove richieste deposit, in tal caso comunica al basicrobot di fermarsi e dirigersi in INDOOR, reiniziando il ciclo sopra descritto.
+    </p>
+
+    <h6>Coordinate</h6>
+
+    <p>
+        Il transporttrolley deve conoscere le coordinate dei landmark (PORT, INDOOR, HOME) per guidare il basicrobot, a questo scopo &egrave; stata creata una apposita classe, <code class="docutils literal notranslate"><span class="pre">unibo.landmarks.LandmarkCoordinates</span></code> che mette a disposizione metodi per <i>caricare e gestire</i> la configurazione dei landmark generata dal <b>MapConfigurator</b>.
+    </p>
+
+    <p>
+        Si riporta di seguito il diagramma UML della classe <code class="docutils literal notranslate"><span class="pre">LandmarkCoordinates</span></code>.
+        <img class="imglim img-border" src="../images/sprint1/landmarksUML.png" alt="LandmarkCoordinates UML"><br>
+        Si denota in particolare il metodo <code class="docutils literal notranslate"><span class="pre">getCoordinateClosestToFor(String, Pair&lt;Int, Int&gt;)</span></code> che permette di ottenere la coordinata pi&ugrave; vicina a una coordinata specificata per un certo landmark, specificato da una stringa che ne indica il nome; questo al transporttrolley di comunicare al robot di spostarsi sempre alla coordinata pi&ugrave; vicina per il landmark di destinazione, essendo alcuni landmark costituiti da pi&ugrave; punti diversi.
+    </p>
+
+    <p>
         <b>CI SONO DEI RAGIONAMENTI DA FARE:
             <ul>
                 <li>come memorizziamo lo spazio disponibile? C'è una terza entità che lo fa?</li>
@@ -730,7 +748,11 @@ CMD ["bash", "./unibo.mapConfigurator"]</code></pre>
     </p>
 
     <p>
-        Tutte le immagini relative a questo progetto saranno rese disponibili online a questo profilo <a about="_blank" href="https://hub.docker.com/u/riccardoob">Docker Hub</a>
+        Tutte le immagini docker relative a questo progetto saranno rese disponibili online a questo profilo <a about="_blank" href="https://hub.docker.com/u/riccardoob">Docker Hub</a>
+    </p>
+
+    <p>
+        Contestualmente al prossimo sprint verranno realizzate le apposite task Gradle per generare le immagini Docker per tutti i servizi coinvolti, cos&igrave; come la configurazione di un volume docker sfruttato dai container per file condivisi.
     </p>
 
     <h5>Controllo</h5>

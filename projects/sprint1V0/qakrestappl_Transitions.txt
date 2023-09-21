@@ -1,0 +1,2 @@
+{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"waiting", "nextstate":"moveToIndoorFromHome", "msgId":"deposit"}
+{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"checkQueueOrReturn", "nextstate":"stopAndRestart", "msgId":"deposit"}
