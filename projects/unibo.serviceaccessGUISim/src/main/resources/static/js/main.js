@@ -1,6 +1,7 @@
 // Definisci la variabile globale
 window.chargeTaken = false;
 window.reloadTime = 7000;
+window.failTime = 15000;
 
 function sendRequest(quantityFw) {
     const saveButton = document.querySelector("#save");
@@ -82,18 +83,18 @@ function showResponse(response) {
         responseText.innerHTML = "The request has been accepted! <br>Please wait for the service to take care of it."
         setTimeout(() => {
             checkChargeTaken();
-        }, 15000); // timeout di 15 secondi
+        }, window.failTime); // timeout di 15 secondi
     }
     else if (response === "rejected") {
         responseText.innerHTML = "The request has been rejected! <br>The page will be restored shortly."
-        countdownFail(reloadTime);
+        countdownFail(window.reloadTime);
         setTimeout(() => {
             location.reload();
         }, reloadTime);
     }
     else {
         responseText.innerHTML = "Error during processing the deposit! <br>The page will be restored shortly."
-        countdownFail(reloadTime)
+        countdownFail(window.reloadTime)
         setTimeout(() => {
             location.reload();
         }, reloadTime);
@@ -107,7 +108,7 @@ function validateInput() {
 
     if (isNaN(inputValue) || inputValue <= 0) {
         // Display an error message
-        showError('Please enter a positive integer value greater than 0.');
+        showError('Please enter a positive integer value!');
     }
     else {
         sendRequest(inputValue);

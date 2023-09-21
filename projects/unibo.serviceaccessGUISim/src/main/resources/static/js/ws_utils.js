@@ -28,6 +28,11 @@ function connect() {
                 }, window.reloadTime);
             }, 3000);
         }
+        else if (`${event.data}`.includes("stomp")) {
+            setTimeout(() => {
+                location.reload();
+            }, 5000);
+        }
 
     };
 }//connect

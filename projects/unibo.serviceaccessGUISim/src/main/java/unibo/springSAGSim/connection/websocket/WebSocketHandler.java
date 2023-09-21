@@ -1,4 +1,5 @@
 package unibo.springSAGSim.connection.websocket;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -10,10 +11,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@Component
 public class WebSocketHandler extends AbstractWebSocketHandler  { //implements WebSocketHandler interface
     private final List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
 
     private static final String className        = "WebSocketHandler";
+
+    public void invalidateSessions() {
+        Iterator<WebSocketSession> iter = sessions.iterator();
+        while( iter.hasNext() ){
+            WebSocketSession session = iter.next();
+            try{
+                session.close();
+            }catch( Exception e ){
+                CommUtils.outred(className + " | invalidateAndReloadSession ERROR:"+e.getMessage());
+            }
+        }
+    }
+
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
