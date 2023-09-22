@@ -104,9 +104,9 @@ function showResponse(response) {
 
 function validateInput() {
     const inputElement = document.getElementById('quantity');
-    const inputValue = parseInt(inputElement.value);
+    const inputValue = parseFloat(inputElement.value);
 
-    if (isNaN(inputValue) || inputValue <= 0) {
+    if (isNaN(inputValue) || inputValue <= 0.0) {
         // Display an error message
         showError('Please enter a positive integer value!');
     }
