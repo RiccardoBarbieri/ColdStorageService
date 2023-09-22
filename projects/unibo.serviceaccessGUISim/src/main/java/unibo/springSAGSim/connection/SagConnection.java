@@ -25,7 +25,7 @@ public class SagConnection extends ConnectionUtils{
         return connectActorUsingCoap(actorCtxHost, actorCtxPort, actorCtx, actorName);
     }
 
-    public String sendStorageRequest(Interaction conn, int fw){
+    public String sendStorageRequest(Interaction conn, float fw){
         String answer = "";
         try {
             String msg = ""+ CommUtils.buildRequest("ServiceAccessGUISim",

@@ -39,7 +39,7 @@ public class SagController {
 
     @PostMapping(value = "/sendStorageRequest", consumes = "application/json")
     public ResponseEntity sendStorageRequest(@RequestBody FWRequest fwrequest){
-        if (fwrequest == null || fwrequest.getFw() == null || fwrequest.getFw() <= 0) {
+        if (fwrequest == null || fwrequest.getFw() == null || fwrequest.getFw() < 0) {
             HttpHeaders headers = new HttpHeaders();
             return new ResponseEntity(className + " sendStorageRequest | ERROR: input error", headers, HttpStatus.BAD_REQUEST);
         }

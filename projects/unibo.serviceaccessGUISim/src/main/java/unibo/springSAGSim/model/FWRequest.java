@@ -2,13 +2,13 @@ package unibo.springSAGSim.model;
 
 public class FWRequest {
 
-    private Integer fw;
+    private Float fw;
 
-    public Integer getFw() {
+    public Float getFw() {
         return fw;
     }
 
-    public void setFw(Integer fw) {
+    public void setFw(Float fw) {
         this.fw = fw;
     }
 
