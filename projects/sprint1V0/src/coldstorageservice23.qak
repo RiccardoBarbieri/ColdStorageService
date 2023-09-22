@@ -212,7 +212,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 				val X = AnywhereToIndoorCoord.first
 				val Y = AnywhereToIndoorCoord.second
 			#]
-			request basicrobot -m moverobot : moverobot(X,Y)
+			request basicrobot -m moverobot : moverobot($X,$Y)
 		}
 		println("TT: new request, returning to indoor") color green
 	}
