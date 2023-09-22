@@ -122,10 +122,7 @@
             </tr>
         </table>
 
-    <h3>Messaggi</h3>
-    <p>
-        
-    </p>
+    <h3 id="messaggi">Messaggi</h3>
 
     <table>
         <tr>
@@ -412,71 +409,8 @@
     </p>
 
     <h3>Interazioni</h3>
-
     <p>
-        Di seguito, vengono riportare le interazioni presenti tra le componenti d'interesse, che realizzano il core-business dell'applicazione.
-    </p>
-    <table>
-        <tr>
-            <th>Mittente</th>
-            <th>Destinatario</th>
-            <th>Tipologia messaggio</th>
-            <th>Formato</th>
-            <th>Significato</th>
-        </tr>
-        <tr>
-            <td class="orange bold center">ServiceAccessGUI</td>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="blue bold center">Request</td>
-            <td>loadrequest(FW)</td>
-            <td>Richiesta di <b>storage</b> di <b>FW</b> chili di cibo</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="orange bold center">ServiceAccessGUI</td>
-            <td class="blue bold center">Reply</td>
-            <td>loadaccepted</td>
-            <td>La richiesta &egrave; stata processata ed accettata</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="orange bold center">ServiceAccessGUI</td>
-            <td class="blue bold center">Reply</td>
-            <td>loadrejected</td>
-            <td>La richiesta &egrave; stata processata e respinta</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="orange bold center"> - </td>
-            <td class="blue bold center">Event</td>
-            <td>chargetaken</td>
-            <td>Il carico &egrave; stato prelevato dal transport trolley, il camion pu&ograve; spostarsi da INDOOR</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="orange bold center">TransportTrolley</td>
-            <td class="blue bold center">Dispatch</td>
-            <td>deposit(FW)</td>
-            <td>E' presente alla INDOOR un nuovo carico da prelevare</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">TransportTrolley</td>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="blue bold center">Dispatch</td>
-            <td>chargetakentt()</td>
-            <td>Il carico presente alla INDOOR &egrave; stato prelevato dal transport trolley</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">TransportTrolley</td>
-            <td class="orange bold center">ColdStorageService</td>
-            <td class="blue bold center">Dispatch</td>
-            <td>chargedeposited(FW)</td>
-            <td>Il carico preso dal transport trolley è stato depositato nella ColdRoom</td>
-        </tr>
-    </table>
-
-    <p>
-        A queste, vengono aggiunte le interazioni presenti tra <b>TransportTrolley</b> e <b>DDR Robot</b> per realizzare il movimento vero e proprio (descritte nella sezione <a href="#basicRobot_analisi">Basic robot</a>).
+        Riguardo alle interazioni viste in fase di <a href="#messaggi">analisi dei requisiti</a>, vengono aggiunte le interazioni presenti tra <b>TransportTrolley</b> e <b>DDR Robot</b> per realizzare il movimento vero e proprio (descritte nella sezione <a href="#basicRobot_analisi">Basic robot</a>).
     </p>
 
     <h5>Diagrammi di sequenza</h5>
@@ -498,6 +432,11 @@
         </ol>
     </p>
     <img class="bigimglim" src="../images/sprint1/diag_sequenza.png" alt="Diagramma di sequenza core-business">
+
+    <p>
+        E' possibile che, al momento dell'arrivo di una nuova richiesta, il <i>TransportTrolley</i> stia tornando in posizione <b>HOME</b>. Questo caso viene gestito dal <i>ColdStorageService</i> fermando il robot ed indirizzandolo nuovamente verso la <b>INDOOR</b>. Nel diagramma sottostante vediamo che il flusso riparte da quando il <i>TT</i> comunica al <i>CSS</i> di aver depositato il carico nella <b>ColdRoom</b>.
+    </p>
+    <img class="bigimglim" src="../images/sprint1/diag_sequenza_double_request.png" alt="Diagramma di sequenza con doppia richiesta core-business">
 
     <p>
         Di seguito, è presente invece la fase di inizializzazione tra <i>TransportTrolley</i> e <i>DDR Robot</i>.
@@ -652,20 +591,10 @@
     </p>
 
     <p>
-        Si riporta di seguito il diagramma UML della classe <code class="docutils literal notranslate"><span class="pre">LandmarkCoordinates</span></code>.
+        Si riporta di seguito il diagramma UML della classe <code class="docutils literal notranslate"><span class="pre">LandmarkCoordinates</span></code>. <br>
         <img class="imglim img-border" src="../images/sprint1/landmarksUML.png" alt="LandmarkCoordinates UML"><br>
         Si denota in particolare il metodo <code class="docutils literal notranslate"><span class="pre">getCoordinateClosestToFor(String, Pair&lt;Int, Int&gt;)</span></code> che permette di ottenere la coordinata pi&ugrave; vicina a una coordinata specificata per un certo landmark, specificato da una stringa che ne indica il nome; questo al transporttrolley di comunicare al robot di spostarsi sempre alla coordinata pi&ugrave; vicina per il landmark di destinazione, essendo alcuni landmark costituiti da pi&ugrave; punti diversi.
     </p>
-
-    <p>
-        <b>CI SONO DEI RAGIONAMENTI DA FARE:
-            <ul>
-                <li>come memorizziamo lo spazio disponibile? C'è una terza entità che lo fa?</li>
-                <li>come scegliamo se accettare o meno la risposta</li>
-            </ul>
-        </b>
-    </p>
-
     <h3 id="mapconfigurator_project">MapConfigurator</h3>
 
     <p>
@@ -760,7 +689,7 @@ CMD ["bash", "./unibo.mapConfigurator"]</code></pre>
     <h5>Controllo</h5>
     
     <p>
-        Dato il numero elevato di servizi da gestire verr&agrave; progettata e messa a disposizione del cliente una applicazione dedicata alla gestione dei componenti del servizio, permetter&agrave; di manipolare impostazioni e valori di default delle applicazioni tramite una interfaccia grafica.
+        Dati i vari servizi da gestire verr&agrave; progettata e messa a disposizione del cliente una applicazione dedicata alla gestione dei componenti del servizio, permetter&agrave; di manipolare impostazioni e valori di default delle applicazioni tramite una interfaccia grafica.
     </p>
 
 </div>
