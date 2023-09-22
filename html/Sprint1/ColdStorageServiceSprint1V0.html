@@ -40,9 +40,12 @@
     <p>
     <bc>Goals dello sprint 1</bc>:
     <ol>
-        <li>Definire con precisione i componenti dell'applicazione, limitandosi al contesto di <i>ColdStorageService</i> e <i>TransportTrolley</i></li>
-        <li>Formulare il modello di interazione tra <b>ColdStorageService</b> e <b>TransportTrolley</b></li>
+        <li>Definire con precisione i componenti dell'applicazione, limitandosi al contesto di <i>CSS</i> e <i>TT</i></li>
+        <li>Formulare il modello di <b>interazione</b> tra <b>ColdStorageService</b> e <b>TransportTrolley</b></li>
     </ol>
+    <p>
+        L'interazione tra <i>TT</i> e <i>DDR Robot</i> è implicita per il funzionamento del core-bussìiness e verrà trattata nel corso del documento.
+    </p>
     </p>
 </div>
 
@@ -53,14 +56,14 @@
         Dal documento dei requisiti, relativamente a questo <i>Sprint</i>, consideriamo i seguenti argomenti da trattare:
         <ul>
             <li>Service area</li>
-            <li>DDR robot e TransportTrolley</li>
-            <li>Interazione tra il <i>CSS</i> ed il <i>TT</i></li>
+            <li><i>DDR robot</i> e <i>TransportTrolley</i></li>
+            <li>Interazione tra <i>CSS</i> e <i>TT</i></li>
         </ul>
     </p>
 
     <h3>Entit&agrave;</h3>
     <p>
-        
+        Sono riportate le quattro entità che partecipano alla realizzazione del core-business dell'applicazione.
     </p>
     <table>
         <tr>
@@ -84,7 +87,9 @@
             <td>Entit&agrave; che riceve istruzioni di "medio livello" e le traduce in istruzioni di basso livello per guidare il DDR robot.</td>
         </tr>
     </table>
-
+    <p class="nota">
+        D'ora in poi, all'interno del documento, <b>basicRobot</b> e <b>DDR Robot</b> verranno usati come sinonimi, prediligendo per il secondo.
+    </p>
     <h3 id="dati_analisi_requisiti">Dati</h3>
     <p>
         Di seguito, sono elencati tutti i dati presenti nei requisiti, con annessa una breve descrizione.
@@ -123,7 +128,9 @@
         </table>
 
     <h3 id="messaggi">Messaggi</h3>
-
+    <p>
+        Sono riportati i messaggi che realizzano le interazioni tra le varie entità (esclusi quelli tra <i>TT</i> e <i>BasicRobot</i>, che verranno analizzati in seguito).
+    </p>
     <table>
         <tr>
             <th>Mittente</th>
@@ -194,14 +201,18 @@
     <h4>ServiceAccessGUISim</h4>
 
     <p>
-        Come detto, in questo Sprint concentreremo l'attenzione sui componenti che implementano la core business logic del sistema e, nonostante non ne faccia direttamente parte, avremo necessità di definire la ServiceAccessGUI per <b>testare</b> il funzionamento della logica applicativa. Ecco perchè, come anticipato nello <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V1.html#test_plans">Sprint0</a>, verr&agrave; modellata come un <b>simulatore</b> che invia una <i>storerequest</i> al ColdStorageService. <br>
+        Come detto, in questo Sprint concentreremo l'attenzione sui componenti che implementano la core business logic del sistema e, nonostante non ne faccia direttamente parte, avremo necessità di definire la <i>ServiceAccessGUI</i> per <b>testare</b> il funzionamento della logica applicativa. Ecco perchè, come anticipato nello <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V1.html#test_plans">Sprint0</a>, verr&agrave; modellata come un <b>simulatore</b> che invia una <i>storerequest</i> al <i>ColdStorageService</i>. <br>
         L'analisi approfondita di questo componente sarà considerata negli sprint successivi.
     </p>
 
+    <p class="nota">
+        In questo sprint la <i>ServiceAccessGUISim (SAGSim)</i> non gestir&agrave; l'inserimento del ticket e la differenziazione tra gli utenti che interagiscono, in quanto queste funzionalit&agrave; verranno analizzate nel prossimo sprint. <br> 
+        Tuttavia, verr&agrave; implementata una versione del <i>ColdStorageService</i> in grado di gestire richieste di deposito concorrenti, per i casi in cui avremo più istanze di <i>SAGSim</i> che effettuano richieste di deposito.
+    </p>
 
-    <h4 id="tt_analisi_requisiti">TransportTrolley e DDRRobot</h4>
+    <h4 id="tt_analisi_requisiti">TransportTrolley e DDR Robot</h4>
     <p>      
-        Il <i>TT</i> &egrave; una entit&agrave; astratta che aggiunge funzionalit&agrave; di pi&ugrave; alto livello ad un DDR robot (come riportato dai requisiti). Queste funzionalit&agrave; sono:
+        Il <i>TT</i> &egrave; una entit&agrave; astratta che aggiunge funzionalit&agrave; di pi&ugrave; alto livello ad un <i>DDR robot</i> (come riportato dai requisiti). Queste funzionalit&agrave; sono:
         <ul>
             <li>trasportare un carico di cibo da INDOOR a ColdRoom;</li>
             <li>recarsi in HOME quando non sono presenti richieste;</li>
@@ -209,11 +220,11 @@
             <li>comunicare all'utente <i>Camion refrigerato</i> che &egrave; stato prelevato il carico</li>
         </ul><br>
 
-        Queste funzionalit&agrave; condividono un requisito fondamentale: la possibilit&agrave; di navigare la service area. Sar&agrave; quindi necessario crearne una rappresentazione comprensibile al componente che controller&agrave; il robot concreto. Nei successivi paragrafi verrà affrontato questo aspetto.<br>
+        Queste funzionalit&agrave; condividono un requisito fondamentale: la possibilit&agrave; di <b>navigare</b> la <b>service area</b>. Sar&agrave; quindi necessario crearne una rappresentazione comprensibile al componente che controller&agrave; il robot concreto. Nei successivi paragrafi verrà affrontato questo aspetto.<br>
 
     </p>
     <p>
-        In questa fase dello sviluppo il DDR Robot sar&agrave; rappresentato da un robot virtuale, disponibile alla nostra software house, che offre una visualizzazione di un robot virtuale che naviga una service area (anch'essa virtuale) e gestisce gli stessi comandi di "medio livello" che il DDR Robot &egrave; in grado di gestire.
+        In questa fase dello sviluppo il <i>DDR Robot</i> sar&agrave; rappresentato da un robot virtuale, disponibile alla nostra software house, che offre una visualizzazione di un robot virtuale che naviga una service area (anch'essa virtuale) e gestisce gli stessi comandi di "medio livello" che il <i>DDR Robot</i> &egrave; in grado di gestire.
     </p>
 
 
@@ -224,7 +235,7 @@
     </p>
 
     <p>
-        Dall'ultimo incontro con il committente &egrave; emerso che il DDR Robot impiega un <b>tempo predefinito</b> per prelevare un carico dal camion.
+        Dall'ultimo incontro con il committente &egrave; emerso che il <i>DDR Robot</i> impiega un <b>tempo predefinito</b> per prelevare un carico dal camion.
     </p>
     <h5>Service area</h5>
     <p>
@@ -299,11 +310,11 @@
     </table>
 
     <p>
-        Abbiamo deciso di suddividere la <b>service area</b> in una griglia di quadrati di lato <b>RD</b>: ogni posizione sulla griglia pu&ograve; contenere il DDR robot.
+        Abbiamo deciso di suddividere la <b>service area</b> in una griglia di quadrati di lato <b>RD</b>: ogni posizione sulla griglia pu&ograve; contenere il <i>DDR robot</i>.
     </p>
 
     <p>
-        La rappresentazione della service area diventa quindi come in figura, si noti il sistema di assi cartesiani che pone il punto (0, 0) in corrispondenza della posizione <b>HOME</b>, che corrisponde alla posizione di partenza.
+        La rappresentazione della service area diventa quindi come nella figura sottostante: si noti il sistema di assi cartesiani che pone il punto (0, 0) in corrispondenza della posizione <b>HOME</b>, che corrisponde alla posizione di partenza.
     </p>
 
     <p>
@@ -316,19 +327,20 @@
 
     <p>
     <figure>
-        <figcaption>Modello service area - non rispecchia le dimensione effettive</figcaption>
+        <p class="nota">Modello service area - non rispecchia le dimensione effettive</p>
         <img class="bigimglim" src="../images/sprint1/serviceareagridaxes.png" alt="Modello service area">
     </figure>
     </p>
 
     <p>
-        Per generare una mappa della service area abbiamo sfruttato il software <code class="prettyprint">unibo.mapperQak23</code> che si avvale di <code class="prettyprint">basicrobot</code> per esplorare ottenere la dimensione dell'area e individuare eventuali ostacoli lungo i bordi, generando una rappresentazione della service area.
+        Per generare una mappa della service area abbiamo sfruttato il software <code class="prettyprint">unibo.mapperQak23</code> che si avvale di <code class="prettyprint">basicrobot</code> per ottenere la dimensione dell'area e individuare eventuali ostacoli lungo i bordi, generando una rappresentazione della service area.
     </p>
 
     <h5>Utilizzo del mapper</h5>
 
-    Per utilizzare il mapper per generare la matrice che rappresenta la service area, senza considerare gli ostacoli:
-
+    <p>
+        E' possibile utilizzare il mapper per generare la matrice che rappresenta la service area, senza considerare gli ostacoli, seguendo questi passi:
+    </p>
     <ol>
         <li>
             Avviare WEnv, l'ambiente virtuale che simula il DDR robot:
@@ -345,7 +357,9 @@
         
     </ol>
 
-    Il mapper produce:
+    <p>
+        Il mapper produrrà:
+    </p>
 
     <ol>
         <li>Un <a href="">file testuale</a> contenente una rappresentazione della mappa.<pre>|r, 1, 1, 1, 1, 1, 1,
@@ -363,11 +377,11 @@
     </p>
 
     <p>
-        Questo applicativo generer&agrave; rappresentazioni testuali e un file binario utilizzabile dal planner per creare i percorsi di movimento del transport trolley.
+        Questo applicativo generer&agrave; rappresentazioni testuali e un file binario utilizzabile dal <i>planner</i> per creare i percorsi di movimento del <i>TransportTrolley</i>.
     </p>
 
     <p>
-        Di seguito &egrave; riportato un esempio del contenuto del file di testo che verr&agrave; generato dall'applicativo. Questo file in particolare non sar&agrave; utilizzato da nessun componente del sistema, ma rappresenta la configurazione creata dall'utente.
+        Di seguito, &egrave; riportato un esempio del contenuto del file di testo che verr&agrave; generato dall'applicativo. Questo file in particolare non sar&agrave; utilizzato da nessun componente del sistema, ma rappresenta la configurazione creata dall'utente.
     </p>
 
         <pre>|<span class="bold homecolor">H</span>, 1, 1, 1, 1, 1, 1,
@@ -376,26 +390,23 @@
 |1, 0, 0, 0, <span class="bold stroke portcolor">P</span>, <span class="bold stroke portcolor">P</span>, 1,
 |<span class="bold indoorcolor">I</span>, <span class="bold indoorcolor">I</span>, <span class="bold indoorcolor">I</span>, 1, 1, 1, 1,</pre>
     </p>
-    
-    <p>
-        In questo sprint verr&agrave; implementato un simulatore si ServiceAccessGUI che non gestir&agrave; l'inserimento del ticket, questa funzionalit&agrave; verr&agrave; analizzata nel prossimo sprint, tuttavia verr&agrave; implementata una versione del ColdStorageService in grado di gestire richieste di deposito concorrenti.
-    </p>
 
-    <h4>TransportTrolley & DDR Robot</h4>
+
+    <h4>TransportTrolley e DDR Robot</h4>
 
     <p>
         Il <b>DDR Robot</b> è il punto finale della catena di core-business, l'entità che esegue le azioni di deposito. Possiamo quindi pensarlo come il vero "robot", che potrebbe essere reale o virtuale. <br> 
-        D'altra parte, il <b>Transport Trolley</b> è un concetto più astratto, che racchiude la logica e controlla il Robot DDR.
+        D'altra parte, il <b>Transport Trolley</b> è un concetto più astratto, che racchiude la logica e controlla il <i>DDR</i>.
     </p>
     <p>
         All'interno del <i>ColdStorageService</i> opererà quindi l'entità <i>TransportTrolley</i>, occupandosi di tutte le funzionalità descritte in fase di <a href="#tt_analisi_requisiti">analisi dei requisiti</a>. Questa entità astratta dovrà comunicare con il "vero" robot per implementare il movimento e le azioni da compiere. <br>
-        Entra quindi in gioco l'attore QAK BasicRobot, fornito dal committente all'interno del progetto <code class="prettyprint">unibo.basicroboot23</code>. In questo modo, otteniamo anche un <b>ambiente virtuale</b> per simulare il comportamento del <i>DDR Robot</i> (WEnv/VirtualRobot).
+        Entra quindi in gioco l'attore Qak <b>BasicRobot</b>, fornito dal committente all'interno del progetto <code class="prettyprint">unibo.basicroboot23</code>. In questo modo, otteniamo anche un <b>ambiente virtuale</b> per simulare il comportamento del <i>DDR Robot</i> (WEnv/VirtualRobot).
     </p>
 
     <h5 id="basicRobot_analisi">Basic robot</h5>
     <p>
-        L'attore QAK BasicRobot, contestualmente alla core-business di questo <i>Sprint</i>, si occuperà di implementare il movimento tra i vari <i>landmarks</i> della <a href="#servicearea_analisi_problema">Service Area</a>. <br>
-    Tra le entità da noi definite, il <i>TransportTrolley</i> è l'unico a comunicare con il suddetto attore: necessiterà di tre messaggi per attuare gli spostamenti:
+        L'attore Qak BasicRobot, contestualmente alla core-business di questo <i>Sprint</i>, si occuperà di implementare il movimento tra i vari <i>landmarks</i> della <a href="#servicearea_analisi_problema">Service Area</a>. <br>
+    Tra le entità da noi definite, il <i>TransportTrolley</i> è l'unico a comunicare con il suddetto attore; necessiterà di tre messaggi per attuare gli spostamenti:
     <ul>
         <li><b>engage(OWNER, STEPTIME)</b>: in fase di inizializzazione, specificando al basicrobot chi lo sta usando (per ottenere l'accesso esclusivo) e qual è lo <i>STEPTIME</i></li>
         <li><b>setpos(X,Y,D)</b>: al successo dell'engage il transportrolley invia questo messaggio al basicrobot per comunicare la posizione e direzione attuali del virtualrobot: il basicrobot manterr&agrave; internamento lo stato del robot basandosi su questa inizializzazione</li>
@@ -404,13 +415,13 @@
         <li><b>getrobotstate()</b>: per ottenere la posizine corrente del robot</li>
     </ul>
     </p>
-    <p>
-        <b>Nota</b>  Essendo che il <i>BasicRobot</i> necessità di coordinate per muoversi, il <i>TransportTrolley</i> deve conoscerle obbligatoriamente. In particolare, deve avere a disposizione il mapping <i>landmarks</i>-<i>coordinate</i>.
+    <p class="nota">
+        Essendo che il <i>BasicRobot</i> necessità di coordinate per muoversi, il <i>TransportTrolley</i> deve conoscerle obbligatoriamente. In particolare, deve avere a disposizione il mapping <i>landmarks</i>-<i>coordinate</i>. 
     </p>
 
     <h3>Interazioni</h3>
     <p>
-        Riguardo alle interazioni viste in fase di <a href="#messaggi">analisi dei requisiti</a>, vengono aggiunte le interazioni presenti tra <b>TransportTrolley</b> e <b>DDR Robot</b> per realizzare il movimento vero e proprio (descritte nella sezione <a href="#basicRobot_analisi">Basic robot</a>).
+        Riguardo alle interazioni viste in fase di <a href="#messaggi">analisi dei requisiti</a>, vengono aggiunte le interazioni presenti tra <b>TransportTrolley</b> e <b>DDR Robot</b> per realizzare il movimento vero e proprio (descritte nella sezione <a href="#basicRobot_analisi">Basic robot</a> subito sopra).
     </p>
 
     <h5>Diagrammi di sequenza</h5>
@@ -431,18 +442,15 @@
             <li>ritornare in posizione <b>HOME</b></li>
         </ol>
     </p>
+    <p class="nota">
+        Dopo un'attenta analisi, abbiamo deciso di implementare il messaggil <b>chargetaken</b> come <b>event</b>. In questo modo si toglie l'onere al <i>CSS</i> di memorizzare l'istanza di <i>SAGSim</i> alla quale inviare l'eventuale messaggio di presa in carico.
+    </p>
     <img class="bigimglim" src="../images/sprint1/diag_sequenza.png" alt="Diagramma di sequenza core-business">
 
     <p>
         E' possibile che, al momento dell'arrivo di una nuova richiesta, il <i>TransportTrolley</i> stia tornando in posizione <b>HOME</b>. Questo caso viene gestito dal <i>ColdStorageService</i> fermando il robot ed indirizzandolo nuovamente verso la <b>INDOOR</b>. Nel diagramma sottostante vediamo che il flusso riparte da quando il <i>TT</i> comunica al <i>CSS</i> di aver depositato il carico nella <b>ColdRoom</b>.
     </p>
     <img class="bigimglim" src="../images/sprint1/diag_sequenza_double_request.png" alt="Diagramma di sequenza con doppia richiesta core-business">
-
-    <p>
-        Di seguito, è presente invece la fase di inizializzazione tra <i>TransportTrolley</i> e <i>DDR Robot</i>.
-    </p>
-    <img class="bigimglim" src="../images/sprint1/diag_sequenza_TT_DDR.png" alt="Diagramma di sequenza TT - DDR">
-
 </p>   
 
 </div>
@@ -541,13 +549,13 @@
     <img class="imglim imgborder" src="../images/sprint1/coldstorageservice23arch.png"></img>
 
     <p>
-        Gli attori <b>coldstorageservice</b> e <b>transporttrolley</b> in questa versione risiedono nello stesso contesto.
+        Gli attori <b>coldstorageservice</b> e <b>transporttrolley</b>, in questa versione, risiedono nello stesso contesto.
     </p>
 
-    <h5>coldstorageservice</h5>
+    <h5>Attore coldstorageservice</h5>
 
     <p>
-        <b>coldstorageservice</b> &egrave; incaricato di comunicare con la ServiceAccessGUISim: gestisce la richiesta di deposito accettandola se la ColdRoom pu&ograve; contenere il carico richiesto, rifiutandola altrimenti.
+        L'attore <b>coldstorageservice</b> &egrave; incaricato di comunicare con la <i>ServiceAccessGUISim</i>: gestisce la richiesta di deposito accettandola se la ColdRoom pu&ograve; contenere il carico richiesto, rifiutandola altrimenti.
 
         A questo scopo si utilizzano le variabili e constanti:
         <ul>
@@ -555,21 +563,27 @@
             <li><code class="docutils literal notranslate"><span class="pre">var currentColdRoom: Float</span></code>: memorizza il peso corrente contenuto nella ColdRoom</li> 
         </ul>
 
-        Se la richiesta viene accettata il <b>coldstorageservice</b> invia il messaggio <b>deposit</b> al <b>transporttrolley</b> e si mette in attesa di altre richieste; quando e se riceve un messaggio <b>chargetakentt</b> dal transporttrolley utilizza il comando <code class="docutils literal notranslate"><span class="pre">updateResource</span></code> per notificare gli observer, e quindi la ServiceAccessGUISim, che il carico &egrave; stato prelevato.
+        Se la richiesta viene accettata il <b>coldstorageservice</b> invia il messaggio <b>deposit</b> al <b>transporttrolley</b> e si mette in attesa di altre richieste; quando e se riceve un messaggio <b>chargetakentt</b> dal transporttrolley utilizza il comando <code class="docutils literal notranslate"><span class="pre">updateResource</span></code> per notificare gli observer, e quindi la <i>ServiceAccessGUISim</i>, che il carico &egrave; stato prelevato. Questo è possibile per via del fatto, già detto in precedenza, che gli attori Qak sono risorse <i>CoapObservable</i>.
+        
+        <p class="nota">
+            Il messaggio <b>chargetaken</b>, precedentemente gestito come <b>event</b>, viene ora inviato come contenuto testuale all'interno dell'<b>updateResource</b>.
+        </p>
     </p>
 
-    <h5>transporttrolley</h5>
+    <h5>Attore transporttrolley</h5>
 
     <p>
-        Il <b>transporttrolley</b> &egrave; incaricato di comunicare al basicrobot dove dovr&agrave; spostare il VirtualRobot.
+        Il <b>transporttrolley</b> &egrave; incaricato di comunicare al <i>basicrobot</i> dove dovr&agrave; spostare il VirtualRobot.
     </p>
 
     <p>
-        All'inizializzazione viene ingaggiato il basicrobot tramite <b>engage</b>, viene poi usato <b>setrobotstate</b> per impostare la posizione iniziale a (0,0) direzione d.
+        All'inizializzazione viene ingaggiato il <i>basicrobot</i> tramite <b>engage</b>, viene poi usato <b>setrobotstate</b> per impostare la posizione iniziale a <i>(0,0)</i> direzione <i>d</i>. <br>
+        <img class="imglim" src="../images/sprint1/diag_sequenza_TT_DDR.png" alt="Diagramma di sequenza TT - DDR">
+    
     </p>
 
     <p>
-        Quando riceve un messaggio <b>deposit</b> l'attore comunica al basicrobot di spostarsi a INDOOR tramite il messaggio <b>moverobot</b>, successivamente comunica a coldstorageservice che il carico &egrave; stato prelevato con il messaggio <b>chargetakentt</b>, muove poi il basicrobot in ColdRoom, comunincando infine l'avvenuto deposito con il messaggio <b>chargedeposited</b>.
+        Quando riceve un messaggio <b>deposit</b> l'attore comunica al <i>basicrobot</i> di spostarsi a INDOOR tramite il messaggio <b>moverobot</b>, successivamente comunica a coldstorageservice che il carico &egrave; stato prelevato con il messaggio <b>chargetakentt</b>, muove poi il basicrobot in ColdRoom, comunincando infine l'avvenuto deposito con il messaggio <b>chargedeposited</b>.
     </p>
 
     <p>
@@ -577,23 +591,25 @@
     </p>
 
     <p>
-        All'arrivo di una richiesta, il transporttrolley indica al basicrobot di spostarsi in INDOOR, prelevare il carico e spostarsi in PORT per depositare il carico. Un volta raggiunto questo stato, viene valutata la presenza di richieste in coda: se ce ne sono il transporttrolley indica al basicrobot di tornare in INDOOR, altrimenti in HOME.
+        All'arrivo di una richiesta, il <i>TransportTrolley</i> indica al <i>basicrobot</i> di spostarsi in INDOOR, prelevare il carico e spostarsi in PORT per depositare il carico. Un volta raggiunto questo stato, viene valutata la presenza di richieste in coda: se ce ne sono il <i>TransportTrolley</i> indica al <i>basicrobot</i> di tornare in INDOOR, altrimenti in HOME.
     </p>
 
     <p>
-        Durante il ritorno in HOME il transporttrolley &egrave; in grado di ricevere nuove richieste deposit, in tal caso comunica al basicrobot di fermarsi e dirigersi in INDOOR, reiniziando il ciclo sopra descritto.
+        Durante il ritorno in HOME il <i>TransportTrolley</i> &egrave; in grado di ricevere nuove richieste deposit, in tal caso comunica al <i>basicrobot</i> di fermarsi e dirigersi in INDOOR, reiniziando il ciclo sopra descritto.
     </p>
 
     <h6>Coordinate</h6>
 
     <p>
-        Il transporttrolley deve conoscere le coordinate dei landmark (PORT, INDOOR, HOME) per guidare il basicrobot, a questo scopo &egrave; stata creata una apposita classe, <code class="docutils literal notranslate"><span class="pre">unibo.landmarks.LandmarkCoordinates</span></code> che mette a disposizione metodi per <i>caricare e gestire</i> la configurazione dei landmark generata dal <b>MapConfigurator</b>.
+        Il <i>TransportTrolley</i> deve conoscere le coordinate dei landmark (PORT, INDOOR, HOME) per guidare il <i>basicrobot</i>. <br> 
+        A questo scopo &egrave; stata creata una apposita classe, <code class="docutils literal notranslate"><span class="pre">unibo.landmarks.LandmarkCoordinates</span></code> che mette a disposizione metodi per <i>caricare e gestire</i> la configurazione dei landmark generata dal <b>MapConfigurator</b>.
     </p>
 
     <p>
         Si riporta di seguito il diagramma UML della classe <code class="docutils literal notranslate"><span class="pre">LandmarkCoordinates</span></code>. <br>
         <img class="imglim img-border" src="../images/sprint1/landmarksUML.png" alt="LandmarkCoordinates UML"><br>
-        Si denota in particolare il metodo <code class="docutils literal notranslate"><span class="pre">getCoordinateClosestToFor(String, Pair&lt;Int, Int&gt;)</span></code> che permette di ottenere la coordinata pi&ugrave; vicina a una coordinata specificata per un certo landmark, specificato da una stringa che ne indica il nome; questo al transporttrolley di comunicare al robot di spostarsi sempre alla coordinata pi&ugrave; vicina per il landmark di destinazione, essendo alcuni landmark costituiti da pi&ugrave; punti diversi.
+        Si denota in particolare il metodo <code class="docutils literal notranslate"><span class="pre">getCoordinateClosestToFor(String, Pair&lt;Int, Int&gt;)</span></code> che permette di ottenere la coordinata pi&ugrave; vicina a una coordinata specificata per un certo landmark, specificato da una stringa che ne indica il nome. <br> 
+        Questo permette al <i>TransportTrolley</i> di comunicare al robot di spostarsi sempre alla coordinata pi&ugrave; vicina per il landmark di destinazione, essendo alcuni landmark costituiti da pi&ugrave; punti diversi.
     </p>
     <h3 id="mapconfigurator_project">MapConfigurator</h3>
 
@@ -601,7 +617,7 @@
         MapConfigurator &egrave; una <b>applicazione grafica web</b> che permette a un utente di creare una configurazione per la disposizione dei punti di interesse nella service area.
     </p>
     <p>
-        Come per la <a href="#sagsim_project">ServiceAccessGUI Simulata</a> utilizziamo il framework <b>Spring Boot</b>.
+        Come per la <a href="#sagsim_project">ServiceAccessGUISim</a> utilizziamo il framework <b>Spring Boot</b>.
     </p>
 
     <div class="imgslide">
@@ -628,13 +644,13 @@
     </p>
 
     <p>
-        Questa applicazione &egrave; completa nel rispetto delle funzionalit&agrave; di base che abbiamo considerato necessarie, &egrave; possibile tuttavia che in futuro verr&agrave; estesa con feature di utilit&agrave; aggiuntive.
+        Questa applicazione &egrave; completa nel rispetto delle funzionalit&agrave; di base che abbiamo considerato necessarie; &egrave; possibile, tuttavia, che in futuro venga estesa con feature di utilit&agrave; aggiuntive.
     </p>
     
     <h5>Diagramma delle classi</h5>
 
     <p>
-        Di seguito si riporta il <b>diagramma UML</b> delle classi dell'applicazione.
+        Infine, si riporta il <b>diagramma UML</b> delle classi dell'applicazione.
     </p>
         <img class="bigimglim" src="../images/sprint1/mapConfiguratorUML.png" alt="Diagramma UML">
 
@@ -656,7 +672,7 @@
     <h4>Distribuzione</h4>
 
     <p>
-        Per il deployment di queste applicazioni si &egrave; deciso di utilizzare <a href="https://www.docker.com/">Docker</a>, questo ci permetter&agrave; di <i>uniformare</i> la metodologia di gestione della distribuzione dei vari componenti del servizio.
+        Per il deployment di queste applicazioni si &egrave; deciso di utilizzare <a href="https://www.docker.com/">Docker</a>,in modo da poter <i>uniformare</i> la metodologia di gestione della distribuzione dei vari componenti del servizio.
     </p>
 
     <p>
@@ -664,7 +680,7 @@
     </p>
 
     <p>
-        Si riporta di seguito il Dockerfile usato per generare l'immagine di mapConfigurator.
+        Si riporta di seguito il Dockerfile usato per generare l'immagine di <i>mapConfigurator</i>.
     </p>
 
     <pre><code class="language-docker">FROM openjdk:11
@@ -675,11 +691,11 @@ WORKDIR unibo.mapConfigurator-boot-2.2/bin
 CMD ["bash", "./unibo.mapConfigurator"]</code></pre>
 
     <p>
-        Allo scopo di velocizzare la creazione dei Dockerfile e delle rispettive immagini abbiamo implementato una serie di task Gradle che automatizzano questo compito, &egrave; possibile visualizzare queste task in un qualsiasi file build.gradle.kts (<a about="_blank" href="../../projects/unibo.mapConfigurator/build.gradle.kts">esempio</a>)
+        Allo scopo di velocizzare la creazione dei Dockerfile e delle rispettive immagini abbiamo implementato una serie di task Gradle che automatizzano questo compito, &egrave; possibile visualizzare queste task in un qualsiasi file build.gradle.kts (<a about="_blank" href="../../projects/unibo.mapConfigurator/build.gradle.kts">esempio</a>).
     </p>
 
     <p>
-        Tutte le immagini docker relative a questo progetto saranno rese disponibili online a questo profilo <a about="_blank" href="https://hub.docker.com/u/riccardoob">Docker Hub</a>
+        Tutte le immagini docker relative a questo progetto saranno rese disponibili online a questo profilo <a about="_blank" href="https://hub.docker.com/u/riccardoob">Docker Hub</a>.
     </p>
 
     <p>
@@ -689,7 +705,7 @@ CMD ["bash", "./unibo.mapConfigurator"]</code></pre>
     <h5>Controllo</h5>
     
     <p>
-        Dati i vari servizi da gestire verr&agrave; progettata e messa a disposizione del cliente una applicazione dedicata alla gestione dei componenti del servizio, permetter&agrave; di manipolare impostazioni e valori di default delle applicazioni tramite una interfaccia grafica.
+        Dati i vari servizi da gestire verr&agrave; progettata e messa a disposizione del cliente una applicazione dedicata alla gestione dei componenti del servizio, permettendo di manipolare impostazioni e valori di default delle applicazioni tramite un'interfaccia grafica.
     </p>
 
 </div>
