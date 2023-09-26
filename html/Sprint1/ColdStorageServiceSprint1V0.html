@@ -44,7 +44,7 @@
         <li>Formulare il modello di <b>interazione</b> tra <b>ColdStorageService</b> e <b>TransportTrolley</b></li>
     </ol>
     <p>
-        L'interazione tra <i>TT</i> e <i>DDR Robot</i> è implicita per il funzionamento del core-bussìiness e verrà trattata nel corso del documento.
+        L'interazione tra <i>TT</i> e <i>DDR Robot</i> è implicita per il funzionamento del core-business e verrà trattata nel corso del documento.
     </p>
     </p>
 </div>
@@ -129,7 +129,7 @@
 
     <h3 id="messaggi">Messaggi</h3>
     <p>
-        Sono riportati i messaggi che realizzano le interazioni tra le varie entità (esclusi quelli tra <i>TT</i> e <i>BasicRobot</i>, che verranno analizzati in seguito).
+        Sono riportati i messaggi che realizzano le interazioni tra le varie entità (esclusi quelli tra <i>TT</i> e <i>basicRobot</i>, che verranno analizzati in seguito).
     </p>
     <table>
         <tr>
@@ -400,28 +400,40 @@
     </p>
     <p>
         All'interno del <i>ColdStorageService</i> opererà quindi l'entità <i>TransportTrolley</i>, occupandosi di tutte le funzionalità descritte in fase di <a href="#tt_analisi_requisiti">analisi dei requisiti</a>. Questa entità astratta dovrà comunicare con il "vero" robot per implementare il movimento e le azioni da compiere. <br>
-        Entra quindi in gioco l'attore Qak <b>BasicRobot</b>, fornito dal committente all'interno del progetto <code class="prettyprint">unibo.basicroboot23</code>. In questo modo, otteniamo anche un <b>ambiente virtuale</b> per simulare il comportamento del <i>DDR Robot</i> (WEnv/VirtualRobot).
+        Entra quindi in gioco l'attore Qak <b>basicRobot</b>, fornito dal committente all'interno del progetto <code class="prettyprint">unibo.basicroboot23</code>. In questo modo, otteniamo anche un <b>ambiente virtuale</b> per simulare il comportamento del <i>DDR Robot</i> (WEnv/VirtualRobot).
     </p>
 
+    <h5>TrolleyExecutor</h5>
+    <p>
+        A livello pratico, fino ad ora, abbiamo il <i>TransportTrolley</i> che deve comunicare con il <i>basicRobot</i>, ovvero l'attore Qak fornito dal committente. Si implica quindi una stretta correlazione tra il <i>TT</i> e la specifica interfaccia d'uso del robot, che sia virtuale o fisico. <br>
+        Abbiamo dunque pensato di introdurre l'attore <b>TrolleyExecutor</b>, il cui compito è quello di implementare lo spostamento comunicando con il <i>basicRobot</i>. Questo permette di astrarre il <i>TransportTrolley</i> dallo specifico protocollo usato dal <i>basicRobot</i>.
+    </p>
+    <p>
+        L'utilizzo di questo nuovo attore, ci permette anche una corretta separazione delle responsabilità. Infatti, il <i>TransportTrolley</i> dovrà occuparsi di gestire le richieste (con l'eventuale coda) e definire la logica di movimento, senza preoccuparsi di come questa viene implementata.
+    </p>
+    
     <h5 id="basicRobot_analisi">Basic robot</h5>
     <p>
-        L'attore Qak BasicRobot, contestualmente alla core-business di questo <i>Sprint</i>, si occuperà di implementare il movimento tra i vari <i>landmarks</i> della <a href="#servicearea_analisi_problema">Service Area</a>. <br>
-    Tra le entità da noi definite, il <i>TransportTrolley</i> è l'unico a comunicare con il suddetto attore; necessiterà di tre messaggi per attuare gli spostamenti:
+        L'attore Qak <i>basicRobot</i>, contestualmente alla core-business di questo <i>Sprint</i>, si occuperà di implementare il movimento tra i vari <i>landmarks</i> della <a href="#servicearea_analisi_problema">Service Area</a>. <br>
+    Tra le entità da noi definite, il <i>TrolleyExecutor</i> è l'unico a comunicare con il suddetto attore e necessiterà di tre messaggi per attuare gli spostamenti:
     <ul>
         <li><b>engage(OWNER, STEPTIME)</b>: in fase di inizializzazione, specificando al basicrobot chi lo sta usando (per ottenere l'accesso esclusivo) e qual è lo <i>STEPTIME</i></li>
-        <li><b>setpos(X,Y,D)</b>: al successo dell'engage il transportrolley invia questo messaggio al basicrobot per comunicare la posizione e direzione attuali del virtualrobot: il basicrobot manterr&agrave; internamento lo stato del robot basandosi su questa inizializzazione</li>
+        <li><b>setpos(X,Y,D)</b>: al successo dell'engage il transporttrolley invia questo messaggio al basicrobot per comunicare la posizione e direzione attuali del virtualrobot: il basicrobot manterr&agrave; internamento lo stato del robot basandosi su questa inizializzazione</li>
         <li><b>moverobot(TARGETX, TARGETY)</b>: per realizzare il movimento all'interno della <i>Service Area</i>.</li>
         <li><b>alarm()</b>: per interrompere il movimento del basicrobot.</li>
         <li><b>getrobotstate()</b>: per ottenere la posizine corrente del robot</li>
     </ul>
     </p>
+    <p>
+        Nella nostra astrazione tra <i>TransportTrolley</i>, <i>TrolleyExecutor</i> e <i>basicRobot</i> manteniamo la semantica <b>request-reply</b> per gli spostamenti, in quanto è necessario essere a conoscenza del successo o fallimento del movimento.
+    </p>
     <p class="nota">
-        Essendo che il <i>BasicRobot</i> necessità di coordinate per muoversi, il <i>TransportTrolley</i> deve conoscerle obbligatoriamente. In particolare, deve avere a disposizione il mapping <i>landmarks</i>-<i>coordinate</i>. 
+        Essendo che il <i>basicRobot</i> necessità di coordinate per muoversi, il <i>TransportTrolley</i> deve conoscerle obbligatoriamente. In particolare, deve avere a disposizione il mapping <i>landmarks</i>-<i>coordinate</i>, in modo da poter comunicare al <i>TrolleyExecutor</i> lo spostamento che dovrà implementare. 
     </p>
 
     <h3>Interazioni</h3>
     <p>
-        Riguardo alle interazioni viste in fase di <a href="#messaggi">analisi dei requisiti</a>, vengono aggiunte le interazioni presenti tra <b>TransportTrolley</b> e <b>DDR Robot</b> per realizzare il movimento vero e proprio (descritte nella sezione <a href="#basicRobot_analisi">Basic robot</a> subito sopra).
+        Riguardo alle interazioni viste in fase di <a href="#messaggi">analisi dei requisiti</a>, vengono aggiunte le interazioni presenti tra <b>TrolleyExecutor</b> e <b>DDR Robot</b> per realizzare il movimento vero e proprio (descritte nella sezione <a href="#basicRobot_analisi">Basic robot</a> subito sopra).
     </p>
 
     <h5>Diagrammi di sequenza</h5>
@@ -451,6 +463,9 @@
         E' possibile che, al momento dell'arrivo di una nuova richiesta, il <i>TransportTrolley</i> stia tornando in posizione <b>HOME</b>. Questo caso viene gestito dal <i>ColdStorageService</i> fermando il robot ed indirizzandolo nuovamente verso la <b>INDOOR</b>. Nel diagramma sottostante vediamo che il flusso riparte da quando il <i>TT</i> comunica al <i>CSS</i> di aver depositato il carico nella <b>ColdRoom</b>.
     </p>
     <img class="bigimglim" src="../images/sprint1/diag_sequenza_double_request.png" alt="Diagramma di sequenza con doppia richiesta core-business">
+    <p>
+        Vediamo che è il <i>TrolleyExecutor</i> ad occuparsi di controllare se il robot è in movimento (sta tornando in HOME), eventualmente fermandolo e implementando il nuovo spostamento comunicato dal <i>TT</i>.
+    </p>
 </p>   
 
 </div>
@@ -549,7 +564,7 @@
     <img class="imglim imgborder" src="../images/sprint1/coldstorageservice23arch.png"></img>
 
     <p>
-        Gli attori <b>coldstorageservice</b> e <b>transporttrolley</b>, in questa versione, risiedono nello stesso contesto.
+        Gli attori <b>coldstorageservice</b>, <b>transporttrolley</b> e <b>trolleyexecutor</b>, in questa versione, risiedono nello stesso contesto.
     </p>
 
     <h5>Attore coldstorageservice</h5>
@@ -573,43 +588,45 @@
     <h5>Attore transporttrolley</h5>
 
     <p>
-        Il <b>transporttrolley</b> &egrave; incaricato di comunicare al <i>basicrobot</i> dove dovr&agrave; spostare il VirtualRobot.
+        Il <b>transporttrolley</b> &egrave; incaricato di comunicare al <i>trolleyexecutor</i> dove dovr&agrave; spostare il robot.
+    </p>
+    <p>
+        Quando riceve un messaggio <b>deposit</b> l'attore comunica al <i>trolleyexecutor</i> di spostarsi a INDOOR tramite il messaggio <b>move(x, y)</b> (possibile in quanto il <i>TT</i> ha il mapping landmark-coordinate); successivamente comunica a coldstorageservice che il carico &egrave; stato prelevato con il messaggio <b>chargetakentt</b> per poi indicare al <i>trolleyexecutor</i> di implementare lo spostamento fino alla ColdRoom, comunicando infine l'avvenuto deposito con il messaggio <b>chargedeposited</b>.
     </p>
 
     <p>
-        All'inizializzazione viene ingaggiato il <i>basicrobot</i> tramite <b>engage</b>, viene poi usato <b>setrobotstate</b> per impostare la posizione iniziale a <i>(0,0)</i> direzione <i>d</i>. <br>
-        <img class="imglim" src="../images/sprint1/diag_sequenza_TT_DDR.png" alt="Diagramma di sequenza TT - DDR">
+        Durante uno qualsiasi degli stati che l'attore assume durante lo spostamento &egrave; in grado di gestire un messaggio <b>deposit</b> tramite interrupt, aggiungendolo a una coda per gestirlo quando possibile, ovvero dopo aver depositato il carico nella ColdRoom. In caso sia presenta una richiesta, viene realizzato il movimento verso INDOOR, altrimenti verso HOME.
+    </p>
+    <p>
+        Durante il ritorno in HOME, <i>transporttrolley</i> &egrave; in grado di ricevere nuove richieste di deposito: in tal caso comunica al <i>trolleyexecutor</i> di fermarsi e dirigersi in INDOOR, reiniziando il ciclo sopra descritto.
+    </p>
+
+    <h5>Attore trolleyexecutor</h5>
+
+    <p>
+        L'attore <i>trolleyexecutor</i> si occupa della comunicazione con l'attore <i>basicrobot</i>, implementando solamente degli spostamenti dalla posizione attuale alle coordinate <i>(x,y)</i> fornite da <i>transporttrolley</i>. <br>
+        In caso il robot si trovi in stato di movimento, quando arriva il messaggio <b>move</b> da parte del <i>transporttrolley</i>, il robot viene fermato e redirezionato verso le nuove coordinate.
+    </p>
+    <p>
+        All'inizializzazione viene ingaggiato il <i>basicrobot</i> tramite <b>engage</b>, usando poi <b>setrobotstate</b> per impostare posizione iniziale a <i>(0,0)</i> e direzione <i>d</i>. <br>
     
     </p>
-
-    <p>
-        Quando riceve un messaggio <b>deposit</b> l'attore comunica al <i>basicrobot</i> di spostarsi a INDOOR tramite il messaggio <b>moverobot</b>, successivamente comunica a coldstorageservice che il carico &egrave; stato prelevato con il messaggio <b>chargetakentt</b>, muove poi il basicrobot in ColdRoom, comunincando infine l'avvenuto deposito con il messaggio <b>chargedeposited</b>.
-    </p>
-
-    <p>
-        Durante uno qualsiasi degli stati che l'attore assume durante lo spostamento &egrave; in grado di gestire un messaggio <b>deposit</b> tramite interrupt, aggiungendolo a una coda per gestirlo quando possibile.
-    </p>
-
-    <p>
-        All'arrivo di una richiesta, il <i>TransportTrolley</i> indica al <i>basicrobot</i> di spostarsi in INDOOR, prelevare il carico e spostarsi in PORT per depositare il carico. Un volta raggiunto questo stato, viene valutata la presenza di richieste in coda: se ce ne sono il <i>TransportTrolley</i> indica al <i>basicrobot</i> di tornare in INDOOR, altrimenti in HOME.
-    </p>
-
-    <p>
-        Durante il ritorno in HOME il <i>TransportTrolley</i> &egrave; in grado di ricevere nuove richieste deposit, in tal caso comunica al <i>basicrobot</i> di fermarsi e dirigersi in INDOOR, reiniziando il ciclo sopra descritto.
-    </p>
+    <img class="imglim" src="../images/sprint1/diag_sequenza_TT_DDR.png" alt="Diagramma di sequenza TT - DDR">
 
     <h6>Coordinate</h6>
 
     <p>
-        Il <i>TransportTrolley</i> deve conoscere le coordinate dei landmark (PORT, INDOOR, HOME) per guidare il <i>basicrobot</i>. <br> 
+        L'attore <i>transporttrolley</i> deve conoscere le coordinate dei landmark (PORT, INDOOR, HOME) per guidare il <i>basicrobot</i>. <br> 
         A questo scopo &egrave; stata creata una apposita classe, <code class="docutils literal notranslate"><span class="pre">unibo.landmarks.LandmarkCoordinates</span></code> che mette a disposizione metodi per <i>caricare e gestire</i> la configurazione dei landmark generata dal <b>MapConfigurator</b>.
     </p>
 
     <p>
         Si riporta di seguito il diagramma UML della classe <code class="docutils literal notranslate"><span class="pre">LandmarkCoordinates</span></code>. <br>
-        <img class="imglim img-border" src="../images/sprint1/landmarksUML.png" alt="LandmarkCoordinates UML"><br>
+        <p>
+            <img class="imglim img-border" src="../images/sprint1/landmarksUML.png" alt="LandmarkCoordinates UML"><br>
+        </p>
         Si denota in particolare il metodo <code class="docutils literal notranslate"><span class="pre">getCoordinateClosestToFor(String, Pair&lt;Int, Int&gt;)</span></code> che permette di ottenere la coordinata pi&ugrave; vicina a una coordinata specificata per un certo landmark, specificato da una stringa che ne indica il nome. <br> 
-        Questo permette al <i>TransportTrolley</i> di comunicare al robot di spostarsi sempre alla coordinata pi&ugrave; vicina per il landmark di destinazione, essendo alcuni landmark costituiti da pi&ugrave; punti diversi.
+        Questo permette a <i>transporttrolley</i> di comunicare a <i>trolleyexecutor</i> di spostarsi sempre alla coordinata pi&ugrave; vicina per il landmark di destinazione, essendo alcuni landmark costituiti da pi&ugrave; punti diversi.
     </p>
     <h3 id="mapconfigurator_project">MapConfigurator</h3>
 
