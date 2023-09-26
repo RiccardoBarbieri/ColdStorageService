@@ -71,16 +71,16 @@
             <th>Comportamento</th>
         </tr>
         <tr>
+            <td class="green bold center">serviceaccessguisim</td>
+            <td>Entit&agrave; adibita al testing che permette l'invio di una richiesta a <i>coldstorageservice</i> per dare inizio alla fase di deposito</td>
+        </tr>
+        <tr>
             <td class="green bold center">coldstorageservice</td>
             <td>Gestisce le richieste di deposito e comanda il transport trolley con istruzioni di alto livello, mantiene la rappresentazione della service area</td>
         </tr>
         <tr>
             <td class="green bold center">transporttrolley</td>
             <td>Gestisce le richieste del ColdStorageService inviando comandi di basso livello al basicRobot</td>
-        </tr>
-        <tr>
-            <td class="green bold center">serviceaccessguisim</td>
-            <td>Entit&agrave; adibita al testing, l'arrivo di un camion a INDOOR e invia una richiesta a coldstorageservice per dare inizio alla fase di deposito.</td>
         </tr>
         <tr>
             <td class="green bold center">basicrobot</td>
@@ -431,6 +431,41 @@
         Essendo che il <i>basicRobot</i> necessità di coordinate per muoversi, il <i>TransportTrolley</i> deve conoscerle obbligatoriamente. In particolare, deve avere a disposizione il mapping <i>landmarks</i>-<i>coordinate</i>, in modo da poter comunicare al <i>TrolleyExecutor</i> lo spostamento che dovrà implementare. 
     </p>
 
+    <h5>Responsabilità dei singoli componenti</h5>
+<p>
+    Viene riportata di seguito una tabella con tutte le funzionalità svolte da già ciascun componente. Per ognuno di essi, viene rispettato il pricinpio di singola responsabilità. 
+</p>
+<p>
+
+    <table>
+        <tr>
+            <th>Entit&agrave;</th>
+            <th>Responsabilità</th>
+        </tr>
+        <tr>
+            <td class="green bold center">serviceaccessguisim</td>
+            <td>Entit&agrave; adibita al testing che permette l'invio di una richiesta a <i>coldstorageservice</i> per dare inizio alla fase di deposito</td>
+        </tr>
+        <tr>
+            <td class="green bold center">coldstorageservice</td>
+            <td>Gestisce le richieste di deposito (accettazione/rifiuto) e notifica il <i>transporttrolley</i> della presenza di un nuovo carico</td>
+        </tr>
+        <tr>
+            <td class="green bold center">transporttrolley</td>
+            <td>Definisce il movimento che deve compiere il robot e gestisce la sua coda di richieste</td>
+        </tr>
+        <tr>
+            <td class="green bold center">trolleyexecutor</td>
+            <td>Implementa lo spostamento comunicando con il <i>basicrobot</i> basandosi sulle coordinate fornite dal <i>transporttrolley</i></td>
+        </tr>
+        <tr>
+            <td class="green bold center">basicrobot</td>
+            <td>Entit&agrave; che riceve istruzioni di "medio livello" e le traduce in istruzioni di basso livello per guidare il DDR robot.</td>
+        </tr>
+    </table>
+</p>
+
+
     <h3>Interazioni</h3>
     <p>
         Riguardo alle interazioni viste in fase di <a href="#messaggi">analisi dei requisiti</a>, vengono aggiunte le interazioni presenti tra <b>TrolleyExecutor</b> e <b>DDR Robot</b> per realizzare il movimento vero e proprio (descritte nella sezione <a href="#basicRobot_analisi">Basic robot</a> subito sopra).
@@ -467,6 +502,7 @@
         Vediamo che è il <i>TrolleyExecutor</i> ad occuparsi di controllare se il robot è in movimento (sta tornando in HOME), eventualmente fermandolo e implementando il nuovo spostamento comunicato dal <i>TT</i>.
     </p>
 </p>   
+
 
 </div>
 
