@@ -44,7 +44,7 @@
         <li>Formulare il modello di <b>interazione</b> tra <b>ColdStorageService</b> e <b>TransportTrolley</b></li>
     </ol>
     <p>
-        L'interazione tra <i>TT</i> e <i>DDR Robot</i> è implicita per il funzionamento del core-business e verrà trattata nel corso del documento.
+        L'interazione tra <i>TT</i> e <i>basicRobot</i> è implicita per il funzionamento del core-business e verrà trattata nel corso del documento.
     </p>
     </p>
 </div>
@@ -56,7 +56,7 @@
         Dal documento dei requisiti, relativamente a questo <i>Sprint</i>, consideriamo i seguenti argomenti da trattare:
         <ul>
             <li>Service area</li>
-            <li><i>DDR robot</i> e <i>TransportTrolley</i></li>
+            <li><i>basicRobot</i> e <i>TransportTrolley</i></li>
             <li>Interazione tra <i>CSS</i> e <i>TT</i></li>
         </ul>
     </p>
@@ -84,12 +84,9 @@
         </tr>
         <tr>
             <td class="green bold center">basicrobot</td>
-            <td>Entit&agrave; che riceve istruzioni di "medio livello" e le traduce in istruzioni di basso livello per guidare il DDR robot.</td>
+            <td>Entit&agrave; che riceve istruzioni di "medio livello" e le traduce in istruzioni di basso livello per guidare il DDR robot o un virtual robot.</td>
         </tr>
     </table>
-    <p class="nota">
-        D'ora in poi, all'interno del documento, <b>basicRobot</b> e <b>DDR Robot</b> verranno usati come sinonimi, prediligendo per il secondo.
-    </p>
     <h3 id="dati_analisi_requisiti">Dati</h3>
     <p>
         Di seguito, sono elencati tutti i dati presenti nei requisiti, con annessa una breve descrizione.
@@ -333,62 +330,8 @@
     </p>
 
     <p>
-        Per generare una mappa della service area abbiamo sfruttato il software <code class="prettyprint">unibo.mapperQak23</code> che si avvale di <code class="prettyprint">basicrobot</code> per ottenere la dimensione dell'area e individuare eventuali ostacoli lungo i bordi, generando una rappresentazione della service area.
-    </p>
-
-    <h5>Utilizzo del mapper</h5>
-
-    <p>
-        E' possibile utilizzare il mapper per generare la matrice che rappresenta la service area, senza considerare gli ostacoli, seguendo questi passi:
-    </p>
-    <ol>
-        <li>
-            Avviare WEnv, l'ambiente virtuale che simula il DDR robot:
-            <pre>docker compose -f projects/it.unibo.virtualRobot2023/virtualRobot23.yaml up</pre>
-        </li>
-        <li>
-            Avviare basicrobot:
-            <pre>projects/unibo.basicrobot23/gradlew run</pre>
-        </li>
-        <li>
-            Avviare il mapper:
-            <pre>projects/unibo.mapperQak23/gradlew run</pre>
-        </li>
-        
-    </ol>
-
-    <p>
-        Il mapper produrrà:
-    </p>
-
-    <ol>
-        <li>Un <a href="">file testuale</a> contenente una rappresentazione della mappa.<pre>|r, 1, 1, 1, 1, 1, 1,
-|1, 0, 0, 0, 0, 0, 1,
-|1, 0, 0, 0, 0, 0, 1,
-|1, 0, 0, 0, 0, 0, 1,
-|1, 1, 1, 1, 1, 1, 1,</pre></li>
-        <li>Un <a>file binario</a> contenente una istanza della classe <code class="prettyprint">unibo.planner23.model.RoomMap</code>, utilizzabile in coppia con una istanza della classe <code class="prettyprint">unibo.planner23.Planner23Util</code></li>
-    </ol>
-    
-    <h5>Configurazione landmark</h5>
-
-    <p>
-        Per permettere a un utente di configurare la posizione dei landmark di interesse nella service area verr&agrave; messo a disposizione un applicativo che espone una interfaccia grafica per posizionare i punti di interesse in una <b>griglia</b>.
-    </p>
-
-    <p>
-        Questo applicativo generer&agrave; rappresentazioni testuali e un file binario utilizzabile dal <i>planner</i> per creare i percorsi di movimento del <i>TransportTrolley</i>.
-    </p>
-
-    <p>
-        Di seguito, &egrave; riportato un esempio del contenuto del file di testo che verr&agrave; generato dall'applicativo. Questo file in particolare non sar&agrave; utilizzato da nessun componente del sistema, ma rappresenta la configurazione creata dall'utente.
-    </p>
-
-        <pre>|<span class="bold homecolor">H</span>, 1, 1, 1, 1, 1, 1,
-|1, 0, 0, 0, <span class="bold coldcolor">C</span>, <span class="bold coldcolor">C</span>, 1,
-|1, 0, 0, 0, <span class="bold coldcolor">C</span>, <span class="bold coldcolor">C</span>, 1,
-|1, 0, 0, 0, <span class="bold stroke portcolor">P</span>, <span class="bold stroke portcolor">P</span>, 1,
-|<span class="bold indoorcolor">I</span>, <span class="bold indoorcolor">I</span>, <span class="bold indoorcolor">I</span>, 1, 1, 1, 1,</pre>
+        Per generare una mappa della service area abbiamo sfruttato il software <code class="prettyprint">unibo.mapperQak23</code> che si avvale di <code class="prettyprint">basicrobot</code> per ottenere la dimensione dell'area e individuare eventuali ostacoli lungo i bordi, generando una rappresentazione della service area. <br>
+        La rappresentazione generata verrà utilizzata come base dall'applicazione mapConfigurator (illustrata successivamente) per personalizzare la service area.
     </p>
 
 
@@ -460,7 +403,7 @@
         </tr>
         <tr>
             <td class="green bold center">basicrobot</td>
-            <td>Entit&agrave; che riceve istruzioni di "medio livello" e le traduce in istruzioni di basso livello per guidare il DDR robot.</td>
+            <td>Entit&agrave; che riceve istruzioni di "medio livello" e le traduce in istruzioni di basso livello per guidare il DDR robot o un virtual robot.</td>
         </tr>
     </table>
 </p>
@@ -468,7 +411,7 @@
 
     <h3>Interazioni</h3>
     <p>
-        Riguardo alle interazioni viste in fase di <a href="#messaggi">analisi dei requisiti</a>, vengono aggiunte le interazioni presenti tra <b>TrolleyExecutor</b> e <b>DDR Robot</b> per realizzare il movimento vero e proprio (descritte nella sezione <a href="#basicRobot_analisi">Basic robot</a> subito sopra).
+        Riguardo alle interazioni viste in fase di <a href="#messaggi">analisi dei requisiti</a>, vengono aggiunte le interazioni presenti tra <b>TrolleyExecutor</b> e <b>basicRobot</b> per realizzare il movimento vero e proprio (descritte nella sezione <a href="#basicRobot_analisi">Basic robot</a> subito sopra).
     </p>
 
     <h5>Diagrammi di sequenza</h5>
@@ -759,6 +702,26 @@ CMD ["bash", "./unibo.mapConfigurator"]</code></pre>
     
     <p>
         Dati i vari servizi da gestire verr&agrave; progettata e messa a disposizione del cliente una applicazione dedicata alla gestione dei componenti del servizio, permettendo di manipolare impostazioni e valori di default delle applicazioni tramite un'interfaccia grafica.
+    </p>
+
+    <h6>Protocollo di avvio</h6>
+    <p>Ad ora, in attesa della dockerizzazione di tutti i progetti e della creazione della suddetta applicazione, abbiamo definito il seguente protocollo di avvio dei vari servizi:
+        <ol>
+            <li><i>VirtualRobot</i> e <i>basicRobot</i> tramite <b>compose</b> delle immagine Docker <br>
+                <pre><code class="language-bash">cd ./projects/unibo.basicrobot23 
+docker compose -f basicrobot23.yaml up</code></pre>
+            </li>
+            <li>
+                <i>ColdStorageService</i> (progetto Qak) 
+                <pre><code class="language-bash">cd ./projects/sprint1v0
+gradlew run</code></pre>
+            </li>
+            <li>
+                <i>ServiceAccessGUISim</i> (progetto Spring) 
+                <pre><code class="language-bash">cd ./projects/unibo.serviceaccessGUISim
+gradlew bootRun</code></pre>
+            </li>
+        </ol>
     </p>
 
 </div>
