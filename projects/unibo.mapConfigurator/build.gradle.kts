@@ -1,5 +1,7 @@
-import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.DockerSpringBootApplication
 import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import java.util.Properties
+
 
 plugins {
     id("java")
@@ -71,6 +73,21 @@ dependencies {
 
 }
 
+val springProps = Properties()
+
+properties["activeProfile"]?.let {
+    println("Loading properties from application-$it.properties")
+    springProps.load(file("src/main/resources/application-$it.properties").inputStream())
+}
+
+//tasks.register("testProperty") {
+//    println(springProps["server.port"]!!::class)
+//}
+
+tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+    systemProperty("spring.profiles.active", properties["activeProfile"] ?: "dev")
+}
+
 tasks.register<Dockerfile>("createDockerfile") {
     dependsOn("bootDistTar")
     group = "docker"
@@ -94,7 +111,7 @@ tasks.register<Dockerfile>("createDockerfile") {
     }
 
     from("openjdk:11")
-    exposePort(8015)
+    exposePort(springProps["server.port"].toString().toInt())
     volume("/data")
     addFile("./build/distributions/" + lastModified.name, "/")
     workingDir(lastModified.name.removeSuffix(".tar") + "/bin")
