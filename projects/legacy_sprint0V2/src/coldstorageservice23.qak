@@ -1,0 +1,204 @@
+System coldstorageservice23
+
+//SAG -> CSS
+Request 	storerequest		:		storerequest(arg)
+
+//CSS -> SAG
+Reply		loadaccepted		:		loadaccepted(arg)	for storerequest
+
+//CSS -> SAG
+Reply		loadrejected   		:		loadrejected(arg)	for storerequest
+
+//SAG -> CSS
+Request		deposit				:		deposit(arg)
+
+//CSS -> SAG
+Reply		ticketaccepted		:		ticketaccepted(arg)	for deposit
+
+//CSS -> SAG
+Reply		ticketrejected		:		ticketrejected(arg) for deposit
+
+//SAG -> CSS
+Request		chargestatus		:		chargestatus(arg)
+
+//CSS -> SAG
+Reply		chargetaken			:		chargetaken(arg)	for chargestatus
+
+ 
+
+Context ctx_coldstorageservice ip [host="localhost" port=8021]
+Context ctx_access ip [host="localhost" port=8022]
+Context ctx_status ip [host="localhost" port=8023]
+Context ctx_raspberry ip [host="localhost" port=8024]
+
+Context ctx_basicrobot ip [host="127.0.0.1" port=8020]
+
+QActor coldstorageservice context ctx_coldstorageservice {
+	
+	[#	val maxColdRoom: Float = 10F
+		var currentColdRoom: Float = 0F
+	#]
+	
+	State s0 initial {
+		println("CSS: started") color blue
+	}
+	Goto waiting
+	
+	State waiting {
+		println("CSS: waiting for requests") color blue
+	}
+	Transition t0 whenRequest storerequest -> checkAvailability
+				  whenRequest deposit -> handleDeposit
+				  whenRequest chargestatus -> sendChargeTaken
+		
+	State checkAvailability {
+		onMsg (storerequest : storerequest(FW)) {
+			[# val FW = payloadArg(0).trim().toFloat() #]
+						
+			if [# (currentColdRoom + FW) <= maxColdRoom #] {
+				replyTo storerequest with loadaccepted : loadaccepted(_)
+				println("CSS: load for $FW KG accepted, currentWeight = $currentColdRoom") color blue
+				[#	currentColdRoom += FW  #]
+			} else {
+				replyTo storerequest with loadrejected : loadrejected(_)
+				println("CSS: load for $FW KG rejected, not enough space in ColdRoom, currentWeight = $currentColdRoom") color blue
+			}
+		}
+	}
+	Goto waiting
+
+	State sendChargeTaken {
+		onMsg (chargestatus : chargestatus(_)) {
+			replyTo chargestatus with chargetaken : chargetaken(_)
+			println("CSS: charge taken") color blue
+		}
+	}
+	Goto waiting
+			  
+	State handleDeposit {
+		onMsg (deposit : deposit(_)) {
+			if [# true #] {
+				replyTo deposit with ticketaccepted : ticketaccepted(_)
+				println("CSS: ticket accepted") color blue
+			} else {
+				replyTo deposit with ticketrejected : ticketrejected(_)
+				println("CSS: ticket rejected") color blue
+			}
+		}
+	}
+	Goto waiting
+	
+}
+
+
+QActor transporttrolley context ctx_coldstorageservice {
+	
+	State s0 initial {
+		
+	}
+	
+}
+
+
+QActor serviceaccessgui context ctx_access {
+	
+	State s0 initial {
+		println("SAG: started") color magenta
+	}
+	Transition t0 whenTime 10000 -> sendRequest
+	
+	State sendRequest {
+		request coldstorageservice -m storerequest : storerequest(_)
+		println("SAG: sending a new storage request") color magenta	
+	}
+	Goto waiting
+	
+	State waiting {
+		println("SAG: waiting for replies") color magenta
+	}
+	Transition t0 whenTime	5000		->	timeout
+				  whenReply loadaccepted -> handleLoadAccept
+				  whenReply loadrejected -> handleLoadReject
+				  whenReply ticketaccepted -> handleTicketAccept
+				  whenReply ticketrejected -> handleTicketReject
+				  whenReply chargetaken -> handleChargeTaken
+	
+	State handleLoadAccept {
+		onMsg (loadaccepted : loadaccepted(_)) {
+			println("SAG: load accepted, going to INDOOR") color magenta	
+			delay 5000
+			
+			request coldstorageservice -m deposit : deposit(_)
+			println("SAG: inserting the ticket number") color magenta	
+		}
+	}
+	Goto waiting
+	
+	State handleLoadReject {
+		onMsg (loadrejected : loadrejected(_)) {
+			println("SAG: load request rejected") color magenta	
+		}
+	}
+	Goto end
+	
+	State handleTicketAccept {
+		onMsg (ticketaccepted : ticketaccepted(_)) {
+			println("SAG: ticket accepted, waiting for charge taken") color magenta				
+			request coldstorageservice -m chargestatus : chargestatus(_)
+		}
+	}
+	Goto waiting
+	
+	State handleTicketReject {
+		onMsg (ticketrejected : ticketrejected(_)) {
+			println("SAG: ticket number rejected") color magenta	
+		}
+	}
+	Goto end
+	
+	State handleChargeTaken {
+		onMsg (chargetaken : chargetaken(_)) {
+			println("SAG: charge taken") color magenta				
+		}
+	}
+	Goto end
+	
+	State timeout {
+		println("SAG: connection with the service timed out") color magenta
+	}
+	Transition t0 whenTime	3000		->	end
+	
+	State end {
+		println("SAG: life-cycle ended") color magenta
+	}
+}
+
+
+QActor servicestatusgui context ctx_status {
+	
+	State s0 initial {
+		
+	}
+	
+}
+
+
+QActor alarmdevice context ctx_raspberry {
+	
+	State s0 initial {
+		
+	}
+	
+}
+
+
+QActor warningdevice context ctx_raspberry {
+	
+	State s0 initial {
+		
+	}
+	
+}
+
+ExternalQActor basicrobot context ctx_basicrobot
+
