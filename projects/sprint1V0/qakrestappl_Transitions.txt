@@ -1,3 +1,12 @@
-{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"waiting", "nextstate":"moveToIndoorFromHome", "msgId":"deposit"}
-{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"waiting", "nextstate":"somethingFailed", "msgId":"fail"}
-{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"checkQueueOrReturn", "nextstate":"stopAndRestart", "msgId":"deposit"}
+{"actor":"coldstorageservice", "msgType":"dispatch", "curstate":"work", "nextstate":"elabChargetaken", "msgId":"chargetakentt"}
+{"actor":"coldstorageservice", "msgType":"dispatch", "curstate":"work", "nextstate":"elabChargedeposited", "msgId":"chargedeposited"}
+{"actor":"basicrobotsim", "msgType":"dispatch", "curstate":"s0", "nextstate":"handleToINDOOR", "msgId":"goToINDOOR"}
+{"actor":"basicrobotsim", "msgType":"dispatch", "curstate":"inINDOOR", "nextstate":"handleToColdRoom", "msgId":"goToColdRoom"}
+{"actor":"basicrobotsim", "msgType":"dispatch", "curstate":"inColdRoom", "nextstate":"goingHOME", "msgId":"goToHOME"}
+{"actor":"basicrobotsim", "msgType":"dispatch", "curstate":"goingHOME", "nextstate":"handleToINDOOR", "msgId":"goToINDOOR"}
+{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"work", "nextstate":"addCharge", "msgId":"newcharge"}
+{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"handleCharge", "nextstate":"takeCharge", "msgId":"arrivedINDOOR"}
+{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"takeCharge", "nextstate":"notifyDeposit", "msgId":"arrivedColdRoom"}
+{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"notifyDeposit", "nextstate":"work", "msgId":"arrivedHOME"}
+{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"stopped", "nextstate":"handleCharge", "msgId":"resume"}
+{"actor":"serviceaccessgui", "msgType":"dispatch", "curstate":"work", "nextstate":"handleChargetaken", "msgId":"chargetaken"}
