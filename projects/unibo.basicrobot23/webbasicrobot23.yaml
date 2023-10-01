@@ -1,7 +1,7 @@
 version: '3'
 services:
   wenv:
-    image: docker.io/natbodocker/virtualrobotdisi23:1.0
+    image: virtualrobotdisi23:1.0
     ports:
       - 8090:8090 
       - 8091:8091/tcp
@@ -15,9 +15,9 @@ services:
       - wenv
   webrobot23:
     image: webrobot23:1.0
-      ports:
+    ports:
       - 8085:8085
-      depends_on:
+    depends_on:
       - basicrobot23
 
 ## -------------------------------------------------------------
