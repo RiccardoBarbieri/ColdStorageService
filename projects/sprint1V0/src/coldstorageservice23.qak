@@ -4,8 +4,8 @@ System coldstorageservice23
 Request 	storerequest		:		storerequest(FW)
 
 //CSS -> SAG
-Reply		loadaccepted		:		loadaccepted(arg)
-Reply		loadrejected		:		loadrejected(arg)
+Reply		loadaccepted		:		loadaccepted(arg) for storerequest
+Reply		loadrejected		:		loadrejected(arg) for storerequest
 Dispatch	chargetaken			:		chargetaken(arg)
 
 //TT -> CSS
@@ -21,28 +21,28 @@ Request		getposition			:		getposition(arg)
 Dispatch	stop				:		stop(arg)
 
 //TE -> TT
-Reply		movedone			:		movedone(arg)
-Reply		movefailed			:		movefailed(arg)
-Reply		position			:		position(X,Y)
+Reply		movedone			:		movedone(arg) for move
+Reply		movefailed			:		movefailed(arg) for move
+Reply		position			:		position(X,Y) for getposition
 Dispatch	fail				:		fail(ERROR)
 
 
 //BASICROBOT
-Request		engage				:		engage(OWNER, STEPTIME)	
-Reply		engagedone			:		engagedone(ARG)
-Reply		engagerefused		:		engagerefused(ARG)
+Request		engage				:		engage(OWNER, STEPTIME)
+Reply		engagedone			:		engagedone(ARG) for engage
+Reply		engagerefused		:		engagerefused(ARG) for engage
 Dispatch	disengage			:		disengage(ARG)
 
 Request		moverobot			:		moverobot(TARGETX, TARGETY)
-Reply		moverobotdone		:		moverobotok(ARG)
-Reply		moverobotfailed		:		moverobotfailed(PLANDONE, PLANTODO)
+Reply		moverobotdone		:		moverobotok(ARG) for moverobot
+Reply		moverobotfailed		:		moverobotfailed(PLANDONE, PLANTODO) for moverobot
 
 Dispatch	setrobotstate		:		setpos(X,Y,D)
 
 Event		alarm				:		alarm(X)
 
 Request		getrobotstate		:		getrobotstate(ARG)
-Reply		robotstate			:		robotstate(POS,DIR)
+Reply		robotstate			:		robotstate(POS,DIR) for getrobotstate
 
 
 
