@@ -10,8 +10,6 @@ services:
     ports:
       - 8020:8020/tcp
       - 8020:8020/udp
-        #depends_on:
-        #- wenv
 
 ## -------------------------------------------------------------
 ## TODO See https://docs.docker.com/compose/startup-order/
