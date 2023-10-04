@@ -17,13 +17,13 @@ Dispatch	deposit				:		deposit(arg)
 
 //TT -> TE
 Request		move				:		move(X,Y)
-Request		getposition			:		getposition(arg)
-Dispatch	stop				:		stop(arg)
+Request		moveclosest			:		moveclosest(Xs,Ys)
 
 //TE -> TT
 Reply		movedone			:		movedone(arg) for move
 Reply		movefailed			:		movefailed(arg) for move
-Reply		position			:		position(X,Y) for getposition
+Reply		movecdone			:		movecdone(arg) for moveclosest
+Reply		movecfailed			:		movecfailed(arg) for moveclosest
 Dispatch	fail				:		fail(ERROR)
 
 
@@ -198,28 +198,19 @@ QActor transporttrolley context ctx_coldstorageservice {
 		returnFromInterrupt
 	}
 	
-	State stopAndRestart {
-		println("TT: stopping trolley") color green
+	State restartToIndoor {
+		println("TT: restarting to indoor") color green
 		
-		request trolleyexecutor -m getposition : getposition(arg)		
+		[#	val destinations = landmarkConf.getCoordinatesFor("I")
+			val messages = utils.PosUtils.listOfDestToMessStrings(destinations)
+			val Xs = messages.first
+			val Ys = messages.second
+		#]
+		
+		request trolleyexecutor -m moveclosest : moveclosest($Xs,$Ys)
 	}
-	Transition t0	whenReply	position	->	moveToIndoorFromAnywhere
-	
-	State moveToIndoorFromAnywhere {
-		onMsg (position : position(X,Y)) {
-			[#	Anywhere = Pair(payloadArg(0).toInt(),payloadArg(1).toInt())
-				
-				val AnywhereToIndoorCoord = landmarkConf.getCoordinateClosestToFor("I", Anywhere)
-				
-				val X = AnywhereToIndoorCoord.first
-				val Y = AnywhereToIndoorCoord.second
-			#]
-			request trolleyexecutor -m move : move($X,$Y)
-		}
-		println("TT: new request, returning to indoor") color green
-	}
-	Transition t0	whenReply	 	movedone	->	takeCharge
-					whenReply		movefailed	->	moveFailed
+	Transition t0	whenReply	 	movecdone	->	takeCharge
+					whenReply		movecfailed	->	moveFailed
 					whenInterrupt	deposit		->	queueDeposit
 	
 	State moveToIndoorFromHome {
@@ -281,7 +272,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 			println("TT: managing queued request, returning to indoor") color green
 		}
 	}
-	Transition t0	whenMsg		deposit							->	stopAndRestart
+	Transition t0	whenMsg		deposit							->	restartToIndoor
 					whenReply	movedone and [# returnHome #]	->	waiting
 					whenReply	movedone and [# !returnHome #]	->	takeCharge
 					whenReply	movefailed						->	moveFailed
@@ -292,6 +283,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 QActor trolleyexecutor context ctx_coldstorageservice {
 	
 	[#	var isMoving = false
+		var destinations = mutableListOf<Pair<Int,Int>>()
 	#]
 	
 	
@@ -303,8 +295,9 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 	State engage {
 		request basicrobot -m engage : engage(trolleyexecutor, 300)
 	}
-	Transition t0	whenReply engagedone	->	setState
-					whenReply engagerefused	->	engageFail
+	Transition t0	whenTime	10000			->	engageFail
+					whenReply	engagedone		->	setState
+					whenReply	engagerefused	->	engageFail
 					
 	State engageFail {
 		[# val ErrorString = "Ingaggio robot fallito" #]
@@ -313,7 +306,12 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 	}
 	
 	State moveFail {
-		replyTo move with movefailed : movefailed(arg)
+		replyTo move with movefailed : movecfailed(arg)
+		println("TE: moverobot failed, try restarting the application") color magenta
+	}
+	
+	State movecFail {
+		replyTo move with movefailed : movecfailed(arg)
 		println("TE: moverobot failed, try restarting the application") color magenta
 	}
 	
@@ -327,10 +325,10 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 	Goto waiting
 	
 	State waiting {
-		println("TE: waiting $isMoving") color magenta
+		println("TE: waiting") color magenta
 	}
 	Transition t0	whenRequest	move		->	move
-					whenRequest	getposition	->	askPosition
+					whenRequest	moveclosest	->	stop
 	
 	State move {
 		println("TE: move") color magenta
@@ -342,9 +340,46 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 			[# isMoving = true #]
 		}
 	}
-	Transition t0	whenReply	moverobotdone	->	moveCompleted
+	Transition t0	whenTime	30000			->	timeout
+					whenReply	moverobotdone	->	moveCompleted
 					whenReply	moverobotfailed	->	moveFail
-					whenRequest	getposition		->	stopAskPos
+					
+	State stop {
+		println("TE: moveClosest") color magenta
+		onMsg (moveclosest : moveclosest(Xs,Ys)) {
+			[# destinations = utils.PosUtils.destStringListToPairs(payloadArg(0), payloadArg(1)) #]
+			if [# isMoving #] {
+				emit alarm : alarm(arg)
+				[# isMoving = false #]
+			}
+		}
+	}
+	Goto askPosition
+	
+	State askPosition {
+		println("TE: askPosition")
+		request basicrobot -m getrobotstate	: getrobotstate(arg)
+	}
+	Transition t0	whenTime	30000		->	timeout
+					whenReply	robotstate	->	moveClosest
+	
+	State moveClosest {
+		println("TE: moveClosest")
+		onMsg (robotstate : robotstate(POS,DIR)) {
+			[#	val position = utils.PosUtils.posStringToPair(payloadArg(0).trim())
+				
+				val closest = utils.PosUtils.closestDestination(position, destinations)
+				val X = closest.first
+				val Y = closest.second
+			#]
+			
+			request basicrobot -m moverobot : moverobot($X,$Y)
+			[# isMoving = true #]
+		}
+	}
+	Transition t0	whenTime	30000			->	timeout
+					whenReply	moverobotdone	->	movecCompleted
+					whenReply	moverobotfailed	->	movecFail
 					
 	State moveCompleted {
 		[# isMoving = false #]
@@ -352,36 +387,43 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 		replyTo move with movedone : movedone(arg)
 	}
 	Goto waiting
-
-	State stopAskPos {
-		discardMsg On
-		println("TE: stopAskPos") color magenta
-		emit alarm : alarm(arg)
-		[# isMoving = false #]
-		request basicrobot -m getrobotstate : getrobotstate(arg)
-	}
-	Transition t0	whenTime	30000		->	timeout
-					whenReply	robotstate	->	sendPosition
-
-	State askPosition {
-		println("TE: askPosition") color magenta
-		request basicrobot -m getrobotstate : getrobotstate(arg)
-	}
-	Transition t0	whenTime	30000		->	timeout
-					whenReply	robotstate	->	sendPosition
 	
-	State sendPosition {
-		println("TE: sendPosition") color magenta
-		onMsg (robotstate : robotstate(POS,DIR)) {
-			[#	val position = utils.PosUtils.posStringToPair(payloadArg(0).trim())
-				
-				val X = position.first
-				val Y = position.second
-			#]
-			replyTo getposition with position : position($X,$Y)
-		}
+	State movecCompleted {
+		[# isMoving = false #]
+		println("TE: movecCompleted") color magenta
+		replyTo moveclosest with movecdone : movecdone(arg)
 	}
 	Goto waiting
+
+//	State stopAskPos {
+//		discardMsg On
+//		println("TE: stopAskPos") color magenta
+//		emit alarm : alarm(arg)
+//		[# isMoving = false #]
+//		request basicrobot -m getrobotstate : getrobotstate(arg)
+//	}
+//	Transition t0	whenTime	30000		->	timeout
+//					whenReply	robotstate	->	sendPosition
+//
+//	State askPosition {
+//		println("TE: askPosition") color magenta
+//		request basicrobot -m getrobotstate : getrobotstate(arg)
+//	}
+//	Transition t0	whenTime	30000		->	timeout
+//					whenReply	robotstate	->	sendPosition
+//	
+//	State sendPosition {
+//		println("TE: sendPosition") color magenta
+//		onMsg (robotstate : robotstate(POS,DIR)) {
+//			[#	val position = utils.PosUtils.posStringToPair(payloadArg(0).trim())
+//				
+//				val X = position.first
+//				val Y = position.second
+//			#]
+//			replyTo getposition with position : position($X,$Y)
+//		}
+//	}
+//	Goto waiting
 
 }
 

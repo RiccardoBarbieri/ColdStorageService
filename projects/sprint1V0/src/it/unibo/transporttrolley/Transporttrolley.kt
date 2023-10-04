@@ -84,38 +84,22 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					sysaction { //it:State
 					}	 	 
 				}	 
-				state("stopAndRestart") { //this:State
+				state("restartToIndoor") { //this:State
 					action { //it:State
-						CommUtils.outgreen("TT: stopping trolley")
-						request("getposition", "getposition(arg)" ,"trolleyexecutor" )  
+						CommUtils.outgreen("TT: restarting to indoor")
+							val destinations = landmarkConf.getCoordinatesFor("I")
+									val messages = utils.PosUtils.listOfDestToMessStrings(destinations)
+									val Xs = messages.first
+									val Ys = messages.second
+						request("moveclosest", "moveclosest($Xs,$Ys)" ,"trolleyexecutor" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t05",targetState="moveToIndoorFromAnywhere",cond=whenReply("position"))
-				}	 
-				state("moveToIndoorFromAnywhere") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("position(X,Y)"), Term.createTerm("position(X,Y)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-									Anywhere = Pair(payloadArg(0).toInt(),payloadArg(1).toInt())
-												
-												val AnywhereToIndoorCoord = landmarkConf.getCoordinateClosestToFor("I", Anywhere)
-												
-												val X = AnywhereToIndoorCoord.first
-												val Y = AnywhereToIndoorCoord.second
-								request("move", "move($X,$Y)" ,"trolleyexecutor" )  
-						}
-						CommUtils.outgreen("TT: new request, returning to indoor")
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t06",targetState="takeCharge",cond=whenReply("movedone"))
-					transition(edgeName="t07",targetState="moveFailed",cond=whenReply("movefailed"))
-					interrupthandle(edgeName="t08",targetState="queueDeposit",cond=whenDispatch("deposit"),interruptedStateTransitions)
+					 transition(edgeName="t05",targetState="takeCharge",cond=whenReply("movecdone"))
+					transition(edgeName="t06",targetState="moveFailed",cond=whenReply("movecfailed"))
+					interrupthandle(edgeName="t07",targetState="queueDeposit",cond=whenDispatch("deposit"),interruptedStateTransitions)
 				}	 
 				state("moveToIndoorFromHome") { //this:State
 					action { //it:State
@@ -128,9 +112,9 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t09",targetState="takeCharge",cond=whenReply("movedone"))
-					transition(edgeName="t010",targetState="moveFailed",cond=whenReply("movefailed"))
-					interrupthandle(edgeName="t011",targetState="queueDeposit",cond=whenDispatch("deposit"),interruptedStateTransitions)
+					 transition(edgeName="t08",targetState="takeCharge",cond=whenReply("movedone"))
+					transition(edgeName="t09",targetState="moveFailed",cond=whenReply("movefailed"))
+					interrupthandle(edgeName="t010",targetState="queueDeposit",cond=whenDispatch("deposit"),interruptedStateTransitions)
 				}	 
 				state("takeCharge") { //this:State
 					action { //it:State
@@ -165,9 +149,9 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t012",targetState="depositInColdRoom",cond=whenReply("movedone"))
-					transition(edgeName="t013",targetState="moveFailed",cond=whenReply("movefailed"))
-					interrupthandle(edgeName="t014",targetState="queueDeposit",cond=whenDispatch("deposit"),interruptedStateTransitions)
+					 transition(edgeName="t011",targetState="depositInColdRoom",cond=whenReply("movedone"))
+					transition(edgeName="t012",targetState="moveFailed",cond=whenReply("movefailed"))
+					interrupthandle(edgeName="t013",targetState="queueDeposit",cond=whenDispatch("deposit"),interruptedStateTransitions)
 				}	 
 				state("depositInColdRoom") { //this:State
 					action { //it:State
@@ -202,12 +186,12 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t015",targetState="stopAndRestart",cond=whenDispatch("deposit"))
-					transition(edgeName="t016",targetState="waiting",cond=whenReplyGuarded("movedone",{ returnHome  
+					 transition(edgeName="t014",targetState="restartToIndoor",cond=whenDispatch("deposit"))
+					transition(edgeName="t015",targetState="waiting",cond=whenReplyGuarded("movedone",{ returnHome  
 					}))
-					transition(edgeName="t017",targetState="takeCharge",cond=whenReplyGuarded("movedone",{ !returnHome  
+					transition(edgeName="t016",targetState="takeCharge",cond=whenReplyGuarded("movedone",{ !returnHome  
 					}))
-					transition(edgeName="t018",targetState="moveFailed",cond=whenReply("movefailed"))
+					transition(edgeName="t017",targetState="moveFailed",cond=whenReply("movefailed"))
 				}	 
 			}
 		}
