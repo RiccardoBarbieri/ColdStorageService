@@ -86,6 +86,7 @@ QActor coldstorageservice context ctx_coldstorageservice {
 			}
 		}
 	}
+	
 	Goto forwardDeposit if [# accepted #] else waiting
 	
 	State forwardDeposit {
