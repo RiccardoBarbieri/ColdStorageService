@@ -1,2 +1,0 @@
-{"actor":"coldstorageservice", "msgType":"dispatch", "curstate":"waiting", "nextstate":"finalizeDeposit", "msgId":"chargetakentt"}
-{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"waiting", "nextstate":"doDeposit", "msgId":"deposit"}
