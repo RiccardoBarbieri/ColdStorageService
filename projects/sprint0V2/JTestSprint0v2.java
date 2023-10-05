@@ -15,7 +15,7 @@ public class JTestSprint0v2 {
 	private final static String actorCtxPort = "8021";
 	private final static String actorCtxHost = "localhost";
 
-	private final static String MAXW = 50;
+	private final static Float MAXW = 50;
 
 	private Interaction coapconn;
 
