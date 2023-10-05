@@ -5,9 +5,9 @@ request( storerequest, storerequest(FW) ).
 reply( loadaccepted, loadaccepted(arg) ).  %%for storerequest
 reply( loadrejected, loadrejected(arg) ).  %%for storerequest
 dispatch( chargetaken, chargetaken(arg) ).
-dispatch( chargetakentt, chargetaken(arg) ).
+request( deposit, deposit(arg) ).
+reply( chargetakentt, chargetaken(arg) ).  %%for deposit
 dispatch( chargedeposited, chargedeposited(arg) ).
-dispatch( deposit, deposit(arg) ).
 request( move, move(X,Y) ).
 request( moveclosest, moveclosest(Xs,Ys) ).
 reply( movedone, movedone(arg) ).  %%for move

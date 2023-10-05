@@ -8,12 +8,12 @@ Reply		loadaccepted		:		loadaccepted(arg) for storerequest
 Reply		loadrejected		:		loadrejected(arg) for storerequest
 Dispatch	chargetaken			:		chargetaken(arg)
 
-//TT -> CSS
-Dispatch	chargetakentt		:		chargetaken(arg)
-Dispatch	chargedeposited		:		chargedeposited(arg)
-
 //CSS -> TT
-Dispatch	deposit				:		deposit(arg)
+Request		deposit				:		deposit(arg)
+
+//TT -> CSS
+Reply		chargetakentt		:		chargetaken(arg) for deposit
+Dispatch	chargedeposited		:		chargedeposited(arg)
 
 //TT -> TE
 Request		move				:		move(X,Y)
@@ -45,7 +45,6 @@ Request		getrobotstate		:		getrobotstate(ARG)
 Reply		robotstate			:		robotstate(POS,DIR) for getrobotstate
 
 
-
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
 Context ctx_coldstorageservice ip [host="localhost" port=8021]
 
@@ -66,8 +65,11 @@ QActor coldstorageservice context ctx_coldstorageservice {
 		println("CSS: waiting for new storage request") color blue
 	}
 	Transition t0	whenRequest		storerequest	->	checkAvailability
-					whenInterrupt	chargetakentt	->	finalizeDeposit
+					whenReply		chargetakentt	->	finalizeDeposit
 					whenInterrupt	chargedeposited	->	chargeDeposited
+					
+	//TODO: gestire coda richieste da qua (mantenere quella in trolley?)
+	//		quando invio una deposit al TT torno in waiting?
 	
 	State checkAvailability {
 		onMsg (storerequest : storerequest(FW)) {
@@ -91,7 +93,7 @@ QActor coldstorageservice context ctx_coldstorageservice {
 	
 	State forwardDeposit {
 		[# accepted = false #]
-		forward transporttrolley -m deposit : deposit(arg)
+		request transporttrolley -m deposit : deposit(arg)
 	}
 	Goto waiting
 
@@ -189,8 +191,8 @@ QActor transporttrolley context ctx_coldstorageservice {
 	State waiting {
 		println("TT: waiting for new deposit request") color green
 	}
-	Transition t0	whenMsg	deposit	->	moveToIndoorFromHome
-					whenMsg	fail	->	somethingFailed
+	Transition t0	whenRequest	deposit	->	moveToIndoorFromHome
+					whenMsg		fail	->	somethingFailed
 	
 	State queueDeposit {
 		[#	depositQueue.add(0)
@@ -212,7 +214,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 	}
 	Transition t0	whenReply	 	movecdone	->	takeCharge
 					whenReply		movecfailed	->	moveFailed
-					whenInterrupt	deposit		->	queueDeposit
+//					whenInterrupt	deposit		->	queueDeposit
 	
 	State moveToIndoorFromHome {
 		[#	val X = HomeToIndoorCoord.first
@@ -223,7 +225,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 	}
 	Transition t0	whenReply	 	movedone		->	takeCharge
 					whenReply		movefailed		->	moveFailed
-					whenInterrupt	deposit			->	queueDeposit
+//					whenInterrupt	deposit			->	queueDeposit
 	
 	State takeCharge {
 		println("TT: loading charge") color green
@@ -233,7 +235,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 	Goto chargeTaken
 	
 	State chargeTaken {
-		forward coldstorageservice -m chargetakentt : chargetakentt
+		replyTo deposit with chargetakentt : chargetakentt
 	}
 	Goto toPort
 	
@@ -246,7 +248,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 	}
 	Transition t0	whenReply		movedone	->	depositInColdRoom
 					whenReply		movefailed	->	moveFailed
-					whenInterrupt	deposit		->	queueDeposit
+//					whenInterrupt	deposit		->	queueDeposit
 					
 	State depositInColdRoom {
 		delay 1000
@@ -273,10 +275,11 @@ QActor transporttrolley context ctx_coldstorageservice {
 			println("TT: managing queued request, returning to indoor") color green
 		}
 	}
-	Transition t0	whenMsg		deposit							->	restartToIndoor
+	Transition t0	
 					whenReply	movedone and [# returnHome #]	->	waiting
 					whenReply	movedone and [# !returnHome #]	->	takeCharge
 					whenReply	movefailed						->	moveFailed
+//					whenMsg		deposit							->	restartToIndoor
 	
 	
 }

@@ -41,7 +41,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					sysaction { //it:State
 					}	 	 
 					 transition(edgeName="t00",targetState="checkAvailability",cond=whenRequest("storerequest"))
-					interrupthandle(edgeName="t01",targetState="finalizeDeposit",cond=whenDispatch("chargetakentt"),interruptedStateTransitions)
+					transition(edgeName="t01",targetState="finalizeDeposit",cond=whenReply("chargetakentt"))
 					interrupthandle(edgeName="t02",targetState="chargeDeposited",cond=whenDispatch("chargedeposited"),interruptedStateTransitions)
 				}	 
 				state("checkAvailability") { //this:State
@@ -74,7 +74,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 				state("forwardDeposit") { //this:State
 					action { //it:State
 						 accepted = false  
-						forward("deposit", "deposit(arg)" ,"transporttrolley" ) 
+						request("deposit", "deposit(arg)" ,"transporttrolley" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
