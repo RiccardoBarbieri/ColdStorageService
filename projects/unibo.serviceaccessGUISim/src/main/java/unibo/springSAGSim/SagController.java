@@ -20,7 +20,11 @@ import unibo.springSAGSim.model.FWRequest;
 public class SagController {
     
     public static final String className = "SagController";
+
     private SagConnection sagConnection;
+    private CoapConnection observerConn;
+    private Interaction requestConn;
+
     @Value("${spring.application.name}")
     String appName;
 
@@ -33,30 +37,30 @@ public class SagController {
     @Autowired
     public SagController(SagConnection sagConnection) {
         this.sagConnection = sagConnection;
-        CoapConnection conn = sagConnection.connectLocalActorUsingCoap();
-        conn.observeResource(new CoapObserver());
+        this.observerConn = sagConnection.connectLocalActorUsingCoap();
+        observerConn.observeResource(new CoapObserver());
+        this.requestConn = sagConnection.connectLocalActorUsingCoap();
     }
 
     @PostMapping(value = "/sendStorageRequest", consumes = "application/json")
-    public ResponseEntity sendStorageRequest(@RequestBody FWRequest fwrequest){
+    public ResponseEntity<String> sendStorageRequest(@RequestBody FWRequest fwrequest) {
         if (fwrequest == null || fwrequest.getFw() == null || fwrequest.getFw() < 0) {
             HttpHeaders headers = new HttpHeaders();
-            return new ResponseEntity(className + " sendStorageRequest | ERROR: input error", headers, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(className + " sendStorageRequest | ERROR: input error", headers, HttpStatus.BAD_REQUEST);
         }
 
-        Interaction conn = sagConnection.connectLocalActorUsingCoap();
-        if (conn == null) {
+        if (this.requestConn == null) {
             HttpHeaders headers = new HttpHeaders();
-            return new ResponseEntity(className + " sendStorageRequest | ERROR: connection null", headers, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(className + " sendStorageRequest | ERROR: connection null", headers, HttpStatus.NOT_FOUND);
         }
 
-        String answer = sagConnection.sendStorageRequest(conn, fwrequest.getFw());
+        String answer = sagConnection.sendStorageRequest(this.requestConn, fwrequest.getFw());
         if (answer == null) {
             HttpHeaders headers = new HttpHeaders();
-            return new ResponseEntity(className + " sendStorageRequest | ERROR: response null", headers, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(className + " sendStorageRequest | ERROR: response null", headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         HttpHeaders headers = new HttpHeaders();
-        return new ResponseEntity(className + " sendStorageRequest | answer: " + answer, headers, HttpStatus.OK);
+        return new ResponseEntity<>(className + " sendStorageRequest | answer: " + answer, headers, HttpStatus.OK);
     }
 }

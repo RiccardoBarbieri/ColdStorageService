@@ -10,7 +10,7 @@ import java.io.Serializable
 
 class LandmarkCoordinates(coordinates: MutableMap<String, MutableList<Pair<Int, Int>>>): Serializable {
 
-    private val serialVersionUID = 4L;
+    private val serialVersionUID = 5L;
 
     private val coordinates: MutableMap<String, MutableList<Pair<Int, Int>>>
 
@@ -37,6 +37,11 @@ class LandmarkCoordinates(coordinates: MutableMap<String, MutableList<Pair<Int, 
         }
 
         return coordinates.minByOrNull { Utils.distance(it, coordinate) } ?: throw IllegalArgumentException("Landmark $landmark has no coordinates")
+    }
+
+    @Throws(IllegalArgumentException::class)
+    fun getCoordinatesFor(landmark: String): List<Pair<Int, Int>> {
+        return coordinates[landmark] ?: throw IllegalArgumentException("Landmark $landmark not found")
     }
 
     fun setCoordinates(landmark: String, coordinates: MutableList<Pair<Int, Int>>) {

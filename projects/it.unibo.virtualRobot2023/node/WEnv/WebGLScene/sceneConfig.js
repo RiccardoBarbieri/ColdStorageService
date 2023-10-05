@@ -1,10 +1,10 @@
 const config = {
     floor: {
-        size: { x: 32, y: 23 }
+        size: { x: 32, y: 24 }
     },
     player: {
-        position: { x: 0.09, y: 0.12 },		
-        speed: 0.2,
+        position: { x: 0.09, y: 0.15 },		
+        speed: 0.1,
     },
     sonars: [
     ],

@@ -9,11 +9,11 @@ dispatch( chargetakentt, chargetaken(arg) ).
 dispatch( chargedeposited, chargedeposited(arg) ).
 dispatch( deposit, deposit(arg) ).
 request( move, move(X,Y) ).
-request( getposition, getposition(arg) ).
-dispatch( stop, stop(arg) ).
+request( moveclosest, moveclosest(Xs,Ys) ).
 reply( movedone, movedone(arg) ).  %%for move
 reply( movefailed, movefailed(arg) ).  %%for move
-reply( position, position(X,Y) ).  %%for getposition
+reply( movecdone, movecdone(arg) ).  %%for moveclosest
+reply( movecfailed, movecfailed(arg) ).  %%for moveclosest
 dispatch( fail, fail(ERROR) ).
 request( engage, engage(OWNER,STEPTIME) ).
 reply( engagedone, engagedone(ARG) ).  %%for engage

@@ -19,6 +19,7 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 			var isMoving = false
+				var destinations = mutableListOf<Pair<Int,Int>>()
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -37,8 +38,11 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
+				 	 		stateTimer = TimerActor("timer_engage", 
+				 	 					  scope, context!!, "local_tout_trolleyexecutor_engage", 10000.toLong() )
 					}	 	 
-					 transition(edgeName="t019",targetState="setState",cond=whenReply("engagedone"))
+					 transition(edgeName="t018",targetState="engageFail",cond=whenTimeout("local_tout_trolleyexecutor_engage"))   
+					transition(edgeName="t019",targetState="setState",cond=whenReply("engagedone"))
 					transition(edgeName="t020",targetState="engageFail",cond=whenReply("engagerefused"))
 				}	 
 				state("engageFail") { //this:State
@@ -54,7 +58,17 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				}	 
 				state("moveFail") { //this:State
 					action { //it:State
-						answer("move", "movefailed", "movefailed(arg)"   )  
+						answer("move", "movefailed", "movecfailed(arg)"   )  
+						CommUtils.outmagenta("TE: moverobot failed, try restarting the application")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+				}	 
+				state("movecFail") { //this:State
+					action { //it:State
+						answer("move", "movefailed", "movecfailed(arg)"   )  
 						CommUtils.outmagenta("TE: moverobot failed, try restarting the application")
 						//genTimer( actor, state )
 					}
@@ -83,14 +97,14 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				}	 
 				state("waiting") { //this:State
 					action { //it:State
-						CommUtils.outmagenta("TE: waiting $isMoving")
+						CommUtils.outmagenta("TE: waiting")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
 					 transition(edgeName="t021",targetState="move",cond=whenRequest("move"))
-					transition(edgeName="t022",targetState="askPosition",cond=whenRequest("getposition"))
+					transition(edgeName="t022",targetState="stop",cond=whenRequest("moveclosest"))
 				}	 
 				state("move") { //this:State
 					action { //it:State
@@ -106,10 +120,68 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
+				 	 		stateTimer = TimerActor("timer_move", 
+				 	 					  scope, context!!, "local_tout_trolleyexecutor_move", 30000.toLong() )
 					}	 	 
-					 transition(edgeName="t023",targetState="moveCompleted",cond=whenReply("moverobotdone"))
-					transition(edgeName="t024",targetState="moveFail",cond=whenReply("moverobotfailed"))
-					transition(edgeName="t025",targetState="stopAskPos",cond=whenRequest("getposition"))
+					 transition(edgeName="t023",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_move"))   
+					transition(edgeName="t024",targetState="moveCompleted",cond=whenReply("moverobotdone"))
+					transition(edgeName="t025",targetState="moveFail",cond=whenReply("moverobotfailed"))
+				}	 
+				state("stop") { //this:State
+					action { //it:State
+						CommUtils.outmagenta("TE: moveClosest")
+						if( checkMsgContent( Term.createTerm("moveclosest(Xs,Ys)"), Term.createTerm("moveclosest(Xs,Ys)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 destinations = utils.PosUtils.destStringListToPairs(payloadArg(0), payloadArg(1))  
+								if(  isMoving  
+								 ){emit("alarm", "alarm(arg)" ) 
+								 isMoving = false  
+								}
+						}
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="askPosition", cond=doswitch() )
+				}	 
+				state("askPosition") { //this:State
+					action { //it:State
+						CommUtils.outblack("TE: askPosition")
+						request("getrobotstate", "getrobotstate(arg)" ,"basicrobot" )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+				 	 		stateTimer = TimerActor("timer_askPosition", 
+				 	 					  scope, context!!, "local_tout_trolleyexecutor_askPosition", 30000.toLong() )
+					}	 	 
+					 transition(edgeName="t026",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_askPosition"))   
+					transition(edgeName="t027",targetState="moveClosest",cond=whenReply("robotstate"))
+				}	 
+				state("moveClosest") { //this:State
+					action { //it:State
+						CommUtils.outblack("TE: moveClosest")
+						if( checkMsgContent( Term.createTerm("robotstate(POS,DIR)"), Term.createTerm("robotstate(POS,DIR)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+									val position = utils.PosUtils.posStringToPair(payloadArg(0).trim())
+												
+												val closest = utils.PosUtils.closestDestination(position, destinations)
+												val X = closest.first
+												val Y = closest.second
+								request("moverobot", "moverobot($X,$Y)" ,"basicrobot" )  
+								 isMoving = true  
+						}
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+				 	 		stateTimer = TimerActor("timer_moveClosest", 
+				 	 					  scope, context!!, "local_tout_trolleyexecutor_moveClosest", 30000.toLong() )
+					}	 	 
+					 transition(edgeName="t028",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_moveClosest"))   
+					transition(edgeName="t029",targetState="movecCompleted",cond=whenReply("moverobotdone"))
+					transition(edgeName="t030",targetState="movecFail",cond=whenReply("moverobotfailed"))
 				}	 
 				state("moveCompleted") { //this:State
 					action { //it:State
@@ -123,48 +195,11 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 					}	 	 
 					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
-				state("stopAskPos") { //this:State
+				state("movecCompleted") { //this:State
 					action { //it:State
-						discardMessages = true
-						CommUtils.outmagenta("TE: stopAskPos")
-						emit("alarm", "alarm(arg)" ) 
 						 isMoving = false  
-						request("getrobotstate", "getrobotstate(arg)" ,"basicrobot" )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-				 	 		stateTimer = TimerActor("timer_stopAskPos", 
-				 	 					  scope, context!!, "local_tout_trolleyexecutor_stopAskPos", 30000.toLong() )
-					}	 	 
-					 transition(edgeName="t026",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_stopAskPos"))   
-					transition(edgeName="t027",targetState="sendPosition",cond=whenReply("robotstate"))
-				}	 
-				state("askPosition") { //this:State
-					action { //it:State
-						CommUtils.outmagenta("TE: askPosition")
-						request("getrobotstate", "getrobotstate(arg)" ,"basicrobot" )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-				 	 		stateTimer = TimerActor("timer_askPosition", 
-				 	 					  scope, context!!, "local_tout_trolleyexecutor_askPosition", 30000.toLong() )
-					}	 	 
-					 transition(edgeName="t028",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_askPosition"))   
-					transition(edgeName="t029",targetState="sendPosition",cond=whenReply("robotstate"))
-				}	 
-				state("sendPosition") { //this:State
-					action { //it:State
-						CommUtils.outmagenta("TE: sendPosition")
-						if( checkMsgContent( Term.createTerm("robotstate(POS,DIR)"), Term.createTerm("robotstate(POS,DIR)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-									val position = utils.PosUtils.posStringToPair(payloadArg(0).trim())
-												
-												val X = position.first
-												val Y = position.second
-								answer("getposition", "position", "position($X,$Y)"   )  
-						}
+						CommUtils.outmagenta("TE: movecCompleted")
+						answer("moveclosest", "movecdone", "movecdone(arg)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

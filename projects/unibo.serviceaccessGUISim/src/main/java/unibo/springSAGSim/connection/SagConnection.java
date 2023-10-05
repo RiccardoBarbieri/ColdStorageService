@@ -8,9 +8,9 @@ import unibo.basicomm23.interfaces.Interaction;
 import unibo.basicomm23.utils.CommUtils;
 
 @Component
-public class SagConnection extends ConnectionUtils{
+public class SagConnection extends ConnectionUtils {
 
-    private static final String className        = "SagConnection";
+    private static final String className = "SagConnection";
     @Value("${actor.ctx}")
     String actorCtx;
     @Value("${actor.name}")
@@ -21,17 +21,17 @@ public class SagConnection extends ConnectionUtils{
     String actorCtxHost;
 
 
-    public CoapConnection connectLocalActorUsingCoap(){
+    public CoapConnection connectLocalActorUsingCoap() {
         return connectActorUsingCoap(actorCtxHost, actorCtxPort, actorCtx, actorName);
     }
 
-    public String sendStorageRequest(Interaction conn, float fw){
+    public String sendStorageRequest(Interaction conn, float fw) {
         String answer = "";
         try {
-            String msg = ""+ CommUtils.buildRequest("ServiceAccessGUISim",
-                    "storerequest", "storerequest("+fw+")", "ColdStorageService");
+            String msg = "" + CommUtils.buildRequest("serviceaccessguisim",
+                    "storerequest", "storerequest(" + fw + ")", actorName);
             CommUtils.outblue(className + " sendStorageRequest | msg:" + msg + ", conn: " + conn);
-            answer = conn.request( msg );
+            answer = conn.request(msg);
             CommUtils.outmagenta(className + " sendStorageRequest | answer: " + answer);
         } catch (Exception e) {
             CommUtils.outred(className + " sendStorageRequest | ERROR: " + e.getMessage());
