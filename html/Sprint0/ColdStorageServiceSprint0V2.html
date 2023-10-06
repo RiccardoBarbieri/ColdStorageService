@@ -36,7 +36,7 @@
 <h2>Requirements</h2>
  
 <div class="remark">
-    <a target="_blank" href="https://iss.riccardohost.space/TemaFinale23.html">Descrizione requirements</a><br>
+    <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements</a><br>
 
 
 <p>
@@ -55,7 +55,7 @@
     
 <h4>Domain analysis</h4>
 <p>
-    Nella seguente tabella vengono riportate le entità trovate nel <a target="_blank" href="https://iss.riccardohost.space/TemaFinale23.html">documento dei requisiti</a>, con annessa una piccola descrizione basata su quanto deducibile dal suddetto documento. <br>
+    Nella seguente tabella vengono riportate le entit&agrave; trovate nel <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">documento dei requisiti</a>, con annessa una piccola descrizione basata su quanto deducibile dal suddetto documento. <br>
     Successivamente, verranno <b>formalizzati</b> i principali concetti in modo da averne una definizione precisa e inequivocabile.
 </p>
 <table>
@@ -71,7 +71,7 @@
                 <li><a href="#ddrrobot">DDR robot</a>;</li>
                 <li><a href="#serviceaccessgui">ServiceAccessGUI</a>;</li>
                 <li><a href="#servicestatusgui">ServiceStatusGUI</a>;</li>
-                <li><a href="https://iss.riccardohost.space/TemaFinale23.html">Alarm system</a>.</li>
+                <li><a href="https://iss.riccardob.dev/TemaFinale23.html">Alarm system</a>.</li>
             </ul></td>
 	</tr>
 	<tr>
@@ -102,7 +102,7 @@
 	</tr>
 	<tr>
 		<td class="green bold center" id="transporttrolley">Transport trolley</td>
-		<td>Entità di forma quadrata e lato <a href="#rd">RD</a>, &egrave; inizialmente posizionato in <a href="#home">HOME</a> e pu&ograve; muoversi avanti e indietro, ruotare di 90° e fermarsi; sfrutta il DDR robot per muoversi nella <a href="#servicearea">Service area</a>.</td>
+		<td>Entit&agrave; di forma quadrata e lato <a href="#rd">RD</a>, &egrave; inizialmente posizionato in <a href="#home">HOME</a> e pu&ograve; muoversi avanti e indietro, ruotare di 90° e fermarsi; sfrutta il DDR robot per muoversi nella <a href="#servicearea">Service area</a>.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="rd">RD</td>
@@ -124,7 +124,7 @@
         </tr>
 	<tr>
 		<td class="green bold center" id="camionrefrigerato">Camion refrigerato</td>
-		<td>Entità esterna al sistema che deposita <a href="#fw">FW</a> kg di prodotti alimentari alla porta <a href="#INDOOR">INDOOR</a>.</td>
+		<td>Entit&agrave; esterna al sistema che deposita <a href="#fw">FW</a> kg di prodotti alimentari alla porta <a href="#INDOOR">INDOOR</a>.</td>
 	</tr>
     <tr>
 		<td class="green bold center" id="fw">FW</td>
@@ -186,7 +186,7 @@
 	</tr>
 	<tr>
 		<td class="green bold center" id="dlimt">DLIMT</td>
-		<td>Distanza massima dal <a href="#sonar">sonar</a> per la quale si attivano i relativi <a target="_blank" href="https://iss.riccardohost.space/TemaFinale23.html">alarm requirements</a>: se viene rilevata una distanza minore l'<a href="#alarmsistem">alarm system</a> comunica al <a href="#transporttrolley">transport trolley</a> di fermarsi.</td>
+		<td>Distanza massima dal <a href="#sonar">sonar</a> per la quale si attivano i relativi <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">alarm requirements</a>: se viene rilevata una distanza minore l'<a href="#alarmsistem">alarm system</a> comunica al <a href="#transporttrolley">transport trolley</a> di fermarsi.</td>
 	</tr>
 	<tr>
 		<td class="green bold center" id="mint">MINT</td>
@@ -233,23 +233,24 @@
             <li><span class="stroke" style="color:rgb(255,228,0);">PORT</span></li>
         </ul>
     </p>
+    <p class="nota">
+        In un colloquio con il committente è stata precisita l'assenza di ostacoli, a differenza dell'immagine presente nel <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">documento dei requisiti</a>.<br>
+    </p>
+
     <p>
-        Il committente ha fornito un ambiente virtuale, detto <i>WEnv o VirtualEnv</i>, che rappresenta la service area e all'interno il robot che ci lavora. Abbiamo utilizzato questa rappresentazione come punto di partenza per definire con precisione la service area. <br>
-        Per una definizione precisa diamo una misura in metri, basati sui dati ottenuti dall'ambiente <i>VirtualEnv</i>.
+        Il committente ha fornito un ambiente virtuale, detto <i>WEnv</i>, che rappresenta la service area e all'interno il robot che ci lavora. Abbiamo utilizzato questa rappresentazione come punto di partenza per definire con precisione la service area. <br>
+        Per una definizione precisa diamo una misura in metri, basati sui dati ottenuti dall'ambiente <i>WEnv</i>. <br>
 
-        <b>INSERIRE SCREEN PARAMETRI VirtualEnv</b>
-
-        Il modello definito è mostrato nell'immagine seguente:
+        Il modello definito è mostrato nell'immagine seguente: <br>
         <img class="bigimglim" src="../images/sprint0/servicearea.png" alt="Modello service area">
 
     </p>
-    <img class="bigimglim" src="../images/sprint0/servicearea.png" alt="Modello service area">
-    <p>
-        In un colloquio con il committente è stata introdotta anche la presenza di <b>ostacoli</b> all'interno della service area, non meglio definiti. <br>
-    Si rimanda ad un successivo incontro con il committente la conferma della dimensione della service area e la revisione dello specifico posizionamento di ogni punto di interesse, compreso degli eventuali ostacoli.
 
+    <p class="keypoint">
+        <b>KEY-POINT</b>: la service area è stata modellata in metri per darne una definizione formale. Nei prossimi Sprint verr&agrave; analizzata nuovamente introducendo il nuovo concetto di misura <b>unitàRobot</b>.
     </p>
 
+   
 <h5>Transport trolley e DDR Robot</h5>
 
     <p class="keypoint">
@@ -265,15 +266,15 @@
 
 <h5>Ticket</h5>
 <p>
-    Dal documento dei requisiti viene evidenziato come il ticket sia identificato da un numero; un analisi più approfondita verrà fatta nei successivi Sprint.
+    Dal documento dei requisiti viene evidenziato come il ticket sia identificato da un numero; un analisi più approfondita verr&agrave; fatta nei successivi Sprint.
 </p>
 <p class="keypoint">
-    <b>KEY-POINT</b>: <i>TICKETTIME</i> non è una proprietà dell'entità <i>ticket</i>, bensì del servizio ColdStorageService.
+    <b>KEY-POINT</b>: <i>TICKETTIME</i> non è una propriet&agrave; dell'entit&agrave; <i>ticket</i>, bensì del servizio ColdStorageService.
 </p>
 
 <h4>Verbs analysis</h4>
 <p>
-    La seguente tabella mette in luce le <b>azioni</b> che vengono compiute all'interno della logica applicativa, evidenziando qual è l'entità che le compie e l'oggetto che fa parte dell'azione stessa.
+    La seguente tabella mette in luce le <b>azioni</b> che vengono compiute all'interno della logica applicativa, evidenziando qual è l'entit&agrave; che le compie e l'oggetto che fa parte dell'azione stessa.
 </p>
 <table>
     <tr>
@@ -400,11 +401,11 @@
         In questa fase verranno presi in analisi i macro-componenti del sistema e le interazioni che avvengono fra essi, con il fine di delineare l'architettura logica del sistema.
     </p>
     <p>
-        Abbiamo deciso di utilizzare il <a target="_blank" href="https://en.wikipedia.org/wiki/Actor_model">modello ad attori</a> per questo progetto in quanto rispecchia i requisiti analizzati dal <a target="_blank" href="https://iss.riccardohost.space/TemaFinale23.html">documento fornito dal cliente</a>: il sistema &egrave; costituito da componenti <b>eterogenei</b> che interagiscono tra di loro su <b>base distribuita</b>; inoltre abbiamo a disposizione librerie e un linguaggio di metamodellazione che supporteranno lo sviluppo orientato agli attori.
+        Abbiamo deciso di utilizzare il <a target="_blank" href="https://en.wikipedia.org/wiki/Actor_model">modello ad attori</a> per questo progetto in quanto rispecchia i requisiti analizzati dal <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">documento fornito dal cliente</a>: il sistema &egrave; costituito da componenti <b>eterogenei</b> che interagiscono tra di loro su <b>base distribuita</b>; inoltre abbiamo a disposizione librerie e un linguaggio di metamodellazione che supporteranno lo sviluppo orientato agli attori.
     </p>
 
     <p>
-        Il linguaggio in questione &egrave; <a target="_blank" href="https://iss.riccardohost.space/QakActors23.html#qakactors23">QAK</a>, un linguaggio di modellazione eseguibile che permette di creare prototipi e sistemi funzionanti in breve tempo (rispetto a linguaggi tradizionali) semplificando gli aspetti pi&ugrave; complessi della gestione delle interazioni tramite una struttura basata su attori che operano in <a target="_blank" href="https://iss.riccardohost.space/Actors23.html#actors23-il-contesto">contesti</a>.<br>
+        Il linguaggio in questione &egrave; <a target="_blank" href="https://iss.riccardob.dev/QakActors23.html#qakactors23">QAK</a>, un linguaggio di modellazione eseguibile che permette di creare prototipi e sistemi funzionanti in breve tempo (rispetto a linguaggi tradizionali) semplificando gli aspetti pi&ugrave; complessi della gestione delle interazioni tramite una struttura basata su attori che operano in <a target="_blank" href="https://iss.riccardob.dev/Actors23.html#actors23-il-contesto">contesti</a>.<br>
 
     Oltre alla velocit&agrave; di sviluppo possibile con QAK, la scelta deriva dal fatto che il cliente ha fornito software per pilotare un DDR robot (o robot virtuali) compatibile con QAK.
     </p>
@@ -415,10 +416,10 @@
         Il committente, in un secondo colloquio, non ha dato nessuna preferenza riguardo alla tipologia di messaggio. <br>
     </p>
     <p class="keypoint">
-        <b>KEY-POINT</b>: il messaggio charge taken verrà modellato con semantica <b>request-reply</b>.
+        <b>KEY-POINT</b>: il messaggio charge taken verr&agrave; modellato con semantica <b>request-reply</b>.
     </p>
     <p>
-        Abbiamo scelto di modellare il messaggio charge taken con semantica request-reply, in quanto sarà l'operatore del camion a richiedere lo stato del carico attraverso la ServiceAccessGUI. <br> 
+        Abbiamo scelto di modellare il messaggio charge taken con semantica request-reply, in quanto sar&agrave; l'operatore del camion a richiedere lo stato del carico attraverso la ServiceAccessGUI. <br> 
         In questo modo non può succedere che vi sia un attesa del messaggio indefinitivamente lunga (con semantica dispatch non sapremmo mai se e quando il messaggio arriverebbe). Avremmo potuto usare un timeout per la gestione della semantica dispatch, ma abbiamo preferito una soluzione più deterministica, con il controllo in mano all'utente.
     </p>
 
@@ -431,7 +432,7 @@
 
     <p>
         Dalla fase di analisi dei requisiti sono emerse diverse problematiche da affrontare, ma sono stati anche individuati con chiarezza dei componenti che andranno realizzati. <br>
-        Di seguito, &egrave; riportata la lista dei macro-componenti individuati, le cui descrizioni sono già state definite in fase di analisi dei requisiti:
+        Di seguito, &egrave; riportata la lista dei macro-componenti individuati, le cui descrizioni sono gi&agrave; state definite in fase di analisi dei requisiti:
         <ul>
             <li>ColdStorageService</li>
             <li>TransportTrolley</li>
@@ -447,9 +448,9 @@
     <h3 id="suddivisioneSprint">Suddivisione in Sprint</h3>
     <p>
         Abbiamo pensato di utilizzare la tecnica <b>divide et impera</b>, separando quindi l'analisi dell'applicazione in parti più piccole ed analizzandole una ad una. <br>
-    Per fare ciò si &egrave; dovuto prima identificare quale fosse il <b>core business</b> dell'applicazione, basandosi sull'analisi dei requisiti appena redatta. Abbiamo scelto come tale l'interazione tra <i>ColdStorageService</i> e <i>TransportTrolley</i>, in quanto da essa si realizza il cuore della logica applicativa richiesta dal committente. Il focus sul <i>TransportTrolley</i> implica anche la presa in considerazione del concetto di <i>basicrobot</i>, già definito in analisi dei requisiti e fornito dal committente.<br>
+    Per fare ciò si &egrave; dovuto prima identificare quale fosse il <b>core business</b> dell'applicazione, basandosi sull'analisi dei requisiti appena redatta. Abbiamo scelto come tale l'interazione tra <i>ColdStorageService</i> e <i>TransportTrolley</i>, in quanto da essa si realizza il cuore della logica applicativa richiesta dal committente. Il focus sul <i>TransportTrolley</i> implica anche la presa in considerazione del concetto di <i>basicrobot</i>, gi&agrave; definito in analisi dei requisiti e fornito dal committente.<br>
     <p>
-        La tecnica appena descritta ci ha permesso di dividere i requisiti da analizzare secondo un ordine di priorità, concretizzato nella definizione di quattro <i>Sprint</i>, ognuno volto all'analisi di una diversa problematica:
+        La tecnica appena descritta ci ha permesso di dividere i requisiti da analizzare secondo un ordine di priorit&agrave;, concretizzato nella definizione di quattro <i>Sprint</i>, ognuno volto all'analisi di una diversa problematica:
         <ol>
             <li><b>Sprint1</b>: ColdStorageService e TransportTrolley (analisi del core business)</li>
             <li><b>Sprint2</b>: ServiceAccessGUI</li>
@@ -458,13 +459,13 @@
         </ol>
     </p>
 
-    Questa suddivisione preliminare verrà confermata di volta in volta nei successivi Sprint, sulla base delle nuove problematiche che sorgeranno e dei relativi modi per affrontarle. <br>
+    Questa suddivisione preliminare verr&agrave; confermata di volta in volta nei successivi Sprint, sulla base delle nuove problematiche che sorgeranno e dei relativi modi per affrontarle. <br>
 
     </p>
     <h3>Valutazioni in termini di tempo</h3>
     <p>
         Il fatto di aver acquisito un'ampia visione di contesto sull'applicazione (derivante dall'analisi dei requisiti) e di aver suddiviso il lavoro in macro-parti (corrispondenti agli Sprint), ci ha permesso di definire con un buon margine di errore il costo in termini di tempo per la realizzazione dell'applicazione. <br>
-    Il tempo che verrà impegato &egrave; poi strettamente dipendente da come verrà suddiviso il lavoro tra i membri del team di sviluppo (2 in questo caso), con possibilità di parallelismo nell'analisi di problematiche diverse.
+    Il tempo che verr&agrave; impegato &egrave; poi strettamente dipendente da come verr&agrave; suddiviso il lavoro tra i membri del team di sviluppo (2 in questo caso), con possibilit&agrave; di parallelismo nell'analisi di problematiche diverse.
     <p>
         Abbiamo scelto di affrontare lo <i>Sprint1</i> assieme, in modo tale da essere certi di analizzare quello che &egrave; il core business dell'applicazione nella maniera più precisa possibile (pagando però in termini di tempo). <br>
     Per i successivi Sprint, ovviamente al netto di eventuali nuove problematiche che sorgeranno, abbiamo invece deciso di dividerci l'analisi di <i>Sprint2</i> e <i>Sprint3</i>, che affrontano problematiche differenti. Per quanto riguarda lo <i>Sprint4</i>, pensiamo possa essere svolto il parallelo allo <i>Sprint2</i>, in quanto trattano problemi molto simili. Tuttavia, decisioni defintive verranno prese e/o confermate nei successivi <i>Sprint</i>.
@@ -486,7 +487,7 @@
     <h3>Architettura logica</h3>
 
     <p>
-        Sulla base dell'analisi dei requisiti non siamo ancora in grado di definire un'architettura logica completa del sistema, che verrà rimandata ai successi Sprint, a valle di un'analisi più approfondita dei componenti e delle interazione presenti fra essi. <br>
+        Sulla base dell'analisi dei requisiti non siamo ancora in grado di definire un'architettura logica completa del sistema, che verr&agrave; rimandata ai successi Sprint, a valle di un'analisi più approfondita dei componenti e delle interazione presenti fra essi. <br>
         Per ora, si utilizza come riferimento il <b>Modello dei requisiti</b> definito in fase di Analisi dei requisiti.
     </p>
 </div>
@@ -496,16 +497,16 @@
 <div class="remark">
     <p>
         Introduciamo un discorso sul <i>Camion refrigerato</i> e sul suo ruolo all'interno dell'applicazione (particolarmente in fase di test). <br>
-        Come già detto in fase di analisi dei requisiti, quest'entità rappresenta l'utente umano che interagisce con il sistema (in particolar modo con la <i>ServiceAccessGUI</i>). Nonostante anche questo aspetto verrà trattato negli <i>Sprint</i> successivi, abbiamo considerato utile, all'interno del progetto <i>qak</i> di questo Sprint, modellare la <i>SAG</i> come <b>entità mock</b> che simula l'interazione con il sistema. In pratica, la <i>SAG</i> si comporta come se ci fosse l'operatore del camion a interagirci.
+        Come gi&agrave; detto in fase di analisi dei requisiti, quest'entit&agrave; rappresenta l'utente umano che interagisce con il sistema (in particolar modo con la <i>ServiceAccessGUI</i>). Nonostante anche questo aspetto verr&agrave; trattato negli <i>Sprint</i> successivi, abbiamo considerato utile, all'interno del progetto <i>qak</i> di questo Sprint, modellare la <i>SAG</i> come <b>entit&agrave; mock</b> che simula l'interazione con il sistema. In pratica, la <i>SAG</i> si comporta come se ci fosse l'operatore del camion a interagirci.
     </p>    
     <p>
         Per quanto riguarda i piani di test per l'applicazione, verranno per la maggior parte rimandati agli <i>Sprint</i> successivi, relativamente ai particolare problemi che verranno affrontati. <br>
         Nel frattempo, abbiamo deciso di testare quello che per ora abbiamo potuto definire nel <a href="#modello_requisiti">modello dei requisiti</a>, ovvero l'interazione tra la <i>ServiceAccessGUI</i> e il <i>ColdStorageService</i>. <br> 
-        Abbiamo quindi sfruttato l'entità mock sopra descritta per definire un'unità di test Junit che ne simula il comportamento. Vi è quindi corrispondenza 1 ad 1 tra l'attore qak <i>serviceaccessgui</i> e l'unità di test.
+        Abbiamo quindi sfruttato l'entit&agrave; mock sopra descritta per definire un'unit&agrave; di test Junit che ne simula il comportamento. Vi è quindi corrispondenza 1 ad 1 tra l'attore qak <i>serviceaccessgui</i> e l'unit&agrave; di test.
    </p>
 
    <p class="keypoint">
-        <b>KEY-POINT</b>: verrà testata l'interazione <i>SAG</i> - <i>CSS</i> tramite un'unità JUnit che simula il comportamento del Camion che interagisce con il <i>CSS</i> (tramite la <i>SAG</i>).
+        <b>KEY-POINT</b>: verr&agrave; testata l'interazione <i>SAG</i> - <i>CSS</i> tramite un'unit&agrave; JUnit che simula il comportamento del Camion che interagisce con il <i>CSS</i> (tramite la <i>SAG</i>).
    </p>
 </div>
 
@@ -513,7 +514,7 @@
 
 <div class="remark">
    <p>
-        Come anticipato nella <a href="#test_plans">sezione precedente</a>, abbiamo implementato una unità di test JUnit che simula il comportamento dell'utente umano (operatore del Camion) che interagisce con il <i>CSS</i> tramite la <i>ServiceAccessGui</i>. <br>
+        Come anticipato nella <a href="#test_plans">sezione precedente</a>, abbiamo implementato una unit&agrave; di test JUnit che simula il comportamento dell'utente umano (operatore del Camion) che interagisce con il <i>CSS</i> tramite la <i>ServiceAccessGui</i>. <br>
         In particolare, abbiamo testato la gestione della richiesta di deposito da parte del <i>CSS</i>, sia in caso vi sia spazio disponibile nella ColdRoom, sia in caso non ci sia.
         In caso di spazio disponibile (e quindi richiesta di deposito accettata), abbiamo testato tutto il protocollo di interazione finora definito tra <i>CSS</i> e <i>SAG</i>.
    </p>
