@@ -10,8 +10,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-	
-class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
+import it.unibo.kactor.sysUtil.createActor   //Sept2023
+class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : ActorBasicFsm( name, scope, confined=isconfined ){
 
 	override fun getInitialState() : String{
 		return "s0"
@@ -26,11 +26,13 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				val PortToHomeCoord = landmarkConf.getCoordinateClosestToFor("H", IndoorToPortCoord)
 				val PortToIndoorCoord = landmarkConf.getCoordinateClosestToFor("I", IndoorToPortCoord)
 				
-				val depositQueue: java.util.Queue<Int> = java.util.LinkedList<Int>()
+				//val depositQueue: java.util.Queue<Int> = java.util.LinkedList<Int>()
+				
+				var CurrentLoad: String = ""
 				
 				var returnHome: Boolean = false
 				
-		return { //this:ActionBasciFsm
+				return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						CommUtils.outgreen("TT: started")
@@ -73,16 +75,20 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					 transition(edgeName="t03",targetState="moveToIndoorFromHome",cond=whenRequest("deposit"))
 					transition(edgeName="t04",targetState="somethingFailed",cond=whenDispatch("fail"))
 				}	 
-				state("queueDeposit") { //this:State
+				state("returnHome") { //this:State
 					action { //it:State
-							depositQueue.add(0)
-						CommUtils.outgreen("TT: added deposit request to queue")
-						returnFromInterrupt(interruptedStateTransitions)
+						CommUtils.outgreen("TT: returning HOME")
+							val X = PortToHomeCoord.first
+									val Y = PortToHomeCoord.second
+						request("move", "move($X,$Y)" ,"trolleyexecutor" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition(edgeName="t05",targetState="waiting",cond=whenReply("movedone"))
+					transition(edgeName="t06",targetState="moveFailed",cond=whenReply("movefailed"))
+					transition(edgeName="t07",targetState="restartToIndoor",cond=whenRequest("deposit"))
 				}	 
 				state("restartToIndoor") { //this:State
 					action { //it:State
@@ -97,22 +103,27 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t05",targetState="takeCharge",cond=whenReply("movecdone"))
-					transition(edgeName="t06",targetState="moveFailed",cond=whenReply("movecfailed"))
+					 transition(edgeName="t08",targetState="takeCharge",cond=whenReply("movecdone"))
+					transition(edgeName="t09",targetState="moveFailed",cond=whenReply("movecfailed"))
 				}	 
 				state("moveToIndoorFromHome") { //this:State
 					action { //it:State
-							val X = HomeToIndoorCoord.first
-									val Y = HomeToIndoorCoord.second
-						request("move", "move($X,$Y)" ,"trolleyexecutor" )  
-						CommUtils.outgreen("TT: moving robot to indoor")
+						if( checkMsgContent( Term.createTerm("deposit(FW)"), Term.createTerm("deposit(FW)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+									CurrentLoad = payloadArg(0)
+												
+												val X = HomeToIndoorCoord.first
+												val Y = HomeToIndoorCoord.second
+								request("move", "move($X,$Y)" ,"trolleyexecutor" )  
+								CommUtils.outgreen("TT: moving robot to indoor")
+						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t07",targetState="takeCharge",cond=whenReply("movedone"))
-					transition(edgeName="t08",targetState="moveFailed",cond=whenReply("movefailed"))
+					 transition(edgeName="t010",targetState="takeCharge",cond=whenReply("movedone"))
+					transition(edgeName="t011",targetState="moveFailed",cond=whenReply("movefailed"))
 				}	 
 				state("takeCharge") { //this:State
 					action { //it:State
@@ -128,7 +139,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("chargeTaken") { //this:State
 					action { //it:State
-						answer("deposit", "chargetakentt", "chargetakentt"   )  
+						answer("deposit", "chargetakentt", "chargetakentt($CurrentLoad)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -147,48 +158,24 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t09",targetState="depositInColdRoom",cond=whenReply("movedone"))
-					transition(edgeName="t010",targetState="moveFailed",cond=whenReply("movefailed"))
+					 transition(edgeName="t012",targetState="depositInColdRoom",cond=whenReply("movedone"))
+					transition(edgeName="t013",targetState="moveFailed",cond=whenReply("movefailed"))
 				}	 
 				state("depositInColdRoom") { //this:State
 					action { //it:State
 						delay(1000) 
-						forward("chargedeposited", "chargedeposited(arg)" ,"coldstorageservice" ) 
+						forward("chargedeposited", "chargedeposited($CurrentLoad)" ,"coldstorageservice" ) 
 						CommUtils.outgreen("TT: charge deposited")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
+				 	 		stateTimer = TimerActor("timer_depositInColdRoom", 
+				 	 					  scope, context!!, "local_tout_transporttrolley_depositInColdRoom", 1000.toLong() )
 					}	 	 
-					 transition( edgeName="goto",targetState="checkQueueOrReturn", cond=doswitch() )
-				}	 
-				state("checkQueueOrReturn") { //this:State
-					action { //it:State
-							returnHome = (depositQueue.size == 0)  
-						if(  returnHome  
-						 ){	val X = PortToHomeCoord.first
-										val Y = PortToHomeCoord.second
-						request("move", "move($X,$Y)" ,"trolleyexecutor" )  
-						CommUtils.outgreen("TT: no queued requests, returning to home")
-						}
-						else
-						 {	depositQueue.remove()
-						 				val X = PortToIndoorCoord.first
-						 				val Y = PortToIndoorCoord.second
-						 request("move", "move($X,$Y)" ,"trolleyexecutor" )  
-						 CommUtils.outgreen("TT: managing queued request, returning to indoor")
-						 }
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t011",targetState="waiting",cond=whenReplyGuarded("movedone",{ returnHome  
-					}))
-					transition(edgeName="t012",targetState="takeCharge",cond=whenReplyGuarded("movedone",{ !returnHome  
-					}))
-					transition(edgeName="t013",targetState="moveFailed",cond=whenReply("movefailed"))
+					 transition(edgeName="t014",targetState="returnHome",cond=whenTimeout("local_tout_transporttrolley_depositInColdRoom"))   
+					transition(edgeName="t015",targetState="restartToIndoor",cond=whenRequest("deposit"))
 				}	 
 			}
 		}
-}
+} 

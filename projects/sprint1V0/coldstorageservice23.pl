@@ -4,10 +4,9 @@
 request( storerequest, storerequest(FW) ).
 reply( loadaccepted, loadaccepted(arg) ).  %%for storerequest
 reply( loadrejected, loadrejected(arg) ).  %%for storerequest
-dispatch( chargetaken, chargetaken(arg) ).
-request( deposit, deposit(arg) ).
-reply( chargetakentt, chargetaken(arg) ).  %%for deposit
-dispatch( chargedeposited, chargedeposited(arg) ).
+request( deposit, deposit(FW) ).
+reply( chargetakentt, chargetakentt(FW) ).  %%for deposit
+dispatch( chargedeposited, chargedeposited(FW) ).
 request( move, move(X,Y) ).
 request( moveclosest, moveclosest(Xs,Ys) ).
 reply( movedone, movedone(arg) ).  %%for move

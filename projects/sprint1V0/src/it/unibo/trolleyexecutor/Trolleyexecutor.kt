@@ -10,8 +10,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-	
-class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
+import it.unibo.kactor.sysUtil.createActor   //Sept2023
+class Trolleyexecutor ( name: String, scope: CoroutineScope, isconfined: Boolean=false  ) : ActorBasicFsm( name, scope, confined=isconfined ){
 
 	override fun getInitialState() : String{
 		return "s0"
@@ -20,7 +20,7 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 		val interruptedStateTransitions = mutableListOf<Transition>()
 			var isMoving = false
 				var destinations = mutableListOf<Pair<Int,Int>>()
-		return { //this:ActionBasciFsm
+				return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						CommUtils.outmagenta("TE: trolleyexecutor initialized")
@@ -41,13 +41,13 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				 	 		stateTimer = TimerActor("timer_engage", 
 				 	 					  scope, context!!, "local_tout_trolleyexecutor_engage", 10000.toLong() )
 					}	 	 
-					 transition(edgeName="t014",targetState="engageFail",cond=whenTimeout("local_tout_trolleyexecutor_engage"))   
-					transition(edgeName="t015",targetState="setState",cond=whenReply("engagedone"))
-					transition(edgeName="t016",targetState="engageFail",cond=whenReply("engagerefused"))
+					 transition(edgeName="t016",targetState="engageFail",cond=whenTimeout("local_tout_trolleyexecutor_engage"))   
+					transition(edgeName="t017",targetState="setState",cond=whenReply("engagedone"))
+					transition(edgeName="t018",targetState="engageFail",cond=whenReply("engagerefused"))
 				}	 
 				state("engageFail") { //this:State
 					action { //it:State
-						 val ErrorString = "Ingaggio robot fallito"  
+						 val ErrorString = "Ingaggiorobotfallito"  
 						forward("fail", "fail($ErrorString)" ,"transporttrolley" ) 
 						CommUtils.outmagenta("TE: engage with robot failed, try restarting the application")
 						//genTimer( actor, state )
@@ -103,8 +103,8 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t017",targetState="move",cond=whenRequest("move"))
-					transition(edgeName="t018",targetState="stop",cond=whenRequest("moveclosest"))
+					 transition(edgeName="t019",targetState="move",cond=whenRequest("move"))
+					transition(edgeName="t020",targetState="stop",cond=whenRequest("moveclosest"))
 				}	 
 				state("move") { //this:State
 					action { //it:State
@@ -123,13 +123,14 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				 	 		stateTimer = TimerActor("timer_move", 
 				 	 					  scope, context!!, "local_tout_trolleyexecutor_move", 30000.toLong() )
 					}	 	 
-					 transition(edgeName="t019",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_move"))   
-					transition(edgeName="t020",targetState="moveCompleted",cond=whenReply("moverobotdone"))
-					transition(edgeName="t021",targetState="moveFail",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t021",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_move"))   
+					transition(edgeName="t022",targetState="stop",cond=whenRequest("moveclosest"))
+					transition(edgeName="t023",targetState="moveCompleted",cond=whenReply("moverobotdone"))
+					transition(edgeName="t024",targetState="moveFail",cond=whenReply("moverobotfailed"))
 				}	 
 				state("stop") { //this:State
 					action { //it:State
-						CommUtils.outmagenta("TE: moveClosest")
+						CommUtils.outmagenta("TE: stop")
 						if( checkMsgContent( Term.createTerm("moveclosest(Xs,Ys)"), Term.createTerm("moveclosest(Xs,Ys)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 destinations = utils.PosUtils.destStringListToPairs(payloadArg(0), payloadArg(1))  
@@ -143,11 +144,11 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="askPosition", cond=doswitch() )
+					 transition(edgeName="t025",targetState="askPosition",cond=whenReply("moverobotfailed"))
 				}	 
 				state("askPosition") { //this:State
 					action { //it:State
-						CommUtils.outblack("TE: askPosition")
+						CommUtils.outmagenta("TE: askPosition")
 						request("getrobotstate", "getrobotstate(arg)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
@@ -156,12 +157,12 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				 	 		stateTimer = TimerActor("timer_askPosition", 
 				 	 					  scope, context!!, "local_tout_trolleyexecutor_askPosition", 30000.toLong() )
 					}	 	 
-					 transition(edgeName="t022",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_askPosition"))   
-					transition(edgeName="t023",targetState="moveClosest",cond=whenReply("robotstate"))
+					 transition(edgeName="t026",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_askPosition"))   
+					transition(edgeName="t027",targetState="moveClosest",cond=whenReply("robotstate"))
 				}	 
 				state("moveClosest") { //this:State
 					action { //it:State
-						CommUtils.outblack("TE: moveClosest")
+						CommUtils.outmagenta("TE: moveClosest")
 						if( checkMsgContent( Term.createTerm("robotstate(POS,DIR)"), Term.createTerm("robotstate(POS,DIR)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 									val position = utils.PosUtils.posStringToPair(payloadArg(0).trim())
@@ -179,9 +180,9 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				 	 		stateTimer = TimerActor("timer_moveClosest", 
 				 	 					  scope, context!!, "local_tout_trolleyexecutor_moveClosest", 30000.toLong() )
 					}	 	 
-					 transition(edgeName="t024",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_moveClosest"))   
-					transition(edgeName="t025",targetState="movecCompleted",cond=whenReply("moverobotdone"))
-					transition(edgeName="t026",targetState="movecFail",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t028",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_moveClosest"))   
+					transition(edgeName="t029",targetState="movecCompleted",cond=whenReply("moverobotdone"))
+					transition(edgeName="t030",targetState="movecFail",cond=whenReply("moverobotfailed"))
 				}	 
 				state("moveCompleted") { //this:State
 					action { //it:State
@@ -209,4 +210,4 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				}	 
 			}
 		}
-}
+} 
