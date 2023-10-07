@@ -26,8 +26,6 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 				val PortToHomeCoord = landmarkConf.getCoordinateClosestToFor("H", IndoorToPortCoord)
 				val PortToIndoorCoord = landmarkConf.getCoordinateClosestToFor("I", IndoorToPortCoord)
 				
-				//val depositQueue: java.util.Queue<Int> = java.util.LinkedList<Int>()
-				
 				var CurrentLoad: String = ""
 				
 				var returnHome: Boolean = false
@@ -92,6 +90,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 				}	 
 				state("restartToIndoor") { //this:State
 					action { //it:State
+						discardMessages = true
 						CommUtils.outgreen("TT: restarting to indoor")
 							val destinations = landmarkConf.getCoordinatesFor("I")
 									val messages = utils.PosUtils.listOfDestToMessStrings(destinations)

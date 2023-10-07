@@ -47,8 +47,6 @@ Reply		robotstate			:		robotstate(POS,DIR) for getrobotstate
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
 Context ctx_coldstorageservice ip [host="localhost" port=8021]
 
-//TODO: ricontrollare consumo movedone/failed, movecdone/failed transporttrolley e moverobotdone/failed trolleyexecutor
-//TODO: controllare anche sintassi TT: solo movedone/failed e movedone/failed TE: moverobotdone/failed
 //TODO: base64 per lista (singolo parametro che codifica [(1,2),(1,2)] o doppio?)
 //TODO: prima controllare se == e = e === causano problemi con unificazione prolog
 //TODO: debuggare correttezza variabili stato ColdRoom
@@ -65,7 +63,6 @@ QActor coldstorageservice context ctx_coldstorageservice {
 		
 		var accepted: Boolean = false
 		
-		val depositQueue: java.util.Queue<Float> = java.util.LinkedList<Float>()
 	#]
 	
 	State s0 initial {
@@ -116,11 +113,10 @@ QActor coldstorageservice context ctx_coldstorageservice {
 	Goto waiting
 	
 	State chargeDeposited {
-		onMsg(chargedeposited : chargedeposite(FW)){
-			println("CSS: load of ${payloadArg(0)} deposited in ColdRoom") color blue
+		onMsg(chargedeposited : chargedeposited(FW)){
+			println("CSS: load of ${payloadArg(0)} deposited in ColdRoom, current weight = $actualCurrentColdRoom") color blue
 			[#	val FW = payloadArg(0).toFloat()
 				actualCurrentColdRoom += FW
-				val currentDeposit = depositQueue.remove() 
 			#]
 		}
 	}
@@ -137,8 +133,6 @@ QActor transporttrolley context ctx_coldstorageservice {
 		val IndoorToPortCoord = landmarkConf.getCoordinateClosestToFor("P", HomeToIndoorCoord)
 		val PortToHomeCoord = landmarkConf.getCoordinateClosestToFor("H", IndoorToPortCoord)
 		val PortToIndoorCoord = landmarkConf.getCoordinateClosestToFor("I", IndoorToPortCoord)
-		
-		//val depositQueue: java.util.Queue<Int> = java.util.LinkedList<Int>()
 		
 		var CurrentLoad: String = ""
 		
@@ -179,6 +173,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 					whenRequest	deposit		->	restartToIndoor
 	
 	State restartToIndoor {
+		discardMsg On
 		println("TT: restarting to indoor") color green
 		
 		[#	val destinations = landmarkConf.getCoordinatesFor("I")
@@ -285,8 +280,9 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 	State waiting {
 		println("TE: waiting") color magenta
 	}
-	Transition t0	whenRequest	move		->	move
-					whenRequest	moveclosest	->	stop
+	Transition t0	whenRequest	move							->	move
+					whenRequest	moveclosest and [# isMoving #]	->	stop
+					whenRequest moveclosest and [# !isMoving #]	->	askPosition
 	
 	State move {
 		println("TE: move") color magenta
@@ -313,10 +309,14 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 			}
 		}
 	}
-	Transition t0	whenReply	moverobotfailed	->	askPosition
+	Transition t0	whenTime	500				->	askPosition
+					whenReply	moverobotfailed	->	askPosition
 	
 	State askPosition {
 		println("TE: askPosition") color magenta
+		onMsg (moveclosest : moveclosest(Xs,Ys)) {
+			[# destinations = utils.PosUtils.destStringListToPairs(payloadArg(0), payloadArg(1)) #]
+		}
 		request basicrobot -m getrobotstate	: getrobotstate(arg)
 	}
 	Transition t0	whenTime	30000		->	timeout
@@ -339,7 +339,7 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 	Transition t0	whenTime	30000			->	timeout
 					whenReply	moverobotdone	->	movecCompleted
 					whenReply	moverobotfailed	->	movecFail
-					
+
 	State moveCompleted {
 		[# isMoving = false #]
 		println("TE: moveCompleted") color magenta

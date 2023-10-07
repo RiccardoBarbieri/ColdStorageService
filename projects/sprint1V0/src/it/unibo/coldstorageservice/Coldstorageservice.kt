@@ -26,7 +26,6 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 				
 				var accepted: Boolean = false
 				
-				val depositQueue: java.util.Queue<Float> = java.util.LinkedList<Float>()
 				return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -107,12 +106,11 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 				}	 
 				state("chargeDeposited") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("chargedeposited(FW)"), Term.createTerm("chargedeposite(FW)"), 
+						if( checkMsgContent( Term.createTerm("chargedeposited(FW)"), Term.createTerm("chargedeposited(FW)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								CommUtils.outblue("CSS: load of ${payloadArg(0)} deposited in ColdRoom")
+								CommUtils.outblue("CSS: load of ${payloadArg(0)} deposited in ColdRoom, current weight = $actualCurrentColdRoom")
 									val FW = payloadArg(0).toFloat()
 												actualCurrentColdRoom += FW
-												val currentDeposit = depositQueue.remove() 
 						}
 						//genTimer( actor, state )
 					}
