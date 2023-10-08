@@ -47,12 +47,6 @@ Reply		robotstate			:		robotstate(POS,DIR) for getrobotstate
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
 Context ctx_coldstorageservice ip [host="localhost" port=8021]
 
-//TODO: base64 per lista (singolo parametro che codifica [(1,2),(1,2)] o doppio?)
-//TODO: prima controllare se == e = e === causano problemi con unificazione prolog
-//TODO: debuggare correttezza variabili stato ColdRoom
-//		dovrebbe essere corretto: in checkAvailability si incrementa solo temp e mai più usata
-//		in finalize si deposita in actualc
-
 QActor coldstorageservice context ctx_coldstorageservice {
 	
 	[#	val maxColdRoom: Float = 10F
@@ -160,7 +154,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 	}
 	Transition t0	whenRequest	deposit	->	moveToIndoorFromHome
 					whenMsg		fail	->	somethingFailed
-
+	
 	State returnHome {
 		println("TT: returning HOME") color green
 		[#	val X = PortToHomeCoord.first
