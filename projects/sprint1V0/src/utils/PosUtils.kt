@@ -20,13 +20,18 @@ class PosUtils {
 
         @Throws(IllegalArgumentException::class)
         fun destStringListToPairs(Xs: String, Ys: String): MutableList<Pair<Int, Int>> {
-            val regex = Regex("""\d+(?:,\d+)*""")
+            val regex = Regex("""s(\d+)(?:l(\d+))*""")
             if (regex.matchEntire(Xs) == null || regex.matchEntire(Ys) == null) {
                 throw IllegalArgumentException("Invalid dest string: [$Xs], [$Ys]. Mangled format.")
             }
 
-            val XsList = Xs.split(",").map { it.toInt() }
-            val YsList = Ys.split(",").map { it.toInt() }
+            var match = regex.matchEntire(Xs) ?: throw IllegalArgumentException("Invalid dest string: [$Xs]. Mangled format.")
+//            println(match.groups)
+//            println(match.groups.toList().slice(1 until match.groups.size))
+            val XsList = match.groups.toList().slice(1 until match.groups.size).mapNotNull { it?.value?.toInt() }.toMutableList()
+            match = regex.matchEntire(Ys) ?: throw IllegalArgumentException("Invalid dest string: [$Ys]. Mangled format.")
+            val YsList = match.groups.toList().slice(1 until match.groups.size).mapNotNull { it?.value?.toInt() }.toMutableList()
+
 
             if (XsList.size != YsList.size) {
                 throw IllegalArgumentException("Invalid dest string: [$Xs], [$Ys]. Mismatched size.")
@@ -44,9 +49,9 @@ class PosUtils {
         }
 
         fun listOfDestToMessStrings(destinations: List<Pair<Int, Int>>): Pair<String, String> {
-            val Xs = destinations.joinToString(",") { it.first.toString() }
-            val Ys = destinations.joinToString(",") { it.second.toString() }
-            return Pair(Xs, Ys)
+            val Xs = destinations.joinToString("l") { it.first.toString() }
+            val Ys = destinations.joinToString("l") { it.second.toString() }
+            return Pair("s$Xs", "s$Ys")
         }
     }
 

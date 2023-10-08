@@ -1,3 +1,2 @@
-{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"waiting", "nextstate":"moveToIndoorFromHome", "msgId":"deposit"}
+{"actor":"coldstorageservice", "msgType":"dispatch", "curstate":"waiting", "nextstate":"chargeDeposited", "msgId":"chargedeposited"}
 {"actor":"transporttrolley", "msgType":"dispatch", "curstate":"waiting", "nextstate":"somethingFailed", "msgId":"fail"}
-{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"checkQueueOrReturn", "nextstate":"restartToIndoor", "msgId":"deposit"}

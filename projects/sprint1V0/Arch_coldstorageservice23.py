@@ -28,10 +28,10 @@ with Diagram('coldstorageservice23Arch', show=False, outformat='png', graph_attr
           transporttrolley=Custom('transporttrolley','./qakicons/symActorSmall.png')
           trolleyexecutor=Custom('trolleyexecutor','./qakicons/symActorSmall.png')
      trolleyexecutor >> Edge( label='alarm', **eventedgeattr, fontcolor='red') >> sys
-     transporttrolley >> Edge(color='magenta', style='solid', decorate='true', label='<moveclosest<font color="darkgreen"> movecdone movecfailed</font> &nbsp; move<font color="darkgreen"> movedone movefailed</font> &nbsp; >',  fontcolor='magenta') >> trolleyexecutor
+     coldstorageservice >> Edge(color='magenta', style='solid', decorate='true', label='<deposit<font color="darkgreen"> chargetakentt</font> &nbsp; >',  fontcolor='magenta') >> transporttrolley
+     transporttrolley >> Edge(color='magenta', style='solid', decorate='true', label='<move<font color="darkgreen"> movedone movefailed</font> &nbsp; moveclosest<font color="darkgreen"> movecdone movecfailed</font> &nbsp; >',  fontcolor='magenta') >> trolleyexecutor
      trolleyexecutor >> Edge(color='magenta', style='solid', decorate='true', label='<engage<font color="darkgreen"> engagedone engagerefused</font> &nbsp; moverobot<font color="darkgreen"> moverobotdone moverobotfailed</font> &nbsp; getrobotstate<font color="darkgreen"> robotstate</font> &nbsp; >',  fontcolor='magenta') >> basicrobot
-     coldstorageservice >> Edge(color='blue', style='solid',  label='<deposit &nbsp; >',  fontcolor='blue') >> transporttrolley
-     transporttrolley >> Edge(color='blue', style='solid',  label='<chargetakentt &nbsp; chargedeposited &nbsp; >',  fontcolor='blue') >> coldstorageservice
+     transporttrolley >> Edge(color='blue', style='solid',  label='<chargedeposited &nbsp; >',  fontcolor='blue') >> coldstorageservice
      trolleyexecutor >> Edge(color='blue', style='solid',  label='<fail &nbsp; >',  fontcolor='blue') >> transporttrolley
      trolleyexecutor >> Edge(color='blue', style='solid',  label='<setrobotstate &nbsp; >',  fontcolor='blue') >> basicrobot
 diag

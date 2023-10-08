@@ -6,14 +6,13 @@ Request 	storerequest		:		storerequest(FW)
 //CSS -> SAG
 Reply		loadaccepted		:		loadaccepted(arg) for storerequest
 Reply		loadrejected		:		loadrejected(arg) for storerequest
-Dispatch	chargetaken			:		chargetaken(arg)
-
-//TT -> CSS
-Dispatch	chargetakentt		:		chargetaken(arg)
-Dispatch	chargedeposited		:		chargedeposited(arg)
 
 //CSS -> TT
-Dispatch	deposit				:		deposit(arg)
+Request		deposit				:		deposit(FW) //TODO: diventerà id richiesta
+
+//TT -> CSS
+Reply		chargetakentt		:		chargetakentt(FW) for deposit
+Dispatch	chargedeposited		:		chargedeposited(FW)
 
 //TT -> TE
 Request		move				:		move(X,Y)
@@ -45,16 +44,19 @@ Request		getrobotstate		:		getrobotstate(ARG)
 Reply		robotstate			:		robotstate(POS,DIR) for getrobotstate
 
 
-
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
 Context ctx_coldstorageservice ip [host="localhost" port=8021]
-
 
 QActor coldstorageservice context ctx_coldstorageservice {
 	
 	[#	val maxColdRoom: Float = 10F
-		var currentColdRoom: Float = 0F
+		var actualCurrentColdRoom: Float = 0F
+		
+		var tempCurrentColdRoom: Float = 0F
+		var LastDepositRequested: Float = 0F
+		
 		var accepted: Boolean = false
+		
 	#]
 	
 	State s0 initial {
@@ -65,47 +67,54 @@ QActor coldstorageservice context ctx_coldstorageservice {
 	State waiting {
 		println("CSS: waiting for new storage request") color blue
 	}
-	Transition t0	whenRequest		storerequest	->	checkAvailability
-					whenInterrupt	chargetakentt	->	finalizeDeposit
-					whenInterrupt	chargedeposited	->	chargeDeposited
+	Transition t0	whenRequest	storerequest	->	checkAvailability
+					whenReply	chargetakentt	->	chargeTakenTT
+					whenMsg		chargedeposited	->	chargeDeposited
 	
 	State checkAvailability {
 		onMsg (storerequest : storerequest(FW)) {
 			[# val FW = payloadArg(0).trim().toFloat() #]
 						
-			if [# (currentColdRoom + FW) <= maxColdRoom #] {
+			if [# (tempCurrentColdRoom + FW) <= maxColdRoom #] {
 				replyTo storerequest with loadaccepted : loadaccepted(arg)
-				println("CSS: load for $FW KG accepted, currentWeight = $currentColdRoom") color blue
-				[#	currentColdRoom += FW
-					accepted = true	
+				[#	tempCurrentColdRoom += FW
+					LastDepositRequested = FW
+					accepted = true
 				#]
+				println("CSS: load for $FW KG accepted, currentWeight = $actualCurrentColdRoom") color blue
 			} else {
 				[# accepted = false #]
 				replyTo storerequest with loadrejected : loadrejected(arg)
-				println("CSS: load for $FW KG rejected, not enough space in ColdRoom, currentWeight = $currentColdRoom") color blue
+				println("CSS: load for $FW KG rejected, not enough space in ColdRoom, currentWeight = $actualCurrentColdRoom") color blue
 			}
 		}
 	}
+	Goto requestOrQueueDeposit if [# accepted #] else waiting
 	
-	Goto forwardDeposit if [# accepted #] else waiting
-	
-	State forwardDeposit {
+	State requestOrQueueDeposit {
 		[# accepted = false #]
-		forward transporttrolley -m deposit : deposit(arg)
+		request transporttrolley -m deposit : deposit($LastDepositRequested)
+		println("CSS: requested deposit for $LastDepositRequested KG") color blue
 	}
 	Goto waiting
 
-	State finalizeDeposit {
-		println("CSS: charge taken") color blue
-		//TODO: bring FW here
+	State chargeTakenTT {
+		onMsg(chargetakentt : chargetakentt(FW)) {
+			println("CSS: charge of ${payloadArg(0)} taken") color blue
+		}
 		updateResource [# "chargetaken" #]
-		returnFromInterrupt
 	}
+	Goto waiting
 	
 	State chargeDeposited {
-		println("CSS: current load deposited in ColdRoom, currentWeight = $currentColdRoom") color blue
-		returnFromInterrupt
+		onMsg(chargedeposited : chargedeposited(FW)){
+			println("CSS: load of ${payloadArg(0)} deposited in ColdRoom, current weight = $actualCurrentColdRoom") color blue
+			[#	val FW = payloadArg(0).toFloat()
+				actualCurrentColdRoom += FW
+			#]
+		}
 	}
+	Goto waiting
 	
 }
 
@@ -119,87 +128,46 @@ QActor transporttrolley context ctx_coldstorageservice {
 		val PortToHomeCoord = landmarkConf.getCoordinateClosestToFor("H", IndoorToPortCoord)
 		val PortToIndoorCoord = landmarkConf.getCoordinateClosestToFor("I", IndoorToPortCoord)
 		
-		val depositQueue: java.util.Queue<Int> = java.util.LinkedList<Int>()
+		var CurrentLoad: String = ""
 		
 		var returnHome: Boolean = false
 		
 	#]
 	
-	
 	State s0 initial {
 		println("TT: started") color green
 	}
 	Goto waiting
-//	Goto test
-	
-	
-//	_______________________________________________________________
-//	Transition t0	whenReply engagedone	->	test
-//					whenReply engagerefused	->	engageFailed
-
-//	State test {
-//		println("${HomeToIndoorCoord}, ${IndoorToPortCoord}, ${PortToHomeCoord}")
-//	}
-//	
-//	
-//	State test {
-//		[# var X = IndoorToPortCoord.first + 2
-//			var Y = IndoorToPortCoord.second
-//		#]
-//		forward basicrobot -m setrobotstate : setpos(0,0,l)
-//		request basicrobot -m moverobot : moverobot($X,$Y)
-//		
-//		[# Y -= 1 #]
-//		
-//		request basicrobot -m moverobot : moverobot($X,$Y)
-//		
-//		[# Y -= 1 #]
-//		request basicrobot -m moverobot : moverobot($X,$Y)
-//		
-//		request basicrobot -m moverobot : moverobot(0,0)
-//		
-//		
-//		request basicrobot -m getrobotstate : getrobotstate(arg)
-//		
-//	}
-//	Transition t0	whenReply	robotstate		->	temp
-//	
-//	
-//	State temp {
-//		onMsg (robotstate : robotstate(pos(X,Y),D)) {
-//			println("${payloadArg(0)}, ${payloadArg(1)}")
-//		}
-//	}
-//	_____________________________________________________________________
-	
-//	State engageFailed {
-//		println("TT: contact with basicrobot failed on engage, try restarting the application") color green
-//	}
 	
 	State moveFailed {
 		println("TT: contact with trolleyexecutor failed on move, try restarting the application") color green
 	}
-	
+
 	State somethingFailed {
 		onMsg(fail : fail(ERROR)) {
 			println("TT: TE failed with error -> ${payloadArg(0)}")
 		}
 	}
-		
+
 	State waiting {
 		println("TT: waiting for new deposit request") color green
 	}
-	Transition t0	whenMsg	deposit	->	moveToIndoorFromHome
-					whenMsg	fail	->	somethingFailed
+	Transition t0	whenRequest	deposit	->	moveToIndoorFromHome
+					whenMsg		fail	->	somethingFailed
 	
-	State queueDeposit {
-		[#	depositQueue.add(0)
+	State returnHome {
+		println("TT: returning HOME") color green
+		[#	val X = PortToHomeCoord.first
+			val Y = PortToHomeCoord.second
 		#]
-		println("TT: added deposit request to queue") color green
-		returnFromInterrupt
+		request trolleyexecutor -m move : move($X,$Y)
 	}
+	Transition t0	whenReply	movedone	->	waiting
+					whenReply	movefailed	->	moveFailed
+					whenRequest	deposit		->	restartToIndoor
 	
 	State restartToIndoor {
+		discardMsg On
 		println("TT: restarting to indoor") color green
 		
 		[#	val destinations = landmarkConf.getCoordinatesFor("I")
@@ -210,20 +178,22 @@ QActor transporttrolley context ctx_coldstorageservice {
 		
 		request trolleyexecutor -m moveclosest : moveclosest($Xs,$Ys)
 	}
-	Transition t0	whenReply	 	movecdone	->	takeCharge
+	Transition t0	whenReply		movecdone	->	takeCharge
 					whenReply		movecfailed	->	moveFailed
-					whenInterrupt	deposit		->	queueDeposit
 	
 	State moveToIndoorFromHome {
-		[#	val X = HomeToIndoorCoord.first
-			val Y = HomeToIndoorCoord.second
-		#]
-		request trolleyexecutor -m move : move($X,$Y)
-		println("TT: moving robot to indoor") color green
+		onMsg(deposit : deposit(FW)) {
+			[#	CurrentLoad = payloadArg(0)
+				
+				val X = HomeToIndoorCoord.first
+				val Y = HomeToIndoorCoord.second
+			#]
+			request trolleyexecutor -m move : move($X,$Y)
+			println("TT: moving robot to indoor") color green
+		}
 	}
-	Transition t0	whenReply	 	movedone		->	takeCharge
-					whenReply		movefailed		->	moveFailed
-					whenInterrupt	deposit			->	queueDeposit
+	Transition t0	whenReply		movedone	->	takeCharge
+					whenReply		movefailed	->	moveFailed
 	
 	State takeCharge {
 		println("TT: loading charge") color green
@@ -233,7 +203,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 	Goto chargeTaken
 	
 	State chargeTaken {
-		forward coldstorageservice -m chargetakentt : chargetakentt
+		replyTo deposit with chargetakentt : chargetakentt($CurrentLoad)
 	}
 	Goto toPort
 	
@@ -246,39 +216,15 @@ QActor transporttrolley context ctx_coldstorageservice {
 	}
 	Transition t0	whenReply		movedone	->	depositInColdRoom
 					whenReply		movefailed	->	moveFailed
-					whenInterrupt	deposit		->	queueDeposit
 					
 	State depositInColdRoom {
 		delay 1000
-		forward coldstorageservice -m chargedeposited : chargedeposited(arg)
+		forward coldstorageservice -m chargedeposited : chargedeposited($CurrentLoad)
 		println("TT: charge deposited") color green
 	}
-	Goto checkQueueOrReturn
-	
-	State checkQueueOrReturn {
-		[#	returnHome = (depositQueue.size == 0) #]
-		if [# returnHome #] {
-			[#	val X = PortToHomeCoord.first
-				val Y = PortToHomeCoord.second
-			#]
-			request trolleyexecutor -m move : move($X, $Y)
-			println("TT: no queued requests, returning to home") color green
-		}
-		else {
-			[#	depositQueue.remove()
-				val X = PortToIndoorCoord.first
-				val Y = PortToIndoorCoord.second
-			#]
-			request trolleyexecutor -m move : move($X, $Y)
-			println("TT: managing queued request, returning to indoor") color green
-		}
-	}
-	Transition t0	whenMsg		deposit							->	restartToIndoor
-					whenReply	movedone and [# returnHome #]	->	waiting
-					whenReply	movedone and [# !returnHome #]	->	takeCharge
-					whenReply	movefailed						->	moveFailed
-	
-	
+	Transition t0	whenTime	1000							->	returnHome
+					whenRequest	deposit							->	restartToIndoor
+
 }
 
 QActor trolleyexecutor context ctx_coldstorageservice {
@@ -301,7 +247,7 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 					whenReply	engagerefused	->	engageFail
 					
 	State engageFail {
-		[# val ErrorString = "Ingaggio robot fallito" #]
+		[# val ErrorString = "Ingaggiorobotfallito" #]
 		forward transporttrolley -m fail : fail($ErrorString)
 		println("TE: engage with robot failed, try restarting the application") color magenta
 	}
@@ -328,8 +274,9 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 	State waiting {
 		println("TE: waiting") color magenta
 	}
-	Transition t0	whenRequest	move		->	move
-					whenRequest	moveclosest	->	stop
+	Transition t0	whenRequest	move							->	move
+					whenRequest	moveclosest and [# isMoving #]	->	stop
+					whenRequest moveclosest and [# !isMoving #]	->	askPosition
 	
 	State move {
 		println("TE: move") color magenta
@@ -342,11 +289,12 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 		}
 	}
 	Transition t0	whenTime	30000			->	timeout
+					whenRequest	moveclosest		->	stop
 					whenReply	moverobotdone	->	moveCompleted
 					whenReply	moverobotfailed	->	moveFail
 					
 	State stop {
-		println("TE: moveClosest") color magenta
+		println("TE: stop") color magenta
 		onMsg (moveclosest : moveclosest(Xs,Ys)) {
 			[# destinations = utils.PosUtils.destStringListToPairs(payloadArg(0), payloadArg(1)) #]
 			if [# isMoving #] {
@@ -355,17 +303,21 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 			}
 		}
 	}
-	Goto askPosition
+	Transition t0	whenTime	500				->	askPosition
+					whenReply	moverobotfailed	->	askPosition
 	
 	State askPosition {
-		println("TE: askPosition")
+		println("TE: askPosition") color magenta
+		onMsg (moveclosest : moveclosest(Xs,Ys)) {
+			[# destinations = utils.PosUtils.destStringListToPairs(payloadArg(0), payloadArg(1)) #]
+		}
 		request basicrobot -m getrobotstate	: getrobotstate(arg)
 	}
 	Transition t0	whenTime	30000		->	timeout
 					whenReply	robotstate	->	moveClosest
 	
 	State moveClosest {
-		println("TE: moveClosest")
+		println("TE: moveClosest") color magenta
 		onMsg (robotstate : robotstate(POS,DIR)) {
 			[#	val position = utils.PosUtils.posStringToPair(payloadArg(0).trim())
 				
@@ -381,7 +333,7 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 	Transition t0	whenTime	30000			->	timeout
 					whenReply	moverobotdone	->	movecCompleted
 					whenReply	moverobotfailed	->	movecFail
-					
+
 	State moveCompleted {
 		[# isMoving = false #]
 		println("TE: moveCompleted") color magenta
