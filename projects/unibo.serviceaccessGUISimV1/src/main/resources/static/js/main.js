@@ -1,7 +1,6 @@
 // Definisci la variabile globale
 window.chargeTaken = false;
 window.reloadTime = 7000;
-window.failTime = 15000;
 
 function sendStorageRequest(quantityFw) {
     const saveButton = document.querySelector("#save");
@@ -59,13 +58,13 @@ function sendStorageRequest(quantityFw) {
             else {
                 setTimeout(() => {
                     if (resolvedValue.includes("loadaccepted")) {
-                        showResponse("accepted")
+                        showResponse("storerequest", "accepted")
                     }
                     else if (resolvedValue.includes("loadrejected")) {
-                        showResponse("rejected")
+                        showResponse("storerequest", "rejected")
                     }
                     else {
-                        showResponse("KO")
+                        showResponse("storerequest", "KO")
                     }
                 }, 2000);
             }
@@ -76,22 +75,17 @@ function sendStorageRequest(quantityFw) {
     });
 }
 
-function sendDepositRequest(quantityFw) {
-    const saveButton = document.querySelector("#save");
+function sendDepositRequest() {
+    const sendDepositBtn = document.querySelector("#sendDepositBtn");
 
-    saveButton.firstElementChild.removeAttribute("hidden");
-    saveButton.disabled = true
+    sendDepositBtn.firstElementChild.removeAttribute("hidden");
+    sendDepositBtn.disabled = true
 
-    const spinner = document.querySelector('.spinner-border');
-    spinner.removeAttribute('hidden');
-
-    //data structure to send to server
-    const requestBodyMap = {
-        fw: quantityFw
-    }
+    const spinnerDeposit = document.querySelector("#spinner-border-ticket");
+    spinnerDeposit.removeAttribute('hidden');
 
     //request to server
-    const relativeEndpoint = '/sendStorageRequest';
+    const relativeEndpoint = '/sendDepositRequest';
     fetch(
         relativeEndpoint,
         {
@@ -99,27 +93,27 @@ function sendDepositRequest(quantityFw) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(requestBodyMap)
+            body: ""
         }
     ).then(response => {
         if (response.ok) {
             //Saving animation end OK
             setTimeout(() => {
-                const saveStatus = document.getElementById('save-status');
-                saveStatus.removeAttribute('hidden');
-                spinner.setAttribute('hidden', 'hidden');
-                saveButton.firstElementChild.hidden = "hidden";
-                saveButton.lastElementChild.textContent = 'Request sent';
-                saveButton.disabled = true;
+                const arrivedIndoor = document.getElementById('arrived-INDOOR');
+                arrivedIndoor.removeAttribute('hidden');
+                spinnerDeposit.setAttribute('hidden', 'hidden');
+                sendDepositBtn.firstElementChild.hidden = "hidden";
+                sendDepositBtn.lastElementChild.textContent = 'Ticket sent';
+                sendDepositBtn.disabled = true;
             }, 1700);
         } else {
             //Saving animation end ERROR
             setTimeout(() => {
-                const saveStatus = document.getElementById('save-status');
-                saveStatus.removeAttribute('hidden');
-                spinner.setAttribute('hidden', 'hidden');
-                saveButton.firstElementChild.hidden = "hidden";
-                saveButton.lastElementChild.textContent = "Error!";
+                const arrivedIndoor = document.getElementById('arrived-INDOOR');
+                arrivedIndoor.removeAttribute('hidden');
+                spinnerDeposit.setAttribute('hidden', 'hidden');
+                sendDepositBtn.firstElementChild.hidden = "hidden";
+                sendDepositBtn.lastElementChild.textContent = 'Error!';
             }, 1700);
         }
         return response;
@@ -131,14 +125,14 @@ function sendDepositRequest(quantityFw) {
             }
             else {
                 setTimeout(() => {
-                    if (resolvedValue.includes("loadaccepted")) {
-                        showResponse("accepted")
+                    if (resolvedValue.includes("ticketaccepted")) {
+                        showResponse("depositrequest", "accepted")
                     }
-                    else if (resolvedValue.includes("loadrejected")) {
-                        showResponse("rejected")
+                    else if (resolvedValue.includes("ticketrejected")) {
+                        showResponse("depositrequest", "rejected")
                     }
                     else {
-                        showResponse("KO")
+                        showResponse("depositrequest", "KO")
                     }
                 }, 2000);
             }
@@ -149,19 +143,108 @@ function sendDepositRequest(quantityFw) {
     });
 }
 
+function sendChargeStatusRequest() {
+    const sendChargeStatusBtn = document.querySelector("#sendChargeStatusBtn");
 
-function showResponse(response) {
+    sendChargeStatusBtn.firstElementChild.removeAttribute("hidden");
+    sendChargeStatusBtn.disabled = true
+
+    const spinnerChargeStatus = document.querySelector("#spinner-border-status");
+    spinnerChargeStatus.removeAttribute('hidden');
+
+    //request to server
+    const relativeEndpoint = '/sendChargeStatusRequest';
+    fetch(
+        relativeEndpoint,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: ""
+        }
+    ).then(response => {
+        if (response.ok) {
+            //Saving animation end OK
+            setTimeout(() => {
+                const statusRequest = document.getElementById('status-request');
+                statusRequest.removeAttribute('hidden');
+                spinnerChargeStatus.setAttribute('hidden', 'hidden');
+                sendChargeStatusBtn.firstElementChild.hidden = "hidden";
+                sendChargeStatusBtn.lastElementChild.textContent = 'Charge request sent';
+                sendChargeStatusBtn.disabled = true;
+            }, 1700);
+        } else {
+            //Saving animation end ERROR
+            setTimeout(() => {
+                const statusRequest = document.getElementById('status-request');
+                statusRequest.removeAttribute('hidden');
+                spinnerChargeStatus.setAttribute('hidden', 'hidden');
+                sendChargeStatusBtn.firstElementChild.hidden = "hidden";
+                sendChargeStatusBtn.lastElementChild.textContent = 'Error!';
+            }, 1700);
+        }
+        return response;
+    }).then(response => {
+        response.text().then((resolvedValue) => {
+
+            if (!response.ok) {
+                showError(response.text());
+            }
+            else {
+                setTimeout(() => {
+                    if (resolvedValue.includes("chargetaken")) {
+                        showResponse("chargestatus", "accepted")
+                    }
+                    else {
+                        showResponse("chargestatus", "KO")
+                    }
+                }, 2000);
+            }
+        });
+
+    }).catch(error => {
+        console.log(error);
+    });
+}
+
+function showResponse(requestType, response) {
     const responseBody = document.getElementById('responseBody');
     responseBody.style.display = "block";
     const responseText = document.getElementById('responseText');
     if (response === "accepted") {
-        responseText.innerHTML = "The request has been accepted! <br>Please wait for the service to take care of it."
-        setTimeout(() => {
-            checkChargeTaken();
-        }, window.failTime); // timeout di 15 secondi
+        if (requestType === "storerequest") {
+            responseText.innerHTML = "The request has been accepted! <br>Please, once arrived at INDOOR, enter the ticket number."
+            setTimeout(() => {
+                const arrivedButton = document.getElementById('arrivedButton');
+                arrivedButton.style.display = "block";
+            }, 500);
+        }
+        else if (requestType === "depositrequest") {
+            responseText.innerHTML = "The ticket has been accepted! <br>Please wait for the service to take care of your charge."
+            setTimeout(() => {
+                const checkChargeStatus = document.getElementById('checkChargeStatus');
+                checkChargeStatus.style.display = "block";
+            }, 500);
+        }
+        else if (requestType === "chargestatus") {
+            responseText.innerHTML = "Your load has been taken in charge from the service! <br> The page will be restored shortly: you can leave the INDOOR."
+            countdownFail(window.reloadTime);
+            setTimeout(() => {
+                location.reload();
+            }, reloadTime);
+        }
     }
     else if (response === "rejected") {
-        responseText.innerHTML = "The request has been rejected! <br>The page will be restored shortly."
+        if (requestType === "storerequest") {
+            responseText.innerHTML = "The request has been rejected! <br>The page will be restored shortly."
+        }
+        else if (requestType === "depositrequest") {
+            responseText.innerHTML = "The ticket has been rejected! <br>The page will be restored shortly."
+        }
+        else if (requestType === "chargestatus") {
+            responseText.innerHTML = "Your load has not been taken in charge from the service! <br> The page will be restored shortly."
+        }
         countdownFail(window.reloadTime);
         setTimeout(() => {
             location.reload();
@@ -186,7 +269,7 @@ function validateInput() {
         showError('Please enter a positive integer value!');
     }
     else {
-        sendRequest(inputValue);
+        sendStorageRequest(inputValue);
     }
 }
 
@@ -201,22 +284,17 @@ function showError(message) {
 }
 
 
+function showTicketField() {
+    const ticketButton = document.getElementById('ticketButton');
+    ticketButton.style.display = "block";
+    const arrivedButton = document.getElementById('arrivedButton');
+    ticketButton.style.display = "none";
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     const inputElement = document.getElementById('quantity');
     inputElement.value = ''; // Imposta il campo di input a una stringa vuota
 });
-
-function checkChargeTaken() {
-    if (!window.chargeTaken) {
-        const timeout = document.getElementById('timeout');
-        timeout.style.display = "block";
-        countdownChargeTaken(reloadTime)
-        setTimeout(() => {
-            location.reload();
-        }, reloadTime);
-    }
-}
-
 
 function countdown(time, element) {
     const countdownDate = new Date().getTime() + time - 1000;
@@ -238,8 +316,4 @@ function countdown(time, element) {
 
 function countdownFail(time) {
     countdown(time - 1000, document.getElementById('countdown'));
-}
-
-function countdownChargeTaken(time) {
-    countdown(time - 1000, document.getElementById('countdownChargeTaken'));
 }

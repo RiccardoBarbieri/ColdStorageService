@@ -38,16 +38,11 @@ h3 {
     margin-bottom: 8px;
 }
 
-#save-status {
+.save-status-span {
     font-size: 18px;
 }
 
 #countdown {
     font-size: 22px;
     color: #1d2dc0;
-}
-
-#countdownChargeTaken {
-    font-size: 22px;
-    color: #05422b;
 }
