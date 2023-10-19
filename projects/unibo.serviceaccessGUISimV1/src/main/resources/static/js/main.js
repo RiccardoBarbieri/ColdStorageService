@@ -288,7 +288,7 @@ function showTicketField() {
     const ticketButton = document.getElementById('ticketButton');
     ticketButton.style.display = "block";
     const arrivedButton = document.getElementById('arrivedButton');
-    ticketButton.style.display = "none";
+    arrivedButton.style.display = "none";
 }
 
 document.addEventListener("DOMContentLoaded", function () {
