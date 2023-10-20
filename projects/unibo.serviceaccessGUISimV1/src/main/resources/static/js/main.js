@@ -146,7 +146,7 @@ function showResponse(requestType, response) {
     const responseText = document.getElementById('responseText');
     if (response === "accepted") {
         if (requestType === "storerequest") {
-            responseText.innerHTML = "The request has been accepted! <br>Please, once arrived at INDOOR, enter the ticket number."
+            responseText.innerHTML = "The request has been accepted!"
             setTimeout(() => {
                 const checkChargeStatus = document.getElementById('checkChargeStatus');
                 checkChargeStatus.style.display = "block";

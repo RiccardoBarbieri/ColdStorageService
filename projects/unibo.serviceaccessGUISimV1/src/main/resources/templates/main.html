@@ -26,17 +26,16 @@
         </button>
     </div>
 
+    <div id="responseBody" style="display: none;">
+        <label id="responseText" class="form-label"></label>
+        <div id="countdown"></div>
+    </div>
     <div id="checkChargeStatus" style="display: none;">
         <label class="form-label">Once arrived at INDOOR, check the status of your load.</label>
         <button id="sendChargeStatusBtn" class="btn btn-primary mt-3" onclick="sendChargeStatusRequest()">
             <span id="spinner-border-status" class="spinner-border spinner-border-sm me-2" aria-hidden="true" hidden="hidden"></span>
             <span class="save-status-span" id="status-request">Send status request</b></span>
         </button>
-    </div>
-
-    <div id="responseBody" style="display: none;">
-        <label id="responseText" class="form-label"></label>
-        <div id="countdown"></div>
     </div>
 
 </div>
