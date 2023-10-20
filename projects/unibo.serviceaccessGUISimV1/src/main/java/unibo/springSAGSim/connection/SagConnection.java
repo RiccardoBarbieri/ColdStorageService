@@ -40,7 +40,7 @@ public class SagConnection extends ConnectionUtils {
         String functionName = "sendChargeStatusRequest";
         try {
             String msg = "" + CommUtils.buildRequest("serviceaccessguisim",
-                    "chargestatus", "chargestatus(_)", actorName);
+                    "chargestatus", "chargestatus(arg)", actorName);
             return sendRequest(conn, msg, functionName);
         } catch (Exception e) {
             CommUtils.outred(className + " " + functionName + " | ERROR: " + e.getMessage());
