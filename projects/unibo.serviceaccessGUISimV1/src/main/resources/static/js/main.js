@@ -146,7 +146,6 @@ function showResponse(requestType, response) {
     const responseText = document.getElementById('responseText');
     if (response === "accepted") {
         if (requestType === "storerequest") {
-            responseText.innerHTML = "The request has been accepted!"
             setTimeout(() => {
                 const checkChargeStatus = document.getElementById('checkChargeStatus');
                 checkChargeStatus.style.display = "block";
@@ -180,7 +179,6 @@ function showResponse(requestType, response) {
         }, reloadTime);
     }
 }
-
 
 function validateInput() {
     const inputElement = document.getElementById('quantity');
