@@ -26,16 +26,8 @@
         </button>
     </div>
 
-    <div id="ticketButton" style="display: none;">
-        <label class="form-label">Please, enter the <b>ticket number</b> received from the service.</label>
-        <button id="sendDepositBtn" class="btn btn-primary mt-3" onclick="sendDepositRequest()">
-            <span id="spinner-border-ticket" class="spinner-border spinner-border-sm me-2" aria-hidden="true" hidden="hidden"></span>
-            <span class="save-status-span" id="arrived-INDOOR">Enter <b>ticket</b></span>
-        </button>
-    </div>
-
     <div id="checkChargeStatus" style="display: none;">
-        <label class="form-label">When you want, check the status of your load.</label>
+        <label class="form-label">Once arrived at INDOOR, check the status of your load.</label>
         <button id="sendChargeStatusBtn" class="btn btn-primary mt-3" onclick="sendChargeStatusRequest()">
             <span id="spinner-border-status" class="spinner-border spinner-border-sm me-2" aria-hidden="true" hidden="hidden"></span>
             <span class="save-status-span" id="status-request">Send status request</b></span>
@@ -45,9 +37,6 @@
     <div id="responseBody" style="display: none;">
         <label id="responseText" class="form-label"></label>
         <div id="countdown"></div>
-    </div>
-    <div id="arrivedButton" style="display: none;">
-        <button id="arrivedBtn" class="btn btn-primary mt-3" onclick="showTicketField()"></button>
     </div>
 
 </div>

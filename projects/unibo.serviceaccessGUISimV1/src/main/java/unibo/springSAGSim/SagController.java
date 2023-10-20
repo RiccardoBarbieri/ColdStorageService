@@ -60,19 +60,6 @@ public class SagController {
         return new ResponseEntity<>(className + " sendStorageRequest | answer: " + answer, headers, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/sendDepositRequest", consumes = "application/json")
-    public ResponseEntity<String> sendDepositRequest() {
-
-        String answer = sagConnection.sendDepositRequest(this.requestConn);
-        if (answer == null) {
-            HttpHeaders headers = new HttpHeaders();
-            return new ResponseEntity<>(className + " sendDepositRequest | ERROR: response null", headers, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        HttpHeaders headers = new HttpHeaders();
-        return new ResponseEntity<>(className + " sendDepositRequest | answer: " + answer, headers, HttpStatus.OK);
-    }
-
     @PostMapping(value = "/sendChargeStatusRequest", consumes = "application/json")
     public ResponseEntity<String> sendChargeStatusRequest() {
 

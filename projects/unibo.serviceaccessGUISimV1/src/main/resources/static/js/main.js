@@ -75,74 +75,6 @@ function sendStorageRequest(quantityFw) {
     });
 }
 
-function sendDepositRequest() {
-    const sendDepositBtn = document.querySelector("#sendDepositBtn");
-
-    sendDepositBtn.firstElementChild.removeAttribute("hidden");
-    sendDepositBtn.disabled = true
-
-    const spinnerDeposit = document.querySelector("#spinner-border-ticket");
-    spinnerDeposit.removeAttribute('hidden');
-
-    //request to server
-    const relativeEndpoint = '/sendDepositRequest';
-    fetch(
-        relativeEndpoint,
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: ""
-        }
-    ).then(response => {
-        if (response.ok) {
-            //Saving animation end OK
-            setTimeout(() => {
-                const arrivedIndoor = document.getElementById('arrived-INDOOR');
-                arrivedIndoor.removeAttribute('hidden');
-                spinnerDeposit.setAttribute('hidden', 'hidden');
-                sendDepositBtn.firstElementChild.hidden = "hidden";
-                sendDepositBtn.lastElementChild.textContent = 'Ticket sent';
-                sendDepositBtn.disabled = true;
-            }, 1700);
-        } else {
-            //Saving animation end ERROR
-            setTimeout(() => {
-                const arrivedIndoor = document.getElementById('arrived-INDOOR');
-                arrivedIndoor.removeAttribute('hidden');
-                spinnerDeposit.setAttribute('hidden', 'hidden');
-                sendDepositBtn.firstElementChild.hidden = "hidden";
-                sendDepositBtn.lastElementChild.textContent = 'Error!';
-            }, 1700);
-        }
-        return response;
-    }).then(response => {
-        response.text().then((resolvedValue) => {
-
-            if (!response.ok) {
-                showError(response.text());
-            }
-            else {
-                setTimeout(() => {
-                    if (resolvedValue.includes("ticketaccepted")) {
-                        showResponse("depositrequest", "accepted")
-                    }
-                    else if (resolvedValue.includes("ticketrejected")) {
-                        showResponse("depositrequest", "rejected")
-                    }
-                    else {
-                        showResponse("depositrequest", "KO")
-                    }
-                }, 2000);
-            }
-        });
-
-    }).catch(error => {
-        console.log(error);
-    });
-}
-
 function sendChargeStatusRequest() {
     const sendChargeStatusBtn = document.querySelector("#sendChargeStatusBtn");
 
@@ -216,13 +148,6 @@ function showResponse(requestType, response) {
         if (requestType === "storerequest") {
             responseText.innerHTML = "The request has been accepted! <br>Please, once arrived at INDOOR, enter the ticket number."
             setTimeout(() => {
-                const arrivedButton = document.getElementById('arrivedButton');
-                arrivedButton.style.display = "block";
-            }, 500);
-        }
-        else if (requestType === "depositrequest") {
-            responseText.innerHTML = "The ticket has been accepted! <br>Please wait for the service to take care of your charge."
-            setTimeout(() => {
                 const checkChargeStatus = document.getElementById('checkChargeStatus');
                 checkChargeStatus.style.display = "block";
             }, 500);
@@ -238,9 +163,6 @@ function showResponse(requestType, response) {
     else if (response === "rejected") {
         if (requestType === "storerequest") {
             responseText.innerHTML = "The request has been rejected! <br>The page will be restored shortly."
-        }
-        else if (requestType === "depositrequest") {
-            responseText.innerHTML = "The ticket has been rejected! <br>The page will be restored shortly."
         }
         else if (requestType === "chargestatus") {
             responseText.innerHTML = "Your load has not been taken in charge from the service! <br> The page will be restored shortly."
@@ -281,14 +203,6 @@ function showError(message) {
     setTimeout(() => {
         errorToast.classList.remove('show');
     }, 2000);
-}
-
-
-function showTicketField() {
-    const ticketButton = document.getElementById('ticketButton');
-    ticketButton.style.display = "block";
-    const arrivedButton = document.getElementById('arrivedButton');
-    arrivedButton.style.display = "none";
 }
 
 document.addEventListener("DOMContentLoaded", function () {

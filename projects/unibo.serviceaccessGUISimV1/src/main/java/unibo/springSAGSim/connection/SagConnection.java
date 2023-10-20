@@ -36,18 +36,6 @@ public class SagConnection extends ConnectionUtils {
         return null;
     }
 
-    public String sendDepositRequest(Interaction conn) {
-        String functionName = "sendDepositRequest";
-        try {
-            String msg = "" + CommUtils.buildRequest("serviceaccessguisim",
-                    "deposit", "deposit(_)", actorName);
-            return sendRequest(conn, msg, functionName);
-        } catch (Exception e) {
-            CommUtils.outred(className + " " + functionName + " | ERROR: " + e.getMessage());
-        }
-        return null;
-    }
-
     public String sendChargeStatusRequest(Interaction conn) {
         String functionName = "sendChargeStatusRequest";
         try {
