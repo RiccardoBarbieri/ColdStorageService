@@ -20,7 +20,7 @@ public class SagConnection extends ConnectionUtils {
     String actorCtxHost;
 
 
-    public CoapConnection connectLocalActorUsingCoap() {
+    public CoapConnectionHighTimeout connectLocalActorUsingCoap() {
         return connectActorUsingCoap(actorCtxHost, actorCtxPort, actorCtx, actorName);
     }
 
