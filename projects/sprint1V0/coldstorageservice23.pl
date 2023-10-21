@@ -2,11 +2,17 @@
 % coldstorageservice23 description   
 %====================================================================================
 request( storerequest, storerequest(FW) ).
+request( chargestatus, chargestatus(arg) ).
 reply( loadaccepted, loadaccepted(arg) ).  %%for storerequest
 reply( loadrejected, loadrejected(arg) ).  %%for storerequest
+reply( chargetaken, chargetaken(arg) ).  %%for chargestatus
+reply( chargefailed, chargefailed(arg) ).  %%for chargestatus
 request( deposit, deposit(FW) ).
+request( depositstatus, depositstatus(arg) ).
 reply( chargetakentt, chargetakentt(FW) ).  %%for deposit
-dispatch( chargedeposited, chargedeposited(FW) ).
+reply( chargefailedtt, chargefailedtt(FW) ).  %%for deposit
+reply( chargedeposited, chargedeposited(FW) ).  %%for depositstatus
+reply( chargedepfailed, chargedeposited(FW) ).  %%for depositstatus
 request( move, move(X,Y) ).
 request( moveclosest, moveclosest(Xs,Ys) ).
 reply( movedone, movedone(arg) ).  %%for move

@@ -2,17 +2,27 @@ System coldstorageservice23
 
 //SAG -> CSS
 Request 	storerequest		:		storerequest(FW)
+Request		chargestatus		:		chargestatus(arg)
 
 //CSS -> SAG
 Reply		loadaccepted		:		loadaccepted(arg) for storerequest
 Reply		loadrejected		:		loadrejected(arg) for storerequest
 
+Reply		chargetaken			:		chargetaken(arg) for chargestatus
+Reply		chargefailed		:		chargefailed(arg) for chargestatus
+
 //CSS -> TT
 Request		deposit				:		deposit(FW) //TODO: diventerà id richiesta
+Request		depositstatus		:		depositstatus(arg)
 
 //TT -> CSS
 Reply		chargetakentt		:		chargetakentt(FW) for deposit
-Dispatch	chargedeposited		:		chargedeposited(FW)
+Reply		chargefailedtt		:		chargefailedtt(FW) for deposit
+
+Reply		chargedeposited		:		chargedeposited(FW) for depositstatus
+Reply		chargedepfailed		:		chargedeposited(FW) for depositstatus
+
+//Dispatch	chargedeposited		:		chargedeposited(FW)
 
 //TT -> TE
 Request		move				:		move(X,Y)
@@ -21,8 +31,10 @@ Request		moveclosest			:		moveclosest(Xs,Ys)
 //TE -> TT
 Reply		movedone			:		movedone(arg) for move
 Reply		movefailed			:		movefailed(arg) for move
+
 Reply		movecdone			:		movecdone(arg) for moveclosest
 Reply		movecfailed			:		movecfailed(arg) for moveclosest
+
 Dispatch	fail				:		fail(ERROR)
 
 
@@ -59,6 +71,18 @@ QActor coldstorageservice context ctx_coldstorageservice {
 		
 	#]
 	
+	State chargeFailed {
+		onMsg(chargefailedtt : chargefailedtt(FW)) {
+			println("CSS: TransportTrolley failed to take the current charge (${payloadArg(0)} KG)") color blue
+		}
+	}
+	
+	State depositFailed {
+		onMsg(chargedepfailed : chargedepfailed(FW)) {
+			println("CSS: TransportTrolley failed to deposit the current charge (${payloadArg(0)} KG)") color blue
+		}
+	}
+	
 	State s0 initial {
 		println("CSS: started") color blue
 	}
@@ -67,9 +91,12 @@ QActor coldstorageservice context ctx_coldstorageservice {
 	State waiting {
 		println("CSS: waiting for new storage request") color blue
 	}
-	Transition t0	whenRequest	storerequest	->	checkAvailability
-					whenReply	chargetakentt	->	chargeTakenTT
-					whenMsg		chargedeposited	->	chargeDeposited
+	Transition t0	whenRequest	storerequest	->	checkAvailability	//1
+					whenRequest chargestatus	->	requestDeposit		//2
+//					whenReply	chargetakentt	->	chargeTakenTT		//3a
+//					whenReply	chargefailedtt	->	chargeFailed		//3b
+//					whenReply	chargedeposited	->	chargeDeposited		//4a
+//					whenReply	chargedepfailed	->	depositFailed		//4b
 	
 	State checkAvailability {
 		onMsg (storerequest : storerequest(FW)) {
@@ -89,34 +116,39 @@ QActor coldstorageservice context ctx_coldstorageservice {
 			}
 		}
 	}
-	Goto requestOrQueueDeposit if [# accepted #] else waiting
+//	Goto requestOrQueueDeposit if [# accepted #] else waiting
+	Goto waiting
 	
-	State requestOrQueueDeposit {
+	State requestDeposit {
 		[# accepted = false #]
 		request transporttrolley -m deposit : deposit($LastDepositRequested)
 		println("CSS: requested deposit for $LastDepositRequested KG") color blue
 	}
-	Goto waiting
+	Transition t0	whenReply	chargetakentt	->	chargeTakenTT
+					whenReply	chargefailedtt	->	chargeFailed
 
 	State chargeTakenTT {
+		replyTo	chargestatus with chargetaken : chargetaken(arg)
 		onMsg(chargetakentt : chargetakentt(FW)) {
 			println("CSS: charge of ${payloadArg(0)} taken") color blue
 		}
-		updateResource [# "chargetaken" #]
+		request transporttrolley -m depositstatus : depositstatus(arg)
 	}
-	Goto waiting
+	Transition t0	whenReply	chargedeposited	->	chargeDeposited
+					whenReply	chargedepfailed	->	depositFailed
 	
 	State chargeDeposited {
 		onMsg(chargedeposited : chargedeposited(FW)){
-			println("CSS: load of ${payloadArg(0)} deposited in ColdRoom, current weight = $actualCurrentColdRoom") color blue
 			[#	val FW = payloadArg(0).toFloat()
 				actualCurrentColdRoom += FW
 			#]
+			println("CSS: load of ${payloadArg(0)} deposited in ColdRoom, current weight = $actualCurrentColdRoom") color blue
 		}
 	}
 	Goto waiting
 	
 }
+
 
 QActor transporttrolley context ctx_coldstorageservice {
 	
@@ -142,10 +174,22 @@ QActor transporttrolley context ctx_coldstorageservice {
 	State moveFailed {
 		println("TT: contact with trolleyexecutor failed on move, try restarting the application") color green
 	}
+	
+	State chargeTakeFailed {
+		replyTo deposit with chargefailedtt : chargefailedtt($CurrentLoad)
+		
+	}
+	Goto moveFailed
+	
+	State chargeDepositFailed {
+		replyTo depositstatus with chargedepfailed : chargedepfailed($CurrentLoad)
+	}
+	Goto moveFailed
+	
 
 	State somethingFailed {
 		onMsg(fail : fail(ERROR)) {
-			println("TT: TE failed with error -> ${payloadArg(0)}")
+			println("TT: TE failed with error -> ${payloadArg(0)}") color green
 		}
 	}
 
@@ -178,8 +222,8 @@ QActor transporttrolley context ctx_coldstorageservice {
 		
 		request trolleyexecutor -m moveclosest : moveclosest($Xs,$Ys)
 	}
-	Transition t0	whenReply		movecdone	->	takeCharge
-					whenReply		movecfailed	->	moveFailed
+	Transition t0	whenReply	movecdone	->	takeCharge
+					whenReply	movecfailed	->	moveFailed
 	
 	State moveToIndoorFromHome {
 		onMsg(deposit : deposit(FW)) {
@@ -190,10 +234,10 @@ QActor transporttrolley context ctx_coldstorageservice {
 			#]
 			request trolleyexecutor -m move : move($X,$Y)
 			println("TT: moving robot to indoor") color green
-		}
+			}
 	}
-	Transition t0	whenReply		movedone	->	takeCharge
-					whenReply		movefailed	->	moveFailed
+	Transition t0	whenReply	movedone	->	takeCharge
+					whenReply	movefailed	->	chargeTakeFailed
 	
 	State takeCharge {
 		println("TT: loading charge") color green
@@ -205,7 +249,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 	State chargeTaken {
 		replyTo deposit with chargetakentt : chargetakentt($CurrentLoad)
 	}
-	Goto toPort
+	Transition t0	whenRequest	depositstatus	->	toPort
 	
 	State toPort {
 		[#	val X = IndoorToPortCoord.first
@@ -214,12 +258,13 @@ QActor transporttrolley context ctx_coldstorageservice {
 		println("TT: moving to access port") color green
 		request trolleyexecutor -m move : move($X,$Y)
 	}
-	Transition t0	whenReply		movedone	->	depositInColdRoom
-					whenReply		movefailed	->	moveFailed
+	Transition t0	whenReply	movedone		->	depositInColdRoom
+					whenReply	movefailed		->	moveFailed
 					
 	State depositInColdRoom {
+		discardMsg On
 		delay 1000
-		forward coldstorageservice -m chargedeposited : chargedeposited($CurrentLoad)
+		replyTo depositstatus with chargedeposited : chargedeposited($CurrentLoad)
 		println("TT: charge deposited") color green
 	}
 	Transition t0	whenTime	1000							->	returnHome
@@ -379,7 +424,6 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 //	Goto waiting
 
 }
-
 
 
 
