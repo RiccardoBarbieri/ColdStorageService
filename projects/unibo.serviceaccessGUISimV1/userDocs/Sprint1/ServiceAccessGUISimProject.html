@@ -1,10 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<link rel="stylesheet" href="../../../html/_static/template.css">
-<link rel="stylesheet" href="../../../html/_static/mine.css">
-<link rel="stylesheet" href="../../../html/_static/code.css">
-<link rel="stylesheet" href="../../../html/_static/colors.css">
+<link rel="stylesheet" href="../_static/template.css">
+<link rel="stylesheet" href="../_static/mine.css">
+<link rel="stylesheet" href="../_static/code.css">
+<link rel="stylesheet" href="../_static/colors.css">
 <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
@@ -75,13 +75,13 @@
         Abbiamo decisio di implementare la comunicazione tra le due componenti software tramite il protocollo <b>Coap</b>. Questa scelta è stata mossa dal fatto che la nostra software house ha già sviluppato classi e interfacce per implementare un concetto generale di connessione tramite appunto il protocollo <i>Coap</i>, all'interno della libreria <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code>.
     </p>
     <p>
-        Nello <a href="../../../html/Sprint0/ColdStorageServiceSprint0V1.html">Sprint0</a> abbiamo poi parlato del concetto di attori e del linguaggio <b>Qak</b>. Infatti, un fattore fondamentale che ci ha spinto a scegliere <i>Coap</i> come protocollo di comunicazione è che ogni attore è definito come una risorsa <b>CoapObservable</b> (osservabile tramite la classe <i>CoapObserver</i> definita nella suddetta libreria).
+        Nello <a href="../../../sprint0V1/Sprint0/ColdStorageServiceSprint0V1.html">Sprint0</a> abbiamo discusso del concetto di attori e del linguaggio <b>Qak</b>. Infatti, un fattore fondamentale che ci ha spinto a scegliere <i>Coap</i> come protocollo di comunicazione è che ogni attore è definito come una risorsa <b>CoapObservable</b> (osservabile tramite la classe <i>CoapObserver</i> definita nella suddetta libreria).
     </p>
     <h6>Diagramma delle classi</h6>
     <p>
         Nell'immagine seguente viene mostrato il <b>diagramma UML</b> delle classi del back-end dell'applicazione Web. 
     </p>
-    <img class="bigimglim" src="../../../html/images/sprint1/architettura_logica_SAGSim.png" alt="Architettura logica Service Access Gui Simulata, realizzata in Spring">
+    <img class="bigimglim" src="../images/sprint1/architettura_logica_SAGSim.png" alt="Architettura logica Service Access Gui Simulata, realizzata in Spring">
     <p>
         Prendiamo in analisi i singoli componenti:
         <ul>
@@ -100,7 +100,7 @@
     </p>
     <h5>Configurazione</h5>
     <p>Alcuni importanti parametri dell'applicazione possono essere configurati dal file <b>application.properties</b>.</p>
-    <img class="imglim" src="../../../html/images/sprint1/application_properties.png" alt="File di configurazione application.properties">
+    <img class="imglim" src="../images/sprint1/application_properties.png" alt="File di configurazione application.properties">
     <p>
         Oltre a poter configurare il nome dell'applicazione che apparirà in alto nella pagina web e il banner da mostrare in console, sono presenti:
         <ul>
@@ -113,7 +113,7 @@
     <p>
         Per la realizzazione della grafica dell'applicazione si fa uso di <b>Bootstrap</b>, una libreria utile per realizzare pagine web reattive e mobile-first, con HTML, CSS e JavaScript;
     </p>
-    <img class="bigimglim" src="../../../html/images/sprint1/frontend_SAGSim.png" alt="Frontend Service Access Gui Simulata">
+    <img class="bigimglim" src="../images/sprint1/frontend_SAGSim.png" alt="Frontend Service Access Gui Simulata">
     <p>
         L'applicazione permette di inserire una quantità numerica che rappresenta i kg di carico da depositare e, previa validazione dell'input con eventuale toast di errore, invia la richiesta al <i>ColdStorageService</i>. <br>
         A questo punto possono presentarsi tre casi:
