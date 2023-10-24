@@ -28,31 +28,61 @@
 <h2>Introduction</h2>
 
 <div class="remark">
-
+    <p>
+        Documento che tratta la realizzazione della <i>ServiceAccessGUI</i> simulata in relazione all'analisi presente nello <a href="../../../../docs/Sprint1/ColdStorageServiceSprint1V0.html">Sprint1</a>. <br>
+    </p>
 </div>
 
 <h2>Requirements</h2>
  
 <div class="remark">
 
+    <p>
+        <bc>Goals</bc> <br>
+        <p>
+            La ServiceAccessGUISim deve permettere di:
+    <ul>
+        <li>inviare una richiesta di deposito</li>
+        <li>richiedere lo stato della propria richiesta</li>
+        <li>resettare l'interfaccia al termine di un ciclo di interazione</li>
+    </ul>
+        </p>
+        </p>
+    <p class="nota">
+        Non è di competenza in questa analisi la gestione del <i>ticket number</i>.
+    </p>
 </div>
 
 <h2>Requirement analysis</h2>
 
 <div class="remark">
-
+    <p>
+        Dobbiamo realizzare un componente software che permetta di simulare richieste di deposito presso il <i>CSS</i>. In particolare, avremo bisogno di un'applicativo che ci permetta di:
+        <ol>
+            <li>
+                effettuare una <i>richiesta di deposito</i> verso il <i>CSS</i>, specificando la quantità di chilogrammi di cibo <b>FW</b> 
+            </li>
+            <li>
+                visualizzare la risposta relativa alla richiesta appena effettuata (<i>accettata</i> o <i>rifiutata</i>)
+            </li>
+            <li>solo in caso di <b>richiesta accettata</b>, richiedere lo <i>stato del carico</i> e visualizzare la relativa risposta</i></li>
+        </ol>
+        Questi tre passaggi rappresentano il flusso di attività che vogliamo vengano simulate. Alla fine di questi step si realizza l'uscita dalla <i>INDOOR</i> da parte del <i>Camion</i>, aggiornando la vista dell'interfaccia applicativa per permettere una nuova interazione (da zero). <br>
+        Come descritto nella sezione <a href="../../../../docs/Sprint1/ColdStorageServiceSprint1V0.html#components_CSS" target="_blank">componenti</a> dello <i>Sprint1</i>, il Camion si deve allontanare anche in caso di <b>richiesta rifiutata</b>, quindi anche in questo casò si dovrà aggiornare la vista dell'applicazione per permettere una nuova interazione. <br>
+    </p>
 </div>
 
 <h2>Problem analysis</h2>
 
 <div class="remark">
+    <p>Per quanto riguarda le <b>tecnologie</b> d'implementazione, pensiamo che un applicazione web sia l'ideale per realizzare questo componente software, per via della sua comodità d'uso e per la possibilità di passare ad un contesto distribuito in modo molto semplice.</p>
 
 </div>
 
 <h2>Test plans</h2> 
 
 <div class="remark">
-    
+    Il comportamente dell'applicazione sarà simulato tramite una unità <i>JUnit</i> all'interno del progetto Qak.
 </div>
 
 <h2>Project</h2> 
@@ -133,84 +163,22 @@
     </p>
 </div>
 
-<h2>Testing</h2> 
- 
-<div class="remark">
-
-</div>
-
 <h2>Deployment</h2> 
 
-
-
 <div class="remark">
 
-    <h4>Distribuzione</h4>
-
     <p>
-        Per il deployment di queste applicazioni si &egrave; deciso di utilizzare <a href="https://www.docker.com/">Docker</a>,in modo da poter <i>uniformare</i> la metodologia di gestione della distribuzione dei vari componenti del servizio.
+        Per il deployment ci si basa sulla sezione all'interno dello <a href="">Sprint1</a>. <br>
+        Relativamente alla <i>ServiceAccessGUISim</i>, riportiamo il comando per l'avvio dell'applicazione.
+
+        <p>
+            <i>ServiceAccessGUISim</i> (progetto Spring) 
+            <pre><code class="language-bash">cd ./projects/unibo.serviceaccessGUISim
+    gradlew bootRun</code></pre>
+        </p>
     </p>
-
-    <p>
-        In particolare abbiamo creato dei Dockerfile, utilizzando l'apposito linguaggio dichiarativo, usati poi per creare le <a href="https://docs.docker.com/glossary/#image">immagini</a> che faranno parte dei <a href="https://docs.docker.com/glossary/#container">container</a> che eseguono i servizi.
-    </p>
-
-    <p>
-        Si riporta di seguito il Dockerfile usato per generare l'immagine di <i>mapConfigurator</i>.
-    </p>
-
-    <pre><code class="language-docker">FROM openjdk:11
-EXPOSE 8015
-VOLUME ["/data"]
-ADD ./build/distributions/unibo.mapConfigurator-boot-2.2.tar /
-WORKDIR unibo.mapConfigurator-boot-2.2/bin
-CMD ["bash", "./unibo.mapConfigurator"]</code></pre>
-
-    <p>
-        Allo scopo di velocizzare la creazione dei Dockerfile e delle rispettive immagini abbiamo implementato una serie di task Gradle che automatizzano questo compito, &egrave; possibile visualizzare queste task in un qualsiasi file build.gradle.kts (<a about="_blank" href="../../projects/unibo.mapConfigurator/build.gradle.kts">esempio</a>).
-    </p>
-
-    <p>
-        Tutte le immagini docker relative a questo progetto saranno rese disponibili online a questo profilo <a about="_blank" href="https://hub.docker.com/u/riccardoob">Docker Hub</a>.
-    </p>
-
-    <p>
-        Contestualmente al prossimo sprint verranno realizzate le apposite task Gradle per generare le immagini Docker per tutti i servizi coinvolti, cos&igrave; come la configurazione di un volume docker sfruttato dai container per file condivisi.
-    </p>
-
-    <h5>Controllo</h5>
-    
-    <p>
-        Dati i vari servizi da gestire verr&agrave; progettata e messa a disposizione del cliente una applicazione dedicata alla gestione dei componenti del servizio, permettendo di manipolare impostazioni e valori di default delle applicazioni tramite un'interfaccia grafica.
-    </p>
-
-    <h6>Protocollo di avvio</h6>
-    <p>Ad ora, in attesa della dockerizzazione di tutti i progetti e della creazione della suddetta applicazione, abbiamo definito il seguente protocollo di avvio dei vari servizi:
-        <ol>
-            <li><i>VirtualRobot</i> e <i>basicRobot</i> tramite <b>compose</b> delle immagine Docker <br>
-                <pre><code class="language-bash">cd ./projects/unibo.basicrobot23 
-docker compose -f basicrobot23.yaml up</code></pre>
-            </li>
-            <li>
-                <i>ColdStorageService</i> (progetto Qak) 
-                <pre><code class="language-bash">cd ./projects/sprint1v0
-gradlew run</code></pre>
-            </li>
-            <li>
-                <i>ServiceAccessGUISim</i> (progetto Spring) 
-                <pre><code class="language-bash">cd ./projects/unibo.serviceaccessGUISim
-gradlew bootRun</code></pre>
-            </li>
-        </ol>
-    </p>
-
 </div>
  
-<h2>Maintenance</h2> 
- 
-<div class="remark">
-
-</div>
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
 GIT repo: https://github.com/RiccardBarbieri/ColdStorageService
