@@ -184,7 +184,7 @@
             Abbiamo scelto la seconda soluzione per i seguenti motivi:
             <ul>
                 <li>il <i>CSS</i> non si deve preoccupare di mantenere l'indirizzo di rete della <i>SAG</i>, ma solamente un codice identificativo (coerente con la separazione delle responsabilità)</li>
-                <li>il codice identificativo, oltre a poter essere potenzialmente più breve, viene inviato dalla <i>SAG</i> all'interno della richiesta di deposito</li>
+                <li>il codice identificativo, oltre a poter essere potenzialmente più breve, viene inviato alla <i>SAG</i> all'interno della risposta relativa alla  richiesta di deposito</li>
             </ul>
             
             A questa soluzione aggiungiamo però un'accortezza. <br>
@@ -196,6 +196,9 @@
         </p>
         <p class="nota">
             Con il termine <b>istanza</b> dell'applicazione si intende una pagina web; possono esserci quindi più istanze contemporanee all'interno dello stesso dispositivo.
+        </p>
+        <p>
+            Un'altra idea potrebbe essere quella di far enumerare tutte le richieste in arrivo da parte del <i>CSS</i> in modo crescente. Otteniamo così un ordine numerico (oltre che temporale) delle richieste. Si dovrà poi comunicare alla <i>SAG</i> il numero della richiesta, così che possa recuperare l'eventuale messaggio di presa in carico. <br/>
         </p>
     </p>
 </div>
