@@ -2,15 +2,14 @@ package unibo.springSAGSim.connection;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 import unibo.basicomm23.coap.CoapConnection;
 import unibo.basicomm23.interfaces.Interaction;
 import unibo.basicomm23.utils.CommUtils;
 
 @Component
-public class SagConnection extends ConnectionUtils{
+public class SagConnection extends ConnectionUtils {
 
-    private static final String className        = "SagConnection";
+    private static final String className = "SagConnection";
     @Value("${actor.ctx}")
     String actorCtx;
     @Value("${actor.name}")
@@ -21,34 +20,54 @@ public class SagConnection extends ConnectionUtils{
     String actorCtxHost;
 
 
-    public CoapConnection connectLocalActorUsingCoap(){
+    public CoapConnection connectLocalActorUsingCoap() {
         return connectActorUsingCoap(actorCtxHost, actorCtxPort, actorCtx, actorName);
     }
 
-    public String sendStorageRequest(Interaction conn, int fw){
-        String answer = "";
+    public String sendStorageRequest(Interaction conn, float fw) {
+        String functionName = "sendStorageRequest";
         try {
-            String msg = ""+ CommUtils.buildRequest("ServiceAccessGUI",
-                    "storerequest", "storerequest("+fw+")", "ColdStorageService");
-            CommUtils.outblue(className + " sendStorageRequest | msg:" + msg + ", conn: " + conn);
-            answer = conn.request( msg );
-            CommUtils.outmagenta(className + " sendStorageRequest | answer: " + answer);
+            String msg = "" + CommUtils.buildRequest("ServiceAccessGUI",
+                    "storerequest", "storerequest(" + fw + ")", actorName);
+            return sendRequest(conn, msg, functionName);
         } catch (Exception e) {
-            CommUtils.outred(className + " sendStorageRequest | ERROR: " + e.getMessage());
+            CommUtils.outred(className + " " + functionName + " | ERROR: " + e.getMessage());
         }
-        return answer;
+        return null;
+    }
+
+    public String sendChargeStatusRequest(Interaction conn) {
+        String functionName = "sendChargeStatusRequest";
+        try {
+            String msg = "" + CommUtils.buildRequest("ServiceAccessGUI",
+                    "chargestatus", "chargestatus(arg)", actorName);
+            return sendRequest(conn, msg, functionName);
+        } catch (Exception e) {
+            CommUtils.outred(className + " " + functionName + " | ERROR: " + e.getMessage());
+        }
+        return null;
     }
 
     public String enterTicketRequest(Interaction conn, String ticketCode) {
-        String answer = "";
+        String functionName = "enterTicketRequest";
         try {
             String msg = ""+ CommUtils.buildRequest("ServiceAccessGUI",
-                    "ticketrequest", "ticketrequest("+ticketCode+")", "ColdStorageService");
-            CommUtils.outblue(className + " enterTicketRequest | msg:" + msg + ", conn: " + conn);
-            answer = conn.request( msg );
-            CommUtils.outmagenta(className + " enterTicketRequest | answer: " + answer);
+                    "ticketrequest", "ticketrequest("+ticketCode+")", actorName);
+            return sendRequest(conn, msg, functionName);
         } catch (Exception e) {
-            CommUtils.outred(className + " enterTicketRequest | ERROR: " + e.getMessage());
+            CommUtils.outred(className + " " + functionName + " | ERROR: " + e.getMessage());
+        }
+        return null;
+    }
+
+    private String sendRequest(Interaction conn, String msg, String functionName) {
+        String answer = "";
+        try {
+            CommUtils.outblue(className + " " + functionName + " | msg:" + msg + ", conn: " + conn);
+            answer = conn.request(msg);
+            CommUtils.outmagenta(className + " " + functionName + " | answer: " + answer);
+        } catch (Exception e) {
+            CommUtils.outred(className + " " + functionName + " | ERROR: " + e.getMessage());
         }
         return answer;
     }

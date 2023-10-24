@@ -7,53 +7,48 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/toast.css}">
-    <link rel="stylesheet" th:href="@{/css/popup.css}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script th:src="@{/js/main.js}"></script>
-    <script src="/js/sockjs.min.js"></script>
-    <script src="/js/ws_utils.js"></script>
 </head>
 <body>
 <div class="container">
     <h1 class="text-center"><span th:text="${arg}">Application name</span></h1>
     <h3 class="text-center">Deposit request simulation</h3>
     <div class="mb-3">
-        <label class="form-label">Welcome, please enter the <b>quantity of food</b> (kg) you need to deposit. <br>
+        <label for="quantity" class="form-label">Welcome, please enter the <b>quantity of food</b> (kg) you need to deposit. <br>
             The load must be a number greater than <i>0</i>.</label>
         <input type="number" id="quantity" name="fw" min="0.10" step="0.1" required class="form-control"
                placeholder="Load of food (kg)">
         <button id="save" class="btn btn-primary mt-3" onclick="validateInput()">
             <span class="spinner-border spinner-border-sm me-2" aria-hidden="true" hidden="hidden"></span>
-            <span role="status" id="save-status">Send request</span>
+            <span class="save-status-span" role="status" id="save-status">Send request</span>
         </button>
     </div>
 
-    <div id="responseBody" style="display: none;">
-        <label id="responseText" class="form-label"></label>
-        <div id="countdown"></div>
-    </div>
-
     <div id="ticketField" style="display: none;">
-        <label class="form-label">Enter the <b>ticket code</b> received by the service.</label>
+        <label for="ticketNumberField" class="form-label">Once arrived at INDOOR, enter the <b>ticket code</b> received by the service.</label>
         <input id="ticketNumberField" name="ticketNumber" required class="form-control"
                placeholder="Ticket code">
         <button id="sendTicketNumber" class="btn btn-primary mt-3" onclick="enterTicketRequest()">
-            <span class="spinner-border spinner-border-sm me-2" aria-hidden="true" hidden="hidden"></span>
+            <span id="spinner-border-ticket" class="spinner-border spinner-border-sm me-2" aria-hidden="true" hidden="hidden"></span>
             <span role="status" id="save-status-ticket">Enter ticket</span>
         </button>
     </div>
 
-    <div id="ticketButton" style="display: none;">
-        <button id="showTicketfield" class="btn btn-primary mt-3" onclick="showTicketField()">
-            <span id="spinner-border-ticket" class="spinner-border spinner-border-sm me-2" aria-hidden="true" hidden="hidden"></span>
-            <span>Arrived at <b>INDOOR</b></span>
+    <div id="checkChargeStatus" style="display: none;">
+        <label class="form-label">The ticket has been accepted! <br>Check the status of your load.</label>
+        <button id="sendChargeStatusBtn" class="btn btn-primary mt-3" onclick="sendChargeStatusRequest()">
+            <span id="spinner-border-status" class="spinner-border spinner-border-sm me-2" aria-hidden="true" hidden="hidden"></span>
+            <span class="save-status-span" id="status-request">Send status request</b></span>
         </button>
     </div>
 
-    <div id="responseTicketBody" style="display: none;">
-        <label id="responseTicketText" class="form-label"></label>
-        <div id="countdownTicket"></div>
+    <div id="responseBody" style="display: none;">
+        <div>
+            <label id="responseText" class="form-label"></label>
+            <div id="countdown"></div>
+        </div>
     </div>
 </div>
 
@@ -69,15 +64,5 @@
     </div>
 </div>
 
-<div id="chargeTaken" class="popup" style="display: none;">
-    <label class="alert-label">The load has been picked up. <br>The page will be restored shortly.</label>
-    <div id="countdownChargeTaken"></div>
-</div>
-
-<div id="timeout" class="popup" style="display: none;">
-    <label class="alert-label">The timeout for handling the load has expired. <br>The page will be restored shortly.</label>
-</div>
-
-<script>connect()</script>
 </body>
 </html>
