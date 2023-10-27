@@ -104,9 +104,7 @@
     <p>
         Abbiamo decisio di implementare la comunicazione tra le due componenti software tramite il protocollo <b>Coap</b>. Questa scelta è stata mossa dal fatto che la nostra software house ha già sviluppato classi e interfacce per implementare un concetto generale di connessione tramite appunto il protocollo <i>Coap</i>, all'interno della libreria <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code>.
     </p>
-    <p>
-        Nello <a href="../../../sprint0V1/Sprint0/ColdStorageServiceSprint0V1.html">Sprint0</a> abbiamo discusso del concetto di attori e del linguaggio <b>Qak</b>. Infatti, un fattore fondamentale che ci ha spinto a scegliere <i>Coap</i> come protocollo di comunicazione è che ogni attore è definito come una risorsa <b>CoapObservable</b> (osservabile tramite la classe <i>CoapObserver</i> definita nella suddetta libreria).
-    </p>
+  
     <h6>Diagramma delle classi</h6>
     <p>
         Nell'immagine seguente viene mostrato il <b>diagramma UML</b> delle classi del back-end dell'applicazione Web. 
@@ -115,18 +113,14 @@
     <p>
         Prendiamo in analisi i singoli componenti:
         <ul>
-            <li><b>SagController</b>: WebServer Controller dell'applicazione definito tramite annotazione del framework <i>SpringBoot</i>. Si occupa di inizializzare l'applicazione definendo un osservatore sull'attore interessato; funge poi da mediatore tra UI e back-end per l'invio al <i>ColdStorageService</i> della richiesta di deposito.</li>
-            <li><b>SagConnection</b>: componente che si occupa di stabilire, tramite <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code>, una connessione <b>Coap</b> con l'attore interessato nel progetto <i>ColdStorageService</i>; permette poi di implementare la comunicazione con l'attore stesso relativamente alla richiesta di deposito.</li>
+            <li><b>SagController</b>: WebServer Controller dell'applicazione definito tramite annotazione del framework <i>SpringBoot</i>. Si occupa di inizializzare l'applicazione definendo un osservatore sull'attore interessato; funge poi da mediatore tra UI e back-end per l'invio al <i>ColdStorageService</i> della richiesta di deposito e della richiesta relativa allo stato del carico depositato.</li>
+            <li><b>SagConnection</b>: componente che si occupa di stabilire, tramite <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code>, una connessione <b>Coap</b> con l'attore interessato nel progetto <i>ColdStorageService</i>; permette poi di implementare la comunicazione con l'attore stesso relativamente alle due richieste sopra definite.</li>
             <li><b>ConnectionUtils</b>: definisce una nuova <i>CoapConnection</i>.</li>
-            <li><b>CoapObserver</b>: osservatore che, ad ogni aggiornamento emesso dal ColdStorageService, avvisa tutte le entità registrate ad esso tramite <i>WebSocket</i>.</li>
+            
+            
+      
         </ul>
-        <p>
-            Per l'aggiornamento automatico della pagina da parte del server utilizziamo le <b>WebSocket</b>. Abbiamo infatti un file <a href="../../springSAGSim/src/main/resources/static/js/ws_utils.js">ws_utils.js</a> che definisce la connessione e gestisce i messaggi in arrivo in maniera opportuna. <br>
-            <ul>
-                <li><b>WebSocketConfiguration</b>: implementa la classe <i>WebSocketConfigurer</i> di <code class="docutils literal notranslate"><span class="pre">org.springframework.web.socket.config.annotation</span></code>.</li>
-                <li><b>WebSocketHandler</b>: memorizza le sessioni registrate e alle quali inviare i messaggi.</li>
-            </ul>
-        </p>
+        
     </p>
     <h5>Configurazione</h5>
     <p>Alcuni importanti parametri dell'applicazione possono essere configurati dal file <b>application.properties</b>.</p>
@@ -148,7 +142,7 @@
         L'applicazione permette di inserire una quantità numerica che rappresenta i kg di carico da depositare e, previa validazione dell'input con eventuale toast di errore, invia la richiesta al <i>ColdStorageService</i>. <br>
         A questo punto possono presentarsi tre casi:
         <ul>
-            <li>richiesta <b>accettata</b>: l'utente viene notificato dell'accettazione della richiesta, indicandogli di attendere la presa in carico. 
+            <li>richiesta <b>accettata</b>: l'utente viene notificato dell'accettazione della richiesta, indicandogli di richiedere lo stato del carico, una volta raggiunta la INDOOR.
                 <p>
                     In questo contesto, due casi sono possibili:
                 <ul>
