@@ -147,59 +147,101 @@
             <td class="orange bold center">coldstorageservice</td>
             <td class="orange bold center">serviceaccessguisim</td>
             <td class="blue bold center">Reply</td>
-            <td>loadaccept()</td>
+            <td>loadaccepted()</td>
             <td>La richiesta di deposito &egrave; stata accettata.</td>
         </tr>
         <tr>
             <td class="orange bold center">coldstorageservice</td>
             <td class="orange bold center">serviceaccessguisim</td>
             <td class="blue bold center">Reply</td>
-            <td>loadreject()</td>
+            <td>loadrejected()</td>
             <td>La richiesta &egrave; stata rifiutata.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">serviceaccessguisim</td>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="blue bold center">Request</td>
+            <td>chargestatus()</td>
+            <td>Viene richiesto lo stato del carico depositato.</td>
         </tr>
         <tr>
             <td class="orange bold center">coldstorageservice</td>
             <td class="orange bold center">serviceaccessguisim</td>
-            <td class="blue bold center">Dispatch</td>
+            <td class="blue bold center">Reply</td>
             <td>chargetaken()</td>
-            <td>Il transport trolley ha comunicato di aver prelevato il carico, il camion deve spostarsi da INDOOR.</td>
+            <td>Il deposito è stato preso in carico dal transport trolley, il camion deve spostarsi da INDOOR.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="orange bold center">serviceaccessguisim</td>
+            <td class="blue bold center">Reply</td>
+            <td>chargefailed()</td>
+            <td>Ci sono stati problemi durante la presa in carico del deposito.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="orange bold center">transporttrolley</td>
+            <td class="blue bold center">Request</td>
+            <td>deposit()</td>
+            <td>Il CSS comunica al transport trolley che è presente un nuovo carico da depositare.</td>
         </tr>
         <tr>
             <td class="orange bold center">transporttrolley</td>
             <td class="orange bold center">coldstorageservice</td>
-            <td class="blue bold center">Dispatch</td>
+            <td class="blue bold center">Reply</td>
             <td>chargetakentt()</td>
             <td>Il carico &egrave; stato prelevato dal transport trolley.</td>
         </tr>
         <tr>
             <td class="orange bold center">transporttrolley</td>
             <td class="orange bold center">coldstorageservice</td>
-            <td class="blue bold center">Dispatch</td>
-            <td>chargedeposited()</td>
-            <td>Il carico &egrave; stato depositato nella ColdRoom.</td>
+            <td class="blue bold center">Reply</td>
+            <td>chargefailedtt()</td>
+            <td>Ci sono stati problemi durante la presa in carico da parte del transport trolley.</td>
         </tr>
         <tr>
             <td class="orange bold center">coldstorageservice</td>
             <td class="orange bold center">transporttrolley</td>
-            <td class="blue bold center">Dispatch</td>
-            <td>deposit()</td>
-            <td>Il CSS comunica al TransportTrolley che deve recarsi a INDOOR, prendere il carico e portare alla ColdRoom</td>
+            <td class="blue bold center">Request</td>
+            <td>depositstatus()</td>
+            <td>Viene richiesto al transport trolley lo stato del cibo che ha preso in carico.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">transporttrolley</td>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="blue bold center">Reply</td>
+            <td>chargedeposited()</td>
+            <td>Il carico &egrave; stato depositato nella ColdRoom.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">transporttrolley</td>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="blue bold center">Reply</td>
+            <td>chargedepfailed()</td>
+            <td>Ci sono stati problemi durante il deposito del carico nella ColdRoom.</td>
         </tr>
     </table>
 
-    <p>
-        Dopo un incontro con il committente, che comunica di non avere preferenze a riguardo, abbiamo deciso di proseguire l'analisi basandoci sul secondo modello proposto nel <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V1.html#modello_requisiti">modello dei requisiti</a> delineato nello <i>Sprint0</i>: il messaggio <b>charge taken</b> sar&agrave; quindi modellato con semantica <b>dispatch</b>.
+    <p class="nota">
+        Ogni risposta è presente nella sua accezione di successo e di fallimento. Si discrimina quindi in base al messaggio e non all'argomento, in modo da gestire con maggiore flessibilità il passaggio tra i vari stati degli attore Qak.
     </p>
     <p>
-        Vediamo che l'unico messaggio che viene inviato dalla <i>ServiceAccessGUISim</i> corrisponde alla richiesta di deposito (<i>storerequest(FW)</i>). Questa decisione si basa sul fatto che in questo <i>Sprint</i> non verrrà trattata la questione dei <b>ticket</b> (fuori dalla core-business logic); perciò avremo che, a seguito di un'eventuale accettazione della richiesta di deposito (<i>storeaccept()</i>), si passerà direttamente alla logica applicativa che la implementa.
+        Vediamo essere presente una semantica <b>request-reply</b> che comprende tutte le interazioni dalla <i>ServiceAccessGUISim</i> al <i>TransportTrolley</i>, passando per il <i>ColdStorageService</i>.
     </p>
+    <p>
+        In questo modello, gli unici messaggi che vengono inviati dalla <i>ServiceAccessGUISim</i> corrispondono alla richiesta di deposito (<i>storerequest(FW)</i>) e alla richiesta dello stato del carico (<i>chargestatus()</i>). Questa decisione si basa sul fatto che in questo <i>Sprint</i> non verrrà trattata la questione dei <b>ticket</b> (fuori dalla core-business logic); perciò avremo che, a seguito di un'eventuale accettazione della richiesta di deposito (<i>storeaccepted()</i>), si passerà direttamente alla logica applicativa che la implementa.
+    </p>
+    <p class="keypoint">
+        <b>KEY-POINT</b>: semantica request-reply per le interazioni della core-business.
+    </p>
+
     <h3>Componenti</h3>
 
     <h4>ServiceAccessGUISim</h4>
 
     <p>
         Come detto, in questo Sprint concentreremo l'attenzione sui componenti che implementano la core business logic del sistema e, nonostante non ne faccia direttamente parte, avremo necessità di definire la <i>ServiceAccessGUI</i> per <b>testare</b> il funzionamento della logica applicativa. Ecco perchè, come anticipato nello <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V1.html#test_plans">Sprint0</a>, verr&agrave; modellata come un <b>simulatore</b> che invia una <i>storerequest</i> al <i>ColdStorageService</i>. <br>
-        L'analisi approfondita di questo componente sarà considerata negli sprint successivi.
+        Lo studio approfondito di questo componente sarà considerato negli sprint successivi, mentre all'interno di <a href="../../projects/unibo.serviceaccessGUISimV1/userDocs/Sprint1/ServiceAccessGUISimProject.html">questo documento</a> è presente l'analisi e conseguente realizzazione della versione "simulata" necessaria in questafase del progetto.
     </p>
 
     <p class="nota">
@@ -243,7 +285,10 @@
             <li><span class="bold" style="color:rgb(43,169,43);">INDOOR</span>: posizione lungo la parete inferiore adiacente alla parete sinistra, il transport trolley deve recarsi in quest'area per prelevare i carichi da i camion;</li>
             <li><span class="stroke" style="color:rgb(255,228,0);">PORT</span>: posizione lungo il bordo inferiore dell'area della ColdRoom, il transport trolley deve posizionarsi in questa area per scaricare i carichi nella ColdRoom</li>
         </ul>
-    <img class="bigimglim" src="../images/sprint1/servicearea.png" alt="Modello service area">
+        <p>
+            Abbiamo dato delle specifiche in metri, in modo da avere una definizione precisa e formale. <br>
+            In fase di analisi, astrarremo dalla specifica unità di misura in metri per adattarla all'entità robot con cui lavoriamo.
+        </p>
     </p>
 
 </div>
@@ -253,25 +298,6 @@
 <div class="remark">
 
     <h3>Componenti</h3>
-
-    <h4>ServiceAccessGUISim</h4>
-
-    <p>
-        Dobbiamo realizzare un componente software che permetta di simulare molteplici richieste di deposito presso il <i>CSS</i>. In particolare, avremo bisogno di un'applicativo che ci permetta di:
-        <ol>
-            <li>
-                effettuare una <i>richiesta di deposito</i> verso il <i>CSS</i>, specificando la quantità di chilogrammi di cibo <b>FW</b> 
-            </li>
-            <li>
-                visualizzare la risposta relativa alla richiesta appena effettuata (<i>accettata</i> o <i>rifiutata</i>)
-            </li>
-            <li>solo in caso di <b>richiesta accettata</b>, visualizzare il messaggio di <i>presa in carico</i></li>
-        </ol>
-        Questi tre passaggi rappresentano il flusso di attività che vogliamo vengano simulate. Alla fine di questi step si realizza l'uscita dalla <i>INDOOR</i> da parte del <i>Camion</i>, aggiornando la vista dell'applicazione per permettere una nuova interazione (da zero). <br>
-        Come anticipato precedentemente nella sezione <a href="#components_CSS" target="_blank">componenti</a>, il Camion si deve allontanare anche in caso di <b>richiesta rifiutata</b>, quindi anche in questo casò si dovrà aggiornare la vista dell'applicazione per permettere una nuova interazione. <br>
-    </p>
-    <p>Per quanto riguarda le <b>tecnologie</b> d'implementazione, pensiamo che un applicazione web sia l'ideale per realizzare questo componente software, per via della sua comodità d'uso e per la possibilità di passare ad un contesto distribuito in modo molto semplice.</p>
-
     <h4>ColdStorageService</h4>
     <p>
         Il <i>CSS</i> si occupa solo di:
@@ -307,31 +333,39 @@
     </table>
 
     <p>
-        Abbiamo deciso di suddividere la <b>service area</b> in una griglia di quadrati di lato <b>RD</b>: ogni posizione sulla griglia pu&ograve; contenere il <i>DDR robot</i>.
+        Dalla misurazione in metri vista nello <i>Sprint0</i>, introduciamo il concetto di <b>unità robot</b>. La nostra nuova unità di misura si basa sulla dimensione del lato del <i>TransportTrolley</i>, ovvero <b>RD</b>. <br>
+        Questo ci ha permesso di suddividere la <b>service area</b> in una griglia di quadrati di lato <b>RD</b>, in modo tale che ogni posizione sulla griglia possa contenere il <i>DDR robot</i>.
     </p>
 
+    <p class="keypoint">
+        <b>KEY-POINT</b>: servicearea rappresentata come griglia di quadrati di lato <b>RD</b>, ovvero l'<b>unità robot</b>.
+    </p>
     <p>
         La rappresentazione della service area diventa quindi come nella figura sottostante: si noti il sistema di assi cartesiani che pone il punto (0, 0) in corrispondenza della posizione <b>HOME</b>, che corrisponde alla posizione di partenza.
     </p>
 
     <p>
-        I <i>punti di interesse</i> <b>INDOOR</b> e <b>PORT</b> finora sono stati modellati come posizioni monodimensionali, in quanto si tratta di "aperture" al quale il robot pu&agrave; accedere, in questo modello verranno indicati come "<i>la posizione in cui il robot deve trovarsi per potervi accedere</i>".
+        I <i>punti di interesse</i> <b>INDOOR</b> e <b>PORT</b> finora sono stati modellati come posizioni monodimensionali, in quanto si tratta di "aperture" al quale il robot può accedere, in questo modello verranno indicati come "<i>la posizione in cui il robot deve trovarsi per potervi accedere</i>".
     </p>
 
     <p>
         Dal punto di vista del <b>transport trolley</b> la service area sar&agrave; rappresentata da una <b>matrice NxM</b>. 
     </p>
 
+
     <p>
     <figure>
-        <p class="nota">Modello service area - non rispecchia le dimensione effettive</p>
         <img class="bigimglim" src="../images/sprint1/serviceareagridaxes.png" alt="Modello service area">
     </figure>
     </p>
+    <p class="nota">
+        La dimensione di ColdRoom, Port e Indoor è stata adatta per farla combaciare alle dimensioni della griglia. Infatti, muovendosi il robot "cella per cella", sarebbe inutile avere celle piene a metà in quanto il <i>TransportTrolley</i> non potrebbe ugualmente accedervi.
+    </p>
 
     <p>
-        Per generare una mappa della service area abbiamo sfruttato il software <code class="prettyprint">unibo.mapperQak23</code> che si avvale di <code class="prettyprint">basicrobot</code> per ottenere la dimensione dell'area e individuare eventuali ostacoli lungo i bordi, generando una rappresentazione della service area. <br>
-        La rappresentazione generata verrà utilizzata come base dall'applicazione mapConfigurator (illustrata successivamente) per personalizzare la service area.
+        Per generare una mappa della service area abbiamo sfruttato il software <code class="prettyprint">unibo.mapperQak23</code> che si avvale di <code class="prettyprint">basicrobot</code> per ottenere le dimensioni dell'area e individuare eventuali ostacoli lungo i bordi, generando una rappresentazione della service area. <br>
+        La rappresentazione generata verrà utilizzata come mappa di default dall'applicazione <i>mapConfigurator</i> (illustrata successivamente) per personalizzare la service area. <br>
+        Si noti la dimensione della ColdRoom in precedenza, più piccola di quella attuale.
     </p>
 
 

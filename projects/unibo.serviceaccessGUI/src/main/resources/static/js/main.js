@@ -1,10 +1,8 @@
 // Definisci la variabile globale
 window.chargeTaken = false;
 window.reloadTime = 7000;
-window.depositRequestIdentifier = "";
-window.ticketNumber = -1;
 
-function sendRequest(quantityFw) {
+function sendStorageRequest(quantityFw) {
     const saveButton = document.querySelector("#save");
 
     saveButton.firstElementChild.removeAttribute("hidden");
@@ -60,16 +58,13 @@ function sendRequest(quantityFw) {
             else {
                 setTimeout(() => {
                     if (resolvedValue.includes("loadaccepted")) {
-                        const stringaccepted = resolvedValue.split("loadaccepted(")[1].split(")")[0];
-                        depositRequestIdentifier = stringaccepted.split(",")[0];
-                        ticketNumber = stringaccepted.split(",")[1];
-                        showResponse("accepted")
+                        showResponse("storerequest", "accepted")
                     }
                     else if (resolvedValue.includes("loadrejected")) {
-                        showResponse("rejected")
+                        showResponse("storerequest", "rejected")
                     }
                     else {
-                        showResponse("KO")
+                        showResponse("storerequest", "KO")
                     }
                 }, 2000);
             }
@@ -80,44 +75,198 @@ function sendRequest(quantityFw) {
     });
 }
 
-function showResponse(response) {
+function sendChargeStatusRequest() {
+    const sendChargeStatusBtn = document.querySelector("#sendChargeStatusBtn");
+
+    sendChargeStatusBtn.firstElementChild.removeAttribute("hidden");
+    sendChargeStatusBtn.disabled = true
+
+    const spinnerChargeStatus = document.querySelector("#spinner-border-status");
+    spinnerChargeStatus.removeAttribute('hidden');
+
+    //request to server
+    const relativeEndpoint = '/sendChargeStatusRequest';
+    fetch(
+        relativeEndpoint,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: ""
+        }
+    ).then(response => {
+        if (response.ok) {
+            //Saving animation end OK
+            setTimeout(() => {
+                const statusRequest = document.getElementById('status-request');
+                statusRequest.removeAttribute('hidden');
+                spinnerChargeStatus.setAttribute('hidden', 'hidden');
+                sendChargeStatusBtn.firstElementChild.hidden = "hidden";
+                sendChargeStatusBtn.lastElementChild.textContent = 'Charge request sent';
+                sendChargeStatusBtn.disabled = true;
+            }, 1700);
+        } else {
+            //Saving animation end ERROR
+            setTimeout(() => {
+                const statusRequest = document.getElementById('status-request');
+                statusRequest.removeAttribute('hidden');
+                spinnerChargeStatus.setAttribute('hidden', 'hidden');
+                sendChargeStatusBtn.firstElementChild.hidden = "hidden";
+                sendChargeStatusBtn.lastElementChild.textContent = 'Error!';
+            }, 1700);
+        }
+        return response;
+    }).then(response => {
+        response.text().then((resolvedValue) => {
+
+            if (!response.ok) {
+                showError(response.text());
+            }
+            else {
+                setTimeout(() => {
+                    if (resolvedValue.includes("chargetaken")) {
+                        showResponse("chargestatus", "accepted")
+                    }
+                    else {
+                        showResponse("chargestatus", "KO")
+                    }
+                }, 2000);
+            }
+        });
+
+    }).catch(error => {
+        console.log(error);
+    });
+}
+
+function enterTicketRequest() {
+
+    const saveButton = document.querySelector("#sendTicketNumber");
+
+    saveButton.firstElementChild.removeAttribute("hidden");
+    saveButton.disabled = true
+
+    const spinner = document.querySelector('#spinner-border-ticket');
+    spinner.removeAttribute('hidden');
+    const inputElement = document.getElementById('ticketNumberField');
+    const inputValue = inputElement.value;
+
+    //data structure to send to server
+    const requestBodyMap = {
+        ticketCode: inputValue
+    }
+
+    //request to server
+    const relativeEndpoint = '/enterTicketRequest';
+    fetch(
+        relativeEndpoint,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBodyMap)
+        }
+    ).then(response => {
+        if (response.ok) {
+            //Saving animation end OK
+            setTimeout(() => {
+                const saveStatus = document.getElementById('save-status-ticket');
+                saveStatus.removeAttribute('hidden');
+                spinner.setAttribute('hidden', 'hidden');
+                saveButton.firstElementChild.hidden = "hidden";
+                saveButton.lastElementChild.textContent = 'Ticket entered';
+                saveButton.disabled = true;
+            }, 1700);
+        } else {
+            //Saving animation end ERROR
+            setTimeout(() => {
+                const saveStatus = document.getElementById('save-status-ticket');
+                saveStatus.removeAttribute('hidden');
+                spinner.setAttribute('hidden', 'hidden');
+                saveButton.firstElementChild.hidden = "hidden";
+                saveButton.lastElementChild.textContent = "Error!";
+            }, 1700);
+        }
+        return response;
+    }).then(response => {
+        response.text().then((resolvedValue) => {
+
+            if (!response.ok) {
+                showError(response.text());
+            }
+            else {
+                setTimeout(() => {
+                    if (resolvedValue.includes("ticketaccepted")) {
+                        showResponseTicket("accepted")
+                    }
+                    else if (resolvedValue.includes("ticketrejected")) {
+                        showResponseTicket("rejected")
+                    }
+                    else {
+                        showResponseTicket("KO")
+                    }
+                }, 2000);
+            }
+        });
+
+    }).catch(error => {
+        console.log(error);
+    });
+}
+
+
+function showResponse(requestType, response) {
     const responseBody = document.getElementById('responseBody');
     responseBody.style.display = "block";
     const responseText = document.getElementById('responseText');
     if (response === "accepted") {
-        const ticketButton = document.getElementById('ticketButton');
-        ticketButton.style.display = "block";
-        const ticketNumberField = document.getElementById('ticketNumberField');
-        ticketNumberField.value = ticketNumber
-        responseText.innerHTML = "The request has been accepted! <br>Your ticket code is " + ticketNumber
+        if (requestType === "storerequest") {
+            setTimeout(() => {
+                const checkChargeStatus = document.getElementById('checkChargeStatus');
+                checkChargeStatus.style.display = "block";
+            }, 500);
+        }
+        else if (requestType === "chargestatus") {
+            responseText.innerHTML = "Your load has been taken in charge from the service! <br> The page will be restored shortly: you can leave the INDOOR."
+            countdownFail(window.reloadTime);
+            setTimeout(() => {
+                location.reload();
+            }, reloadTime);
+        }
     }
     else if (response === "rejected") {
-        responseText.innerHTML = "The request has been rejected! <br>The page will be restored shortly."
-        countdownFail(reloadTime);
+        if (requestType === "storerequest") {
+            responseText.innerHTML = "The request has been rejected! <br>The page will be restored shortly."
+        }
+        else if (requestType === "chargestatus") {
+            responseText.innerHTML = "Your load has not been taken in charge from the service! <br> The page will be restored shortly."
+        }
+        countdownFail(window.reloadTime);
         setTimeout(() => {
             location.reload();
         }, reloadTime);
     }
     else {
         responseText.innerHTML = "Error during processing the deposit! <br>The page will be restored shortly."
-        countdownFail(reloadTime)
+        countdownFail(window.reloadTime)
         setTimeout(() => {
             location.reload();
         }, reloadTime);
     }
 }
 
-
 function validateInput() {
     const inputElement = document.getElementById('quantity');
-    const inputValue = parseInt(inputElement.value);
+    const inputValue = parseFloat(inputElement.value);
 
-    if (isNaN(inputValue) || inputValue < 0) {
+    if (isNaN(inputValue) || inputValue <= 0.0) {
         // Display an error message
-        showError('Please enter a positive integer value greater than 0.');
+        showError('Please enter a positive integer value!');
     }
     else {
-        sendRequest(inputValue);
+        sendStorageRequest(inputValue);
     }
 }
 
@@ -131,23 +280,10 @@ function showError(message) {
     }, 2000);
 }
 
-
 document.addEventListener("DOMContentLoaded", function () {
     const inputElement = document.getElementById('quantity');
     inputElement.value = ''; // Imposta il campo di input a una stringa vuota
 });
-
-function checkChargeTaken() {
-    if (!window.chargeTaken) {
-        const timeout = document.getElementById('timeout');
-        timeout.style.display = "block";
-        countdownChargeTaken(reloadTime)
-        setTimeout(() => {
-            location.reload();
-        }, reloadTime);
-    }
-}
-
 
 function countdown(time, element) {
     const countdownDate = new Date().getTime() + time - 1000;
@@ -169,125 +305,4 @@ function countdown(time, element) {
 
 function countdownFail(time) {
     countdown(time - 1000, document.getElementById('countdown'));
-}
-
-function countdownTicketFail(time) {
-    countdown(time - 1000, document.getElementById('countdownTicket'));
-}
-
-function countdownChargeTaken(time) {
-    countdown(time - 1000, document.getElementById('countdownChargeTaken'));
-}
-
-function showTicketField() {
-     const ticketField = document.getElementById('ticketField');
-     ticketField.style.display = "block";
-     const ticketButton = document.getElementById('ticketButton');
-     ticketButton.style.display = "none";
-}
-
-
-function enterTicketRequest() {
-
-    const saveButton = document.querySelector("#sendTicketNumber");
-
-    saveButton.firstElementChild.removeAttribute("hidden");
-    saveButton.disabled = true
-
-    const spinner = document.querySelector('#spinner-border-ticket');
-    spinner.removeAttribute('hidden');
-        const inputElement = document.getElementById('ticketNumberField');
-        const inputValue = inputElement.value;
-
-        //data structure to send to server
-        const requestBodyMap = {
-            ticketCode: inputValue
-        }
-
-        //request to server
-        const relativeEndpoint = '/enterTicketRequest';
-        fetch(
-            relativeEndpoint,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestBodyMap)
-            }
-        ).then(response => {
-            if (response.ok) {
-                //Saving animation end OK
-                setTimeout(() => {
-                    const saveStatus = document.getElementById('save-status-ticket');
-                    saveStatus.removeAttribute('hidden');
-                    spinner.setAttribute('hidden', 'hidden');
-                    saveButton.firstElementChild.hidden = "hidden";
-                    saveButton.lastElementChild.textContent = 'Ticket entered';
-                    saveButton.disabled = true;
-                }, 1700);
-            } else {
-                //Saving animation end ERROR
-                setTimeout(() => {
-                    const saveStatus = document.getElementById('save-status-ticket');
-                    saveStatus.removeAttribute('hidden');
-                    spinner.setAttribute('hidden', 'hidden');
-                    saveButton.firstElementChild.hidden = "hidden";
-                    saveButton.lastElementChild.textContent = "Error!";
-                }, 1700);
-            }
-            return response;
-        }).then(response => {
-            response.text().then((resolvedValue) => {
-
-                if (!response.ok) {
-                    showError(response.text());
-                }
-                else {
-                    setTimeout(() => {
-                        if (resolvedValue.includes("ticketaccepted")) {
-                            showResponseTicket("accepted")
-                        }
-                        else if (resolvedValue.includes("ticketrejected")) {
-                            showResponseTicket("rejected")
-                        }
-                        else {
-                            showResponseTicket("KO")
-                        }
-                    }, 2000);
-                }
-            });
-
-        }).catch(error => {
-            console.log(error);
-        });
-}
-
-
-function showResponseTicket(response) {
-    const responseBody = document.getElementById('responseTicketBody');
-    responseBody.style.display = "block";
-    const responseText = document.getElementById('responseTicketText');
-    if (response === "accepted") {
-        const ticketButton = document.getElementById('ticketButton');
-        ticketButton.style.display = "block";
-        responseText.innerHTML = "The request has been accepted! <br>Your ticket code is " + ticketNumber
-        setTimeout(() => {
-            checkChargeTaken();
-        }, 15000); // timeout di 15 secondi
-    }
-    else if (response === "rejected") {
-        responseText.innerHTML = "The ticket has been rejected! <br>The page will be restored shortly."
-        countdownTicketFail(reloadTime);
-        setTimeout(() => {
-            location.reload();
-        }, reloadTime);
-    }
-    else {
-        responseText.innerHTML = "Error during entering the ticket! <br>The page will be restored shortly."
-        countdownTicketFail(reloadTime)
-        setTimeout(() => {
-            location.reload();
-        }, reloadTime);
-    }
 }
