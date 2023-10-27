@@ -1,4 +1,5 @@
-import com.bmuschko.gradle.docker.DockerSpringBootApplication
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
 import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import java.util.Properties
 
@@ -7,7 +8,7 @@ plugins {
     id("java")
     id("org.springframework.boot") version "2.7.8"
     id("io.spring.dependency-management") version "1.1.2"
-    id("com.bmuschko.docker-spring-boot-application") version "9.3.2"
+    id("com.bmuschko.docker-spring-boot-application") version "9.3.4"
     id("application")
 }
 
@@ -80,17 +81,13 @@ properties["activeProfile"]?.let {
     springProps.load(file("src/main/resources/application-$it.properties").inputStream())
 }
 
-//tasks.register("testProperty") {
-//    println(springProps["server.port"]!!::class)
-//}
-
 tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
     systemProperty("spring.profiles.active", properties["activeProfile"] ?: "dev")
 }
 
 tasks.register<Dockerfile>("createDockerfile") {
     dependsOn("bootDistTar")
-    group = "docker"
+    group = "unibobootdocker"
     description = "Create Dockerfile"
 
     val fileRegex = Regex(".*-boot-(.*)\\.tar")
@@ -115,18 +112,29 @@ tasks.register<Dockerfile>("createDockerfile") {
     volume("/data")
     addFile("./build/distributions/" + lastModified.name, "/")
     workingDir(lastModified.name.removeSuffix(".tar") + "/bin")
-    defaultCommand("bash", "./" + lastModified.name.split("-")[0])
+    defaultCommand("bash", "./" + lastModified.name.removeSuffix(".tar"))
 }
 
-//tasks.register<DockerBuildImage>("dockerize") {
-//    dependsOn("createDockerfile")
-//    group = "docker"
-//    description = "Dockerize the spring boot application"
-//    doLast {
-//        inputDir.set(layout.projectDirectory.dir("build/docker"))
-//        images.add(project.name.split(".").last().lowercase() + ":latest")
-//    }
-//}
+tasks.register<DockerBuildImage>("buildImage") {
+    dependsOn("createDockerfile")
+    group = "unibobootdocker"
+    description = "Dockerize the spring boot application"
+    val dockerRepository = properties["dockerRepository"] ?: "riccardoob"
+    dockerFile.set(file(layout.projectDirectory.toString() + "/build/docker/Dockerfile"))
+    inputDir.set(file(layout.projectDirectory))
+    images.add("${dockerRepository}/" + project.name.split(".").last().lowercase() + ":latest")
+    images.add("${dockerRepository}/" + project.name.split(".").last().lowercase() + ":${project.version}")
+}
+
+tasks.register<DockerPushImage>("pushImage") {
+    dependsOn("buildImage")
+    group = "unibobootdocker"
+    description = "Push the docker image to the repository"
+    val dockerRepository = properties["dockerRepository"] ?: "riccardoob"
+    images.add("${dockerRepository}/" + project.name.split(".").last().lowercase() + ":latest")
+    images.add("${dockerRepository}/" + project.name.split(".").last().lowercase() + ":${project.version}")
+}
+
 
 
 
