@@ -91,7 +91,7 @@ tasks.register<Dockerfile>("createDockerfile") {
     description = "Create Dockerfile"
 
     val fileRegex = Regex(".*-boot-(.*)\\.tar")
-    val inputDir: Directory = layout.projectDirectory.dir("build/distributions")
+    val inputDir: Directory = project.layout.projectDirectory.dir("build/distributions")
     val lastModified = inputDir.asFileTree.files.filter {
         it.name.matches(fileRegex)
     }.maxByOrNull { it.lastModified() }
@@ -119,7 +119,7 @@ tasks.register<DockerBuildImage>("buildImage") {
     dependsOn("createDockerfile")
     group = "unibobootdocker"
     description = "Dockerize the spring boot application"
-    val dockerRepository = properties["dockerRepository"] ?: "riccardoob"
+    val dockerRepository = properties["dockerRepository"] ?: throw GradleException("dockerRepository property not set")
     dockerFile.set(file(layout.projectDirectory.toString() + "/build/docker/Dockerfile"))
     inputDir.set(file(layout.projectDirectory))
     images.add("${dockerRepository}/" + project.name.split(".").last().lowercase() + ":latest")
@@ -134,6 +134,7 @@ tasks.register<DockerPushImage>("pushImage") {
     images.add("${dockerRepository}/" + project.name.split(".").last().lowercase() + ":latest")
     images.add("${dockerRepository}/" + project.name.split(".").last().lowercase() + ":${project.version}")
 }
+
 
 
 
