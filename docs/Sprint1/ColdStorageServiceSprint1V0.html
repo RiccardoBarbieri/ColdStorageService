@@ -622,7 +622,7 @@ CMD ["bash", "./unibo.mapConfigurator"]</code></pre>
         Dati i vari servizi da gestire verr&agrave; progettata e messa a disposizione del cliente una applicazione dedicata alla gestione dei componenti del servizio, permettendo di manipolare impostazioni e valori di default delle applicazioni tramite un'interfaccia grafica.
     </p>
 
-    <h6>Protocollo di avvio</h6>
+    <h5>Protocollo di avvio</h5>
     <p>Ad ora, in attesa della dockerizzazione di tutti i progetti e della creazione della suddetta applicazione, abbiamo definito il seguente protocollo di avvio dei vari servizi:
         <ol>
             <li><i>VirtualRobot</i> e <i>basicRobot</i> tramite <b>compose</b> delle immagine Docker <br>
@@ -640,6 +640,7 @@ gradlew run</code></pre>
 gradlew bootRun</code></pre>
             </li>
         </ol>
+        &Egrave; necessario avviare i servizi in questo ordine per permettere la creazione della connessione tra il client ServiceAccessGUISim e il mittente dei messaggi ColdStorageService.
     </p>
 
 </div>

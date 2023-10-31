@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="stylesheet" href="../_static/template.css">
+<link rel="stylesheet" href="../_static/mine.css">
+<link rel="stylesheet" href="../_static/code.css">
+<link rel="stylesheet" href="../_static/colors.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/dockerfile.min.js"></script>
+
+
+<script>hljs.highlightAll();</script>
+<title>Progettazione MapConfigurator</title>
+</head>
+    
+<body>
+
+<div id="top">
+
+    <h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE<font size="5"></font> </h1>
+
+</div>  
+
+<div class="body"> 
+
+<h2>Introduction</h2>
+
+<div class="remark">
+
+</div>
+
+<h2>Requirements</h2>
+ 
+<div class="remark">
+
+</div>
+
+<h2>Requirement analysis</h2>
+
+<div class="remark">
+
+</div>
+
+<h2>Problem analysis</h2>
+
+<div class="remark">
+
+</div>
+
+<h2>Test plans</h2> 
+
+<div class="remark">
+    
+</div>
+
+<h2>Project</h2> 
+ 
+<div class="remark">
+
+    <h3 id="mapconfigurator_project">MapConfigurator</h3>
+
+    <p>
+        MapConfigurator &egrave; una <b>applicazione grafica web</b> che permette a un utente di creare una configurazione per la disposizione dei punti di interesse nella service area.
+    </p>
+    <p>
+        Come per la <a href="#sagsim_project">ServiceAccessGUISim</a> utilizziamo il framework <b>Spring Boot</b>.
+    </p>
+
+    <div class="imgslide">
+        <figure>
+            <img class="imglim img-border" src="../images/sprint1/mapconfempty.png" alt="Interfaccia MapConfigurator">
+        </figure>
+        <figure>
+            <img class="imglim img-border" src="../images/sprint1/mapconf.png" alt="Interfaccia MapConfigurator">
+        </figure>
+    </div>
+
+    <p>
+        Le feature principali dell'applicazione includono:
+        <ul>
+            <li><b>blocchi trascinabili</b>: la griglia viene compilata trascinando i blocchi che rappresentano i landmark con una funzionalit&agrave; di <b>drag and drop</b>;</li>
+            <li><b>griglia ridimensionabile</b>: &egrave; possibile ridimensionare la griglia tramite gli slider in alto, la dimensione di <i>default</i> &egrave; quella individuata utilizzando <code class="prettyprint">unibo.mapperQak23</code></li>
+            <li><b>persistenza</b>: l'utente trover&agrave; la configurazione creata salvata tra sessioni, permettendo di riprendere la modifica dove era stata lasciata</li>
+            <li><b>utilizzo intuitivo</b>: l'applicazione deve essere semplice da utilizzare nascondendo i dettagli della rappresentazione utilizzata dal planner</li>
+        </ul>
+    </p>
+
+    <p>
+        I blocchi trascinati sulla mappa vengono considerati come <b>esplorati</b> e, nel caso del blocco della <span class="bold" style="color:rgb(64,64,228);">ColdRoom</span> marcati come <b>ostacoli</b> nella rappresentazione sotto forma di <code class="prettyprint">unibo.planner23.model.RoomMap</code>.
+    </p>
+
+    <p>
+        Questa applicazione &egrave; completa nel rispetto delle funzionalit&agrave; di base che abbiamo considerato necessarie; &egrave; possibile, tuttavia, che in futuro venga estesa con feature di utilit&agrave; aggiuntive.
+    </p>
+    
+    <h5>Diagramma delle classi</h5>
+
+    <p>
+        Infine, si riporta il <b>diagramma UML</b> delle classi dell'applicazione.
+    </p>
+        <img class="bigimglim" src="../images/sprint1/mapConfiguratorUML.png" alt="Diagramma UML">
+
+<h2>Testing</h2> 
+ 
+<div class="remark">
+
+</div>
+
+<h2>Deployment</h2> 
+
+<div class="remark">
+
+</div>
+ 
+<h2>Maintenance</h2> 
+ 
+<div class="remark">
+
+</div>
+
+<div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
+GIT repo: https://github.com/RiccardBarbieri/ColdStorageService
+</div>
+</div>
+</body>
+</html>
