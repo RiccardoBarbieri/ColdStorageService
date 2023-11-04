@@ -28,24 +28,26 @@
 <h2>Introduction</h2>
 <div class="remark">
     <p>
-        All'interno di questo <i>Sprint</i> verrà analizzato il <b>core-business</b> dell'applicazione, esplicitato nello <a href=".\ColdStorageServiceSprint0V1.html#suddivisioneSprint">Sprint0</a> come l'interazione tra <i>ColdStorageService</i> (CSS) e <i>TransportTrolley</i> (TT).
+        All'interno di questo <i>Sprint</i> verrà analizzato il <b>core-business</b> dell'applicazione, esplicitato nello <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V2.html#suddivisioneSprint">Sprint0</a> come l'interazione tra <i>ColdStorageService</i> (CSS) e <i>TransportTrolley</i> (TT).
     </p>
 </div>
 
 <h2>Requirements</h2>
  
 <div class="remark">
-    <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements a questa pagina</a><br>
+    <p>
+        <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements a questa pagina</a><br>
 
-    <p>
-    <bc>Goals dello sprint 1</bc>:
-    <ol>
-        <li>Definire con precisione i componenti dell'applicazione, limitandosi al contesto di <i>CSS</i> e <i>TT</i></li>
-        <li>Formulare il modello di <b>interazione</b> tra <b>ColdStorageService</b> e <b>TransportTrolley</b></li>
-    </ol>
-    <p>
-        L'interazione tra <i>TT</i> e <i>basicRobot</i> è implicita per il funzionamento del core-business e verrà trattata nel corso del documento.
-    </p>
+        <p>
+        <bc>Goals dello sprint 1</bc>:
+        <ol>
+            <li>Definire con precisione i componenti dell'applicazione, limitandosi al contesto di <i>CSS</i> e <i>TT</i></li>
+            <li>Formulare il modello di <b>interazione</b> tra <b>ColdStorageService</b> e <b>TransportTrolley</b></li>
+        </ol>
+        <p>
+            L'interazione tra <i>TT</i> e <i>basicRobot</i> è implicita per il funzionamento del core-business e verrà trattata nel corso del documento.
+        </p>
+        </p>
     </p>
 </div>
 
@@ -223,7 +225,7 @@
     </table>
 
     <p class="nota">
-        Ogni risposta è presente nella sua accezione di successo e di fallimento. Si discrimina quindi in base al messaggio e non all'argomento, in modo da gestire con maggiore flessibilità il passaggio tra i vari stati degli attore Qak.
+        Ogni risposta è presente nella sua accezione di successo e di fallimento. Si discrimina quindi in base al messaggio e non all'argomento, in modo da gestire con maggiore flessibilità il passaggio tra i vari stati degli attori Qak.
     </p>
     <p>
         Vediamo essere presente una semantica <b>request-reply</b> che comprende tutte le interazioni dalla <i>ServiceAccessGUISim</i> al <i>TransportTrolley</i>, passando per il <i>ColdStorageService</i>.
@@ -240,8 +242,8 @@
     <h4>ServiceAccessGUISim</h4>
 
     <p>
-        Come detto, in questo Sprint concentreremo l'attenzione sui componenti che implementano la core business logic del sistema e, nonostante non ne faccia direttamente parte, avremo necessità di definire la <i>ServiceAccessGUI</i> per <b>testare</b> il funzionamento della logica applicativa. Ecco perchè, come anticipato nello <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V1.html#test_plans">Sprint0</a>, verr&agrave; modellata come un <b>simulatore</b> che invia una <i>storerequest</i> al <i>ColdStorageService</i>. <br>
-        Lo studio approfondito di questo componente sarà considerato negli sprint successivi, mentre all'interno di <a href="../../projects/unibo.serviceaccessGUISimV1/userDocs/Sprint1/ServiceAccessGUISimProject.html">questo documento</a> è presente l'analisi e conseguente realizzazione della versione "simulata" necessaria in questafase del progetto.
+        Come detto, in questo Sprint concentreremo l'attenzione sui componenti che implementano la core business logic del sistema e, nonostante non ne faccia direttamente parte, avremo necessità di definire la <i>ServiceAccessGUI</i> per <b>testare</b> il funzionamento della logica applicativa. Ecco perchè, come anticipato nello <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V2.html#test_plans">Sprint0</a>, verr&agrave; modellata come un <b>simulatore</b> che invia una <i>storerequest</i> al <i>ColdStorageService</i>. <br>
+        Lo studio approfondito di questo componente sarà considerato negli sprint successivi, mentre all'interno di <a href="./ServiceAccessGUISimProjectV1.html">questo documento</a> è presente l'analisi e conseguente realizzazione della versione "simulata" necessaria in questa fase del progetto.
     </p>
 
     <p class="nota">
@@ -278,7 +280,7 @@
     </p>
     <h5>Service area</h5>
     <p>
-        Dall'analisi dei requisiti dello sprint precedente abbiamo modellato la service area come un rettangolo contenente aree di interesse:
+        Dall'<a href="../Sprint0/ColdStorageServiceSprint0V2.html#serviceareamodel" target="_blank">analisi dei requisiti</a> dello sprint precedente abbiamo modellato la service area come un rettangolo contenente aree di interesse:
         <ul>
             <li><span class="bold" style="color:rgb(255,0,0);">HOME</span>: quadrato di lato <b>RD</b> che identifica la posizione di partenza del transport trolley, &egrave; collocato sopra alla zona evidenziata;</li>
             <li><span class="bold" style="color:rgb(64,64,228);">ColdRoom</span>: area di dimensione non non ancora definita, rappresenta la ColdRoom dove il transport trolley deve depositrare i carichi;</li>
@@ -287,7 +289,7 @@
         </ul>
         <p>
             Abbiamo dato delle specifiche in metri, in modo da avere una definizione precisa e formale. <br>
-            In fase di analisi, astrarremo dalla specifica unità di misura in metri per adattarla all'entità robot con cui lavoriamo.
+            Nella successiva fase di analisi, astrarremo dalla specifica unità di misura in metri per adattarla all'entità robot con cui lavoriamo.
         </p>
     </p>
 
@@ -309,6 +311,9 @@
         Il <i>ColdStorageService</i> non si interessa del raggiungimento dei particolari landmark nella Service Area (<i>HOME</i>,
         <i>INDOOR</i>, <i>ColdRoom</i>), in quanto l'operazione è delegata al <i>TransportTrolley</i>. In questo modo il <i>CSS</i> risulterà completamente indipendente dalla particolare disposizione dell'area di servizio (come le possibili diverse posizioni dei punti di interesse e degli ostacoli).
 
+        <p class="keypoint">
+            <b>KEY-POINT</b>: il ColdStorageService è indipendente dall'area di servizio e dalle logiche di movimento del trolley.
+        </p>
     </p>
     <p>
         Uno dei principali problemi riguarda appunto la rappresentazione dell'area di servizio, che influisce sull'interazione con il robot e su come esso si muove all'interno della stanza.
@@ -317,7 +322,7 @@
     <h5 id="servicearea_analisi_problema">Service area</h5>
 
     <p>
-        A seguito di questa analisi approfondita sull'area di servizio, possiamo aggiungere un nuovo dato, oltre a quelli presenti nella <a href="#dati_analisi_requisiti" target="_blank">tabella dei dati</a> sopra riportata.
+        A seguito di un'analisi approfondita sull'area di servizio, possiamo aggiungere un nuovo dato, oltre a quelli presenti nella <a href="#dati_analisi_requisiti" target="_blank">tabella dei dati</a> sopra riportata.
     </p>
     <table>
         <tr>
@@ -333,7 +338,7 @@
     </table>
 
     <p>
-        Dalla misurazione in metri vista nello <i>Sprint0</i>, introduciamo il concetto di <b>unità robot</b>. La nostra nuova unità di misura si basa sulla dimensione del lato del <i>TransportTrolley</i>, ovvero <b>RD</b>. <br>
+        Dalla misurazione in metri vista nello <a href="../Sprint0/ColdStorageServiceSprint0V2.html#serviceareamodel" target="_blank">Sprint0</a>, introduciamo il concetto di <b>unità robot</b>. La nostra nuova unità di misura si basa sulla dimensione del lato del <i>TransportTrolley</i>, ovvero <b>RD</b>. <br>
         Questo ci ha permesso di suddividere la <b>service area</b> in una griglia di quadrati di lato <b>RD</b>, in modo tale che ogni posizione sulla griglia possa contenere il <i>DDR robot</i>.
     </p>
 
@@ -345,7 +350,7 @@
     </p>
 
     <p>
-        I <i>punti di interesse</i> <b>INDOOR</b> e <b>PORT</b> finora sono stati modellati come posizioni monodimensionali, in quanto si tratta di "aperture" al quale il robot può accedere, in questo modello verranno indicati come "<i>la posizione in cui il robot deve trovarsi per potervi accedere</i>".
+        I <i>punti di interesse</i> <b>INDOOR</b> e <b>PORT</b> finora sono stati modellati come posizioni monodimensionali, in quanto si tratta di "aperture" al quale il robot può accedere: in questo modello verranno indicati come "<i>la posizione in cui il robot deve trovarsi per potervi accedere</i>".
     </p>
 
     <p>
@@ -386,13 +391,13 @@
         Abbiamo dunque pensato di introdurre l'attore <b>TrolleyExecutor</b>, il cui compito è quello di implementare lo spostamento comunicando con il <i>basicRobot</i>. Questo permette di astrarre il <i>TransportTrolley</i> dallo specifico protocollo usato dal <i>basicRobot</i>.
     </p>
     <p>
-        L'utilizzo di questo nuovo attore, ci permette anche una corretta separazione delle responsabilità. Infatti, il <i>TransportTrolley</i> dovrà occuparsi di gestire le richieste (con l'eventuale coda) e definire la logica di movimento, senza preoccuparsi di come questa viene implementata.
+        L'utilizzo di questo nuovo attore, ci permette anche una corretta separazione delle responsabilità. Infatti, il <i>TransportTrolley</i> dovrà occuparsi di gestire le richieste (con l'eventuale coda) e definire la logica di movimento, senza preoccuparsi di come questa venga implementata.
     </p>
     
     <h5 id="basicRobot_analisi">Basic robot</h5>
     <p>
         L'attore Qak <i>basicRobot</i>, contestualmente alla core-business di questo <i>Sprint</i>, si occuperà di implementare il movimento tra i vari <i>landmarks</i> della <a href="#servicearea_analisi_problema">Service Area</a>. <br>
-    Tra le entità da noi definite, il <i>TrolleyExecutor</i> è l'unico a comunicare con il suddetto attore e necessiterà di tre messaggi per attuare gli spostamenti:
+    Tra le entità da noi definite, il <i>TrolleyExecutor</i> è l'unico a comunicare con il suddetto attore e necessiterà dei seguenti messaggi per attuare gli spostamenti:
     <ul>
         <li><b>engage(OWNER, STEPTIME)</b>: in fase di inizializzazione, specificando al basicrobot chi lo sta usando (per ottenere l'accesso esclusivo) e qual è lo <i>STEPTIME</i></li>
         <li><b>setpos(X,Y,D)</b>: al successo dell'engage il transporttrolley invia questo messaggio al basicrobot per comunicare la posizione e direzione attuali del virtualrobot: il basicrobot manterr&agrave; internamento lo stato del robot basandosi su questa inizializzazione</li>
@@ -467,15 +472,16 @@
         </ol>
     </p>
     <p class="nota">
-        Dopo un'attenta analisi, abbiamo deciso di implementare il messaggil <b>chargetaken</b> come <b>event</b>. In questo modo si toglie l'onere al <i>CSS</i> di memorizzare l'istanza di <i>SAGSim</i> alla quale inviare l'eventuale messaggio di presa in carico.
+        Viene esplicitata chiaramente la semantica <b>request-reply</b> che definisce tutto il ciclo di interazioni.
     </p>
-    <img class="bigimglim" src="../images/sprint1/diag_sequenza.png" alt="Diagramma di sequenza core-business">
+    <img class="bigimglim" src="../images/sprint1/diag_sequenza_ALL_new.png" alt="Diagramma di sequenza core-business">
 
     <p>
-        E' possibile che, al momento dell'arrivo di una nuova richiesta, il <i>TransportTrolley</i> stia tornando in posizione <b>HOME</b>. Questo caso viene gestito dal <i>ColdStorageService</i> fermando il robot ed indirizzandolo nuovamente verso la <b>INDOOR</b>. Nel diagramma sottostante vediamo che il flusso riparte da quando il <i>TT</i> comunica al <i>CSS</i> di aver depositato il carico nella <b>ColdRoom</b>.
+        Nell'immagine sottostante viene ingrandita la lente sulla specifica interazione tra <i>TrolleyExecutor</i> e <i>BasicRobot</i>. In particolare, tramite questa gestione, possiamo controllare analogamente situazioni in cui la notifica al <i>TransportTrolley</i> di un nuovo carico arrivi mentre sta ritornando in posizione HOME. <br>
+        In alto, è presente anche il protocollo di inizializzazione tra le due entità che implementano il movimento.
     </p>
-    <img class="bigimglim" src="../images/sprint1/diag_sequenza_double_request.png" alt="Diagramma di sequenza con doppia richiesta core-business">
-    <p>
+    <img class="bigimglim" src="../images/sprint1/diag_sequenza_TT_TR_BR_new.png" alt="Diagramma di sequenza tra TT, TE e BR">
+    <p class="nota">
         Vediamo che è il <i>TrolleyExecutor</i> ad occuparsi di controllare se il robot è in movimento (sta tornando in HOME), eventualmente fermandolo e implementando il nuovo spostamento comunicato dal <i>TT</i>.
     </p>
 </p>   
@@ -487,7 +493,10 @@
 <h2>Test plans</h2> 
 
 <div class="remark">
-    
+    <p>
+        Essendo che è già stata presentata nello <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V2.html#test_plans">Sprint0</a> una unità di test JUnit che "testa" praticamente la stessa logica di interazione presente in questo Sprint (ovviamente semplificata), abbiamo deciso di non realizzare nessun altro piano di test ulteriore. <br>
+        Inoltre, l'interazione <i>CSS-TT</i> non è ancora completa, in quanto manca la gestione del ticket. Ci è parso quindi più logico realizzare un eventuale altro piano di test nel prossimo Sprint, ove anche questo aspetto sarà trattato.
+    </p>
 </div>
 
 
@@ -571,11 +580,8 @@
 
 </div>
 
-<h2>Testing</h2> 
- 
-<div class="remark">
 
-</div>
+
 
 <h2>Deployment</h2> 
 
