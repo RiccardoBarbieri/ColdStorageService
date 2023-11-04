@@ -272,6 +272,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 
 }
 
+
 QActor trolleyexecutor context ctx_coldstorageservice {
 	
 	[#	var isMoving = false
