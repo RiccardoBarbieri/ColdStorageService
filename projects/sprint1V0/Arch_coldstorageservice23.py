@@ -8,7 +8,7 @@ graphattr = {     #https://www.graphviz.org/doc/info/attrs.html
     'fontsize': '22',
 }
 
-nodeattr = {   
+nodeattr = {
     'fontsize': '22',
     'bgcolor': 'lightyellow'
 }
@@ -17,7 +17,7 @@ eventedgeattr = {
     'color': 'red',
     'style': 'dotted'
 }
-with Diagram('coldstorageservice23Arch', show=False, outformat='png', graph_attr=graphattr) as diag:
+with Diagram('coldstorageservice23Arch', show=False, outformat=['png', 'svg'], graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
 ### see https://renenyffenegger.ch/notes/tools/Graphviz/attributes/label/HTML-like/index

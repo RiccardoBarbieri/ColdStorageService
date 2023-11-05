@@ -22,8 +22,6 @@ Reply		chargefailedtt		:		chargefailedtt(FW) for deposit
 Reply		chargedeposited		:		chargedeposited(FW) for depositstatus
 Reply		chargedepfailed		:		chargedeposited(FW) for depositstatus
 
-//Dispatch	chargedeposited		:		chargedeposited(FW)
-
 //TT -> TE
 Request		move				:		move(X,Y)
 Request		moveclosest			:		moveclosest(Xs,Ys)

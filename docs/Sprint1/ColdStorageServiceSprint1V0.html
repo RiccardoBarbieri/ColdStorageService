@@ -322,23 +322,7 @@
     <h5 id="servicearea_analisi_problema">Service area</h5>
 
     <p>
-        A seguito di un'analisi approfondita sull'area di servizio, possiamo aggiungere un nuovo dato, oltre a quelli presenti nella <a href="#dati_analisi_requisiti" target="_blank">tabella dei dati</a> sopra riportata.
-    </p>
-    <table>
-        <tr>
-            <th>Dato</th>
-            <th>Tipologia</th>
-            <th>Descrizione</th>
-        </tr>
-        <tr>
-            <td class="green bold center">currentTTPosition</td>
-            <td>Variabile, tupla di interi</td>
-            <td>Posizione del transport trolley nella service area, in coordinate x e y secondo lo schema del modello della service area.</td>
-        </tr>
-    </table>
-
-    <p>
-        Dalla misurazione in metri vista nello <a href="../Sprint0/ColdStorageServiceSprint0V2.html#serviceareamodel" target="_blank">Sprint0</a>, introduciamo il concetto di <b>unità robot</b>. La nostra nuova unità di misura si basa sulla dimensione del lato del <i>TransportTrolley</i>, ovvero <b>RD</b>. <br>
+        Partendo dalla misurazione in metri vista nello <a href="../Sprint0/ColdStorageServiceSprint0V2.html#serviceareamodel" target="_blank">Sprint0</a>, introduciamo il concetto di <b>unità robot</b>. La nostra nuova unità di misura si basa sulla dimensione del lato del <i>TransportTrolley</i>, ovvero <b>RD</b>. <br>
         Questo ci ha permesso di suddividere la <b>service area</b> in una griglia di quadrati di lato <b>RD</b>, in modo tale che ogni posizione sulla griglia possa contenere il <i>DDR robot</i>.
     </p>
 
@@ -354,7 +338,7 @@
     </p>
 
     <p>
-        Dal punto di vista del <b>transport trolley</b> la service area sar&agrave; rappresentata da una <b>matrice NxM</b>. 
+        Dal punto di vista del <b>transport trolley</b> la service area sar&agrave; rappresentata da una <b>griglia NxM</b>. 
     </p>
 
 
@@ -382,28 +366,32 @@
     </p>
     <p>
         All'interno del <i>ColdStorageService</i> opererà quindi l'entità <i>TransportTrolley</i>, occupandosi di tutte le funzionalità descritte in fase di <a href="#tt_analisi_requisiti">analisi dei requisiti</a>. Questa entità astratta dovrà comunicare con il "vero" robot per implementare il movimento e le azioni da compiere. <br>
-        Entra quindi in gioco l'attore Qak <b>basicRobot</b>, fornito dal committente all'interno del progetto <code class="prettyprint">unibo.basicroboot23</code>. In questo modo, otteniamo anche un <b>ambiente virtuale</b> per simulare il comportamento del <i>DDR Robot</i> (WEnv/VirtualRobot).
+        Al fine di astrarre le indicazioni del TransportTrolley al robot esecutore e permettere di intercambiare supporto (DDR robot o VirtualRobot) si fa uso del software BasicRobot, fornito dal committente; il software espone l'attore qak <b>basicrobot</b> con il quale &egrave; possibile comunicare per indicare al robot dove spostarsi, indicando le coordinate della destinazione da raggiungere.
     </p>
 
     <h5>TrolleyExecutor</h5>
+
     <p>
-        A livello pratico, fino ad ora, abbiamo il <i>TransportTrolley</i> che deve comunicare con il <i>basicRobot</i>, ovvero l'attore Qak fornito dal committente. Si implica quindi una stretta correlazione tra il <i>TT</i> e la specifica interfaccia d'uso del robot, che sia virtuale o fisico. <br>
-        Abbiamo dunque pensato di introdurre l'attore <b>TrolleyExecutor</b>, il cui compito è quello di implementare lo spostamento comunicando con il <i>basicRobot</i>. Questo permette di astrarre il <i>TransportTrolley</i> dallo specifico protocollo usato dal <i>basicRobot</i>.
+        L'analisi del problema del ritorno del robot alla posizione HOME dopo aver depositato un carico ci ha spinto a introdurre un nuovo componente, il <b>TrolleyExecutor</b>, per distaccare il TransportTrolley dal funzionamento di BasicRobot al fine di realizzare <i>comportamenti di pi&ugrave; alto livello</i> da mettere a disposizione al TransportTrolley.
     </p>
     <p>
-        L'utilizzo di questo nuovo attore, ci permette anche una corretta separazione delle responsabilità. Infatti, il <i>TransportTrolley</i> dovrà occuparsi di gestire le richieste (con l'eventuale coda) e definire la logica di movimento, senza preoccuparsi di come questa venga implementata.
+        In particolare abbiamo considerato necessario introdurre un comando per permettere al transport trolley di indicare uno spostamento verso la <b>posizione pi&ugrave; vicina</b> data una <i>lista di posizioni (le loro coordinate)</i>; questa funzionalit&agrave;, attuabile tramite la richiesta <b>moveclosest(Xs,Ys)</b>, &egrave; stata implementata perch&eacute; alcune posizioni notevoli della service area sono aree costituite da <b>pi&ugrave; di una coordinata</b>.
+    </p>
+
+    <p class="nota">
+        Questa funzionalit&agrave; permetter di ottimizzare la distanza che il robot deve percorrere in certe istanze, riducendo il tempo di esecuzione di alcuni specifici spostamenti. 
     </p>
     
     <h5 id="basicRobot_analisi">Basic robot</h5>
     <p>
-        L'attore Qak <i>basicRobot</i>, contestualmente alla core-business di questo <i>Sprint</i>, si occuperà di implementare il movimento tra i vari <i>landmarks</i> della <a href="#servicearea_analisi_problema">Service Area</a>. <br>
+        L'attore Qak <i>basicRobot</i>, contestualmente al core-business di questo <i>Sprint</i>, &egrave; incaricato di realizzare il movimento tra i vari <i>landmarks</i> della <a href="#servicearea_analisi_problema">Service Area</a>. <br>
     Tra le entità da noi definite, il <i>TrolleyExecutor</i> è l'unico a comunicare con il suddetto attore e necessiterà dei seguenti messaggi per attuare gli spostamenti:
     <ul>
         <li><b>engage(OWNER, STEPTIME)</b>: in fase di inizializzazione, specificando al basicrobot chi lo sta usando (per ottenere l'accesso esclusivo) e qual è lo <i>STEPTIME</i></li>
         <li><b>setpos(X,Y,D)</b>: al successo dell'engage il transporttrolley invia questo messaggio al basicrobot per comunicare la posizione e direzione attuali del virtualrobot: il basicrobot manterr&agrave; internamento lo stato del robot basandosi su questa inizializzazione</li>
         <li><b>moverobot(TARGETX, TARGETY)</b>: per realizzare il movimento all'interno della <i>Service Area</i>.</li>
         <li><b>alarm()</b>: per interrompere il movimento del basicrobot.</li>
-        <li><b>getrobotstate()</b>: per ottenere la posizine corrente del robot</li>
+        <li><b>getrobotstate()</b>: per ottenere la posizione corrente del robot</li>
     </ul>
     </p>
     <p>
@@ -467,23 +455,20 @@
         Sono presenti anche i messaggi per i 3 movimenti che dovrà compiare il robot: 
         <ol>
             <li>raggiungere la <b>INDOOR</b></li>
-            <li>raggiungere la <b>ColdRoom</b></li>
+            <li>raggiungere la <b>PORT</b></li>
             <li>ritornare in posizione <b>HOME</b></li>
         </ol>
     </p>
     <p class="nota">
-        Viene esplicitata chiaramente la semantica <b>request-reply</b> che definisce tutto il ciclo di interazioni.
+        Viene esplicitata chiaramente la semantica <b>request-reply</b> usata nell'intero ciclo di interazioni.
     </p>
     <img class="bigimglim" src="../images/sprint1/diag_sequenza_ALL_new.png" alt="Diagramma di sequenza core-business">
 
     <p>
-        Nell'immagine sottostante viene ingrandita la lente sulla specifica interazione tra <i>TrolleyExecutor</i> e <i>BasicRobot</i>. In particolare, tramite questa gestione, possiamo controllare analogamente situazioni in cui la notifica al <i>TransportTrolley</i> di un nuovo carico arrivi mentre sta ritornando in posizione HOME. <br>
+        Nell'immagine viene dettagliata la specifica interazione tra <i>TrolleyExecutor</i> e <i>BasicRobot</i>, in particolare la semantica del funzionamento della richiesta <i>moveclosest</i>.<br>
         In alto, è presente anche il protocollo di inizializzazione tra le due entità che implementano il movimento.
     </p>
     <img class="bigimglim" src="../images/sprint1/diag_sequenza_TT_TR_BR_new.png" alt="Diagramma di sequenza tra TT, TE e BR">
-    <p class="nota">
-        Vediamo che è il <i>TrolleyExecutor</i> ad occuparsi di controllare se il robot è in movimento (sta tornando in HOME), eventualmente fermandolo e implementando il nuovo spostamento comunicato dal <i>TT</i>.
-    </p>
 </p>   
 
 
@@ -494,8 +479,8 @@
 
 <div class="remark">
     <p>
-        Essendo che è già stata presentata nello <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V2.html#test_plans">Sprint0</a> una unità di test JUnit che "testa" praticamente la stessa logica di interazione presente in questo Sprint (ovviamente semplificata), abbiamo deciso di non realizzare nessun altro piano di test ulteriore. <br>
-        Inoltre, l'interazione <i>CSS-TT</i> non è ancora completa, in quanto manca la gestione del ticket. Ci è parso quindi più logico realizzare un eventuale altro piano di test nel prossimo Sprint, ove anche questo aspetto sarà trattato.
+        Essendo che è già stata presentata nello <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V2.html#test_plans">Sprint0</a> una unità di test JUnit che verifica il funzionamento della stessa logica di interazione presente in questo Sprint, abbiamo deciso di non realizzare nessun altro piano di test ulteriore. <br>
+        L'interazione <i>CSS-TT</i> non è rispetta ancora completamente i requisiti, in quanto manca la gestione del ticket, abbiamo quindi deciso di delegare la realizzazione di una unit&agrave; di test comprensiva al prossimo Sprint, ove anche questo aspetto sarà trattato.
     </p>
 </div>
 
@@ -513,7 +498,7 @@
     <img class="imglim imgborder" src="../images/sprint1/coldstorageservice23arch.png"></img>
 
     <p>
-        Gli attori <b>coldstorageservice</b>, <b>transporttrolley</b> e <b>trolleyexecutor</b>, in questa versione, risiedono nello stesso contesto.
+        Gli attori <b>coldstorageservice</b>, <b>transporttrolley</b> e <b>trolleyexecutor</b> risiedono nello stesso contesto in questo sprint, nel prossimo sviluppo verrano aggiunti componenti che determineranno un nuova distribuzione in contesti.
     </p>
 
     <h5>Attore coldstorageservice</h5>
@@ -527,10 +512,17 @@
             <li><code class="docutils literal notranslate"><span class="pre">var currentColdRoom: Float</span></code>: memorizza il peso corrente contenuto nella ColdRoom</li> 
         </ul>
 
-        Se la richiesta viene accettata il <b>coldstorageservice</b> invia il messaggio <b>deposit</b> al <b>transporttrolley</b> e si mette in attesa di altre richieste; quando e se riceve un messaggio <b>chargetakentt</b> dal transporttrolley utilizza il comando <code class="docutils literal notranslate"><span class="pre">updateResource</span></code> per notificare gli observer, e quindi la <i>ServiceAccessGUISim</i>, che il carico &egrave; stato prelevato. Questo è possibile per via del fatto, già detto in precedenza, che gli attori Qak sono risorse <i>CoapObservable</i>.
+        <p>
+            Questo attore &egrave; incaricato di valutare l'accettazione della richiesta: nel caso in cui venga accettata risponde alla ServiceAccessGUISim con la risposta <b>loadaccepted</b>, successivamente attende una richiesta <code class="docutils literal notranslate"><span class="pre">chargestatus</span></code> da parte della ServiceAccessGUISim.<br>
+            La richiesta <code class="docutils literal notranslate"><span class="pre">chargestatus</span></code> &egrave; stata introdotta come comunicazione da parte della SAG che il camion &egrave; arrivato a INDOOR e il TransportTrolley pu&ograve; prelevare il carico, nel prossimo sprint questa interazione verr&agrave; rifinita dalla richiesta di inserimento del ticket.
+        </p>
+
+        <p>
+            La richiesta <code class="docutils literal notranslate"><span class="pre">deposit(FW)</span></code>, inviata dal CSS al TransportTrolley, denota la partenza del robot da HOME (o altra posizione se era in gestione un altro carico) verso INDOOR, una volta prelevato il carico il CSS riceve risposta <code class="docutils literal notranslate"><span class="pre">chargetakentt</span></code>, dopo averla ricevuta il CSS comunica alla SAG che il camion deve spostarsi da INDOOR tramite la risposta <code class="docutils literal notranslate"><span class="pre">chargetaken</span></code>.
+        </p>
         
         <p class="nota">
-            Il messaggio <b>chargetaken</b>, precedentemente gestito come <b>event</b>, viene ora inviato come contenuto testuale all'interno dell'<b>updateResource</b>.
+            Il messaggio <b>chargetaken</b>, precedentemente gestito come <b>event</b>, viene ora inviato come risposta alla richiesta <b>chargestatus</b>.
         </p>
     </p>
 
@@ -544,23 +536,46 @@
     </p>
 
     <p>
-        Durante uno qualsiasi degli stati che l'attore assume durante lo spostamento &egrave; in grado di gestire un messaggio <b>deposit</b> tramite interrupt, aggiungendolo a una coda per gestirlo quando possibile, ovvero dopo aver depositato il carico nella ColdRoom. In caso sia presenta una richiesta, viene realizzato il movimento verso INDOOR, altrimenti verso HOME.
+        Durante uno qualsiasi degli stati che l'attore assume durante lo spostamento, esso &egrave; in grado di ricevere una richiesta <code class="docutils literal notranslate"><span class="pre">deposit</span></code> che verr&agrave; gestita al termine del ciclo corrente, se a questo avvenimento nessuna richiesta <code class="docutils literal notranslate"><span class="pre">deposit</span></code>, l'attore attende <i>1 secondo</i> prima di comunicare al <i>trolleyexecutor</i> di tornare in HOME per poter gestire eventuali nuove richieste di deposito.
     </p>
     <p>
-        Durante il ritorno in HOME, <i>transporttrolley</i> &egrave; in grado di ricevere nuove richieste di deposito: in tal caso comunica al <i>trolleyexecutor</i> di fermarsi e dirigersi in INDOOR, reiniziando il ciclo sopra descritto.
+        Durante il ritorno in HOME, <i>transporttrolley</i> &egrave; in grado di ricevere nuove richieste di deposito: in tal caso richiede al <i>trolleyexecutor</i> una azione <code class="docutils literal notranslate"><span class="pre">moveclosest(Xs,Ys)</span></code>.
+    </p>
+
+    <p>
+        Tutti gli stati nei quali si attende una risposta dal <i>trolleyexecutor</i> implementano un <b>timeout</b> tramite la transizione <code class="docutils literal notranslate"><span class="pre">whenTime</span></code>, per gestire eventuali malfunzionamenti dei supporti sottostanti: in caso di timeout viene comunicato di riavviare l'applicazione, evitando cos&igrave; attese infinite.
     </p>
 
     <h5>Attore trolleyexecutor</h5>
 
     <p>
         L'attore <i>trolleyexecutor</i> si occupa della comunicazione con l'attore <i>basicrobot</i>, implementando solamente degli spostamenti dalla posizione attuale alle coordinate <i>(x,y)</i> fornite da <i>transporttrolley</i>. <br>
-        In caso il robot si trovi in stato di movimento, quando arriva il messaggio <b>move</b> da parte del <i>transporttrolley</i>, il robot viene fermato e redirezionato verso le nuove coordinate.
     </p>
+
     <p>
-        All'inizializzazione viene ingaggiato il <i>basicrobot</i> tramite <b>engage</b>, usando poi <b>setrobotstate</b> per impostare posizione iniziale a <i>(0,0)</i> e direzione <i>d</i>. <br>
-    
+        All'inizializzazione viene ingaggiato il <i>basicrobot</i> tramite <b>engage</b>, usando poi <b>setrobotstate</b> per impostare posizione iniziale a <i>(0,0)</i> e direzione <i>d</i>.
     </p>
     <img class="imglim" src="../images/sprint1/diag_sequenza_TT_DDR.png" alt="Diagramma di sequenza TT - DDR">
+
+    <p>
+        Il compito principale del trolleyexecutor &egrave; quello di attuare il comando <code class="docutils literal notranslate"><span class="pre">moveclosest</span></code>, a questo scopo viene mantenuta una variabile boolean <code class="docutils literal notranslate"><span class="pre">var isMoving = false</span></code> che assume valore <code class="docutils literal notranslate"><span class="pre">true</span></code> quando il robot &egrave; in movimento e viceversa.<br>
+        Questa variabile serve all'attore per discriminare due casi diversi alla ricezione di <code class="docutils literal notranslate"><span class="pre">moveclosest</span></code>:
+        <ul>
+            <li>se <code class="docutils literal notranslate"><span class="pre">isMoving == true</span></code> viene inviato un evento <code class="docutils literal notranslate"><span class="pre">alarm</span></code> per fermare il robot, viene poi richiesta la posizone attuale del robot con la richiesta <code class="docutils literal notranslate"><span class="pre">getrobotstate</span></code></li>
+            <li>se <code class="docutils literal notranslate"><span class="pre">isMoving == false</span></code> viene direttamente richiesta la posizione</li>
+        </ul>
+        Una volta ottenuta la posizione del robot, l'attore calcola le distanze tra posizione e destinazione e richiede lo spostamento al basicrobot verso la coordinata pi&ugrave; vicina con il messaggio <code class="docutils literal notranslate"><span class="pre">moverobot(X,Y)</span></code>.
+    </p>
+
+    <p>
+        Il messaggio <code class="docutils literal notranslate"><span class="pre">moveclosest</span></code> contiene due parametri:
+        <ol>
+            <li>il primo una lista di valori interi che rappresentano le X delle coordinate</li>
+            <li>il secondo una lista di valori interi che rappresentano le Y delle coordinate</li>
+        </ol>
+        Dato che le stringhe dei parametri vengono estratte dal messaggio tramite l'unificazione prolog, esse non possono contenere alcuni caratteri che sono utilizzati da prolog, in particolare <code class="docutils literal notranslate"><span class="pre">,</span></code>, <code class="docutils literal notranslate"><span class="pre">(</span></code> o <code class="docutils literal notranslate"><span class="pre">)</span></code> e non possono iniziare con un valore numerico, &egrave; stata quindi creata una rappresentazione adhoc (arbitraria) per comunicare le coordinate.<br>
+        In particolare le stringhe iniziano con il carattere <code class="docutils literal notranslate"><span class="pre">s</span></code> seguito da valori numerici interi, separati dal carattere <code class="docutils literal notranslate"><span class="pre">l</span></code>.
+    </p>
 
     <h6>Coordinate</h6>
 
