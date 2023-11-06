@@ -1,1 +1,676 @@
-../../../../docs/Sprint1/ColdStorageServiceSprint1V0.html
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="stylesheet" href="../_static/template.css">
+<link rel="stylesheet" href="../_static/mine.css">
+<link rel="stylesheet" href="../_static/code.css">
+<link rel="stylesheet" href="../_static/colors.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/dockerfile.min.js"></script>
+
+
+<script>hljs.highlightAll();</script>
+<title>Sprint1</title>
+</head>
+    
+<body>
+
+<div id="top">
+
+    <h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE<font size="5"></font> </h1>
+
+</div>  
+
+<div class="body"> 
+
+<h2>Introduction</h2>
+<div class="remark">
+    <p>
+        All'interno di questo <i>Sprint</i> verrà analizzato il <b>core-business</b> dell'applicazione, esplicitato nello <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V2.html#suddivisioneSprint">Sprint0</a> come l'interazione tra <i>ColdStorageService</i> (CSS) e <i>TransportTrolley</i> (TT).
+    </p>
+</div>
+
+<h2>Requirements</h2>
+ 
+<div class="remark">
+    <p>
+        <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements a questa pagina</a><br>
+
+        <p>
+        <bc>Goals dello sprint 1</bc>:
+        <ol>
+            <li>Definire con precisione i componenti dell'applicazione, limitandosi al contesto di <i>CSS</i> e <i>TT</i></li>
+            <li>Formulare il modello di <b>interazione</b> tra <b>ColdStorageService</b> e <b>TransportTrolley</b></li>
+        </ol>
+        <p>
+            L'interazione tra <i>TT</i> e <i>basicRobot</i> è implicita per il funzionamento del core-business e verrà trattata nel corso del documento.
+        </p>
+        </p>
+    </p>
+</div>
+
+<h2>Requirement analysis</h2>
+
+<div class="remark">
+    <p>
+        Dal documento dei requisiti, relativamente a questo <i>Sprint</i>, consideriamo i seguenti argomenti da trattare:
+        <ul>
+            <li>Service area</li>
+            <li><i>basicRobot</i> e <i>TransportTrolley</i></li>
+            <li>Interazione tra <i>CSS</i> e <i>TT</i></li>
+        </ul>
+    </p>
+
+    <h3>Entit&agrave;</h3>
+    <p>
+        Sono riportate le quattro entità che partecipano alla realizzazione del core-business dell'applicazione.
+    </p>
+    <table>
+        <tr>
+            <th>Entit&agrave;</th>
+            <th>Comportamento</th>
+        </tr>
+        <tr>
+            <td class="green bold center">serviceaccessguisim</td>
+            <td>Entit&agrave; adibita al testing che permette l'invio di una richiesta a <i>coldstorageservice</i> per dare inizio alla fase di deposito</td>
+        </tr>
+        <tr>
+            <td class="green bold center">coldstorageservice</td>
+            <td>Gestisce le richieste di deposito e comanda il transport trolley con istruzioni di alto livello, mantiene la rappresentazione della service area</td>
+        </tr>
+        <tr>
+            <td class="green bold center">transporttrolley</td>
+            <td>Gestisce le richieste del ColdStorageService inviando comandi di basso livello al basicRobot</td>
+        </tr>
+        <tr>
+            <td class="green bold center">basicrobot</td>
+            <td>Entit&agrave; che riceve istruzioni di "medio livello" e le traduce in istruzioni di basso livello per guidare il DDR robot o un virtual robot.</td>
+        </tr>
+    </table>
+    <h3 id="dati_analisi_requisiti">Dati</h3>
+    <p>
+        Di seguito, sono elencati tutti i dati presenti nei requisiti, con annessa una breve descrizione.
+    </p>
+        <table>
+            <tr>
+                <th>Dato</th>
+                <th>Tipologia</th>
+                <th>Descrizione</th>
+            </tr>
+            <tr>
+                <td class="green bold center">MAXW</td>
+                <td>Costante, float</td>
+                <td>Limite massimo di chilogrammi che la ColdRoom pu&ograve; contenere in un dato momento.</td>
+            </tr>
+            <tr>
+                <td class="green bold center">RD</td>
+                <td>Costante, intera</td>
+                <td>Lunghezza del lato del transport trolley.</td>
+            </tr>
+            <tr>
+                <td class="green bold center">FW</td>
+                <td>Variabile, float</td>
+                <td>Quantit&agrave; di carico che un camion refrigerato deve depositare, espressa in chilogrammi.</td>
+            </tr>
+            <tr>
+                <td class="green bold center">TTState</td>
+                <td>Enumerativo</td>
+                <td>Tre valori che rappresentano i possibili stati in cui si pu&agrave; trovare il transport trolley (in HOME, in movimento e fermo): <pre>HOME, MOVING, STOPPED</pre></td>
+            </tr>
+            <tr>
+                <td class="green bold center">currentTTState</td>
+                <td>Variabile, enumerativo</td>
+                <td>Stato attuale del transport trolley, di tipo <code class="prettyprint">TTState</code></td>
+            </tr>
+        </table>
+
+    <h3 id="messaggi">Messaggi</h3>
+    <p>
+        Sono riportati i messaggi che realizzano le interazioni tra le varie entità (esclusi quelli tra <i>TT</i> e <i>basicRobot</i>, che verranno analizzati in seguito).
+    </p>
+    <table>
+        <tr>
+            <th>Mittente</th>
+            <th>Destinatario</th>
+            <th>Tipologia messaggio</th>
+            <th>Formato</th>
+            <th>Significato</th>
+        </tr>
+        <tr>
+            <td class="orange bold center">serviceaccessguisim</td>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="blue bold center">Request</td>
+            <td>storerequest(FW)</td>
+            <td>Richiesta di <b>storage</b> di <b>FW</b> chili di cibo.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="orange bold center">serviceaccessguisim</td>
+            <td class="blue bold center">Reply</td>
+            <td>loadaccepted()</td>
+            <td>La richiesta di deposito &egrave; stata accettata.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="orange bold center">serviceaccessguisim</td>
+            <td class="blue bold center">Reply</td>
+            <td>loadrejected()</td>
+            <td>La richiesta &egrave; stata rifiutata.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">serviceaccessguisim</td>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="blue bold center">Request</td>
+            <td>chargestatus()</td>
+            <td>Viene richiesto lo stato del carico depositato.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="orange bold center">serviceaccessguisim</td>
+            <td class="blue bold center">Reply</td>
+            <td>chargetaken()</td>
+            <td>Il deposito è stato preso in carico dal transport trolley, il camion deve spostarsi da INDOOR.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="orange bold center">serviceaccessguisim</td>
+            <td class="blue bold center">Reply</td>
+            <td>chargefailed()</td>
+            <td>Ci sono stati problemi durante la presa in carico del deposito.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="orange bold center">transporttrolley</td>
+            <td class="blue bold center">Request</td>
+            <td>deposit()</td>
+            <td>Il CSS comunica al transport trolley che è presente un nuovo carico da depositare.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">transporttrolley</td>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="blue bold center">Reply</td>
+            <td>chargetakentt()</td>
+            <td>Il carico &egrave; stato prelevato dal transport trolley.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">transporttrolley</td>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="blue bold center">Reply</td>
+            <td>chargefailedtt()</td>
+            <td>Ci sono stati problemi durante la presa in carico da parte del transport trolley.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="orange bold center">transporttrolley</td>
+            <td class="blue bold center">Request</td>
+            <td>depositstatus()</td>
+            <td>Viene richiesto al transport trolley lo stato del cibo che ha preso in carico.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">transporttrolley</td>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="blue bold center">Reply</td>
+            <td>chargedeposited()</td>
+            <td>Il carico &egrave; stato depositato nella ColdRoom.</td>
+        </tr>
+        <tr>
+            <td class="orange bold center">transporttrolley</td>
+            <td class="orange bold center">coldstorageservice</td>
+            <td class="blue bold center">Reply</td>
+            <td>chargedepfailed()</td>
+            <td>Ci sono stati problemi durante il deposito del carico nella ColdRoom.</td>
+        </tr>
+    </table>
+
+    <p class="nota">
+        Ogni risposta è presente nella sua accezione di successo e di fallimento. Si discrimina quindi in base al messaggio e non all'argomento, in modo da gestire con maggiore flessibilità il passaggio tra i vari stati degli attori Qak.
+    </p>
+    <p>
+        Vediamo essere presente una semantica <b>request-reply</b> che comprende tutte le interazioni dalla <i>ServiceAccessGUISim</i> al <i>TransportTrolley</i>, passando per il <i>ColdStorageService</i>.
+    </p>
+    <p>
+        In questo modello, gli unici messaggi che vengono inviati dalla <i>ServiceAccessGUISim</i> corrispondono alla richiesta di deposito (<i>storerequest(FW)</i>) e alla richiesta dello stato del carico (<i>chargestatus()</i>). Questa decisione si basa sul fatto che in questo <i>Sprint</i> non verrrà trattata la questione dei <b>ticket</b> (fuori dalla core-business logic); perciò avremo che, a seguito di un'eventuale accettazione della richiesta di deposito (<i>storeaccepted()</i>), si passerà direttamente alla logica applicativa che la implementa.
+    </p>
+    <p class="keypoint">
+        <b>KEY-POINT</b>: semantica request-reply per le interazioni della core-business.
+    </p>
+
+    <h3>Componenti</h3>
+
+    <h4>ServiceAccessGUISim</h4>
+
+    <p>
+        Come detto, in questo Sprint concentreremo l'attenzione sui componenti che implementano la core business logic del sistema e, nonostante non ne faccia direttamente parte, avremo necessità di definire la <i>ServiceAccessGUI</i> per <b>testare</b> il funzionamento della logica applicativa. Ecco perchè, come anticipato nello <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V2.html#test_plans">Sprint0</a>, verr&agrave; modellata come un <b>simulatore</b> che invia una <i>storerequest</i> al <i>ColdStorageService</i>. <br>
+        Lo studio approfondito di questo componente sarà considerato negli sprint successivi, mentre all'interno di <a href="./ServiceAccessGUISimProjectV1.html">questo documento</a> è presente l'analisi e conseguente realizzazione della versione "simulata" necessaria in questa fase del progetto.
+    </p>
+
+    <p class="nota">
+        In questo sprint la <i>ServiceAccessGUISim (SAGSim)</i> non gestir&agrave; l'inserimento del ticket e la differenziazione tra gli utenti che interagiscono, in quanto queste funzionalit&agrave; verranno analizzate nel prossimo sprint. <br> 
+        Tuttavia, verr&agrave; implementata una versione del <i>ColdStorageService</i> in grado di gestire richieste di deposito concorrenti, per i casi in cui avremo più istanze di <i>SAGSim</i> che effettuano richieste di deposito.
+    </p>
+
+    <h4 id="tt_analisi_requisiti">TransportTrolley e DDR Robot</h4>
+    <p>      
+        Il <i>TT</i> &egrave; una entit&agrave; astratta che aggiunge funzionalit&agrave; di pi&ugrave; alto livello ad un <i>DDR robot</i> (come riportato dai requisiti). Queste funzionalit&agrave; sono:
+        <ul>
+            <li>trasportare un carico di cibo da INDOOR a ColdRoom;</li>
+            <li>recarsi in HOME quando non sono presenti richieste;</li>
+            <li>comunicare il proprio <b>stato</b> a entit&agrave; interessate.</li>
+            <li>comunicare all'utente <i>Camion refrigerato</i> che &egrave; stato prelevato il carico</li>
+        </ul><br>
+
+        Queste funzionalit&agrave; condividono un requisito fondamentale: la possibilit&agrave; di <b>navigare</b> la <b>service area</b>. Sar&agrave; quindi necessario crearne una rappresentazione comprensibile al componente che controller&agrave; il robot concreto. Nei successivi paragrafi verrà affrontato questo aspetto.<br>
+
+    </p>
+    <p>
+        In questa fase dello sviluppo il <i>DDR Robot</i> sar&agrave; rappresentato da un robot virtuale, disponibile alla nostra software house, che offre una visualizzazione di un robot virtuale che naviga una service area (anch'essa virtuale) e gestisce gli stessi comandi di "medio livello" che il <i>DDR Robot</i> &egrave; in grado di gestire.
+    </p>
+
+
+    <h4 id="components_CSS">ColdStorageService</h4>
+
+    <p>
+        &Egrave; stata discussa con il committente la questione dell'allontanamento del camion refrigerato dalla INDOOR: il messaggio <b>chargetaken</b> conferma il completamento del ritiro del carico da parte del transport trolley, in tal momento il camion <b>deve allontanarsi immediatamente</b>. In caso di richiesta rifiutata il camion si deve allontanare alla ricezione del messaggio <b>storerejected</b>.
+    </p>
+
+    <p>
+        Dall'ultimo incontro con il committente &egrave; emerso che il <i>DDR Robot</i> impiega un <b>tempo predefinito</b> per prelevare un carico dal camion.
+    </p>
+    <h5>Service area</h5>
+    <p>
+        Dall'<a href="../Sprint0/ColdStorageServiceSprint0V2.html#serviceareamodel" target="_blank">analisi dei requisiti</a> dello sprint precedente abbiamo modellato la service area come un rettangolo contenente aree di interesse:
+        <ul>
+            <li><span class="bold" style="color:rgb(255,0,0);">HOME</span>: quadrato di lato <b>RD</b> che identifica la posizione di partenza del transport trolley, &egrave; collocato sopra alla zona evidenziata;</li>
+            <li><span class="bold" style="color:rgb(64,64,228);">ColdRoom</span>: area di dimensione non non ancora definita, rappresenta la ColdRoom dove il transport trolley deve depositrare i carichi;</li>
+            <li><span class="bold" style="color:rgb(43,169,43);">INDOOR</span>: posizione lungo la parete inferiore adiacente alla parete sinistra, il transport trolley deve recarsi in quest'area per prelevare i carichi da i camion;</li>
+            <li><span class="stroke" style="color:rgb(255,228,0);">PORT</span>: posizione lungo il bordo inferiore dell'area della ColdRoom, il transport trolley deve posizionarsi in questa area per scaricare i carichi nella ColdRoom</li>
+        </ul>
+        <p>
+            Abbiamo dato delle specifiche in metri, in modo da avere una definizione precisa e formale. <br>
+            Nella successiva fase di analisi, astrarremo dalla specifica unità di misura in metri per adattarla all'entità robot con cui lavoriamo.
+        </p>
+    </p>
+
+</div>
+
+<h2>Problem analysis</h2>
+
+<div class="remark">
+
+    <h3>Componenti</h3>
+    <h4>ColdStorageService</h4>
+    <p>
+        Il <i>CSS</i> si occupa solo di:
+        <ul>
+            <li>accettare/rifiutare la richiesta di deposito</li>
+            <li>notificare il <i>TransportTrolley</i> della presenza di un nuovo carico</li>
+            <li>notificare la <i>ServiceAccessGUISim</i> della presa in carico da parte del <i>TT</i> (messaggio <b>chargetaken</b>)</li>
+        </ul>
+        Il <i>ColdStorageService</i> non si interessa del raggiungimento dei particolari landmark nella Service Area (<i>HOME</i>,
+        <i>INDOOR</i>, <i>ColdRoom</i>), in quanto l'operazione è delegata al <i>TransportTrolley</i>. In questo modo il <i>CSS</i> risulterà completamente indipendente dalla particolare disposizione dell'area di servizio (come le possibili diverse posizioni dei punti di interesse e degli ostacoli).
+
+        <p class="keypoint">
+            <b>KEY-POINT</b>: il ColdStorageService è indipendente dall'area di servizio e dalle logiche di movimento del trolley.
+        </p>
+    </p>
+    <p>
+        Uno dei principali problemi riguarda appunto la rappresentazione dell'area di servizio, che influisce sull'interazione con il robot e su come esso si muove all'interno della stanza.
+    </p>
+
+    <h5 id="servicearea_analisi_problema">Service area</h5>
+
+    <p>
+        Partendo dalla misurazione in metri vista nello <a href="../Sprint0/ColdStorageServiceSprint0V2.html#serviceareamodel" target="_blank">Sprint0</a>, introduciamo il concetto di <b>unità robot</b>. La nostra nuova unità di misura si basa sulla dimensione del lato del <i>TransportTrolley</i>, ovvero <b>RD</b>. <br>
+        Questo ci ha permesso di suddividere la <b>service area</b> in una griglia di quadrati di lato <b>RD</b>, in modo tale che ogni posizione sulla griglia possa contenere il <i>DDR robot</i>.
+    </p>
+
+    <p class="keypoint">
+        <b>KEY-POINT</b>: servicearea rappresentata come griglia di quadrati di lato <b>RD</b>, ovvero l'<b>unità robot</b>.
+    </p>
+    <p>
+        La rappresentazione della service area diventa quindi come nella figura sottostante: si noti il sistema di assi cartesiani che pone il punto (0, 0) in corrispondenza della posizione <b>HOME</b>, che corrisponde alla posizione di partenza.
+    </p>
+
+    <p>
+        I <i>punti di interesse</i> <b>INDOOR</b> e <b>PORT</b> finora sono stati modellati come posizioni monodimensionali, in quanto si tratta di "aperture" al quale il robot può accedere: in questo modello verranno indicati come "<i>la posizione in cui il robot deve trovarsi per potervi accedere</i>".
+    </p>
+
+    <p>
+        Dal punto di vista del <b>transport trolley</b> la service area sar&agrave; rappresentata da una <b>griglia NxM</b>. 
+    </p>
+
+
+    <p>
+    <figure>
+        <img class="bigimglim" src="../images/sprint1/serviceareagridaxes.png" alt="Modello service area">
+    </figure>
+    </p>
+    <p class="nota">
+        La dimensione di ColdRoom, Port e Indoor è stata adatta per farla combaciare alle dimensioni della griglia. Infatti, muovendosi il robot "cella per cella", sarebbe inutile avere celle piene a metà in quanto il <i>TransportTrolley</i> non potrebbe ugualmente accedervi.
+    </p>
+
+    <p>
+        Per generare una mappa della service area abbiamo sfruttato il software <code class="prettyprint">unibo.mapperQak23</code> che si avvale di <code class="prettyprint">basicrobot</code> per ottenere le dimensioni dell'area e individuare eventuali ostacoli lungo i bordi, generando una rappresentazione della service area. <br>
+        La rappresentazione generata verrà utilizzata come mappa di default dall'applicazione <i>mapConfigurator</i> (illustrata successivamente) per personalizzare la service area. <br>
+        Si noti la dimensione della ColdRoom in precedenza, più piccola di quella attuale.
+    </p>
+
+
+    <h4>TransportTrolley e DDR Robot</h4>
+
+    <p>
+        Il <b>DDR Robot</b> è il punto finale della catena di core-business, l'entità che esegue le azioni di deposito. Possiamo quindi pensarlo come il vero "robot", che potrebbe essere reale o virtuale. <br> 
+        D'altra parte, il <b>Transport Trolley</b> è un concetto più astratto, che racchiude la logica e controlla il <i>DDR</i>.
+    </p>
+    <p>
+        All'interno del <i>ColdStorageService</i> opererà quindi l'entità <i>TransportTrolley</i>, occupandosi di tutte le funzionalità descritte in fase di <a href="#tt_analisi_requisiti">analisi dei requisiti</a>. Questa entità astratta dovrà comunicare con il "vero" robot per implementare il movimento e le azioni da compiere. <br>
+        Al fine di astrarre le indicazioni del TransportTrolley al robot esecutore e permettere di intercambiare supporto (DDR robot o VirtualRobot) si fa uso del software BasicRobot, fornito dal committente; il software espone l'attore qak <b>basicrobot</b> con il quale &egrave; possibile comunicare per indicare al robot dove spostarsi, indicando le coordinate della destinazione da raggiungere.
+    </p>
+
+    <h5>TrolleyExecutor</h5>
+
+    <p>
+        L'analisi del problema del ritorno del robot alla posizione HOME dopo aver depositato un carico ci ha spinto a introdurre un nuovo componente, il <b>TrolleyExecutor</b>, per distaccare il TransportTrolley dal funzionamento di BasicRobot al fine di realizzare <i>comportamenti di pi&ugrave; alto livello</i> da mettere a disposizione al TransportTrolley.
+    </p>
+    <p>
+        In particolare abbiamo considerato necessario introdurre un comando per permettere al transport trolley di indicare uno spostamento verso la <b>posizione pi&ugrave; vicina</b> data una <i>lista di posizioni (le loro coordinate)</i>; questa funzionalit&agrave;, attuabile tramite la richiesta <b>moveclosest(Xs,Ys)</b>, &egrave; stata implementata perch&eacute; alcune posizioni notevoli della service area sono aree costituite da <b>pi&ugrave; di una coordinata</b>.
+    </p>
+
+    <p class="keypoint">
+         <b>KEY-POINT: </b> Questa funzionalit&agrave; permette di ottimizzare la distanza che il robot deve percorrere in certe istanze, riducendo il tempo di esecuzione di alcuni specifici spostamenti. 
+    </p>
+    
+    <h5 id="basicRobot_analisi">Basic robot</h5>
+    <p>
+        L'attore Qak <i>basicRobot</i>, contestualmente al core-business di questo <i>Sprint</i>, &egrave; incaricato di realizzare il movimento tra i vari <i>landmarks</i> della <a href="#servicearea_analisi_problema">Service Area</a>. <br>
+    Tra le entità da noi definite, il <i>TrolleyExecutor</i> è l'unico a comunicare con il suddetto attore e necessiterà dei seguenti messaggi per attuare gli spostamenti:
+    <ul>
+        <li><b>engage(OWNER, STEPTIME)</b>: in fase di inizializzazione, specificando al basicrobot chi lo sta usando (per ottenere l'accesso esclusivo) e qual è lo <i>STEPTIME</i></li>
+        <li><b>setpos(X,Y,D)</b>: al successo dell'engage il transporttrolley invia questo messaggio al basicrobot per comunicare la posizione e direzione attuali del virtualrobot: il basicrobot manterr&agrave; internamento lo stato del robot basandosi su questa inizializzazione</li>
+        <li><b>moverobot(TARGETX, TARGETY)</b>: per realizzare il movimento all'interno della <i>Service Area</i>.</li>
+        <li><b>alarm()</b>: per interrompere il movimento del basicrobot.</li>
+        <li><b>getrobotstate()</b>: per ottenere la posizione corrente del robot</li>
+    </ul>
+    </p>
+    <p>
+        Nella nostra astrazione tra <i>TransportTrolley</i>, <i>TrolleyExecutor</i> e <i>basicRobot</i> manteniamo la semantica <b>request-reply</b> per gli spostamenti, in quanto è necessario essere a conoscenza del successo o fallimento del movimento.
+    </p>
+    <p class="nota">
+        Essendo che il <i>basicRobot</i> necessità di coordinate per muoversi, il <i>TransportTrolley</i> deve conoscerle obbligatoriamente. In particolare, deve avere a disposizione il mapping <i>landmarks</i>-<i>coordinate</i>, in modo da poter comunicare al <i>TrolleyExecutor</i> lo spostamento che dovrà implementare. 
+    </p>
+
+    <h5>Responsabilità dei singoli componenti</h5>
+<p>
+    Viene riportata di seguito una tabella con tutte le funzionalità svolte da già ciascun componente. Per ognuno di essi, viene rispettato il <b>principio di singola responsabilità</b>. 
+</p>
+<p>
+
+    <table>
+        <tr>
+            <th>Entit&agrave;</th>
+            <th>Responsabilità</th>
+        </tr>
+        <tr>
+            <td class="green bold center">serviceaccessguisim</td>
+            <td>Entit&agrave; adibita al testing che permette l'invio di una richiesta a <i>coldstorageservice</i> per dare inizio alla fase di deposito</td>
+        </tr>
+        <tr>
+            <td class="green bold center">coldstorageservice</td>
+            <td>Gestisce le richieste di deposito (accettazione/rifiuto) e notifica il <i>transporttrolley</i> della presenza di un nuovo carico</td>
+        </tr>
+        <tr>
+            <td class="green bold center">transporttrolley</td>
+            <td>Definisce il movimento che deve compiere il robot e gestisce la sua coda di richieste</td>
+        </tr>
+        <tr>
+            <td class="green bold center">trolleyexecutor</td>
+            <td>Implementa lo spostamento comunicando con il <i>basicrobot</i> basandosi sulle coordinate fornite dal <i>transporttrolley</i></td>
+        </tr>
+        <tr>
+            <td class="green bold center">basicrobot</td>
+            <td>Entit&agrave; che riceve istruzioni di "medio livello" e le traduce in istruzioni di basso livello per guidare il DDR robot o un virtual robot.</td>
+        </tr>
+    </table>
+</p>
+
+
+    <h3>Interazioni</h3>
+    <p>
+        Riguardo alle interazioni viste in fase di <a href="#messaggi">analisi dei requisiti</a>, vengono aggiunte le interazioni presenti tra <b>TrolleyExecutor</b> e <b>basicRobot</b> per realizzare il movimento vero e proprio (descritte nella sezione <a href="#basicRobot_analisi">Basic robot</a> subito sopra).
+    </p>
+
+    <h5>Diagrammi di sequenza</h5>
+    <p>
+        Le frecce sono colorate in base al tipo di messaggio:
+        <ul>
+            <li><span class="bold" style="color:rgb(231, 48, 48);">request/reply</span></li>
+            <li><span class="bold" style="color:rgb(48, 79, 231);">dispatch</span></li>
+            <li><span class="bold" style="color:rgb(48, 231, 109);">event</span></li>
+        </ul>
+    </p>
+    <p>
+        Si riporta lo schema di funzionamento del core-business, supponendo che il carico venga accettato (in caso contrario il flusso si ferma). <br>
+        Sono presenti anche i messaggi per i 3 movimenti che dovrà compiare il robot: 
+        <ol>
+            <li>raggiungere la <b>INDOOR</b></li>
+            <li>raggiungere la <b>PORT</b></li>
+            <li>ritornare in posizione <b>HOME</b></li>
+        </ol>
+    </p>
+    <p class="nota">
+        Viene esplicitata chiaramente la semantica <b>request-reply</b> usata nell'intero ciclo di interazioni.
+    </p>
+    <img class="bigimglim" src="../images/sprint1/diag_sequenza_ALL_new.png" alt="Diagramma di sequenza core-business">
+
+    <p>
+        Nell'immagine viene dettagliata la specifica interazione tra <i>TrolleyExecutor</i> e <i>BasicRobot</i>, in particolare la semantica del funzionamento della richiesta <i>moveclosest</i>.<br>
+        In alto, è presente anche il protocollo di inizializzazione tra le due entità che implementano il movimento.
+    </p>
+    <img class="bigimglim" src="../images/sprint1/diag_sequenza_TT_TR_BR_new.png" alt="Diagramma di sequenza tra TT, TE e BR">
+</p>   
+
+
+</div>
+
+
+<h2>Test plans</h2> 
+
+<div class="remark">
+    <p>
+        Essendo che è già stata presentata nello <a target="_blank" href="../Sprint0/ColdStorageServiceSprint0V2.html#test_plans">Sprint0</a> una unità di test JUnit che verifica il funzionamento della stessa logica di interazione presente in questo Sprint, abbiamo deciso di non realizzare nessun altro piano di test ulteriore. <br>
+        L'interazione <i>CSS-TT</i> non è rispetta ancora completamente i requisiti, in quanto manca la gestione del ticket, abbiamo quindi deciso di delegare la realizzazione di una unit&agrave; di test comprensiva al prossimo Sprint, ove anche questo aspetto sarà trattato.
+    </p>
+</div>
+
+
+<h2>Project</h2> 
+ 
+<div class="remark">
+
+    <h3>ColdStorageService</h3>
+
+    <p>
+        Si riporta di seguito l'architettura logica del ColdStorageService.
+    </p>
+
+    <img class="imglim imgborder" src="../images/sprint1/coldstorageservice23arch.png"></img>
+
+    <p>
+        Gli attori <b>coldstorageservice</b>, <b>transporttrolley</b> e <b>trolleyexecutor</b> risiedono nello stesso contesto in questo sprint, nel prossimo sviluppo verrano aggiunti componenti che determineranno un nuova distribuzione in contesti.
+    </p>
+
+    <h5>Attore coldstorageservice</h5>
+
+    <p>
+        L'attore <b>coldstorageservice</b> &egrave; incaricato di comunicare con la <i>ServiceAccessGUISim</i>: gestisce la richiesta di deposito accettandola se la ColdRoom pu&ograve; contenere il carico richiesto, rifiutandola altrimenti.
+
+        A questo scopo si utilizzano le variabili e constanti:
+        <ul>
+            <li><code class="docutils literal notranslate"><span class="pre">val maxColdRoom: Float</span></code>: mantiene il peso massimo che la ColdRoom pu&ograve; contenere</li> 
+            <li><code class="docutils literal notranslate"><span class="pre">var currentColdRoom: Float</span></code>: memorizza il peso corrente contenuto nella ColdRoom</li> 
+        </ul>
+
+        <p>
+            Questo attore &egrave; incaricato di valutare l'accettazione della richiesta: nel caso in cui venga accettata risponde alla ServiceAccessGUISim con la risposta <b>loadaccepted</b>, successivamente attende una richiesta <code class="docutils literal notranslate"><span class="pre">chargestatus</span></code> da parte della ServiceAccessGUISim.<br>
+            La richiesta <code class="docutils literal notranslate"><span class="pre">chargestatus</span></code> &egrave; stata introdotta come comunicazione da parte della SAG che il camion &egrave; arrivato a INDOOR e il TransportTrolley pu&ograve; prelevare il carico; nel prossimo sprint questa interazione verr&agrave; rifinita dalla richiesta di inserimento del ticket.
+        </p>
+
+        <p>
+            La richiesta <code class="docutils literal notranslate"><span class="pre">deposit(FW)</span></code>, inviata dal CSS al TransportTrolley, denota la partenza del robot da HOME (o altra posizione se era in gestione un altro carico) verso INDOOR. Una volta prelevato il carico il CSS riceve risposta <code class="docutils literal notranslate"><span class="pre">chargetakentt</span></code>, successivamente il CSS comunica alla SAG che il camion deve spostarsi da INDOOR tramite la risposta <code class="docutils literal notranslate"><span class="pre">chargetaken</span></code>.
+        </p>
+        
+    </p>
+
+    <h5>Attore transporttrolley</h5>
+
+    <p>
+        Il <b>transporttrolley</b> &egrave; incaricato di comunicare al <i>trolleyexecutor</i> dove dovr&agrave; spostare il robot.
+    </p>
+    <p>
+        Quando riceve un messaggio <b>deposit</b> l'attore comunica al <i>trolleyexecutor</i> di spostarsi a INDOOR tramite il messaggio <b>move(x, y)</b> (possibile in quanto il <i>TT</i> ha il mapping landmark-coordinate); successivamente comunica a coldstorageservice che il carico &egrave; stato prelevato con il messaggio <b>chargetakentt</b> per poi indicare al <i>trolleyexecutor</i> di implementare lo spostamento fino alla ColdRoom, comunicando infine l'avvenuto deposito con il messaggio <b>chargedeposited</b>.
+    </p>
+
+    <p>
+        Durante uno qualsiasi degli stati che l'attore assume durante lo spostamento, esso &egrave; in grado di ricevere una richiesta <code class="docutils literal notranslate"><span class="pre">deposit</span></code> che verr&agrave; gestita al termine del ciclo corrente. Se a questo avvenimento nessuna richiesta <code class="docutils literal notranslate"><span class="pre">deposit</span></code> &egrave; presente, l'attore attende <i>1 secondo</i> prima di comunicare al <i>trolleyexecutor</i> di tornare in HOME per poter gestire eventuali nuove richieste di deposito.
+    </p>
+    <p>
+        Durante il ritorno in HOME, <i>transporttrolley</i> &egrave; in grado di ricevere nuove richieste di deposito: in tal caso richiede al <i>trolleyexecutor</i> una azione <code class="docutils literal notranslate"><span class="pre">moveclosest(Xs,Ys)</span></code>.
+    </p>
+
+    <p class="nota">
+        Gli stati nei quali si attende una risposta dal <i>trolleyexecutor</i> implementano un <b>timeout</b> tramite la transizione <code class="docutils literal notranslate"><span class="pre">whenTime</span></code> per gestire eventuali malfunzionamenti dei supporti sottostanti: in caso di timeout viene comunicato di riavviare l'applicazione, evitando cos&igrave; attese infinite.
+    </p>
+
+    <h5>Attore trolleyexecutor</h5>
+
+    <p>
+        L'attore <i>trolleyexecutor</i> si occupa della comunicazione con l'attore <i>basicrobot</i>, implementando solamente degli spostamenti dalla posizione attuale alle coordinate <i>(x,y)</i> fornite da <i>transporttrolley</i>. <br>
+    </p>
+
+    <p>
+        All'inizializzazione viene ingaggiato il <i>basicrobot</i> tramite <b>engage</b>, usando poi <b>setrobotstate</b> per impostare posizione iniziale a <i>(0,0)</i> e direzione <i>d</i>.
+    </p>
+
+    <p>
+        Il compito principale del trolleyexecutor &egrave; quello di attuare il comando <code class="docutils literal notranslate"><span class="pre">moveclosest</span></code>, a questo scopo viene mantenuta una variabile boolean <code class="docutils literal notranslate"><span class="pre">var isMoving = false</span></code> che assume valore <code class="docutils literal notranslate"><span class="pre">true</span></code> quando il robot &egrave; in movimento e viceversa.<br>
+        Questa variabile serve all'attore per discriminare due casi diversi alla ricezione di <code class="docutils literal notranslate"><span class="pre">moveclosest</span></code>:
+        <ul>
+            <li>se <code class="docutils literal notranslate"><span class="pre">isMoving == true</span></code> viene inviato un evento <code class="docutils literal notranslate"><span class="pre">alarm</span></code> per fermare il robot, viene poi richiesta la posizone attuale del robot con la richiesta <code class="docutils literal notranslate"><span class="pre">getrobotstate</span></code></li>
+            <li>se <code class="docutils literal notranslate"><span class="pre">isMoving == false</span></code> viene direttamente richiesta la posizione</li>
+        </ul>
+        Una volta ottenuta la posizione del robot, l'attore calcola le distanze tra posizione e destinazione e richiede lo spostamento al basicrobot verso la coordinata pi&ugrave; vicina con il messaggio <code class="docutils literal notranslate"><span class="pre">moverobot(X,Y)</span></code>.
+    </p>
+
+    <p>
+        Il messaggio <code class="docutils literal notranslate"><span class="pre">moveclosest</span></code> contiene due parametri:
+        <ol>
+            <li>il primo una lista di valori interi che rappresentano le X delle coordinate</li>
+            <li>il secondo una lista di valori interi che rappresentano le Y delle coordinate</li>
+        </ol>
+        Dato che le stringhe dei parametri vengono estratte dal messaggio tramite l'unificazione prolog, esse non possono contenere alcuni caratteri che sono utilizzati da prolog, in particolare <code class="docutils literal notranslate"><span class="pre">,</span></code>, <code class="docutils literal notranslate"><span class="pre">(</span></code> o <code class="docutils literal notranslate"><span class="pre">)</span></code> e non possono iniziare con un valore numerico, &egrave; stata quindi creata una rappresentazione adhoc (arbitraria) per comunicare le coordinate.<br>
+        In particolare le stringhe iniziano con il carattere <code class="docutils literal notranslate"><span class="pre">s</span></code> seguito da valori numerici interi, separati dal carattere <code class="docutils literal notranslate"><span class="pre">l</span></code>.
+    </p>
+
+    <h6>Coordinate</h6>
+
+    <p>
+        L'attore <i>transporttrolley</i> deve conoscere le coordinate dei landmark (PORT, INDOOR, HOME) per guidare il <i>basicrobot</i>. <br> 
+        A questo scopo &egrave; stata creata una apposita classe, <code class="docutils literal notranslate"><span class="pre">unibo.landmarks.LandmarkCoordinates</span></code> che mette a disposizione metodi per <i>caricare e gestire</i> la configurazione dei landmark generata dal <b>MapConfigurator</b>.
+    </p>
+
+    <p>
+        Si riporta di seguito il diagramma UML della classe <code class="docutils literal notranslate"><span class="pre">LandmarkCoordinates</span></code>. <br>
+        <p>
+            <img class="imglim img-border" src="../images/sprint1/landmarksUML.png" alt="LandmarkCoordinates UML"><br>
+        </p>
+        Si denota in particolare il metodo <code class="docutils literal notranslate"><span class="pre">getCoordinateClosestToFor(String, Pair&lt;Int, Int&gt;)</span></code> che permette di ottenere la coordinata pi&ugrave; vicina a una coordinata specificata per un certo landmark, specificato da una stringa che ne indica il nome. <br> 
+        Questo permette a <i>transporttrolley</i> di comunicare a <i>trolleyexecutor</i> di spostarsi sempre alla coordinata pi&ugrave; vicina per il landmark di destinazione, essendo alcuni landmark costituiti da pi&ugrave; punti diversi.
+    </p>
+
+</div>
+
+
+
+
+<h2>Deployment</h2> 
+
+
+
+<div class="remark">
+
+    <h4>Distribuzione</h4>
+
+    <p>
+        Per il deployment di queste applicazioni si &egrave; deciso di utilizzare <a href="https://www.docker.com/">Docker</a>,in modo da poter <i>uniformare</i> la metodologia di gestione della distribuzione dei vari componenti del servizio.
+    </p>
+
+    <p>
+        In particolare abbiamo creato dei Dockerfile, utilizzando l'apposito linguaggio dichiarativo, usati poi per creare le <a href="https://docs.docker.com/glossary/#image">immagini</a> che faranno parte dei <a href="https://docs.docker.com/glossary/#container">container</a> che eseguono i servizi.
+    </p>
+
+    <p>
+        Si riporta di seguito il Dockerfile usato per generare l'immagine di <i>mapConfigurator</i>.
+    </p>
+
+    <pre><code class="language-docker">FROM openjdk:11
+EXPOSE 8015
+VOLUME ["/data"]
+ADD ./build/distributions/unibo.mapConfigurator-boot-2.2.tar /
+WORKDIR unibo.mapConfigurator-boot-2.2/bin
+CMD ["bash", "./unibo.mapConfigurator"]</code></pre>
+
+    <p>
+        Allo scopo di velocizzare la creazione dei Dockerfile e delle rispettive immagini abbiamo implementato una serie di task Gradle che automatizzano questo compito, &egrave; possibile visualizzare queste task in un qualsiasi file build.gradle.kts (<a about="_blank" href="../../projects/unibo.mapConfigurator/build.gradle.kts">esempio</a>).
+    </p>
+
+    <p>
+        Tutte le immagini docker relative a questo progetto saranno rese disponibili online a questo profilo <a about="_blank" href="https://hub.docker.com/u/riccardoob">Docker Hub</a>.
+    </p>
+
+    <p>
+        Contestualmente al prossimo sprint verranno realizzate le apposite task Gradle per generare le immagini Docker per tutti i servizi coinvolti, cos&igrave; come la configurazione di un volume docker sfruttato dai container per file condivisi.
+    </p>
+
+    <h5>Controllo</h5>
+    
+    <p>
+        Dati i vari servizi da gestire verr&agrave; progettata e messa a disposizione del cliente una applicazione dedicata alla gestione dei componenti del servizio, permettendo di manipolare impostazioni e valori di default delle applicazioni tramite un'interfaccia grafica.
+    </p>
+
+    <h5>Protocollo di avvio</h5>
+    <p>Ad ora, in attesa della dockerizzazione di tutti i progetti e della creazione della suddetta applicazione, abbiamo definito il seguente protocollo di avvio dei vari servizi:
+        <ol>
+            <li><i>VirtualRobot</i> e <i>basicRobot</i> tramite <b>compose</b> delle immagine Docker <br>
+                <pre><code class="language-bash">cd ./projects/unibo.basicrobot23 
+docker compose -f basicrobot23.yaml up</code></pre>
+            </li>
+            <li>
+                <i>ColdStorageService</i> (progetto Qak) 
+                <pre><code class="language-bash">cd ./projects/sprint1v0
+gradlew run</code></pre>
+            </li>
+            <li>
+                <i>ServiceAccessGUISim</i> (progetto Spring) 
+                <pre><code class="language-bash">cd ./projects/unibo.serviceaccessGUISim
+gradlew bootRun</code></pre>
+            </li>
+        </ol>
+        &Egrave; necessario avviare i servizi in questo ordine per permettere la creazione della connessione tra il client ServiceAccessGUISim e il mittente dei messaggi ColdStorageService.
+    </p>
+
+</div>
+ 
+<h2>Maintenance</h2> 
+ 
+<div class="remark">
+
+</div>
+
+<div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
+GIT repo: https://github.com/RiccardBarbieri/ColdStorageService
+</div>
+</div>
+</body>
+</html>
