@@ -76,13 +76,16 @@
 
 <div class="remark">
     <p>Per quanto riguarda le <b>tecnologie</b> d'implementazione, pensiamo che un applicazione web sia l'ideale per realizzare questo componente software, per via della sua comodità d'uso e per la possibilità di passare ad un contesto distribuito in modo molto semplice.</p>
-
+    <p>
+        In generale, la bassa complessità di questo componente software ci permette di non avere un'analisi del problema complessa, potendoci basare su quella dei requisiti appena redatta. In fase di progettazione si avrà quindi un focus sulle specifiche tecnologie di implementazione.
+    </p>
 </div>
 
 <h2>Test plans</h2> 
 
 <div class="remark">
-    Il comportamente dell'applicazione sarà simulato tramite una unità <i>JUnit</i> all'interno del progetto Qak.
+    Il comportamento dell'applicazione (in una versione semplificata) è stato simulato tramite una unità <i>JUnit</i> all'interno del progetto Qak dello <a href="../Sprint0/ColdStorageServiceSprint0V2.html#test_plans" target="_blank">Sprint0</a>. <br>
+    Nello <i>Sprint2</i>, a monte di un'analisi completa di questo componente software, verrà implementato un piano di test completo.
 </div>
 
 <h2>Project</h2> 
@@ -94,17 +97,27 @@
         Come anticipato in fase di analisi del problema, si è pensato di implementare questo componente software come un'<b>applicazione web</b>. <br>
     </p>
     <p>
-        Abbiamo deciso di sviluppare l'applicazione utilizzando il framework <b>Spring Boot</b>, sia poiché permette di aggiungere funzionalità in poco tempo, sia allo scopo di uniformare lo stack tecnologico utilizzato dal progetto nel suo insieme (utilizzeremo <i>Spring</i> anche all'interno del <a href="#mapconfigurator_project">MapConfigurator</a>). 
+        Abbiamo deciso di sviluppare l'applicazione utilizzando il framework <b>Spring Boot</b>, sia poiché permette di aggiungere funzionalità in poco tempo, sia allo scopo di uniformare lo stack tecnologico utilizzato dal progetto nel suo insieme (utilizzeremo <i>Spring</i> anche all'interno del <a href="./ColdStorageServiceSprint1V0.html#mapconfigurator_project">MapConfigurator</a>). 
     </p>
+
     <h5>Architettura dell'applicazione</h5>
     <h6>Comunicazione con il ColdStorageService</h6>
-<p>
-    Questa applicazione serve per accedere ai servizi forniti dal <i>ColdStorageService</i>. La comunicazione con esso è quindi di cruciale importanza.
-</p>
+    <p>
+        Questa applicazione serve per accedere ai servizi forniti dal <i>ColdStorageService</i>. La comunicazione con esso è quindi di cruciale importanza.
+    </p>
     <p>
         Abbiamo decisio di implementare la comunicazione tra le due componenti software tramite il protocollo <b>Coap</b>. Questa scelta è stata mossa dal fatto che la nostra software house ha già sviluppato classi e interfacce per implementare un concetto generale di connessione tramite appunto il protocollo <i>Coap</i>, all'interno della libreria <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code>.
     </p>
   
+    <h6 id="timeoutclass">Gestione del timeout</h6>
+    <p>
+        Nell'implementazione del protocollo <i>Coap</i> che avevamo disponibile nella nostra software house, il timeout per la ricezione di una risposta aveva un tempo fisso di 1 secondo, dopo il quale la comunicazione ritornava un errore. <br>
+        Dal momento che il messaggio <b>chargestatus</b> inviato dalla <i>SAGSim</i> può ottenere una risposta anche dopo parecchi secondi, il timeout così basso risultava un problema per l'implementazioni.
+    </p>
+    <p>
+        Abbiamo così realizzato la nuova classe <b>CoapConnectionHighTimeout</b> che estende <i>Connection</i> di <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code>. Tramite essa, abbiamo potuto allungare il tempo di timeout a 15 secondi.
+    </p>
+
     <h6>Diagramma delle classi</h6>
     <p>
         Nell'immagine seguente viene mostrato il <b>diagramma UML</b> delle classi del back-end dell'applicazione Web. 
@@ -115,8 +128,8 @@
         <ul>
             <li><b>SagController</b>: WebServer Controller dell'applicazione definito tramite annotazione del framework <i>SpringBoot</i>. Si occupa di inizializzare l'applicazione definendo un osservatore sull'attore interessato; funge poi da mediatore tra UI e back-end per l'invio al <i>ColdStorageService</i> della richiesta di deposito e della richiesta relativa allo stato del carico depositato.</li>
             <li><b>SagConnection</b>: componente che si occupa di stabilire, tramite <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code>, una connessione <b>Coap</b> con l'attore interessato nel progetto <i>ColdStorageService</i>; permette poi di implementare la comunicazione con l'attore stesso relativamente alle due richieste sopra definite.</li>
-            <li><b>ConnectionUtils</b>: definisce una nuova <i>CoapConnection</i>.</li>
-            
+            <li><b>ConnectionUtils</b>: definisce una nuova <i>CoapConnection</i> utilizzando la nuova classe sopra analizzata per la gestione del timeout.</li>
+            <li><a href="#timeoutclass">CoapConnectionHighTimeout</a>: analizzata in precedenza.</li>
             
       
         </ul>
