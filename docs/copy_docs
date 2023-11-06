@@ -1,0 +1,60 @@
+#!/bin/bash
+
+rm -r ../projects/sprint0V0/userDocs
+mkdir ../projects/sprint0V0/userDocs
+cp -r images ../projects/sprint0V0/userDocs
+cp -r _static ../projects/sprint0V0/userDocs
+mkdir ../projects/sprint0V0/userDocs/Sprint0
+cp Sprint0/ColdStorageServiceSprint0V0.html ../projects/sprint0V0/userDocs/Sprint0
+
+rm -r ../projects/sprint0V1/userDocs
+mkdir ../projects/sprint0V1/userDocs
+cp -r images ../projects/sprint0V1/userDocs
+cp -r _static ../projects/sprint0V1/userDocs
+mkdir ../projects/sprint0V1/userDocs/Sprint0
+cp Sprint0/ColdStorageServiceSprint0V1.html ../projects/sprint0V1/userDocs/Sprint0
+
+rm -r ../projects/sprint0V2/userDocs
+mkdir ../projects/sprint0V2/userDocs
+cp -r images ../projects/sprint0V2/userDocs
+cp -r _static ../projects/sprint0V2/userDocs
+mkdir ../projects/sprint0V2/userDocs/Sprint0
+cp Sprint0/ColdStorageServiceSprint0V2.html ../projects/sprint0V2/userDocs/Sprint0
+
+rm -r ../projects/sprint1V0/userDocs
+mkdir ../projects/sprint1V0/userDocs
+cp -r images ../projects/sprint1V0/userDocs
+cp -r _static ../projects/sprint1V0/userDocs
+mkdir ../projects/sprint1V0/userDocs/Sprint1
+cp Sprint1/ColdStorageServiceSprint1V0.html ../projects/sprint1V0/userDocs/Sprint1
+
+rm -r ../projects/unibo.serviceaccessGUISimV0/userDocs
+mkdir ../projects/unibo.serviceaccessGUISimV0/userDocs
+cp -r images ../projects/unibo.serviceaccessGUISimV0/userDocs
+cp -r _static ../projects/unibo.serviceaccessGUISimV0/userDocs
+mkdir ../projects/unibo.serviceaccessGUISimV0/userDocs/Sprint1
+cp Sprint1/ServiceAccessGUISimProjectV0.html ../projects/unibo.serviceaccessGUISimV0/userDocs/Sprint1
+
+rm -r ../projects/unibo.serviceaccessGUISimV1/userDocs
+mkdir ../projects/unibo.serviceaccessGUISimV1/userDocs
+cp -r images ../projects/unibo.serviceaccessGUISimV1/userDocs
+cp -r _static ../projects/unibo.serviceaccessGUISimV1/userDocs
+mkdir ../projects/unibo.serviceaccessGUISimV1/userDocs/Sprint1
+cp Sprint1/ServiceAccessGUISimProjectV1.html ../projects/unibo.serviceaccessGUISimV1/userDocs/Sprint1
+
+rm -r ../projects/unibo.serviceaccessGUI/userDocs
+mkdir ../projects/unibo.serviceaccessGUI/userDocs
+cp -r images ../projects/unibo.serviceaccessGUI/userDocs
+cp -r _static ../projects/unibo.serviceaccessGUI/userDocs
+mkdir ../projects/unibo.serviceaccessGUI/userDocs/Sprint2
+cp Sprint2/ServiceAccessGUIProject.html ../projects/unibo.serviceaccessGUI/userDocs/Sprint2
+
+rm -r ../projects/unibo.mapConfigurator/userDocs
+mkdir ../projects/unibo.mapConfigurator/userDocs
+cp -r images ../projects/unibo.mapConfigurator/userDocs
+cp -r _static ../projects/unibo.mapConfigurator/userDocs
+mkdir ../projects/unibo.mapConfigurator/userDocs/Sprint1
+cp Sprint1/MapConfiguratorProject.html ../projects/unibo.mapConfigurator/userDocs/Sprint1
+
+
+
