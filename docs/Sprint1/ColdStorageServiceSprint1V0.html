@@ -378,8 +378,8 @@
         In particolare abbiamo considerato necessario introdurre un comando per permettere al transport trolley di indicare uno spostamento verso la <b>posizione pi&ugrave; vicina</b> data una <i>lista di posizioni (le loro coordinate)</i>; questa funzionalit&agrave;, attuabile tramite la richiesta <b>moveclosest(Xs,Ys)</b>, &egrave; stata implementata perch&eacute; alcune posizioni notevoli della service area sono aree costituite da <b>pi&ugrave; di una coordinata</b>.
     </p>
 
-    <p class="nota">
-        Questa funzionalit&agrave; permetter di ottimizzare la distanza che il robot deve percorrere in certe istanze, riducendo il tempo di esecuzione di alcuni specifici spostamenti. 
+    <p class="keypoint">
+         <b>KEY-POINT: </b> Questa funzionalit&agrave; permette di ottimizzare la distanza che il robot deve percorrere in certe istanze, riducendo il tempo di esecuzione di alcuni specifici spostamenti. 
     </p>
     
     <h5 id="basicRobot_analisi">Basic robot</h5>
@@ -403,7 +403,7 @@
 
     <h5>Responsabilità dei singoli componenti</h5>
 <p>
-    Viene riportata di seguito una tabella con tutte le funzionalità svolte da già ciascun componente. Per ognuno di essi, viene rispettato il pricinpio di singola responsabilità. 
+    Viene riportata di seguito una tabella con tutte le funzionalità svolte da già ciascun componente. Per ognuno di essi, viene rispettato il <b>principio di singola responsabilità</b>. 
 </p>
 <p>
 
@@ -514,16 +514,13 @@
 
         <p>
             Questo attore &egrave; incaricato di valutare l'accettazione della richiesta: nel caso in cui venga accettata risponde alla ServiceAccessGUISim con la risposta <b>loadaccepted</b>, successivamente attende una richiesta <code class="docutils literal notranslate"><span class="pre">chargestatus</span></code> da parte della ServiceAccessGUISim.<br>
-            La richiesta <code class="docutils literal notranslate"><span class="pre">chargestatus</span></code> &egrave; stata introdotta come comunicazione da parte della SAG che il camion &egrave; arrivato a INDOOR e il TransportTrolley pu&ograve; prelevare il carico, nel prossimo sprint questa interazione verr&agrave; rifinita dalla richiesta di inserimento del ticket.
+            La richiesta <code class="docutils literal notranslate"><span class="pre">chargestatus</span></code> &egrave; stata introdotta come comunicazione da parte della SAG che il camion &egrave; arrivato a INDOOR e il TransportTrolley pu&ograve; prelevare il carico; nel prossimo sprint questa interazione verr&agrave; rifinita dalla richiesta di inserimento del ticket.
         </p>
 
         <p>
-            La richiesta <code class="docutils literal notranslate"><span class="pre">deposit(FW)</span></code>, inviata dal CSS al TransportTrolley, denota la partenza del robot da HOME (o altra posizione se era in gestione un altro carico) verso INDOOR, una volta prelevato il carico il CSS riceve risposta <code class="docutils literal notranslate"><span class="pre">chargetakentt</span></code>, dopo averla ricevuta il CSS comunica alla SAG che il camion deve spostarsi da INDOOR tramite la risposta <code class="docutils literal notranslate"><span class="pre">chargetaken</span></code>.
+            La richiesta <code class="docutils literal notranslate"><span class="pre">deposit(FW)</span></code>, inviata dal CSS al TransportTrolley, denota la partenza del robot da HOME (o altra posizione se era in gestione un altro carico) verso INDOOR. Una volta prelevato il carico il CSS riceve risposta <code class="docutils literal notranslate"><span class="pre">chargetakentt</span></code>, successivamente il CSS comunica alla SAG che il camion deve spostarsi da INDOOR tramite la risposta <code class="docutils literal notranslate"><span class="pre">chargetaken</span></code>.
         </p>
         
-        <p class="nota">
-            Il messaggio <b>chargetaken</b>, precedentemente gestito come <b>event</b>, viene ora inviato come risposta alla richiesta <b>chargestatus</b>.
-        </p>
     </p>
 
     <h5>Attore transporttrolley</h5>
@@ -536,14 +533,14 @@
     </p>
 
     <p>
-        Durante uno qualsiasi degli stati che l'attore assume durante lo spostamento, esso &egrave; in grado di ricevere una richiesta <code class="docutils literal notranslate"><span class="pre">deposit</span></code> che verr&agrave; gestita al termine del ciclo corrente, se a questo avvenimento nessuna richiesta <code class="docutils literal notranslate"><span class="pre">deposit</span></code>, l'attore attende <i>1 secondo</i> prima di comunicare al <i>trolleyexecutor</i> di tornare in HOME per poter gestire eventuali nuove richieste di deposito.
+        Durante uno qualsiasi degli stati che l'attore assume durante lo spostamento, esso &egrave; in grado di ricevere una richiesta <code class="docutils literal notranslate"><span class="pre">deposit</span></code> che verr&agrave; gestita al termine del ciclo corrente. Se a questo avvenimento nessuna richiesta <code class="docutils literal notranslate"><span class="pre">deposit</span></code> &egrave; presente, l'attore attende <i>1 secondo</i> prima di comunicare al <i>trolleyexecutor</i> di tornare in HOME per poter gestire eventuali nuove richieste di deposito.
     </p>
     <p>
         Durante il ritorno in HOME, <i>transporttrolley</i> &egrave; in grado di ricevere nuove richieste di deposito: in tal caso richiede al <i>trolleyexecutor</i> una azione <code class="docutils literal notranslate"><span class="pre">moveclosest(Xs,Ys)</span></code>.
     </p>
 
-    <p>
-        Tutti gli stati nei quali si attende una risposta dal <i>trolleyexecutor</i> implementano un <b>timeout</b> tramite la transizione <code class="docutils literal notranslate"><span class="pre">whenTime</span></code>, per gestire eventuali malfunzionamenti dei supporti sottostanti: in caso di timeout viene comunicato di riavviare l'applicazione, evitando cos&igrave; attese infinite.
+    <p class="nota">
+        Gli stati nei quali si attende una risposta dal <i>trolleyexecutor</i> implementano un <b>timeout</b> tramite la transizione <code class="docutils literal notranslate"><span class="pre">whenTime</span></code> per gestire eventuali malfunzionamenti dei supporti sottostanti: in caso di timeout viene comunicato di riavviare l'applicazione, evitando cos&igrave; attese infinite.
     </p>
 
     <h5>Attore trolleyexecutor</h5>

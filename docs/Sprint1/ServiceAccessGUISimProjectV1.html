@@ -105,17 +105,17 @@
     <p>
         Questa applicazione serve per accedere ai servizi forniti dal <i>ColdStorageService</i>. La comunicazione con esso è quindi di cruciale importanza.
     </p>
-    <p>
-        Abbiamo decisio di implementare la comunicazione tra le due componenti software tramite il protocollo <b>Coap</b>. Questa scelta è stata mossa dal fatto che la nostra software house ha già sviluppato classi e interfacce per implementare un concetto generale di connessione tramite appunto il protocollo <i>Coap</i>, all'interno della libreria <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code>.
+    <p class="keypoint">
+    <b>KEY-POINT:</b> La comunicazione tra i due componenti (ServiceAccessGUISim e ColdStorageService) tramite il protocollo <b>Coap</b>; la scelta &egrave; guidata dal fatto che la nostra software house ha già sviluppato classi e interfacce per implementare un concetto generale di connessione tramite questo protocollo nella libreria <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code> per comunicare con gli attori qak.
     </p>
   
     <h6 id="timeoutclass">Gestione del timeout</h6>
     <p>
-        Nell'implementazione del protocollo <i>Coap</i> che avevamo disponibile nella nostra software house, il timeout per la ricezione di una risposta aveva un tempo fisso di 1 secondo, dopo il quale la comunicazione ritornava un errore. <br>
-        Dal momento che il messaggio <b>chargestatus</b> inviato dalla <i>SAGSim</i> può ottenere una risposta anche dopo parecchi secondi, il timeout così basso risultava un problema per l'implementazioni.
+        Nell'implementazione del <code class="docutils literal notranslate"><span class="pre">CoapClient</span></code> disponibile alla nostra software house, il timeout per la ricezione di una risposta ha un tempo fisso di 1 secondo, dopo il quale la comunicazione ritorna un errore.<br>
+        Dal momento che il messaggio <b>chargestatus</b> inviato dalla <i>SAGSim</i> può ottenere una risposta anche dopo parecchi secondi, a causa del movimento del tempo necessario al robot per spostarsi, un timeout così basso risultava un problema per l'implementazione.
     </p>
-    <p>
-        Abbiamo così realizzato la nuova classe <b>CoapConnectionHighTimeout</b> che estende <i>Connection</i> di <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code>. Tramite essa, abbiamo potuto allungare il tempo di timeout a 15 secondi.
+    <p class="keypoint">
+     <b>KEY-POINT:</b> É stata realizzata la classe <b>CoapConnectionHighTimeout</b> che estende <i>Connection</i> e imita la <code class="docutils literal notranslate"><span class="pre">CoapConnection</span></code> di <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code> per poter impostare il tempo di timeout a 15 secondi nel <code class="docutils literal notranslate"><span class="pre">CoapClient</span></code> da essa gestito.
     </p>
 
     <h6>Diagramma delle classi</h6>
@@ -136,7 +136,7 @@
         
     </p>
     <h5>Configurazione</h5>
-    <p>Alcuni importanti parametri dell'applicazione possono essere configurati dal file <b>application.properties</b>.</p>
+    <p>Alcuni importanti parametri dell'applicazione possono essere configurati dal file <b>application-dev.properties</b> (per l'ambiente di sviluppo) e/o dal file <b>application-prod.properties</b> per l'ambiente di produzione; al momento i due file contengono le stesse informazioni ma sono stati creati entrambi perch&eacute; in futuro sar&agrave; necessario discriminare i due ambienti per il deployment tramite docker (uniforme con le apposite task gradle create).</p>
     <img class="imglim" src="../images/sprint1/application_properties.png" alt="File di configurazione application.properties">
     <p>
         Oltre a poter configurare il nome dell'applicazione che apparirà in alto nella pagina web e il banner da mostrare in console, sono presenti:
