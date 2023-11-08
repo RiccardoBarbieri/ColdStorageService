@@ -27,6 +27,7 @@ cp -r images ../projects/sprint1V0/userDocs
 cp -r _static ../projects/sprint1V0/userDocs
 mkdir ../projects/sprint1V0/userDocs/Sprint1
 cp Sprint1/ColdStorageServiceSprint1V0.html ../projects/sprint1V0/userDocs/Sprint1
+cp Sprint1/ColdStorageServiceSprint1V0BarbieriRuberto.pdf ../projects/sprint1V0/userDocs/Sprint1
 
 rm -r ../projects/unibo.serviceaccessGUISimV0/userDocs
 mkdir ../projects/unibo.serviceaccessGUISimV0/userDocs
