@@ -180,48 +180,6 @@
             <td>chargefailed()</td>
             <td>Ci sono stati problemi durante la presa in carico del deposito.</td>
         </tr>
-        <tr>
-            <td class="orange bold center">coldstorageservice</td>
-            <td class="orange bold center">transporttrolley</td>
-            <td class="blue bold center">Request</td>
-            <td>deposit()</td>
-            <td>Il CSS comunica al transport trolley che è presente un nuovo carico da depositare.</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">transporttrolley</td>
-            <td class="orange bold center">coldstorageservice</td>
-            <td class="blue bold center">Reply</td>
-            <td>chargetakentt()</td>
-            <td>Il carico &egrave; stato prelevato dal transport trolley.</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">transporttrolley</td>
-            <td class="orange bold center">coldstorageservice</td>
-            <td class="blue bold center">Reply</td>
-            <td>chargefailedtt()</td>
-            <td>Ci sono stati problemi durante la presa in carico da parte del transport trolley.</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">coldstorageservice</td>
-            <td class="orange bold center">transporttrolley</td>
-            <td class="blue bold center">Request</td>
-            <td>depositstatus()</td>
-            <td>Viene richiesto al transport trolley lo stato del cibo che ha preso in carico.</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">transporttrolley</td>
-            <td class="orange bold center">coldstorageservice</td>
-            <td class="blue bold center">Reply</td>
-            <td>chargedeposited()</td>
-            <td>Il carico &egrave; stato depositato nella ColdRoom.</td>
-        </tr>
-        <tr>
-            <td class="orange bold center">transporttrolley</td>
-            <td class="orange bold center">coldstorageservice</td>
-            <td class="blue bold center">Reply</td>
-            <td>chargedepfailed()</td>
-            <td>Ci sono stati problemi durante il deposito del carico nella ColdRoom.</td>
-        </tr>
     </table>
 
     <p class="nota">
@@ -253,21 +211,146 @@
 
     <h4 id="tt_analisi_requisiti">TransportTrolley e DDR Robot</h4>
     <p>      
-        Il <i>TT</i> &egrave; una entit&agrave; astratta che aggiunge funzionalit&agrave; di pi&ugrave; alto livello ad un <i>DDR robot</i> (come riportato dai requisiti). Queste funzionalit&agrave; sono:
+        Il <i>TransportTrolley</i> &egrave; una entit&agrave; che si interpone tra il <i>BasicRobot</i> e il <i>ColdStorageService</i> e offre operazioni di alto livello per effettuare un deposito, in particolare:
         <ul>
-            <li>trasportare un carico di cibo da INDOOR a ColdRoom;</li>
-            <li>recarsi in HOME quando non sono presenti richieste;</li>
+            <li>prelevare un carico di cibo da INDOOR;</li>
+            <li>depositare un carico prelevato ColdRoom;</li>
+            <li>spostarsi da ColdRoom a HOME una volta completato il deposito;</li>
             <li>comunicare il proprio <b>stato</b> a entit&agrave; interessate.</li>
-            <li>comunicare all'utente <i>Camion refrigerato</i> che &egrave; stato prelevato il carico</li>
-        </ul><br>
+        </ul>
 
-        Queste funzionalit&agrave; condividono un requisito fondamentale: la possibilit&agrave; di <b>navigare</b> la <b>service area</b>. Sar&agrave; quindi necessario crearne una rappresentazione comprensibile al componente che controller&agrave; il robot concreto. Nei successivi paragrafi verrà affrontato questo aspetto.<br>
+        Questa entit&agrave; deve essere anche in grado di comunicare quando un carico viene prelevato all'esterno, verr&agrave; discusso in analisi del problema se comunicarlo direttamente al componente interessato o al ColdStorageService in vece di gestore del servizio.
+    </p>
 
+    <p>
+        Queste funzionalit&agrave; condividono un requisito fondamentale: la possibilit&agrave; di <b>navigare</b> la <b>service area</b>. A questo scopo &egrave; stata modellata una rappresentazione comprensibile al componente che controller&agrave; il robot concreto. Nei successivi paragrafi verrà affrontato questo aspetto.
     </p>
     <p>
-        In questa fase dello sviluppo il <i>DDR Robot</i> sar&agrave; rappresentato da un robot virtuale, disponibile alla nostra software house, che offre una visualizzazione di un robot virtuale che naviga una service area (anch'essa virtuale) e gestisce gli stessi comandi di "medio livello" che il <i>DDR Robot</i> &egrave; in grado di gestire.
+        Il <i>DDR Robot</i> sar&agrave; rappresentato da un robot virtuale, disponibile alla nostra software house, che offre una visualizzazione di un robot virtuale che naviga una service area virtuale.
     </p>
 
+    <p>
+        <p>
+            <b>MODELLI:</b>
+        </p>
+        <p>
+            <i>Opzione 1</i><br>
+            Il ColdStorageService invia una istruzione di deposito generale e il TransportTrolley decide come gestire gli spostamenti
+        </p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mittente</th>
+                    <th>Destinatario</th>
+                    <th>Tipologia messaggio</th>
+                    <th>Formato</th>
+                    <th>Significato</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="blue bold center">Request</td>
+                    <td>deposit()</td>
+                    <td>Il CSS comunica al transport trolley che è presente un nuovo carico da depositare.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>chargetakentt()</td>
+                    <td>Il carico &egrave; stato prelevato dal transport trolley.</td>
+                </tr>
+                <!--<tr>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>chargefailedtt()</td>
+                    <td>Ci sono stati problemi durante la presa in carico da parte del transport trolley.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="blue bold center">Request</td>
+                    <td>depositstatus()</td>
+                    <td>Viene richiesto al transport trolley lo stato del cibo che ha preso in carico.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>chargedeposited()</td>
+                    <td>Il carico &egrave; stato depositato nella ColdRoom.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>chargedepfailed()</td>
+                    <td>Ci sono stati problemi durante il deposito del carico nella ColdRoom.</td>
+                </tr>-->
+            </tbody>
+        </table>
+        <p>
+            <i>Opzione 2</i><br>
+            Il ColdStorageService invia istruzioni dettagliate di spostamento, TransportTrolley non prende decisioni a riguardo
+        </p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mittente</th>
+                    <th>Destinatario</th>
+                    <th>Tipologia messaggio</th>
+                    <th>Formato</th>
+                    <th>Significato</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="blue bold center">Request</td>
+                    <td>deposit()</td>
+                    <td>Il CSS comunica al transport trolley che è presente un nuovo carico da depositare.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>chargetakentt()</td>
+                    <td>Il carico &egrave; stato prelevato dal transport trolley.</td>
+                </tr>
+                <!--<tr>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>chargefailedtt()</td>
+                    <td>Ci sono stati problemi durante la presa in carico da parte del transport trolley.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="blue bold center">Request</td>
+                    <td>depositstatus()</td>
+                    <td>Viene richiesto al transport trolley lo stato del cibo che ha preso in carico.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>chargedeposited()</td>
+                    <td>Il carico &egrave; stato depositato nella ColdRoom.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>chargedepfailed()</td>
+                    <td>Ci sono stati problemi durante il deposito del carico nella ColdRoom.</td>
+                </tr>-->
+            </tbody>
+        </table>
 
     <h4 id="components_CSS">ColdStorageService</h4>
 
