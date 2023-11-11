@@ -427,6 +427,9 @@
     <p>
         Abbiamo scelto di modellare il messaggio charge taken con semantica request-reply, in quanto sar&agrave; l'operatore del camion a richiedere lo stato del carico attraverso la ServiceAccessGUI. <br> 
         In questo modo non può succedere che vi sia un attesa del messaggio indefinitivamente lunga (con semantica dispatch non sapremmo mai se e quando il messaggio arriverebbe). Avremmo potuto usare un timeout per la gestione della semantica dispatch, ma abbiamo preferito una soluzione più deterministica, con il controllo in mano all'utente.
+        <p>
+            E' stato quindi aggiunto il nuovo messaggio <b>chargestatus</b> per richiedere lo stato del carico, mostrato nel modello sottostante.
+        </p>
     </p>
 
     <img id="modello" class="bigimglim" src="../../projects/sprint0V2/coldstorageservice23arch.png" alt="Modello dispatch" height="70%" width="70%">
@@ -527,7 +530,11 @@
 </div>
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
-GIT repo: https://github.com/RiccardBarbieri/ColdStorageService
-</div> 
+    GIT repo: https://github.com/RiccardBarbieri/ColdStorageService
+    <p>Riccardo Barbieri - riccardo.barbieri11@studio.unibo.it</p>
+    <img src="../images/foto/riccardo.jpg" width="15%" height="15%">
+    <p>Leonardo Ruberto - leonardo.ruberto@studio.unibo.it</p>
+    <img src="../images/foto/leonardo.jpg" width="15%" height="15%">
+    </div>
 </body>
 </html>
