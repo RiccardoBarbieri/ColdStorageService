@@ -1,1 +1,0 @@
-{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"waiting", "nextstate":"somethingFailed", "msgId":"fail"}

@@ -1,0 +1,62 @@
+System coldstorageservice23
+
+//SAG -> CSS
+Request 	storerequest		:		storerequest(FW)
+Request		chargestatus		:		chargestatus(arg)
+
+//CSS -> SAG
+Reply		loadaccepted		:		loadaccepted(arg) for storerequest
+Reply		loadrejected		:		loadrejected(arg) for storerequest
+
+Reply		chargetaken			:		chargetaken(arg) for chargestatus
+Reply		chargefailed		:		chargefailed(arg) for chargestatus
+
+//CSS -> TT
+Request		toindoor			:		toindoor(arg)
+Request		depositcharge		:		depositcharge(arg)
+Request		returnhome			:		returnhome(arg)
+
+//TT -> CSS
+Reply		chargetakentt		:		chargetakentt(FW) for toindoor
+Reply		chargedeposited		:		chargedeposited(FW) for depositcharge
+Reply		returned			:		returned(FW) for returnhome
+
+
+Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
+Context ctx_coldstorageservice ip [host="localhost" port=8021]
+Context ctx_access ip [host="localhost" port=8022]
+
+
+QActor serviceaccessgui context ctx_access {
+	
+	State s0 initial {
+		request coldstorageservice -m storerequest : storerequest(arg)
+		request coldstorageservice -m chargestatus : chargestatus(arg)
+	}
+	
+	
+}
+
+QActor coldstorageservice context ctx_coldstorageservice {
+	
+	State s0 initial {
+		request transporttrolley -m toindoor : deposit(arg)
+		request transporttrolley -m depositcharge : depositcharge(arg)
+		request transporttrolley -m returnhome : returnhome(arg)
+	}
+	
+}
+
+
+QActor transporttrolley context ctx_coldstorageservice {
+	
+	State s0 initial {
+		println("TT: started") color green
+	}
+}
+
+
+ExternalQActor basicrobot context ctxbasicrobot
+
+
+
