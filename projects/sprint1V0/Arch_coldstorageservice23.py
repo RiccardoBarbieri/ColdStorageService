@@ -8,7 +8,7 @@ graphattr = {     #https://www.graphviz.org/doc/info/attrs.html
     'fontsize': '22',
 }
 
-nodeattr = {
+nodeattr = {   
     'fontsize': '22',
     'bgcolor': 'lightyellow'
 }
@@ -17,7 +17,7 @@ eventedgeattr = {
     'color': 'red',
     'style': 'dotted'
 }
-with Diagram('coldstorageservice23Arch', show=False, outformat='svg', graph_attr=graphattr) as diag:
+with Diagram('coldstorageservice23Arch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
 ### see https://renenyffenegger.ch/notes/tools/Graphviz/attributes/label/HTML-like/index
@@ -26,8 +26,11 @@ with Diagram('coldstorageservice23Arch', show=False, outformat='svg', graph_attr
      with Cluster('ctx_coldstorageservice', graph_attr=nodeattr):
           coldstorageservice=Custom('coldstorageservice','./qakicons/symActorSmall.png')
           transporttrolley=Custom('transporttrolley','./qakicons/symActorSmall.png')
-     with Cluster('ctx_access', graph_attr=nodeattr):
-          serviceaccessgui=Custom('serviceaccessgui','./qakicons/symActorSmall.png')
-     coldstorageservice >> Edge(color='magenta', style='solid', decorate='true', label='<toindoor<font color="darkgreen"> chargetakentt</font> &nbsp; depositcharge<font color="darkgreen"> chargedeposited</font> &nbsp; returnhome<font color="darkgreen"> returned</font> &nbsp; >',  fontcolor='magenta') >> transporttrolley
-     serviceaccessgui >> Edge(color='magenta', style='solid', decorate='true', label='<storerequest<font color="darkgreen"> loadaccepted loadrejected</font> &nbsp; chargestatus<font color="darkgreen"> chargetaken chargefailed</font> &nbsp; >',  fontcolor='magenta') >> coldstorageservice
+          trolleyexecutor=Custom('trolleyexecutor','./qakicons/symActorSmall.png')
+     trolleyexecutor >> Edge( label='alarm', **eventedgeattr, fontcolor='red') >> sys
+     coldstorageservice >> Edge(color='magenta', style='solid', decorate='true', label='<deposit<font color="darkgreen"> chargetakentt chargefailedtt</font> &nbsp; depositstatus<font color="darkgreen"> chargedeposited chargedepfailed</font> &nbsp; >',  fontcolor='magenta') >> transporttrolley
+     transporttrolley >> Edge(color='magenta', style='solid', decorate='true', label='<move<font color="darkgreen"> movedone movefailed</font> &nbsp; moveclosest<font color="darkgreen"> movecdone movecfailed</font> &nbsp; >',  fontcolor='magenta') >> trolleyexecutor
+     trolleyexecutor >> Edge(color='magenta', style='solid', decorate='true', label='<engage<font color="darkgreen"> engagedone engagerefused</font> &nbsp; moverobot<font color="darkgreen"> moverobotdone moverobotfailed</font> &nbsp; getrobotstate<font color="darkgreen"> robotstate</font> &nbsp; >',  fontcolor='magenta') >> basicrobot
+     trolleyexecutor >> Edge(color='blue', style='solid',  label='<fail &nbsp; >',  fontcolor='blue') >> transporttrolley
+     trolleyexecutor >> Edge(color='blue', style='solid',  label='<setrobotstate &nbsp; >',  fontcolor='blue') >> basicrobot
 diag

@@ -54,6 +54,7 @@ Request		getrobotstate		:		getrobotstate(ARG)
 Reply		robotstate			:		robotstate(POS,DIR) for getrobotstate
 
 
+
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
 Context ctx_coldstorageservice ip [host="localhost" port=8021]
 

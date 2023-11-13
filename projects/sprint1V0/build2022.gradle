@@ -117,7 +117,7 @@ eclipse {
 
 application {
     // Define the main class for the application.
-    mainClass = 'it.unibo.ctx_access.MainCtx_accessKt'
+    mainClass = 'it.unibo.ctx_coldstorageservice.MainCtx_coldstorageserviceKt'
 }
 
  jar {
