@@ -37,17 +37,15 @@
 <div class="remark">
     <p>
         <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements a questa pagina</a><br>
+    </p>
 
-        <p>
-        <bc>Goals dello sprint 1</bc>:
-        <ol>
-            <li>Definire con precisione i componenti dell'applicazione, limitandosi al contesto di <i>CSS</i> e <i>TT</i></li>
-            <li>Formulare il modello di <b>interazione</b> tra <b>ColdStorageService</b> e <b>TransportTrolley</b></li>
-        </ol>
-        <p>
-            L'interazione tra <i>TT</i> e <i>basicRobot</i> è implicita per il funzionamento del core-business e verrà trattata nel corso del documento.
-        </p>
-        </p>
+    <bc>Goals dello sprint 1</bc>:
+    <ol>
+        <li>Definire con precisione i componenti dell'applicazione, limitandosi al contesto di <i>CSS</i> e <i>TT</i></li>
+        <li>Formulare il modello di <b>interazione</b> tra <b>ColdStorageService</b> e <b>TransportTrolley</b></li>
+    </ol>
+    <p>
+        L'interazione tra <i>TT</i> e <i>basicRobot</i> è essenziale per il funzionamento del core-business e verrà trattata nel corso del documento.
     </p>
 </div>
 
@@ -56,12 +54,12 @@
 <div class="remark">
     <p>
         Dal documento dei requisiti, relativamente a questo <i>Sprint</i>, consideriamo i seguenti argomenti da trattare:
-        <ul>
-            <li>Service area</li>
-            <li><i>basicRobot</i> e <i>TransportTrolley</i></li>
-            <li>Interazione tra <i>CSS</i> e <i>TT</i></li>
-        </ul>
     </p>
+    <ul>
+        <li>Service area</li>
+        <li><i>basicRobot</i> e <i>TransportTrolley</i></li>
+        <li>Interazione tra <i>CSS</i> e <i>TT</i></li>
+    </ul>
 
     <p>
         Si riporta il risultato dell'analisi in <a href="../Sprint0/ColdStorageServiceSprint0V2.html#modello" target="_blank" rel="noopener noreferrer">Sprint0</a>, si baser&agrave; la seguente analisi su questo modello.<br>
@@ -72,16 +70,18 @@
     <h3>Entit&agrave;</h3>
     <p>
         Limitandosi al core-business dell'applicazione, riportiamo le sole componenti d'interesse presenti nel modello sopra definito.
+    </p>
         <ul>
             <li>ServiceAccessGUI</li>
             <li>ColdStorageService</li>
             <li>TransportTrolley</li>
             <li>BasicRobot</li>
         </ul>
-        <b>DA SPOSTARE IN ANALISI PROBLEMA? OPPURE SONO ATTORI DA REQ SPRINT0?</b>
-        <p class="keypoint">
-           <b>KEY-POINT:</b> ogni entità corrisponde ad un <b>attore</b> 
-        </p>
+    <p>
+        <b>TODO:BASICROBOT DA INIZIARE A CITARE IN ANALISI PROBLEMA? OPPURE SONO ATTORI DA REQ SPRINT0?</b>
+    </p>
+    <p class="keypoint">
+       <b>KEY-POINT:</b> ogni entità corrisponde ad un <b>attore</b> 
     </p>
     <h3 id="dati_analisi_requisiti">Dati</h3>
     <p>
@@ -195,10 +195,12 @@
     </p>
     <p>
         In questo modello, gli unici messaggi che vengono inviati dalla <i>ServiceAccessGUI</i> sono:
+    </p>
         <ul>
             <li><i>storerequest(FW)</i>, per la richiesta di deposito;</li>
             <li><i>chargestatus()</i>, per la richiesta dello stato del carico;</li>
         </ul>
+    <p>
         questa decisione si basa sul fatto che in questo <i>Sprint</i> <b>non verr&agrave; trattata la questione dei <i>ticket</i></b>.
     </p>
     <p class="keypoint">
@@ -210,21 +212,23 @@
         Definiamo il nuovo modello dei requisiti che fungerà da punto di partenza per la nostra analisi.
 
         <b>DOBBIAMO RAGIONARE SU COSA SCEGLIERE TRA DDR E BR</b>
+    </p>
 
-        <p>In aggiunta al modello iniziale, esplicitiamo la relazione <i>TransportTrolley-BasicRobot</i>. Dal <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">documento dei requisiti</a> viene esplicitato che il <b>TT usa il DDR</b> per realizzare il movimento.
-        </p>
+    <p>
+        In aggiunta al modello iniziale, esplicitiamo la relazione <i>TransportTrolley-BasicRobot</i>. Dal <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">documento dei requisiti</a> viene esplicitato che il <b>TT usa il DDR</b> per realizzare il movimento.
     </p>
     
     <h4 id="tt_analisi_requisiti">TransportTrolley e DDR Robot</h4>
     <p>      
         Il <i>TransportTrolley</i> &egrave; una entit&agrave; che si interpone tra il <i>BasicRobot</i> e il <i>ColdStorageService</i> e offre operazioni di alto livello per effettuare un deposito, in particolare:
+    </p>
         <ul>
             <li>prelevare un carico di cibo da INDOOR;</li>
             <li>depositare un carico prelevato ColdRoom;</li>
             <li>spostarsi da ColdRoom a HOME una volta completato il deposito;</li>
             <!--<li>comunicare il proprio <b>stato</b> a entit&agrave; interessate.</li>-->
         </ul>
-
+    <p>
         Inoltre, questa entit&agrave; deve essere in grado di comunicare all'esterno quando un carico viene prelevato; verr&agrave; discusso in analisi del problema se comunicarlo direttamente al componente interessato o al <i>ColdStorageService</i>, in vece di gestore del servizio.
     </p>
 
@@ -407,52 +411,29 @@
     <h4>ServiceAccessGUI</h4>
 
     <p>
-        Dal <a href="#modello_iniziale">modello iniziale</a>, la <b>ServiceAccessGUI</b> è definita come un attore e, all'interno dello <a href="../Sprint0/ColdStorageServiceSprint0V2.html" target="_blank" rel="noopener noreferrer">Sprint0</a> è stata realizzata come un <b>attore qak</b> all'interno del progetto principale. <br>
-        Abbiamo deciso di realizzare questo componente come esterno al progetto principale: la relativa analisi è presente in <a href="./ServiceAccessGUISimProjectV1.html">questo documento</a>. 
+        Data la complessit&agrave; del componente, abbiamo deciso di analizzare questo componente in uno Sprint parallelo al progetto principale: la relativa analisi è presente in <a href="./ServiceAccessGUISimProjectV1.html">questo documento</a>. 
     </p>
 
     <p class="nota">
         In questo Sprint la <i>ServiceAccessGUI</i> non gestir&agrave; l'inserimento del ticket e la differenziazione tra gli utenti che interagiscono, in quanto queste funzionalit&agrave;, non inerenti al core-business, verranno analizzate nel prossimo Sprint.<br> 
     </p>
 
-    
-
-    
-    <!--
-        <h5>Service area</h5>
-    <p>
-        Dall'<a href="../Sprint0/ColdStorageServiceSprint0V2.html#serviceareamodel" target="_blank">analisi dei requisiti</a> dello sprint precedente abbiamo modellato la service area come un rettangolo contenente aree di interesse:
-        <ul>
-            <li><span class="bold" style="color:rgb(255,0,0);">HOME</span>: quadrato di lato <b>RD</b> che identifica la posizione di partenza del transport trolley, &egrave; collocato sopra alla zona evidenziata;</li>
-            <li><span class="bold" style="color:rgb(64,64,228);">ColdRoom</span>: area di dimensione non non ancora definita, rappresenta la ColdRoom dove il transport trolley deve depositrare i carichi;</li>
-            <li><span class="bold" style="color:rgb(43,169,43);">INDOOR</span>: posizione lungo la parete inferiore adiacente alla parete sinistra, il transport trolley deve recarsi in quest'area per prelevare i carichi da i camion;</li>
-            <li><span class="stroke" style="color:rgb(255,228,0);">PORT</span>: posizione lungo il bordo inferiore dell'area della ColdRoom, il transport trolley deve posizionarsi in questa area per scaricare i carichi nella ColdRoom</li>
-        </ul>
-        <p>
-            Abbiamo dato delle specifiche in metri, in modo da avere una definizione precisa e formale. <br>
-            Nella successiva fase di analisi, astrarremo dalla specifica unità di misura in metri per adattarla all'entità robot con cui lavoriamo.
-        </p>
-    </p>
-    -->
-
     <h4>ColdStorageService</h4>
     <p>
         Tra i due modelli definiti in <a href="#modelli_css-tt" target="_blank" rel="noopener noreferrer">analisi dei requisiti</a>, abbiamo optato per il primo, in cui il <i>CSS</i> delega al <i>TransportTrolley</i> la realizzazione delle logiche di movimento. <br>
         Il <i>CSS</i> si occuperà quindi solo di:
+    </p>
         <ul>
             <li>accettare/rifiutare la richiesta di deposito</li>
             <li>notificare il <i>TransportTrolley</i> della presenza di un nuovo carico</li>
             <li>notificare la <i>ServiceAccessGUI</i> della presa in carico da parte del <i>TT</i> (messaggio <b>chargetaken</b>)</li>
         </ul>
+    <p>
         Il <i>ColdStorageService</i> non si interessa del raggiungimento dei particolari landmark nella Service Area (<i>HOME</i>,
         <i>INDOOR</i>, <i>ColdRoom</i>), in quanto l'operazione è delegata al <i>TransportTrolley</i>. In questo modo il <i>CSS</i> risulterà completamente indipendente dalla particolare disposizione dell'area di servizio (come le possibili diverse posizioni dei punti di interesse e degli ostacoli).
-
-        <p class="keypoint">
-            <b>KEY-POINT</b>: il ColdStorageService è completamente indipendente dalla particolare disposizione dell'area di servizio e dalle logiche di movimento del trolley, rispettando così anche il <b>principio di singola responsabilità</b>.
-        </p>
     </p>
-    <p>
-        Uno dei principali problemi riguarda appunto la rappresentazione dell'area di servizio, che influisce sull'interazione con il robot e su come esso si muove all'interno della stanza.
+    <p class="keypoint">
+        <b>KEY-POINT</b>: il ColdStorageService è completamente indipendente dalla particolare disposizione dell'area di servizio e dalle logiche di movimento del trolley, rispettando così anche il <b>principio di singola responsabilità</b>.
     </p>
 
     <h5 id="servicearea_analisi_problema">Service area</h5>
@@ -495,30 +476,58 @@
     <h4>TransportTrolley, DDR Robot e BasicRobot</h4>
 
     <p>
-        Il <b>DDR Robot</b> è il punto finale della catena di core-business, l'entità che esegue le azioni di deposito. Possiamo quindi pensarlo come il vero "robot", che potrebbe essere reale o virtuale. <br> 
-        D'altra parte, il <b>Transport Trolley</b> è un concetto di più alto livello, che racchiude la logica di movimento e controlla il <i>DDR</i>.
+        Il <b>DDR Robot</b> è il supporto fisico che si muove nella service area ed esegue le azioni di deposito. Ai fini di testare la funzionalit&agrave; del sistema si far&agrave; uso del supporto <b>VirtualRobot</b>, a disposizione della nostra software house, un robot virtuale che naviga una service area virtuale.<br> 
     </p>
     <p>
-        Al fine di astrarre le indicazioni del TransportTrolley al robot esecutore e permettere di intercambiare supporto (DDR robot o VirtualRobot) si fa uso del software BasicRobot, fornito dal committente; il software espone l'attore qak <b>basicrobot</b> con il quale &egrave; possibile comunicare per indicare al robot dove spostarsi, indicando le coordinate della destinazione da raggiungere.
+        Per guidare il robot, il TransportTrolley comunicher&agrave; con il software <b>BasicRobot</b>, sistema che permettere di intercambiare supporto (DDR robot o VirtualRobot) fornito dal committente; il software espone l'attore qak <b>basicrobot</b> con il quale &egrave; possibile comunicare per indicare al robot dove spostarsi, indicando le coordinate della destinazione da raggiungere.
+    </p>
+
+    <p>
+        basicrobot &egrave; in grado di interpretare l'area da navigare tramite il modello della service area formulato; la service area verr&agrave; passata al basicrobot tramite un formato testuale adhoc, configurabile tramite l'utilizzo del mapConfigurator, un esempio:
+    </p>
+        <pre><code class="language-bash">|1, 1, 1, 1, 1, 1, 1, 
+|1, 0, 0, 0, X, X, 1, 
+|1, 0, 0, 0, X, X, 1, 
+|1, 0, 0, 0, 0, 0, 1, 
+|1, 1, 1, 1, 1, 1, 1, 
+</code></pre>
+    <p>
+        Ogni numero o lettera rappresenta una cella della griglia, dove:
+    </p>
+    <ul>
+        <li>0: cella non esplorata</li>
+        <li>1: cella libera esplorata</li>
+        <li>X: cella con ostacolo</li>
+    </ul>
+
+    <p>
+        Tra i due <a href="#modelli_css-tt">modelli proposti</a> in analisi dei requisiti abbiamo deciso di mantenere la prima opzione, che assegna la responsabilit&agrave; dei singoli spostamenti al TransportTrolley; questa scelta &egrave; stata fatta per ridurre le responsabilit&agrave; del ColdStorageService, rispettando il principio di singola responsabilit&agrave;.
     </p>
 
     <h5>TrolleyExecutor</h5>
 
     <p>
-        L'analisi del problema del ritorno del robot alla posizione HOME dopo aver depositato un carico ci ha spinto a introdurre il nuovo componente <b>TrolleyExecutor</b>. Così facendo, possiamo distaccare il TransportTrolley dal funzionamento di BasicRobot, al fine di realizzare <i>comportamenti di pi&ugrave; alto livello</i> da mettere a disposizione al TransportTrolley.
+        Analizzando il problema del ritorno del robot alla posizione HOME dopo aver depositato un carico, abbiamo deciso di arricchire il modello con un componente intermedio, il <b>TrolleyExecutor</b>, per implementare <i>funzionalit&agrave; di pi&ugrave; alto livello</i> per muovere il robot rispetto a quelle offerte dal basicrobot.
     </p>
 
-    
     <p>
-        <h6>Possibile ottimizzazione</h6>
-        Come possibile ottimizzazione da proporre al committente, abbiamo considerato interessante introdurre un comando per permettere al transport trolley di indicare uno spostamento verso la <b>posizione pi&ugrave; vicina</b> data una <i>lista di posizioni (le loro coordinate)</i>; questa funzionalit&agrave;, attuabile tramite la richiesta <b>moveclosest(Xs,Ys)</b>, &egrave; stata implementata perch&eacute; alcune posizioni notevoli della service area sono aree costituite da <b>pi&ugrave; di una coordinata</b>.
+        La prima di queste funzionalit&agrave; consiste nell'abilitare il TransporTrolley a esprimere uno spostamento verso la coordinata pi&ugrave; vicina tra quelle in una lista specificata.
     </p>
 
     <p class="keypoint">
         <b>KEY-POINT: </b> Questa funzionalit&agrave; permette di ottimizzare la distanza che il robot deve percorrere in certe istanze, riducendo il tempo di esecuzione di alcuni specifici spostamenti. 
     </p>
+
+    <p>
+        In seguito verr&agrave; specificato il modello interazione delle tre entit&agrave; che realizzano il movimento del robot.
+    </p>
     
-    <h5 id="basicRobot_analisi">Basic robot</h5>
+    <h5 id="basicRobot_analisi">TransportTrolley-TrolleyExecutor-BasicRobot</h5>
+
+    <p>
+        <b>TODO: TABELLA TUTTE LE INTERAZIONE TT-TE-BR</b>
+    </p>
+
     <p>
         L'attore Qak <i>basicRobot</i>, contestualmente al core-business di questo <i>Sprint</i>, &egrave; incaricato di realizzare il movimento tra i vari <i>landmarks</i> della <a href="#servicearea_analisi_problema">Service Area</a>. <br>
     Tra le entità da noi definite, il <i>TrolleyExecutor</i> è l'unico a comunicare con il suddetto attore e necessiterà dei seguenti messaggi per attuare gli spostamenti:
