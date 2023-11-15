@@ -77,9 +77,6 @@
             <li>TransportTrolley</li>
             <li>BasicRobot</li>
         </ul>
-    <p>
-        <b>TODO:BASICROBOT DA INIZIARE A CITARE IN ANALISI PROBLEMA? OPPURE SONO ATTORI DA REQ SPRINT0?</b>
-    </p>
     <p class="keypoint">
        <b>KEY-POINT:</b> ogni entità corrisponde ad un <b>attore</b> 
     </p>
@@ -514,7 +511,7 @@
         La prima di queste funzionalit&agrave; consiste nell'abilitare il TransporTrolley a esprimere uno spostamento verso la coordinata pi&ugrave; vicina tra quelle in una lista specificata.
     </p>
 
-    <p class="keypoint">
+    <p class="keypoint" id="ottimizzazione">
         <b>KEY-POINT: </b> Questa funzionalit&agrave; permette di ottimizzare la distanza che il robot deve percorrere in certe istanze, riducendo il tempo di esecuzione di alcuni specifici spostamenti. 
     </p>
 
@@ -525,25 +522,185 @@
     <h5 id="basicRobot_analisi">TransportTrolley-TrolleyExecutor-BasicRobot</h5>
 
     <p>
-        <b>TODO: TABELLA TUTTE LE INTERAZIONE TT-TE-BR</b>
-    </p>
-
-    <p>
         L'attore Qak <i>basicRobot</i>, contestualmente al core-business di questo <i>Sprint</i>, &egrave; incaricato di realizzare il movimento tra i vari <i>landmarks</i> della <a href="#servicearea_analisi_problema">Service Area</a>. <br>
-    Tra le entità da noi definite, il <i>TrolleyExecutor</i> è l'unico a comunicare con il suddetto attore e necessiterà dei seguenti messaggi per attuare gli spostamenti:
-    <ul>
-        <li><b>engage(OWNER, STEPTIME)</b>: in fase di inizializzazione, specificando al basicrobot chi lo sta usando (per ottenere l'accesso esclusivo) e qual è lo <i>STEPTIME</i></li>
-        <li><b>setpos(X,Y,D)</b>: al successo dell'engage il transporttrolley invia questo messaggio al basicrobot per comunicare la posizione e direzione attuali del virtualrobot: il basicrobot manterr&agrave; internamento lo stato del robot basandosi su questa inizializzazione</li>
-        <li><b>moverobot(TARGETX, TARGETY)</b>: per realizzare il movimento all'interno della <i>Service Area</i>.</li>
-        <li><b>alarm()</b>: per interrompere il movimento del basicrobot.</li>
-        <li><b>getrobotstate()</b>: per ottenere la posizione corrente del robot</li>
-    </ul>
+    Tra le entità da noi definite, il <i>TrolleyExecutor</i> è l'unico a comunicare con il suddetto attore e necessiterà dei seguenti messaggi per attuare gli spostamenti.
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Mittente</th>
+                <th>Destinatario</th>
+                <th>Tipologia messaggio</th>
+                <th>Identificatore</th>
+                <th>Payload</th>
+                <th>Significato</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="orange bold center">trolleyexecutor</td>
+                <td class="orange bold center">basicrobot</td>
+                <td class="blue bold center">Request</td>
+                <td>engage</td>
+			    <td>engage(OWNER, STEPTIME)</td>
+                <td>Il TE specifica di essere l'utilizzatore al BR</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">basicrobot</td>
+                <td class="orange bold center">trolleyexecutor</td>
+                <td class="blue bold center">Reply</td>
+                <td>engagedone</td>
+			    <td>engagedone()</td>
+                <td>L'ingaggio del BR da parte del TE è andato a buon fine</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">basicrobot</td>
+                <td class="orange bold center">trolleyexecutor</td>
+                <td class="blue bold center">Reply</td>
+                <td>engagerefused</td>
+			    <td>engagerefused()</td>
+                <td>L'ingaggio del BR da parte del TE NON è andato a buon fine</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">trolleyexecutor</td>
+                <td class="orange bold center">basicrobot</td>
+                <td class="blue bold center">Dispatch</td>
+                <td>setrobotstate</td>
+			    <td>setpos(X, Y, dir)</td>
+                <td>Il TE comunica al BR posizione e direzione di inizializzazione del virtualrobot</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">trolleyexecutor</td>
+                <td class="orange bold center">basicrobot</td>
+                <td class="blue bold center">Request</td>
+                <td>moverobot</td>
+			    <td>moverobot(TARGETX, TARGETY)</td>
+                <td>Il TE comunica al BR le coordinate verso qui effettuare lo spostamento</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">basicrobot</td>
+                <td class="orange bold center">trolleyexecutor</td>
+                <td class="blue bold center">Reply</td>
+                <td>moverobotdone</td>
+			    <td>moverobotok()</td>
+                <td>Lo spostamento indicato dal TE è andato a buon fine</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">basicrobot</td>
+                <td class="orange bold center">trolleyexecutor</td>
+                <td class="blue bold center">Reply</td>
+                <td>moverobotfailed</td>
+			    <td>moverobotfailed(PLANDONE, PLANTODO)</td>
+                <td>Lo spostamento indicato dal TE NON è andato a buon fine e vengono restituiti dal BR informazioni relative allo spostamento effettuato e a quello mancante</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">trolleyexecutor</td>
+                <td class="orange bold center">basicrobot</td>
+                <td class="blue bold center">Event</td>
+                <td>alarm</td>
+			    <td>alarm()</td>
+                <td>Il TE comunica al BR di fermare il virtualrobot</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">trolleyexecutor</td>
+                <td class="orange bold center">basicrobot</td>
+                <td class="blue bold center">Request</td>
+                <td>getrobotstate</td>
+			    <td>getrobotstate()</td>
+                <td>Il TE comunica al BR le coordinate verso qui effettuare lo spostamento</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">basicrobot</td>
+                <td class="orange bold center">trolleyexecutor</td>
+                <td class="blue bold center">Reply</td>
+                <td>robotstate</td>
+			    <td>robotstate(POS, DIR)</td>
+                <td>Il BR indica ritorna la posizione ed il direzionamento del virtualrobot</td>
+            </tr>
+        </tbody>
+    </table>
     </p>
     <p>
-        Nella nostra astrazione tra <i>TransportTrolley</i>, <i>TrolleyExecutor</i> e <i>basicRobot</i> manteniamo la semantica <b>request-reply</b> per gli spostamenti, in quanto è necessario essere a conoscenza del successo o fallimento del movimento.
+        Inoltre, nella tabella sottostante, sono riportati i messaggi tra <i>TransporTrolley</i> e <i>TrolleyExecutor</i>.
+        <table>
+            <thead>
+                <tr>
+                    <th>Mittente</th>
+                    <th>Destinatario</th>
+                    <th>Tipologia messaggio</th>
+                    <th>Identificatore</th>
+                    <th>Payload</th>
+                    <th>Significato</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="orange bold center">trolleyexecutor</td>
+                    <td class="blue bold center">Request</td>
+                    <td>move</td>
+                    <td>move(X, Y)</td>
+                    <td>Il TT comunica al TE le coordinate verso cui effettuare lo spostamento</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">trolleyexecutor</td>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>movedone</td>
+                    <td>movedone()</td>
+                    <td>Lo spostamento è andato a buon fine</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">trolleyexecutor</td>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>movefailed</td>
+                    <td>movefailed()</td>
+                    <td>Lo spostamento NON è andato a buon fine</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="orange bold center">trolleyexecutor</td>
+                    <td class="blue bold center">Request</td>
+                    <td>moveclosest</td>
+                    <td>moveclosest(Xs, Ys)</td>
+                    <td>Il TT comunica al TE una lista di coordinate tra cui scegliere e verso cui effettuare lo spostamento</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">trolleyexecutor</td>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>movecdone</td>
+                    <td>movecdone()</td>
+                    <td>Lo spostamento alle coordinate più vicine è andato a buon fine</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">trolleyexecutor</td>
+                    <td class="orange bold center">transporttrolley</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>movecfailed</td>
+                    <td>movecfailed()</td>
+                    <td>Lo spostamento alle coordinate più vicine NON è andato a buon fine</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="nota">
+            Nonostante sia da discutere l'interesse del committente nell'<a href="#ottimizzazione">ottimizzazione discussa sopra</a>, abbiamo riportato gli eventuali messaggi necessari.
+        </p>
+    </p>
+    <p>
+        Nella nostra astrazione tra <i>TransportTrolley</i>, <i>TrolleyExecutor</i> e <i>basicRobot</i> abbiamo mantenuto la semantica <b>request-reply</b> per gli spostamenti, in quanto è necessario essere a conoscenza del successo o fallimento del movimento.
     </p>
     <p class="nota">
         Essendo che il <i>basicRobot</i> necessità di coordinate per muoversi, il <i>TransportTrolley</i> deve conoscerle obbligatoriamente. In particolare, deve avere a disposizione il mapping <i>landmarks</i>-<i>coordinate</i>, in modo da poter comunicare al <i>TrolleyExecutor</i> lo spostamento che dovrà implementare. 
+    </p>
+
+    <h6>Modello</h6>
+    <p>
+        Di seguito, riportiamo il modello logico limitato al contesto di <i>TransportTrolley</i>, <i>TrolleyExecutor</i> e <i>basicRobot</i>.
+    </p>
+    <p>
+        <b>TODO: INSERIRE IL MODELLO</b>
     </p>
 
     <h5>Responsabilità dei singoli componenti</h5>
@@ -622,10 +779,10 @@
 
     <h4>Modello</h4>
     <p>
-        Esponiamo il modello logico risultante dall'analisi del problema appena redatta.
+        Esponiamo il modello logico completo risultante dall'analisi del problema appena redatta.
     </p>
 
-    <b>TODO: inserire un modellooooo</b>
+    <img class="bigimglim imgborder" src="../images/sprint1/coldstorageservice23arch.png"></img>
 </div>
 
 
@@ -644,15 +801,11 @@
 <div class="remark">
 
     <h3>ColdStorageService</h3>
-
     <p>
-        Si riporta di seguito l'architettura logica del ColdStorageService.
+        Come evidenziato nel modello finale dell'analisi del problema, gli attori <b>coldstorageservice</b>, <b>transporttrolley</b> e <b>trolleyexecutor</b> risiedono nello stesso contesto in questo sprint, nel prossimo sviluppo verrano aggiunti componenti che determineranno un nuova distribuzione in contesti.
     </p>
-
-    <img class="imglim imgborder" src="../images/sprint1/coldstorageservice23arch.png"></img>
-
     <p>
-        Gli attori <b>coldstorageservice</b>, <b>transporttrolley</b> e <b>trolleyexecutor</b> risiedono nello stesso contesto in questo sprint, nel prossimo sviluppo verrano aggiunti componenti che determineranno un nuova distribuzione in contesti.
+        Nei paragrafi successivi viene dettagliato il comportamento di ognuno dei 3 attori, fornendo specifiche sulla relativa implementazione.
     </p>
 
     <h5>Attore coldstorageservice</h5>
@@ -785,6 +938,10 @@ CMD ["bash", "./unibo.mapConfigurator"]</code></pre>
 
     <p>
         Contestualmente al prossimo sprint verranno realizzate le apposite task Gradle per generare le immagini Docker per tutti i servizi coinvolti, cos&igrave; come la configurazione di un volume docker sfruttato dai container per file condivisi.
+    </p>
+
+    <p class="keypoint">
+        Utilizzo di <b>Dockerfile</b> per il deployment, generati da task Gradle.
     </p>
 
     <h5>Controllo</h5>
