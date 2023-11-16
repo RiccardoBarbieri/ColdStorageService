@@ -1,0 +1,66 @@
+System coldstorageservice23
+
+//TT -> TE
+Request		move				:		move(X,Y)
+Request		moveclosest			:		moveclosest(Xs,Ys)
+
+//TE -> TT
+Reply		movedone			:		movedone(arg) for move
+Reply		movefailed			:		movefailed(arg) for move
+
+Reply		movecdone			:		movecdone(arg) for moveclosest
+Reply		movecfailed			:		movecfailed(arg) for moveclosest
+
+Dispatch	fail				:		fail(ERROR)
+
+
+//BASICROBOT
+Request		engage				:		engage(OWNER, STEPTIME)
+Reply		engagedone			:		engagedone(ARG) for engage
+Reply		engagerefused		:		engagerefused(ARG) for engage
+Dispatch	disengage			:		disengage(ARG)
+
+Request		moverobot			:		moverobot(TARGETX, TARGETY)
+Reply		moverobotdone		:		moverobotok(ARG) for moverobot
+Reply		moverobotfailed		:		moverobotfailed(PLANDONE, PLANTODO) for moverobot
+
+Dispatch	setrobotstate		:		setpos(X,Y,D)
+
+Event		alarm				:		alarm(X)
+
+Request		getrobotstate		:		getrobotstate(ARG)
+Reply		robotstate			:		robotstate(POS,DIR) for getrobotstate
+
+
+
+Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
+Context ctx_coldstorageservice ip [host="localhost" port=8021]
+
+
+QActor transporttrolley context ctx_coldstorageservice {
+	State s0 initial {
+		request trolleyexecutor -m move : move(arg)
+		request trolleyexecutor -m moveclosest : moveclosest(arg)
+	}
+}
+
+
+QActor trolleyexecutor context ctx_coldstorageservice {
+	State s0 initial {
+		forward transporttrolley -m fail : fail(arg)
+		request basicrobot -m engage : engage(OWNER, STEPTIME)
+		forward basicrobot -m disengage : disengage(arg)
+		request basicrobot -m moverobot : moverobot(X,Y)
+		forward basicrobot -m setrobotstate : setrobotstate(X,Y,D)
+		request basicrobot -m getrobotstate : getrobotstate(arg)
+		emit alarm : alarm(X)
+	}
+
+}
+
+
+
+ExternalQActor basicrobot context ctxbasicrobot
+
+
+
