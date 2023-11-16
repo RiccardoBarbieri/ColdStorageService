@@ -8,7 +8,7 @@ graphattr = {     #https://www.graphviz.org/doc/info/attrs.html
     'fontsize': '22',
 }
 
-nodeattr = {   
+nodeattr = {
     'fontsize': '22',
     'bgcolor': 'lightyellow'
 }
@@ -17,7 +17,7 @@ eventedgeattr = {
     'color': 'red',
     'style': 'dotted'
 }
-with Diagram('coldstorageservice23Arch', show=False, outformat='png', graph_attr=graphattr) as diag:
+with Diagram('coldstorageservice23Arch', show=False, outformat='svg', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
 ### see https://renenyffenegger.ch/notes/tools/Graphviz/attributes/label/HTML-like/index
@@ -32,5 +32,5 @@ with Diagram('coldstorageservice23Arch', show=False, outformat='png', graph_attr
      transporttrolley >> Edge(color='magenta', style='solid', decorate='true', label='<move<font color="darkgreen"> movedone movefailed</font> &nbsp; moveclosest<font color="darkgreen"> movecdone movecfailed</font> &nbsp; >',  fontcolor='magenta') >> trolleyexecutor
      trolleyexecutor >> Edge(color='magenta', style='solid', decorate='true', label='<engage<font color="darkgreen"> engagedone engagerefused</font> &nbsp; moverobot<font color="darkgreen"> moverobotdone moverobotfailed</font> &nbsp; getrobotstate<font color="darkgreen"> robotstate</font> &nbsp; >',  fontcolor='magenta') >> basicrobot
      trolleyexecutor >> Edge(color='blue', style='solid',  label='<fail &nbsp; >',  fontcolor='blue') >> transporttrolley
-     trolleyexecutor >> Edge(color='blue', style='solid',  label='<setrobotstate &nbsp; >',  fontcolor='blue') >> basicrobot
+     trolleyexecutor >> Edge(color='blue', style='solid',  label='<setrobotstate &nbsp; disengage &nbsp; >',  fontcolor='blue') >> basicrobot
 diag

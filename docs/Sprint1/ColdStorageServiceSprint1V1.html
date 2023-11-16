@@ -207,8 +207,6 @@
     <h3>Modello dei requisiti</h3>
     <p>
         Definiamo il nuovo modello dei requisiti che fungerà da punto di partenza per la nostra analisi.
-
-        <b>DOBBIAMO RAGIONARE SU COSA SCEGLIERE TRA DDR E BR</b>
     </p>
 
     <p>
@@ -508,7 +506,7 @@
     </p>
 
     <p>
-        La prima di queste funzionalit&agrave; consiste nell'abilitare il TransporTrolley a esprimere uno spostamento verso la coordinata pi&ugrave; vicina tra quelle in una lista specificata.
+        La prima di queste funzionalit&agrave; consiste nell'abilitare il TransportTrolley a esprimere uno spostamento verso la coordinata pi&ugrave; vicina tra quelle in una lista specificata.
     </p>
 
     <p class="keypoint" id="ottimizzazione">
@@ -543,7 +541,7 @@
                 <td class="blue bold center">Request</td>
                 <td>engage</td>
 			    <td>engage(OWNER, STEPTIME)</td>
-                <td>Il TE specifica di essere l'utilizzatore al BR</td>
+                <td>Il TE "ingaggia" il BR, ottenendo utilizzo esclusivo specificando di essere l'utilizzatore insieme al tempo di STEPTIME (in ms)</td>
             </tr>
             <tr>
                 <td class="orange bold center">basicrobot</td>
@@ -560,6 +558,14 @@
                 <td>engagerefused</td>
 			    <td>engagerefused()</td>
                 <td>L'ingaggio del BR da parte del TE NON è andato a buon fine</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">trolleyexecutor</td>
+                <td class="orange bold center">basicrobot</td>
+                <td class="blue bold center">Request</td>
+                <td>disengage</td>
+			    <td>disengage(arg)</td>
+                <td>Il TE specifica la terminazione dell'ingaggio al BR</td>
             </tr>
             <tr>
                 <td class="orange bold center">trolleyexecutor</td>
@@ -621,7 +627,7 @@
     </table>
     </p>
     <p>
-        Inoltre, nella tabella sottostante, sono riportati i messaggi tra <i>TransporTrolley</i> e <i>TrolleyExecutor</i>.
+        Inoltre, nella tabella sottostante, sono riportati i messaggi tra <i>TransportTrolley</i> e <i>TrolleyExecutor</i>.
         <table>
             <thead>
                 <tr>
@@ -700,7 +706,7 @@
         Di seguito, riportiamo il modello logico limitato al contesto di <i>TransportTrolley</i>, <i>TrolleyExecutor</i> e <i>basicRobot</i>.
     </p>
     <p>
-        <b>TODO: INSERIRE IL MODELLO</b>
+        <img class="bigimglim" src="../images/sprint1/css23modelTT-TE-BR.png" alt="Modello TransportTrolley-TrolleyExecutor-BasicRobot">
     </p>
 
     <h5>Responsabilità dei singoli componenti</h5>

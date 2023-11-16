@@ -218,6 +218,15 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope, isconfined: Boolean
 					}	 	 
 					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
+				state("disengage") { //this:State
+					action { //it:State
+						forward("disengage", "disengage(arg)" ,"basicrobot" ) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+				}	 
 			}
 		}
 } 
