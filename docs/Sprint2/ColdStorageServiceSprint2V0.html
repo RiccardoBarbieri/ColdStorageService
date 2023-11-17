@@ -30,8 +30,8 @@
 
 <div class="remark">
     <p>
-        All'interno dello <a href="../Sprint1/ColdStorageServiceSprint1V0.html">Sprint1</a> è stato analizzato il <b>core-business</b> dell'applicazione, ovvero le funzionalità offerte dal <i>ColdStorageService</i>, usando la <a href="../Sprint1/ServiceAccessGUISimProjectV1.html">ServiceAccessGUISim</a> come prompt per utilizzare i servizi. In questa fase, ci siamo occupati della logica del <i>ColdStorageService</i> usando un contesto semplificativo in cui vi fosse un'interazione per volta. <br>
-        In questo Sprint gestiremo invece la presenza di più utilizzatori simultanei, analizzando quindi il concetto di <b>ticket</b> e costruendo la <b>ServiceAccessGUI</b>.
+        All'interno dello <a href="../Sprint1/ColdStorageServiceSprint1V0.html">Sprint1</a> è stato analizzato il <u>core-business</u> dell'applicazione, ovvero le funzionalità offerte dal <i>ColdStorageService</i>, usando la <a href="../Sprint1/ServiceAccessGUISimProjectV1.html">ServiceAccessGUI</a> come prompt per utilizzare i servizi. In questa fase, ci siamo occupati della logica del <i>ColdStorageService</i> usando un contesto semplificativo in cui vi fosse un'interazione per volta. <br>
+        In questo Sprint gestiremo invece la presenza di più utilizzatori simultanei, analizzando quindi il concetto di <b>ticket</b> e costruendo la versione finale della <b>ServiceAccessGUI</b>.
     </p>
 </div>
 
@@ -39,14 +39,19 @@
 <h2>Requirements</h2>
  
 <div class="remark">
-    <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements a questa pagina</a><br>
+    <p>
+        <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements a questa pagina</a><br>
+    </p>
 
     <p>
-    <bc>Goals dello sprint 2</bc>:
+    <bc>Goals dello Sprint2</bc>:
     <ol>
         <li>Definire cos'è il <b>ticket</b> e come gestirlo</li>
         <li>Implementare la <b>ServiceAccessGUI</b> con il concetto di più utilizzatori contemporanei in un sistema distribuito</li>
     </ol>
+    </p>
+    <p class="nota">
+        Visto quanto realizzato nell'analisi della <a href="../Sprint1/ServiceAccessGUISimProjectV1.html">ServiceAccessGUI</a> relativa allo <i>Sprint1</i>, abbiamo già pronta l'applicazione web di partenza, realizzata con il framework <b>SpringBoot</b>.
     </p>
 </div>
 
@@ -56,7 +61,113 @@
 <div class="remark">
 
     <p>
-        Vengono riportati di seguito i requisiti definiti nello <a href="../Sprint0/ColdStorageServiceSprint0V1.html">Sprint0</a>
+        Si riporta il modello risultante dall'analisi in <a href="../Sprint1/ColdStorageServiceSprint1V1.html#modello_finale" target="_blank" rel="noopener noreferrer">Sprint1</a>, sul quale si baser&agrave; la seguente analisi.<br>
+        <p>
+            <img class="bigimglim imgborder" src="../images/sprint1/coldstorageservice23arch.png"></img>
+        </p>
+    </p>
+    <p>
+        Inoltre, viene riportato nei seguenti documenti la versione del <i>TemaFinale23</i> analizzata contestualmente a questo Sprint, ed in particolare ai due macro-argomenti:
+        <ul>
+            <li><a href="../documents/temafinale_sprint2_sag.pdf" target="_blank" rel="noopener noreferrer">ServiceAccessGUI</a></li>
+            <li><a href="../documents/temafinale_sprint2_ticket.pdf" target="_blank" rel="noopener noreferrer">gestione del ticket</a></li>
+        </ul>
+    </p>
+
+    <h3>ServiceAccessGUI</h3>
+
+    <p>
+        La <i>ServiceAccessGUI</i> è l'interfaccia grafica che a disposizione dell'utente per accedere ai servizi forniti dal <i>ColdStorageService</i>.
+    </p>
+    <h5>Interazioni</h5>
+    <p>
+        Di seguito, vengono riportate le interazioni presenti e già implementate nello <i>Sprint1</i>. <br>
+        Abbiamo tre attori:
+    <ul>
+        <li>FridgeTruck: utente umano</li>
+        <li>ServiceAccessGUI: interfaccia grafica (<a href="../Sprint1/ServiceAccessGUISimProjectV1.html" target="_blank" rel="noopener noreferrer">applicazione web</a> realizzata relativamente allo <i>Sprint1</i>)</li>
+        <li>coldstorageservice: attore <i>qak</i></li>
+    </ul>
+    </p>
+    <table>
+        <thead>
+            <tr>
+                <th>Mittente</th>
+                <th>Destinatario</th>
+                <th>Tipologia interazione/messaggio</th>
+                <th>Eventuale messaggio</th>
+                <th>Descrizione</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="orange bold center">FridgeTruck</td>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="blue bold center">Interazione umana</td>
+                <td></td>
+                <td>Inserimento quantitativo di cibo da depositare in chilogrammi e innesco richiesta di deposito.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="blue bold center">Request</td>
+                <td>storerequest : storerequest(FW)</td>
+                <td>Richiesta di <b>storage</b> di <b>FW</b> chili di cibo.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="blue bold center">Reply</td>
+                <td>loadaccepted : loadaccepted()</td>
+                <td>La richiesta di deposito &egrave; stata accettata.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="blue bold center">Reply</td>
+                <td>loadrejected : loadrejected()</td>
+                <td>La richiesta &egrave; stata rifiutata.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">FridgeTruck</td>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="blue bold center">Interazione umana</td>
+                <td></td>
+                <td>Innesco richiesta di stato del carico.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="blue bold center">Request</td>
+                <td>chargestatus : chargestatus()</td>
+                <td>Viene richiesto lo stato del carico depositato.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="blue bold center">Reply</td>
+                <td>chargetaken : chargetaken()</td>
+                <td>Il deposito è stato preso in carico dal transport trolley, il camion deve spostarsi da INDOOR.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="blue bold center">Reply</td>
+                <td>chargefailed : chargefailed()</td>
+                <td>Ci sono stati problemi durante la presa in carico del deposito.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+        Ora, come visto nei <a href="../documents/temafinale_sprint2_ticket.pdf" target="_blank" rel="noopener noreferrer">requisiti</a>, a seguito di una richiesta accettata (<i>loadaccepted</i>), il <i>ColdStorageService</i> deve <b>fornire</b> il <b>ticket number</b>. <br>
+        Di conseguenza, dovrà essere presente nella <i>SAG</i> un campo per l'<b>inserimento del ticket</b>, da cui poi innescare la richiesta di deposito verso il <i>coldstorageservice</i>, specificando appunto il <i>ticket number</i>.
+    </p>
+    <p>
+        Inoltre, si aggiunge il requisito di visualizzare il peso corrente del materiale immagazzinato nella <a href="#coldroom">Cold Room</a>.
+    </p>
+    <p class="nota">   
+        L'applicazione deve mostrare visualizzazioni separate per ogni utente (operiamo in un contesto distribuito). Quindi, un'utente dovrà visualizzare l'accettazione (o rifiuto) della richiesta e l'eventuale presa in carico solo relativamente alla sua richiesta di deposito. 
     </p>
 
     <h3>Ticket</h3>
@@ -80,34 +191,6 @@
         </p>
         <p class="nota">
             Parlando con il committente si è scoperto non essere necessario che il <i>"numero"</i> del ticket sia propriamente un numero: intendiamolo quindi come un <b>codice</b>.
-        </p>
-    </p>
-
-    <h3>ServiceAccessGUI</h3>
-    <p>
-        <table>
-            <tr>
-                <th>Termine</th>
-                <th>Descrizione</th>
-            </tr>
-            <tr>
-                <td class="green bold center" id="serviceaccessgui">ServiceAccessGUI</td>
-                <td>Interfaccia grafica che permette a un utente di: 
-                    <ul>
-                        <li>visualizzare il peso corrente del materiale immagazzinato nella <a href="#coldroom">Cold Room</a>;</li>
-                        <li>inviare la richiesta di deposito di una <b>FoodLoad</b> <a href="#fw">FW</a> kg di prodotti alimentari, comunicando un <a href="#ticket">ticket</a> in caso di richiesta accettata;</li>
-                        <li>immettere il codice del ticket quando il <a href="#camionrefrigerato">camion refrigerato</a> si trova alla porta <a href="#INDOOR">INDOOR</a>, all'esterno della service area;</li>
-                        <li>visualizzare il messaggio di <a href="#chargetaken">charge taken</a>.</li>
-                    </ul>
-                </td>
-            </tr>
-        </table>
-        <p class="nota">
-            Visto quanto realizzato nell'analisi della <i>ServiceAccessGUISim</i> relativa allo <i>Sprint1</i>, abbiamo già pronta l'applicazione web di partenza, realizzata con il framework <b>SpringBoot</b>.
-        </p>
-        <p>
-            La <i>ServiceAccessGUI</i> è quindi l'applicazione che verrà messa a disposizione dell'utente per accedere ai servizi forniti dal <i>ColdStorageService</i>. <br>
-            L'applicazione deve mostrare visualizzazioni separate per ogni utente (operiamo in un contesto distribuito). Quindi, un'utente dovrà visualizzare l'accettazione (o rifiuto) della richiesta e l'eventuale presa in carico solo relativamente alla sua richiesta di deposito. 
         </p>
     </p>
 </div>
