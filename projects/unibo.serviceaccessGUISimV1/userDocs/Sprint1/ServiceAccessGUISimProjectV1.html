@@ -12,7 +12,7 @@
 
 
 <script>hljs.highlightAll();</script>
-<title>Progettazione ServiceAccessGUISim</title>
+<title>Progettazione ServiceAccessGUI</title>
 </head>
     
 <body>
@@ -29,7 +29,7 @@
 
 <div class="remark">
     <p>
-        Documento che tratta la realizzazione della <i>ServiceAccessGUI</i> simulata in relazione all'analisi presente nello <a href="../../../../docs/Sprint1/ColdStorageServiceSprint1V0.html">Sprint1</a>. <br>
+        Documento che tratta la realizzazione della <i>ServiceAccessGUI</i>, in relazione all'analisi presente nello <a href="../../../../docs/Sprint1/ColdStorageServiceSprint1V0.html">Sprint1</a>. <br>
     </p>
 </div>
 
@@ -40,7 +40,7 @@
     <p>
         <bc>Goals</bc> <br>
         <p>
-            La ServiceAccessGUISim deve permettere di:
+            La ServiceAccessGUI, in questa fase di sviluppo, deve permettere di:
     <ul>
         <li>inviare una richiesta di deposito</li>
         <li>richiedere lo stato della propria richiesta</li>
@@ -67,8 +67,76 @@
             </li>
             <li>solo in caso di <b>richiesta accettata</b>, richiedere lo <i>stato del carico</i> e visualizzare la relativa risposta</i></li>
         </ol>
-        Questi tre passaggi rappresentano il flusso di attività che vogliamo vengano simulate. Alla fine di questi step si realizza l'uscita dalla <i>INDOOR</i> da parte del <i>Camion</i>, aggiornando la vista dell'interfaccia applicativa per permettere una nuova interazione (da zero). <br>
-        Come descritto nella sezione <a href="../../../../docs/Sprint1/ColdStorageServiceSprint1V0.html#components_CSS" target="_blank">componenti</a> dello <i>Sprint1</i>, il Camion si deve allontanare anche in caso di <b>richiesta rifiutata</b>, quindi anche in questo casò si dovrà aggiornare la vista dell'applicazione per permettere una nuova interazione. <br>
+        Come descritto nella sezione <a href="./ColdStorageServiceSprint1V1.html#components_CSS" target="_blank">componenti</a> dello <i>Sprint1</i>, il Camion si deve allontanare anche in caso di <b>richiesta rifiutata</b>, quindi anche in questo casò si dovrà aggiornare la vista dell'applicazione per permettere una nuova interazione. <br>
+    </p>
+
+    <h4>Messaggi</h4>
+    <p>
+        Si riportano di seguito i messaggi necessari per l'interazione tra <i>SAG</i> e <i>CSS</i>, presi dal <a href="../Sprint0/ColdStorageServiceSprint0V2.html#modello" target="_blank" rel="noopener noreferrer">modello dei requisiti</a> definito nello <i>Sprint0</i>.
+    <table>
+        <thead>
+            <tr>
+                <th>Mittente</th>
+                <th>Destinatario</th>
+                <th>Tipologia messaggio</th>
+                <th>Identificatore</th>
+                <th>Payload</th>
+                <th>Significato</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="orange bold center">serviceaccessgui</td>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="blue bold center">Request</td>
+                <td>storerequest</td>
+                <td>storerequest(FW)</td>
+                <td>Richiesta di <b>storage</b> di <b>FW</b> chili di cibo.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="orange bold center">serviceaccessgui</td>
+                <td class="blue bold center">Reply</td>
+                <td>loadaccepted</td>
+				<td>loadaccepted()</td>
+                <td>La richiesta di deposito &egrave; stata accettata.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="orange bold center">serviceaccessgui</td>
+                <td class="blue bold center">Reply</td>
+                <td>loadrejected</td>
+				<td>loadrejected()</td>
+                <td>La richiesta &egrave; stata rifiutata.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">serviceaccessgui</td>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="blue bold center">Request</td>
+                <td>chargestatus</td>
+				<td>chargestatus()</td>
+                <td>Viene richiesto lo stato del carico depositato.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="orange bold center">serviceaccessgui</td>
+                <td class="blue bold center">Reply</td>
+                <td>chargetaken</td>
+				<td>chargetaken()</td>
+                <td>Il deposito è stato preso in carico dal transport trolley, il camion deve spostarsi da INDOOR.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="orange bold center">serviceaccessgui</td>
+                <td class="blue bold center">Reply</td>
+                <td>chargefailed</td>
+				<td>chargefailed()</td>
+                <td>Ci sono stati problemi durante la presa in carico del deposito.</td>
+            </tr>
+        </tbody>
+    </table>
+
+
     </p>
 </div>
 
@@ -92,12 +160,12 @@
  
 <div class="remark">
 
-    <h3 id="sagsim_project">ServiceAccessGUISim</h3>
+    <h3 id="sagsim_project">ServiceAccessGUI</h3>
     <p>
         Come anticipato in fase di analisi del problema, si è pensato di implementare questo componente software come un'<b>applicazione web</b>. <br>
     </p>
     <p>
-        Abbiamo deciso di sviluppare l'applicazione utilizzando il framework <b>Spring Boot</b>, sia poiché permette di aggiungere funzionalità in poco tempo, sia allo scopo di uniformare lo stack tecnologico utilizzato dal progetto nel suo insieme (utilizzeremo <i>Spring</i> anche all'interno del <a href="./ColdStorageServiceSprint1V0.html#mapconfigurator_project">MapConfigurator</a>). 
+        Abbiamo deciso di sviluppare l'applicazione utilizzando il framework <b>Spring Boot</b>, sia poiché permette di aggiungere funzionalità in poco tempo, sia allo scopo di uniformare lo stack tecnologico utilizzato dal progetto nel suo insieme (utilizzeremo <i>Spring</i> anche all'interno del <a href="./MapConfiguratorProject.html">MapConfigurator</a>). 
     </p>
 
     <h5>Architettura dell'applicazione</h5>
@@ -106,7 +174,7 @@
         Questa applicazione serve per accedere ai servizi forniti dal <i>ColdStorageService</i>. La comunicazione con esso è quindi di cruciale importanza.
     </p>
     <p class="keypoint">
-    <b>KEY-POINT:</b> La comunicazione tra i due componenti (ServiceAccessGUISim e ColdStorageService) tramite il protocollo <b>Coap</b>; la scelta &egrave; guidata dal fatto che la nostra software house ha già sviluppato classi e interfacce per implementare un concetto generale di connessione tramite questo protocollo nella libreria <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code> per comunicare con gli attori qak.
+    <b>KEY-POINT:</b> La comunicazione tra i due componenti (ServiceAccessGUI e ColdStorageService) tramite il protocollo <b>Coap</b>; la scelta &egrave; guidata dal fatto che la nostra software house ha già sviluppato classi e interfacce per implementare un concetto generale di connessione tramite questo protocollo nella libreria <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code> per comunicare con gli attori qak.
     </p>
   
     <h6 id="timeoutclass">Gestione del timeout</h6>
@@ -176,11 +244,11 @@
 
     <p>
         Per il deployment ci si basa sulla sezione all'interno dello <a href="">Sprint1</a>. <br>
-        Relativamente alla <i>ServiceAccessGUISim</i>, riportiamo il comando per l'avvio dell'applicazione.
+        Relativamente alla <i>ServiceAccessGUI</i>, riportiamo il comando per l'avvio dell'applicazione.
 
         <p>
-            <i>ServiceAccessGUISim</i> (progetto Spring) 
-            <pre><code class="language-bash">cd ./projects/unibo.serviceaccessGUISim
+            <i>ServiceAccessGUI</i> (progetto Spring) 
+            <pre><code class="language-bash">cd ./projects/unibo.serviceaccessGUI
     gradlew bootRun</code></pre>
         </p>
     </p>
@@ -188,8 +256,11 @@
  
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
-GIT repo: https://github.com/RiccardBarbieri/ColdStorageService
-</div>
-</div>
+    GIT repo: https://github.com/RiccardBarbieri/ColdStorageService
+    <p>Riccardo Barbieri - riccardo.barbieri11@studio.unibo.it</p>
+    <img src="../images/foto/riccardo.jpg" width="15%" height="15%">
+    <p>Leonardo Ruberto - leonardo.ruberto@studio.unibo.it</p>
+    <img src="../images/foto/leonardo.jpg" width="15%" height="15%">
+    </div>
 </body>
 </html>

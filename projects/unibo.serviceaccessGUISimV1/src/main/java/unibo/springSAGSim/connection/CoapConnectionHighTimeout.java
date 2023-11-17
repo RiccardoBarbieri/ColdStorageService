@@ -6,6 +6,7 @@ import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.elements.exception.ConnectorException;
+import unibo.basicomm23.coap.CoapConnection;
 import unibo.basicomm23.interfaces.Interaction;
 import unibo.basicomm23.utils.CommUtils;
 import unibo.basicomm23.utils.Connection;
@@ -13,101 +14,25 @@ import unibo.basicomm23.utils.Connection;
 import java.io.IOException;
 
 
-public class CoapConnectionHighTimeout extends Connection {
-protected CoapClient client;
-private String url;
+public class CoapConnectionHighTimeout extends CoapConnection {
 
-private String answer = "unknown";
+    public CoapConnectionHighTimeout(String address, String path) {
+        super(address, path);
+        setCoapClient(address, path);
+    }
 
-	public static Interaction create(String host, String path) throws Exception {
-	 	return new CoapConnectionHighTimeout(host,path);
-	}
-
-	public CoapConnectionHighTimeout( String address, String path) { //"coap://localhost:5683/" + path
- 		setCoapClient(address,path);
-	}
-
-	protected void setCoapClient(String addressWithPort, String path) {
-		//CommUtils.outmagenta(  "    +++ CoapConn | setCoapClient addressWithPort=" +  addressWithPort  );
-		//url            = "coap://"+address + ":5683/"+ path;
-		url            = "coap://"+addressWithPort + "/"+ path;
-		if( Connection.trace )  CommUtils.outyellow(  "    +++ CoapConn | setCoapClient url=" +  url  );
-		client          = new CoapClient( url );
- 		client.useExecutor(); //To be shutdown
-		if( Connection.trace )  CommUtils.outyellow("    +++ CoapConn | STARTS client url=" +  url ); //+ " client=" + client );
-		client.setTimeout( 15000L );
-	}
-
-	public void removeObserve(CoapObserveRelation relation) {
-		relation.proactiveCancel();
-		if( Connection.trace )  CommUtils.outyellow("    +++ CoapConn | removeObserve !!!!!!!!!!!!!!!" + relation   );
-	}
-	public CoapObserveRelation observeResource( CoapHandler handler  ) {
-		CoapObserveRelation relation = client.observe( handler );
-		//if( Connection.trace )  CommUtils.outyellow("    +++ CoapConn |  added " + handler + " relation=" + relation + relation );
- 		return relation;
-	}
-
-
-
-//From Interaction
-	@Override
-	public void forward(String msg) throws ConnectorException, IOException {
-	    if( Connection.trace ) CommUtils.outyellow(  "    +++ CoapConn | forward " + url + " msg=" + msg );
-
-		if( client != null ) {
-			CoapResponse resp = client.put(msg, MediaTypeRegistry.TEXT_PLAIN); //Blocking!
-			if( resp != null ) {
-				if (Connection.trace)
-					CommUtils.outyellow("    +++ CoapConn | forward " + msg + " resp=" + resp.getCode());
-			}else {
-		    	CommUtils.outred("    +++ CoapConn | forward - resp null for " + msg  );
-		    }  //?????
-		}
-	}
-
-
-	@Override
-	public String request(String query) throws ConnectorException, IOException {
-		if( Connection.trace ) CommUtils.outyellow(  "    +++ CoapConn | request query=" + query + " url="+url  );
-		String param = query.isEmpty() ? "" :  "?q="+query;
-		if( Connection.trace ) CommUtils.outyellow(  "    +++ CoapConn | param=" + (url+param)  );
-
-  		//client.setURI(url+param);
-		//CoapResponse response = client.get(  );
-
-		client.setURI(url );
-		CoapResponse response = client.put(query, MediaTypeRegistry.TEXT_PLAIN);
-		if( response != null ) {
-			if( Connection.trace )  CommUtils.outyellow(  "    +++ CoapConn | request=" + query
- 	 				+" RESPONSE CODEEEE: " + response.getCode() + " answer=" + response.getResponseText()  );
-			answer = response.getResponseText();
- 	 		return answer;
-		}else {
-	 		CommUtils.outred(  "    +++ CoapConn | request=" + query +" RESPONSE NULL " );
-			return null;
-		}
-	}
-
-	//https://phoenixnap.com/kb/install-java-raspberry-pi
-
-	@Override
-	public void reply(String reqid) throws Exception {
-		throw new Exception( "   +++ CoapConn | reply not allowed");
-	}
-
-	@Override
-	public String receiveMsg() throws Exception {
-		if( Connection.trace )  CommUtils.outyellow(  "    +++ CoapConn | receiveMsg" );
-		return answer;
-	}
-
-	@Override
-	public void close()  {
-		if( Connection.trace ) CommUtils.outyellow(  "    +++ CoapConn | client shutdown=" + client);
-		client.shutdown();
-	}
-
+    @Override
+    protected void setCoapClient(String addressWithPort, String path) {
+        //CommUtils.outmagenta(  "    +++ CoapConn | setCoapClient addressWithPort=" +  addressWithPort  );
+        //url            = "coap://"+address + ":5683/"+ path;
+        this.url = "coap://" + addressWithPort + "/" + path;
+        if (Connection.trace) CommUtils.outyellow("    +++ CoapConn | setCoapClient url=" + url);
+        this.client = new CoapClient(url);
+        this.client.useExecutor(); //To be shutdown
+        if (Connection.trace)
+            CommUtils.outyellow("    +++ CoapConn | STARTS client url=" + url); //+ " client=" + client );
+        this.client.setTimeout(15000L);
+    }
 }
 /*
 Log4j by default looks for a file called log4j.properties or log4j.xml on the classpath
