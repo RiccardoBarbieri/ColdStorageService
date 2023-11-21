@@ -1,0 +1,26 @@
+{
+  "t10n0iw" : {
+    "id" : 0,
+    "weight" : 1.0,
+    "repr" : "t10n0iw",
+    "generationTimeMs" : 1700596826593
+  },
+  "t20n1di" : {
+    "id" : 1,
+    "weight" : 2.0,
+    "repr" : "t20n1di",
+    "generationTimeMs" : 1700596826593
+  },
+  "t30n2kh" : {
+    "id" : 2,
+    "weight" : 3.0,
+    "repr" : "t30n2kh",
+    "generationTimeMs" : 1700596826593
+  },
+  "t40n3xz" : {
+    "id" : 3,
+    "weight" : 4.0,
+    "repr" : "t40n3xz",
+    "generationTimeMs" : 1700596826593
+  }
+}

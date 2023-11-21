@@ -1,5 +1,8 @@
 package ticket
 
+import cli.System.Object
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.streams.asSequence
 
@@ -9,7 +12,7 @@ class TicketManager {
     val STRING_LENGTH = 2L
 
     var incrementalId = 0
-    val tickets = mutableMapOf<Int, Ticket>()
+    val tickets = mutableMapOf<String, Ticket>()
 
     fun generateTicket(weight: Float): String {
         val currentId = incrementalId++
@@ -19,8 +22,14 @@ class TicketManager {
         representation += "n"
         representation += currentId.toString()
         representation += randomString()
-        tickets[currentId] = Ticket(currentId, weight, representation)
+        tickets[representation] = Ticket(currentId, weight, representation)
         return representation
+    }
+
+    fun init(filename: String = "tickets.json", destination: String = "./") {
+        val map = loadFromJsonFile(filename, destination)
+        map.forEach { (key, value) -> tickets[key] = value }
+        incrementalId = tickets.maxOf { it.value.id } + 1
     }
 
     private fun randomString(): String {
@@ -31,14 +40,28 @@ class TicketManager {
     }
 
     fun checkTicketValidity(ticketRepr: String, currentTimeMs: Long, ticketTimeMs: Long): Boolean {
-        val ticketId = ticketRepr.split("n")[1].dropLast(2).toInt()
-        val ticket = tickets[ticketId] ?: return false
+        val ticket = tickets[ticketRepr] ?: return false
         return (currentTimeMs - ticket.generationTimeMs) < ticketTimeMs
+    }
+
+    fun dumpToJsonFile(filename: String = "tickets.json", destination: String = "./") {
+        val objectMapper = ObjectMapper()
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(java.io.File(destination + filename), tickets)
+    }
+
+    private fun loadFromJsonFile(filename: String = "tickets.json", destination: String = "./"): Map<String, Ticket> {
+        val objectMapper = ObjectMapper()
+        val typeRef: TypeReference<HashMap<String, Ticket>> = object : TypeReference<HashMap<String, Ticket>>() {}
+        return objectMapper.readValue(java.io.File(destination + filename), typeRef)
     }
 
 }
 
 fun main() {
     val ticketManager = TicketManager()
-
+    ticketManager.generateTicket(1.0f)
+    ticketManager.generateTicket(2.0f)
+    ticketManager.generateTicket(3.0f)
+    ticketManager.generateTicket(4.0f)
+    ticketManager.dumpToJsonFile()
 }
