@@ -1,1 +1,2 @@
+{"actor":"coldstorageservice", "msgType":"dispatch", "curstate":"waiting", "nextstate":"requestDeposit", "msgId":"initdeposit"}
 {"actor":"transporttrolley", "msgType":"dispatch", "curstate":"waiting", "nextstate":"somethingFailed", "msgId":"fail"}

@@ -2,11 +2,17 @@
 % coldstorageservice23 description   
 %====================================================================================
 request( storerequest, storerequest(FW) ).
+request( insertticket, insertticket(TICKET) ).
 request( chargestatus, chargestatus(arg) ).
-reply( loadaccepted, loadaccepted(arg) ).  %%for storerequest
+dispatch( initdeposit, initdeposit(TICKET) ).
+reply( loadaccepted, loadaccepted(TICKET) ).  %%for storerequest
 reply( loadrejected, loadrejected(arg) ).  %%for storerequest
 reply( chargetaken, chargetaken(arg) ).  %%for chargestatus
 reply( chargefailed, chargefailed(arg) ).  %%for chargestatus
+reply( ticketaccepted, ticketaccepted(arg) ).  %%for insertticket
+reply( ticketrejected, ticketrejected(arg) ).  %%for insertticket
+request( generateticket, generateticket(FW) ).
+reply( ticket, ticket(TICKET) ).  %%for generateticket
 request( deposit, deposit(FW) ).
 request( depositstatus, depositstatus(arg) ).
 reply( chargetakentt, chargetakentt(FW) ).  %%for deposit
@@ -34,7 +40,9 @@ reply( robotstate, robotstate(POS,DIR) ).  %%for getrobotstate
 %====================================================================================
 context(ctxbasicrobot, "127.0.0.1",  "TCP", "8020").
 context(ctx_coldstorageservice, "localhost",  "TCP", "8021").
- qactor( coldstorageservice, ctx_coldstorageservice, "it.unibo.coldstorageservice.Coldstorageservice").
+ qactor( tempsag, ctx_coldstorageservice, "it.unibo.tempsag.Tempsag").
+  qactor( ticketmanager, ctx_coldstorageservice, "it.unibo.ticketmanager.Ticketmanager").
+  qactor( coldstorageservice, ctx_coldstorageservice, "it.unibo.coldstorageservice.Coldstorageservice").
   qactor( transporttrolley, ctx_coldstorageservice, "it.unibo.transporttrolley.Transporttrolley").
   qactor( trolleyexecutor, ctx_coldstorageservice, "it.unibo.trolleyexecutor.Trolleyexecutor").
   qactor( basicrobot, ctxbasicrobot, "external").

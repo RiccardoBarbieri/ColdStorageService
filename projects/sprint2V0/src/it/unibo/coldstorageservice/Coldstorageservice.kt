@@ -26,6 +26,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 				
 				var accepted: Boolean = false
 				
+				val weightTicketMap = mutableMapOf<String, Float>()
 				return { //this:ActionBasciFsm
 				state("chargeFailed") { //this:State
 					action { //it:State
@@ -53,6 +54,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 				}	 
 				state("s0") { //this:State
 					action { //it:State
+						delegate("insertticket", "ticketmanager") 
 						CommUtils.outblue("CSS: started")
 						//genTimer( actor, state )
 					}
@@ -69,8 +71,12 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t00",targetState="checkAvailability",cond=whenRequest("storerequest"))
-					transition(edgeName="t01",targetState="requestDeposit",cond=whenRequest("chargestatus"))
+					 transition(edgeName="t04",targetState="checkAvailability",cond=whenRequest("storerequest"))
+					transition(edgeName="t05",targetState="requestDeposit",cond=whenDispatch("initdeposit"))
+					transition(edgeName="t06",targetState="chargeTakenTT",cond=whenReply("chargetakentt"))
+					transition(edgeName="t07",targetState="chargeFailed",cond=whenReply("chargefailedtt"))
+					transition(edgeName="t08",targetState="chargeDeposited",cond=whenReply("chargedeposited"))
+					transition(edgeName="t09",targetState="depositFailed",cond=whenReply("chargedepfailed"))
 				}	 
 				state("checkAvailability") { //this:State
 					action { //it:State
@@ -78,8 +84,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 val FW = payloadArg(0).trim().toFloat()  
 								if(  (tempCurrentColdRoom + FW) <= maxColdRoom  
-								 ){answer("storerequest", "loadaccepted", "loadaccepted(arg)"   )  
-									tempCurrentColdRoom += FW
+								 ){	tempCurrentColdRoom += FW
 													LastDepositRequested = FW
 													accepted = true
 								CommUtils.outblue("CSS: load for $FW KG accepted, currentWeight = $actualCurrentColdRoom")
@@ -95,20 +100,52 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
+					 transition( edgeName="goto",targetState="requestTicket", cond=doswitchGuarded({ accepted  
+					}) )
+					transition( edgeName="goto",targetState="waiting", cond=doswitchGuarded({! ( accepted  
+					) }) )
 				}	 
-				state("requestDeposit") { //this:State
+				state("requestTicket") { //this:State
 					action { //it:State
-						 accepted = false  
-						request("deposit", "deposit($LastDepositRequested)" ,"transporttrolley" )  
-						CommUtils.outblue("CSS: requested deposit for $LastDepositRequested KG")
+						request("generateticket", "generateticket($LastDepositRequested)" ,"ticketmanager" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t02",targetState="chargeTakenTT",cond=whenReply("chargetakentt"))
-					transition(edgeName="t03",targetState="chargeFailed",cond=whenReply("chargefailedtt"))
+					 transition(edgeName="t010",targetState="replyTicket",cond=whenReply("ticket"))
+				}	 
+				state("replyTicket") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("ticket(TICKET)"), Term.createTerm("ticket(TICKET)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 val Ticket = payloadArg(0)  
+								CommUtils.outblue("CSS: Serving ticket")
+								answer("storerequest", "loadaccepted", "loadaccepted($Ticket)"   )  
+								 weightTicketMap[Ticket] = LastDepositRequested  
+						}
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
+				}	 
+				state("requestDeposit") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("initdeposit(TICKET)"), Term.createTerm("initdeposit(TICKET)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+									LastDepositRequested = weightTicketMap[payloadArg(0)]!!
+												weightTicketMap.remove(payloadArg(0))
+								request("deposit", "deposit($LastDepositRequested)" ,"transporttrolley" )  
+								CommUtils.outblue("CSS: requested deposit for $LastDepositRequested KG")
+						}
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
 				state("chargeTakenTT") { //this:State
 					action { //it:State
@@ -123,8 +160,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t04",targetState="chargeDeposited",cond=whenReply("chargedeposited"))
-					transition(edgeName="t05",targetState="depositFailed",cond=whenReply("chargedepfailed"))
+					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
 				state("chargeDeposited") { //this:State
 					action { //it:State

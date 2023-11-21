@@ -2,14 +2,29 @@ System coldstorageservice23
 
 //SAG -> CSS
 Request 	storerequest		:		storerequest(FW)
+
+//SAG -> CSS(TM)
+Request		insertticket		:		insertticket(TICKET)
 Request		chargestatus		:		chargestatus(arg)
 
+//TM -> CSS
+Dispatch	initdeposit			:		initdeposit(TICKET)
+
 //CSS -> SAG
-Reply		loadaccepted		:		loadaccepted(arg) for storerequest
+Reply		loadaccepted		:		loadaccepted(TICKET) for storerequest
 Reply		loadrejected		:		loadrejected(arg) for storerequest
 
+//TM -> SAG
 Reply		chargetaken			:		chargetaken(arg) for chargestatus
 Reply		chargefailed		:		chargefailed(arg) for chargestatus
+Reply		ticketaccepted		:		ticketaccepted(arg) for insertticket
+Reply		ticketrejected		:		ticketrejected(arg) for insertticket
+
+//CSS -> TM
+Request		generateticket		:		generateticket(FW)
+
+//TM -> CSS
+Reply		ticket				:		ticket(TICKET) for generateticket
 
 //CSS -> TT
 Request		deposit				:		deposit(FW) //TODO: diventerà id richiesta
@@ -54,9 +69,79 @@ Request		getrobotstate		:		getrobotstate(ARG)
 Reply		robotstate			:		robotstate(POS,DIR) for getrobotstate
 
 
-
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
 Context ctx_coldstorageservice ip [host="localhost" port=8021]
+
+QActor tempsag context ctx_coldstorageservice {
+	
+	[# var Ticket: String = "" #]
+	
+	State s0 initial {
+		delay 2000
+		println("SAG: requesting ticket") color yellow
+		request coldstorageservice -m storerequest : storerequest(5)
+	}
+	Transition t0 whenReply loadaccepted -> reply
+	
+	State reply {
+		onMsg(loadaccepted : loadaccepted(TICKET)) {
+			println("SAG: ${payloadArg(0)}") color yellow
+			[# Ticket = payloadArg(0) #]
+		}
+		delay 5000
+	}
+	Goto insertticket
+	
+	State insertticket {
+		request coldstorageservice -m insertticket : insertticket($Ticket)
+	}
+	Transition t0	whenReply	ticketaccepted	->	confirm
+	
+	State confirm {
+		println("SAG: confirmed ticket") color yellow
+	}
+	Goto s0
+	
+}
+
+
+QActor ticketmanager context ctx_coldstorageservice {
+	
+	[#	val ticketManager: ticket.TicketManager = ticket.TicketManager()
+		val TICKETTIME = 10
+		
+	#]
+	
+	State s0 initial {
+	}
+	Goto waiting
+	
+	State waiting {
+		
+	}
+	Transition t0	whenRequest	generateticket	->	generateTicket
+					whenRequest	insertticket	->	validateTicket
+	
+	State generateTicket {
+		onMsg (generateticket : generateticket(FW)) {
+			[# val NewTicket = ticketManager.generateTicket(payloadArg(0).toFloat()) #]
+			replyTo generateticket with ticket : ticket($NewTicket)
+		}
+	}
+	Goto waiting
+	
+	State validateTicket {
+		onMsg(insertticket : insertticket(TICKET)) {
+			[# ticketManager.checkTicketValidity(payloadArg(0), System.currentTimeMillis(), TICKETTIME*1000L) #]
+			replyTo insertticket with ticketaccepted : ticketaccepted(arg)
+			
+			forward coldstorageservice -m initdeposit : initdeposit($payloadArg(0))
+		}
+	}
+	Goto waiting
+	
+	
+}
 
 QActor coldstorageservice context ctx_coldstorageservice {
 	
@@ -68,6 +153,7 @@ QActor coldstorageservice context ctx_coldstorageservice {
 		
 		var accepted: Boolean = false
 		
+		val weightTicketMap = mutableMapOf<String, Float>()
 	#]
 	
 	State chargeFailed {
@@ -83,6 +169,8 @@ QActor coldstorageservice context ctx_coldstorageservice {
 	}
 	
 	State s0 initial {
+		delegate "insertticket" to ticketmanager
+		
 		println("CSS: started") color blue
 	}
 	Goto waiting
@@ -91,18 +179,18 @@ QActor coldstorageservice context ctx_coldstorageservice {
 		println("CSS: waiting for new storage request") color blue
 	}
 	Transition t0	whenRequest	storerequest	->	checkAvailability	//1
-					whenRequest chargestatus	->	requestDeposit		//2
-//					whenReply	chargetakentt	->	chargeTakenTT		//3a
-//					whenReply	chargefailedtt	->	chargeFailed		//3b
-//					whenReply	chargedeposited	->	chargeDeposited		//4a
-//					whenReply	chargedepfailed	->	depositFailed		//4b
+//					whenRequest chargestatus	->	requestDeposit		//2
+					whenMsg		initdeposit		->	requestDeposit		//2
+					whenReply	chargetakentt	->	chargeTakenTT		//3a
+					whenReply	chargefailedtt	->	chargeFailed		//3b
+					whenReply	chargedeposited	->	chargeDeposited		//4a
+					whenReply	chargedepfailed	->	depositFailed		//4b
 	
 	State checkAvailability {
 		onMsg (storerequest : storerequest(FW)) {
 			[# val FW = payloadArg(0).trim().toFloat() #]
 						
 			if [# (tempCurrentColdRoom + FW) <= maxColdRoom #] {
-				replyTo storerequest with loadaccepted : loadaccepted(arg)
 				[#	tempCurrentColdRoom += FW
 					LastDepositRequested = FW
 					accepted = true
@@ -115,16 +203,36 @@ QActor coldstorageservice context ctx_coldstorageservice {
 			}
 		}
 	}
-//	Goto requestOrQueueDeposit if [# accepted #] else waiting
+	Goto requestTicket if [# accepted #] else waiting
+	
+	State requestTicket {
+		request ticketmanager -m generateticket : generateticket($LastDepositRequested)
+	}
+	Transition t0	whenReply	ticket	->	replyTicket
+	
+	State replyTicket {
+		onMsg(ticket : ticket(TICKET)) {
+			[# val Ticket = payloadArg(0) #]
+			println("CSS: Serving ticket") color blue
+		
+			replyTo storerequest with loadaccepted : loadaccepted($Ticket)
+			[# weightTicketMap[Ticket] = LastDepositRequested #]
+		}
+	}
 	Goto waiting
 	
 	State requestDeposit {
-		[# accepted = false #]
-		request transporttrolley -m deposit : deposit($LastDepositRequested)
-		println("CSS: requested deposit for $LastDepositRequested KG") color blue
+		onMsg(initdeposit : initdeposit(TICKET)) {
+			[#	LastDepositRequested = weightTicketMap[payloadArg(0)]!!
+				weightTicketMap.remove(payloadArg(0))
+			#]
+			request transporttrolley -m deposit : deposit($LastDepositRequested)
+			println("CSS: requested deposit for $LastDepositRequested KG") color blue
+		}
 	}
-	Transition t0	whenReply	chargetakentt	->	chargeTakenTT
-					whenReply	chargefailedtt	->	chargeFailed
+	Goto waiting
+//	Transition t0	whenReply	chargetakentt	->	chargeTakenTT
+//					whenReply	chargefailedtt	->	chargeFailed
 
 	State chargeTakenTT {
 		replyTo	chargestatus with chargetaken : chargetaken(arg)
@@ -133,8 +241,9 @@ QActor coldstorageservice context ctx_coldstorageservice {
 		}
 		request transporttrolley -m depositstatus : depositstatus(arg)
 	}
-	Transition t0	whenReply	chargedeposited	->	chargeDeposited
-					whenReply	chargedepfailed	->	depositFailed
+	Goto waiting
+//	Transition t0	whenReply	chargedeposited	->	chargeDeposited
+//					whenReply	chargedepfailed	->	depositFailed
 	
 	State chargeDeposited {
 		onMsg(chargedeposited : chargedeposited(FW)){
