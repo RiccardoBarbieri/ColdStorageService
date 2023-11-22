@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import unibo.basicomm23.coap.CoapConnection;
 import unibo.basicomm23.interfaces.Interaction;
+import unibo.springSAGSim.connection.CoapObserver;
 import unibo.springSAGSim.connection.SagConnection;
 import unibo.springSAGSim.model.FWRequest;
 import unibo.springSAGSim.model.TicketRequest;
@@ -28,21 +30,26 @@ import java.io.OutputStream;
 public class SagController {
 
     public static final String className = "SagController";
-    @Value("${spring.application.name}")
-    String appName;
+
     private SagConnection sagConnection;
+    private CoapConnection observerConn;
     private Interaction requestConn;
 
-    @Autowired
-    public SagController(SagConnection sagConnection) {
-        this.sagConnection = sagConnection;
-        this.requestConn = sagConnection.connectLocalActorUsingCoap();
-    }
+    @Value("${spring.application.name}")
+    String appName;
 
     @GetMapping("/")
     public String homePage(Model model) {
         model.addAttribute("arg", appName);
         return "main";
+    }
+
+    @Autowired
+    public SagController(SagConnection sagConnection) {
+        this.sagConnection = sagConnection;
+        this.observerConn = sagConnection.connectLocalActorUsingCoap();
+        observerConn.observeResource(new CoapObserver());
+        this.requestConn = sagConnection.connectLocalActorUsingCoap();
     }
 
     @PostMapping(value = "/sendStorageRequest", consumes = "application/json")
@@ -81,7 +88,7 @@ public class SagController {
     }
 
     @PostMapping(value = "/enterTicketRequest", consumes = "application/json")
-    public ResponseEntity<String> enterTicketRequest(@RequestBody TicketRequest ticketrequest) {
+    public ResponseEntity<String> enterTicketRequest(@RequestBody TicketRequest ticketrequest){
         if (ticketrequest == null || ticketrequest.getTicketCode() == null || ticketrequest.getTicketCode().isEmpty()) {
             HttpHeaders headers = new HttpHeaders();
             return new ResponseEntity<>(className + " enterTicketRequest | ERROR: input error", headers, HttpStatus.BAD_REQUEST);
@@ -103,15 +110,16 @@ public class SagController {
         return new ResponseEntity<>(className + " enterTicketRequest | answer: " + answer, headers, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/generatePdf", consumes = "application/json", produces = MediaType.APPLICATION_PDF_VALUE)
-    public @ResponseBody byte[] generatePdf(@RequestBody TicketRequest ticketrequest) {
+    @PostMapping(value = "/generatePdf", consumes = "application/json", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> generatePdf(@RequestBody TicketRequest ticketrequest) {
         Document document = new Document(PageSize.A7);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.out.println("__________________Ticket code: " + ticketrequest.getTicketCode());
         try {
             PdfWriter.getInstance(document, out);
         } catch (DocumentException e) {
             HttpHeaders headers = new HttpHeaders();
-            return null;
+            return new ResponseEntity<>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         try {
@@ -130,11 +138,12 @@ public class SagController {
 
             document.close();
         } catch (DocumentException e) {
-            HttpHeaders headers = new HttpHeaders();
             return null;
         }
 
-        return out.toByteArray();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=ticket.pdf");
+        return new ResponseEntity<>(out.toByteArray(), headers, HttpStatus.OK);
     }
 
 }

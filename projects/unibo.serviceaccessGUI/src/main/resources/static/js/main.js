@@ -1,8 +1,11 @@
 // Definisci la variabile globale
-window.chargeTaken = false;
 window.reloadTime = 7000;
 
 function sendStorageRequest(quantityFw) {
+
+    // TODO MOCK
+    generatePdf("t10n2cd")
+    return
     const saveButton = document.querySelector("#save");
 
     saveButton.firstElementChild.removeAttribute("hidden");
@@ -54,24 +57,21 @@ function sendStorageRequest(quantityFw) {
 
             if (!response.ok) {
                 showError(response.text());
-            }
-            else {
+            } else {
                 setTimeout(() => {
                     if (resolvedValue.includes("loadaccepted")) {
                         var ticketCodeTmp = resolvedValue.split("(")[2]
                         var ticketCode = ticketCodeTmp.split(")")[0]
                         showResponseStorageRequest("accepted", ticketCode)
-                    }
-                    else if (resolvedValue.includes("loadrejected")) {
+                    } else if (resolvedValue.includes("loadrejected")) {
                         showResponseStorageRequest("rejected", null)
-                    }
-                    else {
+                    } else {
                         showResponseStorageRequest("KO", null)
                     }
                 }, 2000);
             }
         });
-        
+
     }).catch(error => {
         console.log(error);
     });
@@ -95,13 +95,11 @@ function sendChargeStatusRequest() {
 
             if (!response.ok) {
                 showError(response.text());
-            }
-            else {
+            } else {
                 setTimeout(() => {
                     if (resolvedValue.includes("chargetaken")) {
                         showResponseChargeStatus("accepted")
-                    }
-                    else {
+                    } else {
                         showResponseChargeStatus("KO")
                     }
                 }, 2000);
@@ -122,7 +120,7 @@ function enterTicketRequest(inputValue) {
 
     const spinner = document.querySelector('#spinner-border-ticket');
     spinner.removeAttribute('hidden');
-    
+
 
     //data structure to send to server
     const requestBodyMap = {
@@ -167,16 +165,13 @@ function enterTicketRequest(inputValue) {
 
             if (!response.ok) {
                 showError(response.text());
-            }
-            else {
+            } else {
                 setTimeout(() => {
                     if (resolvedValue.includes("ticketaccepted")) {
                         showResponseTicket("accepted")
-                    }
-                    else if (resolvedValue.includes("ticketrejected")) {
+                    } else if (resolvedValue.includes("ticketrejected")) {
                         showResponseTicket("rejected")
-                    }
-                    else {
+                    } else {
                         showResponseTicket("KO")
                     }
                 }, 2000);
@@ -188,6 +183,34 @@ function enterTicketRequest(inputValue) {
     });
 }
 
+function generatePdf(inputValue) {
+
+    //data structure to send to server
+    const requestBodyMap = {
+        ticketCode: inputValue
+    }
+
+    //request to server
+    const relativeEndpoint = '/generatePdf';
+    fetch(
+        relativeEndpoint,
+        {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/pdf',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBodyMap)
+        }
+    ).then(response => {
+        return response.arrayBuffer();
+    }).then(data => {
+        var blob = new Blob([data], {type: 'application/pdf'});
+        saveAs(blob, 'ticket.pdf');
+    }).catch(error => {
+            console.log(error);
+    });
+}
 
 function showResponseStorageRequest(response, ticketCode) {
     const responseBody = document.getElementById('responseBodyStorage');
@@ -195,10 +218,10 @@ function showResponseStorageRequest(response, ticketCode) {
     const responseText = document.getElementById('responseTextStorage');
     if (response === "accepted") {
         setTimeout(() => {
-            responseText.innerHTML = "The storage request has been accepted! <br>Your ticket is: <b>" + ticketCode + "</b>" 
+            responseText.innerHTML = "The storage request has been accepted! <br>Your ticket is: <b>" + ticketCode + "</b>"
+            generatePdf(ticketCode);
         }, 500);
-    }
-    else if (response === "rejected") {
+    } else if (response === "rejected") {
         setTimeout(() => {
             responseText.innerHTML = "The request has been rejected! <br>The page will be restored shortly."
         }, 500);
@@ -206,8 +229,7 @@ function showResponseStorageRequest(response, ticketCode) {
         setTimeout(() => {
             location.reload();
         }, reloadTime);
-    }
-    else {
+    } else {
         responseText.innerHTML = "Error during processing the deposit! <br>The page will be restored shortly."
         countdownFail(window.reloadTime, "countdownStorage")
         setTimeout(() => {
@@ -222,18 +244,16 @@ function showResponseTicket(response) {
     const responseText = document.getElementById('responseTextTicket');
     if (response === "accepted") {
         setTimeout(() => {
-            responseText.innerHTML = "Your ticket has been accepted, the service is taking care of your load. <br> Wait until the handling is completed." 
+            responseText.innerHTML = "Your ticket has been accepted, the service is taking care of your load. <br> Wait until the handling is completed."
         }, 500);
         setTimeout(() => {
-            sendChargeStatusRequest(); 
+            sendChargeStatusRequest();
         }, 1000);
-    }
-    else if (response === "rejected") {
+    } else if (response === "rejected") {
         setTimeout(() => {
             responseText.innerHTML = "Your ticket has been rejected! <br>Check that you have entered it correctly."
         }, 500);
-    }
-    else {
+    } else {
         responseText.innerHTML = "Error during processing the ticket validation! <br>The page will be restored shortly."
         countdownFail(window.reloadTime, "countdownTicket")
         setTimeout(() => {
@@ -254,8 +274,7 @@ function showResponseChargeStatus(response) {
                 location.reload();
             }, reloadTime);
         }, 500);
-    }
-    else if (response === "KO") {
+    } else if (response === "KO") {
         setTimeout(() => {
             responseText.innerHTML = "The service encountered an issue and the load was not taken over! <br>The page will be restored shortly."
         }, 500);
@@ -263,8 +282,7 @@ function showResponseChargeStatus(response) {
         setTimeout(() => {
             location.reload();
         }, reloadTime);
-    }
-    else {
+    } else {
         responseText.innerHTML = "Error during processing the handling of the load! <br>The page will be restored shortly."
         countdownFail(window.reloadTime, "countdownChargeStatus")
         setTimeout(() => {
@@ -280,8 +298,7 @@ function validateInput() {
     if (isNaN(inputValue) || inputValue <= 0.0) {
         // Display an error message
         showError('Please enter a positive integer value!');
-    }
-    else {
+    } else {
         sendStorageRequest(inputValue);
     }
 }
@@ -295,11 +312,9 @@ function validateTicket() {
     if (inputValue.length < 1) {
         // Display an error message
         showError('Ticket field must be filled!');
-    }
-    else if (!inputValue.match(regex)) {
+    } else if (!inputValue.match(regex)) {
         showError('Ticket code is not in the correct format!');
-    }
-    else {
+    } else {
         enterTicketRequest(inputValue);
     }
 }
