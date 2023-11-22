@@ -58,13 +58,15 @@ function sendStorageRequest(quantityFw) {
             else {
                 setTimeout(() => {
                     if (resolvedValue.includes("loadaccepted")) {
-                        showResponse("storerequest", "accepted")
+                        var ticketCodeTmp = resolvedValue.substring(resolvedValue.lastIndexOf("loadaccepted("), resolvedValue.length)
+                        var ticketCode = ticketCodeTmp.substring(0, ticketCodeTmp.indexOf(")"));
+                        showResponse("accepted", ticketCode)
                     }
                     else if (resolvedValue.includes("loadrejected")) {
-                        showResponse("storerequest", "rejected")
+                        showResponse("rejected", null)
                     }
                     else {
-                        showResponse("storerequest", "KO")
+                        showResponse("KO", null)
                     }
                 }, 2000);
             }
@@ -126,10 +128,10 @@ function sendChargeStatusRequest() {
             else {
                 setTimeout(() => {
                     if (resolvedValue.includes("chargetaken")) {
-                        showResponse("chargestatus", "accepted")
+                        showResponseChargeStatus("accepted")
                     }
                     else {
-                        showResponse("chargestatus", "KO")
+                        showResponseChargeStatus("KO")
                     }
                 }, 2000);
             }
@@ -217,40 +219,84 @@ function enterTicketRequest() {
 }
 
 
-function showResponse(requestType, response) {
-    const responseBody = document.getElementById('responseBody');
+function showResponseStorageRequest(response, ticketCode) {
+    const responseBody = document.getElementById('responseBodyStorage');
     responseBody.style.display = "block";
-    const responseText = document.getElementById('responseText');
+    const responseText = document.getElementById('responseTextStorage');
     if (response === "accepted") {
-        if (requestType === "storerequest") {
-            setTimeout(() => {
-                const checkChargeStatus = document.getElementById('checkChargeStatus');
-                checkChargeStatus.style.display = "block";
-            }, 500);
-        }
-        else if (requestType === "chargestatus") {
-            responseText.innerHTML = "Your load has been taken in charge from the service! <br> The page will be restored shortly: you can leave the INDOOR."
-            countdownFail(window.reloadTime);
-            setTimeout(() => {
-                location.reload();
-            }, reloadTime);
-        }
+        setTimeout(() => {
+            responseText.innerHTML = "The storage request has been accepted! <br>Your ticket is: <b>" + ticketCode + "</b>" 
+        }, 500);
     }
     else if (response === "rejected") {
-        if (requestType === "storerequest") {
+        setTimeout(() => {
             responseText.innerHTML = "The request has been rejected! <br>The page will be restored shortly."
-        }
-        else if (requestType === "chargestatus") {
-            responseText.innerHTML = "Your load has not been taken in charge from the service! <br> The page will be restored shortly."
-        }
-        countdownFail(window.reloadTime);
+        }, 500);
+        countdownFail(window.reloadTime, "countdownStorage");
         setTimeout(() => {
             location.reload();
         }, reloadTime);
     }
     else {
         responseText.innerHTML = "Error during processing the deposit! <br>The page will be restored shortly."
-        countdownFail(window.reloadTime)
+        countdownFail(window.reloadTime, "countdownStorage")
+        setTimeout(() => {
+            location.reload();
+        }, reloadTime);
+    }
+}
+
+function showResponseTicket(response) {
+    const responseBody = document.getElementById('responseBodyTicket');
+    responseBody.style.display = "block";
+    const responseText = document.getElementById('responseTextTicket');
+    if (response === "accepted") {
+        setTimeout(() => {
+            responseText.innerHTML = "Your ticket has been accepted, the service is taking care of your load. <br> Wait until the handling is completed." 
+        }, 500);
+        setTimeout(() => {
+            sendChargeStatusRequest(); 
+        }, 1000);
+    }
+    else if (response === "rejected") {
+        setTimeout(() => {
+            responseText.innerHTML = "Your ticket has been rejected! <br>Check that you have entered it correctly."
+        }, 500);
+    }
+    else {
+        responseText.innerHTML = "Error during processing the ticket validation! <br>The page will be restored shortly."
+        countdownFail(window.reloadTime, "countdownTicket")
+        setTimeout(() => {
+            location.reload();
+        }, reloadTime);
+    }
+}
+
+function showResponseChargeStatus(response) {
+    const responseBody = document.getElementById('responseBodyChargeStatus');
+    responseBody.style.display = "block";
+    const responseText = document.getElementById('responseTextChargeStatus');
+    if (response === "accepted") {
+        setTimeout(() => {
+            responseText.innerHTML = "Your load has been taken in charge from the service! <br> The page will be restored shortly: you can leave the INDOOR."
+            countdownFail(window.reloadTime, "countdownChargeStatus");
+            setTimeout(() => {
+                location.reload();
+            }, reloadTime);
+        }, 500);
+    }
+    else if (response === "KO") {
+        setTimeout(() => {
+            responseText.innerHTML = "The service encountered an issue and the load was not taken over! <br>The page will be restored shortly."
+        }, 500);
+        countdownFail(window.reloadTime, "countdownChargeStatus");
+        setTimeout(() => {
+            location.reload();
+        }, reloadTime);
+    }
+    else {
+        responseText.innerHTML = "Error during processing the handling of the load! <br>The page will be restored shortly."
+        countdownFail(window.reloadTime, "countdownChargeStatus")
         setTimeout(() => {
             location.reload();
         }, reloadTime);
@@ -303,6 +349,6 @@ function countdown(time, element) {
     }, 1000);
 }
 
-function countdownFail(time) {
-    countdown(time - 1000, document.getElementById('countdown'));
+function countdownFail(time, countdownElement) {
+    countdown(time - 1000, document.getElementById(countdownElement));
 }

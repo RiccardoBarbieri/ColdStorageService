@@ -26,7 +26,14 @@
         </button>
     </div>
 
-    <div id="ticketField" style="display: none;">
+    <div id="responseBodyStorage" style="display: none;">
+        <div>
+            <label id="responseTextStorage" class="form-label"></label>
+            <div id="countdownStorage"></div>
+        </div>
+    </div>
+
+    <div id="ticketField" style="display: block;">
         <label for="ticketNumberField" class="form-label">Once arrived at INDOOR, enter the <b>ticket code</b> received by the service.</label>
         <input id="ticketNumberField" name="ticketNumber" required class="form-control"
                placeholder="Ticket code">
@@ -36,18 +43,17 @@
         </button>
     </div>
 
-    <div id="checkChargeStatus" style="display: none;">
-        <label class="form-label">The ticket has been accepted! <br>Check the status of your load.</label>
-        <button id="sendChargeStatusBtn" class="btn btn-primary mt-3" onclick="sendChargeStatusRequest()">
-            <span id="spinner-border-status" class="spinner-border spinner-border-sm me-2" aria-hidden="true" hidden="hidden"></span>
-            <span class="save-status-span" id="status-request">Send status request</b></span>
-        </button>
+    <div id="responseBodyTicket" style="display: none;">
+        <div>
+            <label id="responseTextTicket" class="form-label"></label>
+            <div id="countdownTicket"></div>
+        </div>
     </div>
 
-    <div id="responseBody" style="display: none;">
+    <div id="responseBodyChargeStatus" style="display: none;">
         <div>
-            <label id="responseText" class="form-label"></label>
-            <div id="countdown"></div>
+            <label id="responseTextChargeStatus" class="form-label"></label>
+            <div id="countdownChargeStatus"></div>
         </div>
     </div>
 </div>
