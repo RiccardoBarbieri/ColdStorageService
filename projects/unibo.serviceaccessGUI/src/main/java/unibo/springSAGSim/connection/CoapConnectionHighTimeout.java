@@ -1,9 +1,17 @@
 package unibo.springSAGSim.connection;
 
 import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapObserveRelation;
+import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.MediaTypeRegistry;
+import org.eclipse.californium.elements.exception.ConnectorException;
 import unibo.basicomm23.coap.CoapConnection;
+import unibo.basicomm23.interfaces.Interaction;
 import unibo.basicomm23.utils.CommUtils;
 import unibo.basicomm23.utils.Connection;
+
+import java.io.IOException;
 
 
 public class CoapConnectionHighTimeout extends CoapConnection {
