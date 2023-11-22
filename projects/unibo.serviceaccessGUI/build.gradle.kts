@@ -44,6 +44,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.eclipse.californium/californium-proxy2
 	implementation("org.eclipse.californium:californium-proxy2:3.5.0")
 
+    implementation("com.itextpdf:itextpdf:5.5.13.3")
+    implementation("org.apache.pdfbox:pdfbox:3.0.0")
+
 }
 
 val springProps = Properties()
