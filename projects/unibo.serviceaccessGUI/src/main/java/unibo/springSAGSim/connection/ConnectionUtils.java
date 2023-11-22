@@ -14,7 +14,7 @@ public class ConnectionUtils {
             CommSystemConfig.tracing = true;
             String path   = actorCtx+"/"+actorName;
 
-            coapconn = new CoapConnection(acotCtxAddr+":"+ actorCtxPort, path );
+            coapconn = new CoapConnectionHighTimeout(acotCtxAddr+":"+ actorCtxPort, path );
             CommUtils.outyellow(className + " connectActorUsingCoap | conn:" + coapconn);
         }catch(Exception e){
             CommUtils.outred(className + " connectActorUsingCoap | ERROR: " + e.getMessage());

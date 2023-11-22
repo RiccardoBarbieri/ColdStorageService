@@ -38,8 +38,8 @@ class Ticketmanager ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t02",targetState="generateTicket",cond=whenRequest("generateticket"))
-					transition(edgeName="t03",targetState="validateTicket",cond=whenRequest("insertticket"))
+					 transition(edgeName="t00",targetState="generateTicket",cond=whenRequest("generateticket"))
+					transition(edgeName="t01",targetState="validateTicket",cond=whenRequest("insertticket"))
 				}	 
 				state("generateTicket") { //this:State
 					action { //it:State

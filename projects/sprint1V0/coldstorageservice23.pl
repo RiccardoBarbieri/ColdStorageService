@@ -2,39 +2,32 @@
 % coldstorageservice23 description   
 %====================================================================================
 request( storerequest, storerequest(FW) ).
-request( chargestatus, chargestatus(arg) ).
-reply( loadaccepted, loadaccepted(arg) ).  %%for storerequest
-reply( loadrejected, loadrejected(arg) ).  %%for storerequest
-reply( chargetaken, chargetaken(arg) ).  %%for chargestatus
-reply( chargefailed, chargefailed(arg) ).  %%for chargestatus
-request( deposit, deposit(FW) ).
-request( depositstatus, depositstatus(arg) ).
-reply( chargetakentt, chargetakentt(FW) ).  %%for deposit
-reply( chargefailedtt, chargefailedtt(FW) ).  %%for deposit
-reply( chargedeposited, chargedeposited(FW) ).  %%for depositstatus
-reply( chargedepfailed, chargedeposited(FW) ).  %%for depositstatus
-request( move, move(X,Y) ).
-request( moveclosest, moveclosest(Xs,Ys) ).
-reply( movedone, movedone(arg) ).  %%for move
-reply( movefailed, movefailed(arg) ).  %%for move
-reply( movecdone, movecdone(arg) ).  %%for moveclosest
-reply( movecfailed, movecfailed(arg) ).  %%for moveclosest
-dispatch( fail, fail(ERROR) ).
-request( engage, engage(OWNER,STEPTIME) ).
-reply( engagedone, engagedone(ARG) ).  %%for engage
-reply( engagerefused, engagerefused(ARG) ).  %%for engage
-dispatch( disengage, disengage(ARG) ).
-request( moverobot, moverobot(TARGETX,TARGETY) ).
-reply( moverobotdone, moverobotok(ARG) ).  %%for moverobot
-reply( moverobotfailed, moverobotfailed(PLANDONE,PLANTODO) ).  %%for moverobot
-dispatch( setrobotstate, setpos(X,Y,D) ).
-event( alarm, alarm(X) ).
-request( getrobotstate, getrobotstate(ARG) ).
-reply( robotstate, robotstate(POS,DIR) ).  %%for getrobotstate
+request( codeentered, codeentered(TICKET) ).
+event( rejrequpdate, rejrequpdate(NREJ) ).
+dispatch( newcharge, newcharge(FW) ).
+dispatch( chargetakentt, chargetakentt(arg) ).
+dispatch( chargetaken, chargetaken(TICKET) ).
+dispatch( chargedeposited, chargedeposited(FW) ).
+event( coldroomupdate, coldroomupdate(KG) ).
+event( statusupdate, statusupdate(POS,STATE) ).
+dispatch( stop, stop(arg) ).
+dispatch( resume, resume(arg) ).
+dispatch( goToINDOOR, goToINDOOR(arg) ).
+dispatch( goToColdRoom, goToColdRoom(arg) ).
+dispatch( goToHOME, goToHOME(arg) ).
+dispatch( arrivedINDOOR, arrivedINDOOR(arg) ).
+dispatch( arrivedColdRoom, arrivedColdRoom(arg) ).
+dispatch( arrivedHOME, arrivedHOME(arg) ).
 %====================================================================================
-context(ctxbasicrobot, "127.0.0.1",  "TCP", "8020").
 context(ctx_coldstorageservice, "localhost",  "TCP", "8021").
+context(ctx_access, "localhost",  "TCP", "8022").
+context(ctx_statusmonitor, "localhost",  "TCP", "8023").
+context(ctx_alarmsystem, "localhost",  "TCP", "8024").
+context(ctx_basicrobot, "127.0.0.1",  "TCP", "8020").
  qactor( coldstorageservice, ctx_coldstorageservice, "it.unibo.coldstorageservice.Coldstorageservice").
+  qactor( basicrobotsim, ctx_basicrobot, "it.unibo.basicrobotsim.Basicrobotsim").
   qactor( transporttrolley, ctx_coldstorageservice, "it.unibo.transporttrolley.Transporttrolley").
-  qactor( trolleyexecutor, ctx_coldstorageservice, "it.unibo.trolleyexecutor.Trolleyexecutor").
-  qactor( basicrobot, ctxbasicrobot, "external").
+  qactor( serviceaccessgui, ctx_access, "it.unibo.serviceaccessgui.Serviceaccessgui").
+  qactor( servicestatusgui, ctx_statusmonitor, "it.unibo.servicestatusgui.Servicestatusgui").
+  qactor( warningdevice, ctx_alarmsystem, "it.unibo.warningdevice.Warningdevice").
+  qactor( alarmdevice, ctx_alarmsystem, "it.unibo.alarmdevice.Alarmdevice").

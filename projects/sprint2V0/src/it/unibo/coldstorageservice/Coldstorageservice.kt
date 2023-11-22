@@ -71,12 +71,12 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t04",targetState="checkAvailability",cond=whenRequest("storerequest"))
-					transition(edgeName="t05",targetState="requestDeposit",cond=whenDispatch("initdeposit"))
-					transition(edgeName="t06",targetState="chargeTakenTT",cond=whenReply("chargetakentt"))
-					transition(edgeName="t07",targetState="chargeFailed",cond=whenReply("chargefailedtt"))
-					transition(edgeName="t08",targetState="chargeDeposited",cond=whenReply("chargedeposited"))
-					transition(edgeName="t09",targetState="depositFailed",cond=whenReply("chargedepfailed"))
+					 transition(edgeName="t02",targetState="checkAvailability",cond=whenRequest("storerequest"))
+					transition(edgeName="t03",targetState="requestDeposit",cond=whenDispatch("initdeposit"))
+					transition(edgeName="t04",targetState="chargeTakenTT",cond=whenReply("chargetakentt"))
+					transition(edgeName="t05",targetState="chargeFailed",cond=whenReply("chargefailedtt"))
+					transition(edgeName="t06",targetState="chargeDeposited",cond=whenReply("chargedeposited"))
+					transition(edgeName="t07",targetState="depositFailed",cond=whenReply("chargedepfailed"))
 				}	 
 				state("checkAvailability") { //this:State
 					action { //it:State
@@ -113,7 +113,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t010",targetState="replyTicket",cond=whenReply("ticket"))
+					 transition(edgeName="t08",targetState="replyTicket",cond=whenReply("ticket"))
 				}	 
 				state("replyTicket") { //this:State
 					action { //it:State
@@ -149,7 +149,6 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 				}	 
 				state("chargeTakenTT") { //this:State
 					action { //it:State
-						answer("chargestatus", "chargetaken", "chargetaken(arg)"   )  
 						if( checkMsgContent( Term.createTerm("chargetakentt(FW)"), Term.createTerm("chargetakentt(FW)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								CommUtils.outblue("CSS: charge of ${payloadArg(0)} taken")

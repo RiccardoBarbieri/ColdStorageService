@@ -95,7 +95,8 @@
                 <th>Mittente</th>
                 <th>Destinatario</th>
                 <th>Tipologia interazione/messaggio</th>
-                <th>Eventuale messaggio</th>
+                <th>Identificatore messaggio</th>
+                <th>Payload</th>
                 <th>Descrizione</th>
             </tr>
         </thead>
@@ -105,27 +106,31 @@
                 <td class="orange bold center">ServiceAccessGUI</td>
                 <td class="blue bold center">Interazione umana</td>
                 <td></td>
+                <td></td>
                 <td>Inserimento quantitativo di cibo da depositare in chilogrammi e innesco richiesta di deposito.</td>
             </tr>
             <tr>
                 <td class="orange bold center">ServiceAccessGUI</td>
                 <td class="orange bold center">coldstorageservice</td>
                 <td class="blue bold center">Request</td>
-                <td>storerequest : storerequest(FW)</td>
+                <td>storerequest</td>
+                <td>storerequest(FW)</td>
                 <td>Richiesta di <b>storage</b> di <b>FW</b> chili di cibo.</td>
             </tr>
             <tr>
                 <td class="orange bold center">coldstorageservice</td>
                 <td class="orange bold center">ServiceAccessGUI</td>
                 <td class="blue bold center">Reply</td>
-                <td>loadaccepted : loadaccepted()</td>
+                <td>loadaccepted</td>
+                <td>loadaccepted()</td>
                 <td>La richiesta di deposito &egrave; stata accettata.</td>
             </tr>
             <tr>
                 <td class="orange bold center">coldstorageservice</td>
                 <td class="orange bold center">ServiceAccessGUI</td>
                 <td class="blue bold center">Reply</td>
-                <td>loadrejected : loadrejected()</td>
+                <td>loadrejected</td>
+                <td>loadrejected()</td>
                 <td>La richiesta &egrave; stata rifiutata.</td>
             </tr>
             <tr>
@@ -133,31 +138,39 @@
                 <td class="orange bold center">ServiceAccessGUI</td>
                 <td class="blue bold center">Interazione umana</td>
                 <td></td>
+                <td></td>
                 <td>Innesco richiesta di stato del carico.</td>
             </tr>
             <tr>
                 <td class="orange bold center">ServiceAccessGUI</td>
                 <td class="orange bold center">coldstorageservice</td>
                 <td class="blue bold center">Request</td>
-                <td>chargestatus : chargestatus()</td>
+                <td>chargestatus</td>
+                <td>chargestatus()</td>
                 <td>Viene richiesto lo stato del carico depositato.</td>
             </tr>
             <tr>
                 <td class="orange bold center">coldstorageservice</td>
                 <td class="orange bold center">ServiceAccessGUI</td>
                 <td class="blue bold center">Reply</td>
-                <td>chargetaken : chargetaken()</td>
+                <td>chargetaken</td>
+                <td>chargetaken()</td>
                 <td>Il deposito è stato preso in carico dal transport trolley, il camion deve spostarsi da INDOOR.</td>
             </tr>
             <tr>
                 <td class="orange bold center">coldstorageservice</td>
                 <td class="orange bold center">ServiceAccessGUI</td>
                 <td class="blue bold center">Reply</td>
-                <td>chargefailed : chargefailed()</td>
+                <td>chargefailed</td>
+                <td>chargefailed()</td>
                 <td>Ci sono stati problemi durante la presa in carico del deposito.</td>
             </tr>
         </tbody>
     </table>
+
+    <p>
+        Dai requisiti non emerge nessun nuovo tipo di interazione tra i componenti gi&agrave; individuati, verranno discusse modifiche alle interazioni gi&agrave; presenti per integrare le nuove funzionalit&agrave; nell'analisi del problema.
+    </p>
 
     <p>
         Ora, come visto nei <a href="../documents/temafinale_sprint2_ticket.pdf" target="_blank" rel="noopener noreferrer">requisiti</a>, a seguito di una richiesta accettata (<i>loadaccepted</i>), il <i>ColdStorageService</i> deve <b>fornire</b> il <b>ticket number</b>. <br>
@@ -277,6 +290,123 @@
             <b>KEY-POINT:</b> il <i>CSS</i> dovrà memorizzare l'associazione fra una determinata richiesta di deposito (con il relativo quantitativo FW) e il ticket emesso in risposta ad essa.
         </p>
     </p>
+
+    <h3>ColdStorageService</h3>
+
+    <p>
+        Allo scopo di mantenere componenti che rispettano il principio di singola responsabilit&agrave; abbiamo deciso di creare un nuovo componente (attore): il <b>ticketmanager</b>; questo componente &egrave; incaricato di:
+    </p>
+    <ul>
+        <li>generare un nuovo ticket</li>
+        <li>validare un ticket dato il suo codice</li>
+        <li>mantenere uno storico dei ticket generati</li>
+    </ul>
+
+    <p>
+        Di seguito si riporta il modello di interazione tra <i>ServiceAccessGUI</i>, <i>ColdStorageService</i> e il nuovo <i>TicketManager</i>.
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Mittente</th>
+                <th>Destinatario</th>
+                <th>Tipologia interazione/messaggio</th>
+                <th>Identificatore messaggio</th>
+                <th>Payload</th>
+                <th>Descrizione</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="blue bold center">Request</td>
+                <td>storerequest</td>
+                <td>storerequest(FW)</td>
+                <td>Richiesta di <b>storage</b> di <b>FW</b> chili di cibo.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="blue bold center">Reply</td>
+                <td>loadaccepted</td>
+                <td>loadaccepted()</td>
+                <td>La richiesta di deposito &egrave; stata accettata.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="blue bold center">Reply</td>
+                <td>loadrejected</td>
+                <td>loadrejected()</td>
+                <td>La richiesta &egrave; stata rifiutata.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="orange bold center">ticketmanager</td>
+                <td class="blue bold center">Request</td>
+                <td>insertticket</td>
+                <td>insertticket(TICKET)</td>
+                <td>Viene inviato il ticket inserito al ticketmanager.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">ticketmanager</td>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="blue bold center">Reply</td>
+                <td>ticketaccepted</td>
+                <td>ticketaccepted()</td>
+                <td>Il ticket &egrave; stato validato e accettato dal sistema.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">ticketmanager</td>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="blue bold center">Reply</td>
+                <td>ticketrejected</td>
+                <td>ticketrejected()</td>
+                <td>Il ticket &egrave; stato validato ma rifiutato dal sistema.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="orange bold center">ticketmanager</td>
+                <td class="blue bold center">Request</td>
+                <td>generateticket</td>
+                <td>generateticket(FW)</td>
+                <td>Richiesta per la generazione di un ticket.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">ticketmanager</td>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="blue bold center">Reply</td>
+                <td>ticket</td>
+                <td>ticket(TCIKET)</td>
+                <td>Il ticket &egrave; stato generato.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">ticketmanager</td>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="blue bold center">Dispatch</td>
+                <td>initdeposit</td>
+                <td>initdeposit(TICKET)</td>
+                <td>Inizia una azione di deposito dopo la validazione di un ticket.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+        Il messaggio <i>chargestatus</i> &egrave; stato sostituito dal messaggio <b>insertticket</b>: l'azione di deposito viene ora iniziata da questo messaggio.
+    </p>
+
+    <p class="keypoint">
+        <b>KEY-POINT:</b> Per mantenere un unico punto di accesso al sistema il messaggio <b>insertticket</b> pu&ograve; essere inviato a coldstorageservice che delegher&agrave; la gestione al ticketmanager.
+    </p>
+
+    <h3>Architettura logica</h3>
+    
+    <p>
+        Si riporta di seguito il modello di architettura logica sulla quale si baser&agrave; la progettazione
+    </p>
+
 </div>
 
 
@@ -303,6 +433,9 @@
 <h2>Project</h2> 
  
 <div class="remark">
+
+    <h3>ColdStorageService</h3>
+
 
 </div>
 

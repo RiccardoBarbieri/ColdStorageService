@@ -8,7 +8,7 @@ graphattr = {     #https://www.graphviz.org/doc/info/attrs.html
     'fontsize': '22',
 }
 
-nodeattr = {   
+nodeattr = {
     'fontsize': '22',
     'bgcolor': 'lightyellow'
 }
@@ -17,14 +17,13 @@ eventedgeattr = {
     'color': 'red',
     'style': 'dotted'
 }
-with Diagram('coldstorageservice23Arch', show=False, outformat='png', graph_attr=graphattr) as diag:
+with Diagram('coldstorageservice23Arch', show=False, outformat='svg', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
 ### see https://renenyffenegger.ch/notes/tools/Graphviz/attributes/label/HTML-like/index
      with Cluster('ctxbasicrobot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
      with Cluster('ctx_coldstorageservice', graph_attr=nodeattr):
-          tempsag=Custom('tempsag','./qakicons/symActorSmall.png')
           ticketmanager=Custom('ticketmanager','./qakicons/symActorSmall.png')
           coldstorageservice=Custom('coldstorageservice','./qakicons/symActorSmall.png')
           transporttrolley=Custom('transporttrolley','./qakicons/symActorSmall.png')
@@ -34,7 +33,6 @@ with Diagram('coldstorageservice23Arch', show=False, outformat='png', graph_attr
      coldstorageservice >> Edge(color='magenta', style='solid', decorate='true', label='<generateticket<font color="darkgreen"> ticket</font> &nbsp; >',  fontcolor='magenta') >> ticketmanager
      transporttrolley >> Edge(color='magenta', style='solid', decorate='true', label='<move<font color="darkgreen"> movedone movefailed</font> &nbsp; moveclosest<font color="darkgreen"> movecdone movecfailed</font> &nbsp; >',  fontcolor='magenta') >> trolleyexecutor
      trolleyexecutor >> Edge(color='magenta', style='solid', decorate='true', label='<engage<font color="darkgreen"> engagedone engagerefused</font> &nbsp; moverobot<font color="darkgreen"> moverobotdone moverobotfailed</font> &nbsp; getrobotstate<font color="darkgreen"> robotstate</font> &nbsp; >',  fontcolor='magenta') >> basicrobot
-     tempsag >> Edge(color='magenta', style='solid', decorate='true', label='<storerequest<font color="darkgreen"> loadaccepted loadrejected</font> &nbsp; insertticket<font color="darkgreen"> ticketaccepted ticketrejected</font> &nbsp; >',  fontcolor='magenta') >> coldstorageservice
      ticketmanager >> Edge(color='blue', style='solid',  label='<initdeposit &nbsp; >',  fontcolor='blue') >> coldstorageservice
      trolleyexecutor >> Edge(color='blue', style='solid',  label='<fail &nbsp; >',  fontcolor='blue') >> transporttrolley
      trolleyexecutor >> Edge(color='blue', style='solid',  label='<setrobotstate &nbsp; disengage &nbsp; >',  fontcolor='blue') >> basicrobot

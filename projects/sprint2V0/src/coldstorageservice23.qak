@@ -5,7 +5,7 @@ Request 	storerequest		:		storerequest(FW)
 
 //SAG -> CSS(TM)
 Request		insertticket		:		insertticket(TICKET)
-Request		chargestatus		:		chargestatus(arg)
+//Request		chargestatus		:		chargestatus(arg)
 
 //TM -> CSS
 Dispatch	initdeposit			:		initdeposit(TICKET)
@@ -15,8 +15,8 @@ Reply		loadaccepted		:		loadaccepted(TICKET) for storerequest
 Reply		loadrejected		:		loadrejected(arg) for storerequest
 
 //TM -> SAG
-Reply		chargetaken			:		chargetaken(arg) for chargestatus
-Reply		chargefailed		:		chargefailed(arg) for chargestatus
+//Reply		chargetaken			:		chargetaken(arg) for chargestatus
+//Reply		chargefailed		:		chargefailed(arg) for chargestatus
 Reply		ticketaccepted		:		ticketaccepted(arg) for insertticket
 Reply		ticketrejected		:		ticketrejected(arg) for insertticket
 
@@ -72,37 +72,37 @@ Reply		robotstate			:		robotstate(POS,DIR) for getrobotstate
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020]
 Context ctx_coldstorageservice ip [host="localhost" port=8021]
 
-QActor tempsag context ctx_coldstorageservice {
-	
-	[# var Ticket: String = "" #]
-	
-	State s0 initial {
-		delay 2000
-		println("SAG: requesting ticket") color yellow
-		request coldstorageservice -m storerequest : storerequest(5)
-	}
-	Transition t0 whenReply loadaccepted -> reply
-	
-	State reply {
-		onMsg(loadaccepted : loadaccepted(TICKET)) {
-			println("SAG: ${payloadArg(0)}") color yellow
-			[# Ticket = payloadArg(0) #]
-		}
-		delay 5000
-	}
-	Goto insertticket
-	
-	State insertticket {
-		request coldstorageservice -m insertticket : insertticket($Ticket)
-	}
-	Transition t0	whenReply	ticketaccepted	->	confirm
-	
-	State confirm {
-		println("SAG: confirmed ticket") color yellow
-	}
-	Goto s0
-	
-}
+//QActor tempsag context ctx_coldstorageservice {
+//	
+//	[# var Ticket: String = "" #]
+//	
+//	State s0 initial {
+//		delay 2000
+//		println("SAG: requesting ticket") color yellow
+//		request coldstorageservice -m storerequest : storerequest(5)
+//	}
+//	Transition t0 whenReply loadaccepted -> reply
+//	
+//	State reply {
+//		onMsg(loadaccepted : loadaccepted(TICKET)) {
+//			println("SAG: ${payloadArg(0)}") color yellow
+//			[# Ticket = payloadArg(0) #]
+//		}
+//		delay 5000
+//	}
+//	Goto insertticket
+//	
+//	State insertticket {
+//		request coldstorageservice -m insertticket : insertticket($Ticket)
+//	}
+//	Transition t0	whenReply	ticketaccepted	->	confirm
+//	
+//	State confirm {
+//		println("SAG: confirmed ticket") color yellow
+//	}
+//	Goto s0
+//	
+//}
 
 
 QActor ticketmanager context ctx_coldstorageservice {
@@ -235,7 +235,7 @@ QActor coldstorageservice context ctx_coldstorageservice {
 //					whenReply	chargefailedtt	->	chargeFailed
 
 	State chargeTakenTT {
-		replyTo	chargestatus with chargetaken : chargetaken(arg)
+//		replyTo	chargestatus with chargetaken : chargetaken(arg)
 		onMsg(chargetakentt : chargetakentt(FW)) {
 			println("CSS: charge of ${payloadArg(0)} taken") color blue
 		}

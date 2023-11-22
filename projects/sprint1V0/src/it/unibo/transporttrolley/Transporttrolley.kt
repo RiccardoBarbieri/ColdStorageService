@@ -18,183 +18,99 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
-			val landmarkConf = utils.MapUtils.loadMapConfiguration("servicearea")
-				var Anywhere: Pair<Int, Int> = Pair(0,0)
+			var MovementState: MState = MState.HOME
+				var ServiceState: SState = SState.WAITING
 				
-				val HomeToIndoorCoord = landmarkConf.getCoordinateClosestToFor("I", Pair(0,0))
-				val IndoorToPortCoord = landmarkConf.getCoordinateClosestToFor("P", HomeToIndoorCoord)
-				val PortToHomeCoord = landmarkConf.getCoordinateClosestToFor("H", IndoorToPortCoord)
-				val PortToIndoorCoord = landmarkConf.getCoordinateClosestToFor("I", IndoorToPortCoord)
+				var ServingNow: Float = 0f
 				
-				var CurrentLoad: String = ""
-				
-				var returnHome: Boolean = false
-				
+				var Pos: Pair<Int,Int> = Pair(0,0)
+				var ChargeList : MutableList<Float> = mutableListOf<Float>()
 				return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outgreen("TT: started")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
-				state("moveFailed") { //this:State
+				state("work") { //this:State
 					action { //it:State
-						CommUtils.outgreen("TT: contact with trolleyexecutor failed on move, try restarting the application")
+							ServiceState = SState.WAITING
+									MovementState = MState.HOME
+						emit("statusupdate", "statusupdate(pos(N,N),$MovementState)" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition(edgeName="t09",targetState="addCharge",cond=whenDispatch("newcharge"))
 				}	 
-				state("chargeTakeFailed") { //this:State
+				state("addCharge") { //this:State
 					action { //it:State
-						answer("deposit", "chargefailedtt", "chargefailedtt($CurrentLoad)"   )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="moveFailed", cond=doswitch() )
-				}	 
-				state("chargeDepositFailed") { //this:State
-					action { //it:State
-						answer("depositstatus", "chargedepfailed", "chargedepfailed($CurrentLoad)"   )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="moveFailed", cond=doswitch() )
-				}	 
-				state("somethingFailed") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("fail(ERROR)"), Term.createTerm("fail(ERROR)"), 
+						if( checkMsgContent( Term.createTerm("newcharge(FW)"), Term.createTerm("newcharge(FW)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								CommUtils.outgreen("TT: TE failed with error -> ${payloadArg(0)}")
+								 ChargeList.add(payloadArg(1).toFloat())  
 						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="handleCharge", cond=doswitch() )
 				}	 
-				state("waiting") { //this:State
+				state("handleCharge") { //this:State
 					action { //it:State
-						CommUtils.outgreen("TT: waiting for new deposit request")
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t06",targetState="moveToIndoorFromHome",cond=whenRequest("deposit"))
-					transition(edgeName="t07",targetState="somethingFailed",cond=whenDispatch("fail"))
-				}	 
-				state("returnHome") { //this:State
-					action { //it:State
-						CommUtils.outgreen("TT: returning HOME")
-							val X = PortToHomeCoord.first
-									val Y = PortToHomeCoord.second
-						request("move", "move($X,$Y)" ,"trolleyexecutor" )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t08",targetState="waiting",cond=whenReply("movedone"))
-					transition(edgeName="t09",targetState="moveFailed",cond=whenReply("movefailed"))
-					transition(edgeName="t010",targetState="restartToIndoor",cond=whenRequest("deposit"))
-				}	 
-				state("restartToIndoor") { //this:State
-					action { //it:State
-						discardMessages = true
-						CommUtils.outgreen("TT: restarting to indoor")
-							val destinations = landmarkConf.getCoordinatesFor("I")
-									val messages = utils.PosUtils.listOfDestToMessStrings(destinations)
-									val Xs = messages.first
-									val Ys = messages.second
-						request("moveclosest", "moveclosest($Xs,$Ys)" ,"trolleyexecutor" )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t011",targetState="takeCharge",cond=whenReply("movecdone"))
-					transition(edgeName="t012",targetState="moveFailed",cond=whenReply("movecfailed"))
-				}	 
-				state("moveToIndoorFromHome") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("deposit(FW)"), Term.createTerm("deposit(FW)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-									CurrentLoad = payloadArg(0)
-												
-												val X = HomeToIndoorCoord.first
-												val Y = HomeToIndoorCoord.second
-								request("move", "move($X,$Y)" ,"trolleyexecutor" )  
-								CommUtils.outgreen("TT: moving robot to indoor")
+						if(  ServiceState == SState.WAITING && !ChargeList.isEmpty()  
+						 ){	ServiceState = SState.SERVING
+										MovementState = MState.MOVING
+						emit("statusupdate", "statusupdate(pos(N,N),$MovementState)" ) 
+						forward("goToINDOOR", "goToINDOOR(arg)" ,"basicrobotsim" ) 
 						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t013",targetState="takeCharge",cond=whenReply("movedone"))
-					transition(edgeName="t014",targetState="chargeTakeFailed",cond=whenReply("movefailed"))
+					 transition(edgeName="t010",targetState="takeCharge",cond=whenDispatch("arrivedINDOOR"))
+					interrupthandle(edgeName="t011",targetState="addCharge",cond=whenDispatch("newcharge"),interruptedStateTransitions)
 				}	 
 				state("takeCharge") { //this:State
 					action { //it:State
-						CommUtils.outgreen("TT: loading charge")
-						delay(1000) 
-						CommUtils.outgreen("TT: charge loaded")
+						if(  ServingNow == 0f  
+						 ){CommUtils.outblack("TT  | Charge taken from truck")
+						 ServingNow = ChargeList.removeAt(0)  
+						forward("goToColdRoom", "goToColdRoom(arg)" ,"basicrobotsim" ) 
+						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="chargeTaken", cond=doswitch() )
+					 transition(edgeName="t012",targetState="notifyDeposit",cond=whenDispatch("arrivedColdRoom"))
+					interrupthandle(edgeName="t013",targetState="addCharge",cond=whenDispatch("newcharge"),interruptedStateTransitions)
 				}	 
-				state("chargeTaken") { //this:State
+				state("notifyDeposit") { //this:State
 					action { //it:State
-						answer("deposit", "chargetakentt", "chargetakentt($CurrentLoad)"   )  
+						forward("chargedeposited", "chargedeposited($ServingNow)" ,"coldstorageservice" ) 
+						 ServingNow = 0f  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t015",targetState="toPort",cond=whenRequest("depositstatus"))
+					 transition(edgeName="t014",targetState="work",cond=whenDispatch("arrivedHOME"))
+					interrupthandle(edgeName="t015",targetState="addCharge",cond=whenDispatch("newcharge"),interruptedStateTransitions)
 				}	 
-				state("toPort") { //this:State
+				state("stopped") { //this:State
 					action { //it:State
-							val X = IndoorToPortCoord.first
-									val Y = IndoorToPortCoord.second
-						CommUtils.outgreen("TT: moving to access port")
-						request("move", "move($X,$Y)" ,"trolleyexecutor" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t016",targetState="depositInColdRoom",cond=whenReply("movedone"))
-					transition(edgeName="t017",targetState="moveFailed",cond=whenReply("movefailed"))
-				}	 
-				state("depositInColdRoom") { //this:State
-					action { //it:State
-						discardMessages = true
-						delay(1000) 
-						answer("depositstatus", "chargedeposited", "chargedeposited($CurrentLoad)"   )  
-						CommUtils.outgreen("TT: charge deposited")
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-				 	 		stateTimer = TimerActor("timer_depositInColdRoom", 
-				 	 					  scope, context!!, "local_tout_transporttrolley_depositInColdRoom", 1000.toLong() )
-					}	 	 
-					 transition(edgeName="t018",targetState="returnHome",cond=whenTimeout("local_tout_transporttrolley_depositInColdRoom"))   
-					transition(edgeName="t019",targetState="restartToIndoor",cond=whenRequest("deposit"))
+					 transition(edgeName="t016",targetState="handleCharge",cond=whenDispatch("resume"))
 				}	 
 			}
 		}

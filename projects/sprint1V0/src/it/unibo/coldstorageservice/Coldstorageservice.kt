@@ -18,76 +18,69 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
-			val maxColdRoom: Float = 10F
-				var actualCurrentColdRoom: Float = 0F
-				
-				var tempCurrentColdRoom: Float = 0F
-				var LastDepositRequested: Float = 0F
-				
-				var accepted: Boolean = false
-				
+			var TICKETTIME = 30
+				var MAXW = 100
+				var CurrentColdRoom = 0f
+				var TicketMap : HashMap<String, Pair<Float, Long>> = HashMap<String, Pair<Float, Long>>()
+				var TicketList : MutableList<String> = mutableListOf<String>()
+				var ReqRejected = 0
 				return { //this:ActionBasciFsm
-				state("chargeFailed") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("chargefailedtt(FW)"), Term.createTerm("chargefailedtt(FW)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								CommUtils.outblue("CSS: TransportTrolley failed to take the current charge (${payloadArg(0)} KG)")
-						}
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-				}	 
-				state("depositFailed") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("chargedeposited(FW)"), Term.createTerm("chargedepfailed(FW)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								CommUtils.outblue("CSS: TransportTrolley failed to deposit the current charge (${payloadArg(0)} KG)")
-						}
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-				}	 
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outblue("CSS: started")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
-				state("waiting") { //this:State
+				state("work") { //this:State
 					action { //it:State
-						CommUtils.outblue("CSS: waiting for new storage request")
+						CommUtils.outcyan("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
+						 	   
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t00",targetState="checkAvailability",cond=whenRequest("storerequest"))
-					transition(edgeName="t01",targetState="requestDeposit",cond=whenRequest("chargestatus"))
+					 transition(edgeName="t00",targetState="elabStorerequest",cond=whenRequest("storerequest"))
+					transition(edgeName="t01",targetState="elabCodeentered",cond=whenRequest("codeentered"))
+					transition(edgeName="t02",targetState="elabChargetaken",cond=whenDispatch("chargetakentt"))
+					transition(edgeName="t03",targetState="elabChargedeposited",cond=whenDispatch("chargedeposited"))
 				}	 
-				state("checkAvailability") { //this:State
+				state("elabStorerequest") { //this:State
 					action { //it:State
+							var CurrentTime = 0L
+									var CurrentTicket = ""
+									fun generateNextTicket(existingMap: HashMap<String, Pair<Float, Long>>): String {
+						    			val alphabets = ('A'..'Z').toList()
+						    			val numbers = (0..9).toList()
+						
+									    while (true) {
+									        val randomChars = (1..3).map { alphabets.random() }
+									        val randomNumbers = (1..3).map { numbers.random() }
+									        val randomString = (randomChars + randomNumbers).joinToString("")
+						
+								    	    if (!existingMap.containsKey(randomString)) {
+									            return randomString
+								    	    }
+						    			}
+									}
 						if( checkMsgContent( Term.createTerm("storerequest(FW)"), Term.createTerm("storerequest(FW)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 val FW = payloadArg(0).trim().toFloat()  
-								if(  (tempCurrentColdRoom + FW) <= maxColdRoom  
-								 ){answer("storerequest", "loadaccepted", "loadaccepted(arg)"   )  
-									tempCurrentColdRoom += FW
-													LastDepositRequested = FW
-													accepted = true
-								CommUtils.outblue("CSS: load for $FW KG accepted, currentWeight = $actualCurrentColdRoom")
+								if(  CurrentColdRoom + payloadArg(1).toInt() <= MAXW  
+								 ){CurrentTime = getCurrentTime()
+									CurrentTicket = generateNextTicket(TicketMap)
+													TicketMap.put(CurrentTicket, Pair(payloadArg(1).toFloat(), CurrentTime)) 
+													TicketList.add(CurrentTicket)
+								CommUtils.outblack("CSS | Accepted request for ${payloadArg(1)} kilograms")
+								answer("storerequest", "storereply", "storereply($CurrentTicket,OK)"   )  
 								}
 								else
-								 { accepted = false  
-								 answer("storerequest", "loadrejected", "loadrejected(arg)"   )  
-								 CommUtils.outblue("CSS: load for $FW KG rejected, not enough space in ColdRoom, currentWeight = $actualCurrentColdRoom")
+								 {CommUtils.outblack("CSS | Rejected request for ${payloadArg(1)} kilograms, not enough space")
+								 answer("storerequest", "storereply", "storereply(NULL,REJ)"   )  
+								  ReqRejected += 1  
+								 emit("rejrequpdate", "rejrequpdate($ReqRejected)" ) 
 								 }
 						}
 						//genTimer( actor, state )
@@ -95,51 +88,63 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
-				state("requestDeposit") { //this:State
+				state("elabCodeentered") { //this:State
 					action { //it:State
-						 accepted = false  
-						request("deposit", "deposit($LastDepositRequested)" ,"transporttrolley" )  
-						CommUtils.outblue("CSS: requested deposit for $LastDepositRequested KG")
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t02",targetState="chargeTakenTT",cond=whenReply("chargetakentt"))
-					transition(edgeName="t03",targetState="chargeFailed",cond=whenReply("chargefailedtt"))
-				}	 
-				state("chargeTakenTT") { //this:State
-					action { //it:State
-						answer("chargestatus", "chargetaken", "chargetaken(arg)"   )  
-						if( checkMsgContent( Term.createTerm("chargetakentt(FW)"), Term.createTerm("chargetakentt(FW)"), 
+						 var Elapsed = 0L  
+						if( checkMsgContent( Term.createTerm("codeentered(TICKET)"), Term.createTerm("codeentered(TICKET)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								CommUtils.outblue("CSS: charge of ${payloadArg(0)} taken")
+								 var TicketStart = TicketMap.get(payloadArg(1))!!.second  
+								Elapsed = getDuration(TicketStart)
+								if(  Elapsed > TICKETTIME * 1000  
+								 ){ TicketMap.remove(payloadArg(1))  
+								answer("codeentered", "ticketreply", "ticketreply(NULL,REJ)"   )  
+								 ReqRejected += 1  
+								emit("rejrequpdate", "rejrequpdate($ReqRejected)" ) 
+								CommUtils.outblack("CSS | Rejected code confirmation, ticket ${payloadArg(1)} has expired")
+								}
+								else
+								 { var CurrentFW = TicketMap.get(payloadArg(1))!!.first  
+								 answer("codeentered", "ticketreply", "ticketreply(${payloadArg(1)},OK)"   )  
+								 forward("newcharge", "newcharge($CurrentFW)" ,"transporttrolley" ) 
+								 CommUtils.outblack("CSS | Accepted code confirmation for ticket ${payloadArg(1)}")
+								  CurrentColdRoom += payloadArg(1).toFloat()  
+								 }
 						}
-						request("depositstatus", "depositstatus(arg)" ,"transporttrolley" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t04",targetState="chargeDeposited",cond=whenReply("chargedeposited"))
-					transition(edgeName="t05",targetState="depositFailed",cond=whenReply("chargedepfailed"))
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
-				state("chargeDeposited") { //this:State
+				state("elabChargetaken") { //this:State
+					action { //it:State
+						 var CurrentTicketServed = TicketList.removeAt(0)  
+						forward("chargetaken", "chargetaken($CurrentTicketServed)" ,"serviceaccessgui" ) 
+						 TicketMap.remove(CurrentTicketServed)  
+						CommUtils.outblack("CSS | TransportTrolley has taken current load")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
+				}	 
+				state("elabChargedeposited") { //this:State
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("chargedeposited(FW)"), Term.createTerm("chargedeposited(FW)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-									val FW = payloadArg(0).toFloat()
-												actualCurrentColdRoom += FW
-								CommUtils.outblue("CSS: load of ${payloadArg(0)} deposited in ColdRoom, current weight = $actualCurrentColdRoom")
+								CommUtils.outblack("CSS | TranportTrolley has deposited ${payloadArg(1)} kilograms in the ColdRoom")
+								emit("coldroomupdate", "coldroomupdate($CurrentColdRoom)" ) 
 						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 			}
 		}
