@@ -22,6 +22,7 @@ public class SagController {
     public static final String className = "SagController";
 
     private SagConnection sagConnection;
+    private CoapConnection observerConn;
     private Interaction requestConn;
 
     @Value("${spring.application.name}")
@@ -36,6 +37,8 @@ public class SagController {
     @Autowired
     public SagController(SagConnection sagConnection) {
         this.sagConnection = sagConnection;
+        this.observerConn = sagConnection.connectLocalActorUsingCoap();
+        observerConn.observeResource(new CoapObserver());
         this.requestConn = sagConnection.connectLocalActorUsingCoap();
     }
 

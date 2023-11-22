@@ -1,5 +1,4 @@
 // Definisci la variabile globale
-window.chargeTaken = false;
 window.reloadTime = 7000;
 
 function sendStorageRequest(quantityFw) {
