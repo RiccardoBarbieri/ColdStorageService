@@ -2,6 +2,10 @@
 window.reloadTime = 7000;
 
 function sendStorageRequest(quantityFw) {
+
+    // TODO MOCK
+    generatePdf("t10n2cd")
+    return
     const saveButton = document.querySelector("#save");
 
     saveButton.firstElementChild.removeAttribute("hidden");
@@ -187,6 +191,40 @@ function enterTicketRequest(inputValue) {
     });
 }
 
+function generatePdf(inputValue) {
+
+    //data structure to send to server
+    const requestBodyMap = {
+        ticketCode: inputValue
+    }
+
+    //request to server
+    const relativeEndpoint = '/generatePdf';
+    fetch(
+        relativeEndpoint,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBodyMap)
+        }
+    ).then(response => {
+        return response;
+    }).then(response => {
+        response.text().then((resolvedValue) => {
+
+            if (!response.ok) {
+                showError(response.text());
+            }
+            else {
+            }
+        });
+
+    }).catch(error => {
+        console.log(error);
+    });
+}
 
 function showResponseStorageRequest(response, ticketCode) {
     const responseBody = document.getElementById('responseBodyStorage');
@@ -195,6 +233,7 @@ function showResponseStorageRequest(response, ticketCode) {
     if (response === "accepted") {
         setTimeout(() => {
             responseText.innerHTML = "The storage request has been accepted! <br>Your ticket is: <b>" + ticketCode + "</b>" 
+            generatePdf(ticketCode);
         }, 500);
     }
     else if (response === "rejected") {
