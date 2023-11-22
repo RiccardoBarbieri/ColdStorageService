@@ -29,7 +29,7 @@
     <div id="responseBodyStorage" style="display: none;">
         <div>
             <label id="responseTextStorage" class="form-label"></label>
-            <div id="countdownStorage"></div>
+            <div class="countdown" id="countdownStorage"></div>
         </div>
     </div>
 
@@ -37,7 +37,7 @@
         <label for="ticketNumberField" class="form-label">Once arrived at INDOOR, enter the <b>ticket code</b> received by the service.</label>
         <input id="ticketNumberField" name="ticketNumber" required class="form-control"
                placeholder="Ticket code">
-        <button id="sendTicketNumber" class="btn btn-primary mt-3" onclick="enterTicketRequest()">
+        <button id="sendTicketNumber" class="btn btn-primary mt-3" onclick="validateTicket()">
             <span id="spinner-border-ticket" class="spinner-border spinner-border-sm me-2" aria-hidden="true" hidden="hidden"></span>
             <span role="status" id="save-status-ticket">Enter ticket</span>
         </button>
@@ -46,14 +46,14 @@
     <div id="responseBodyTicket" style="display: none;">
         <div>
             <label id="responseTextTicket" class="form-label"></label>
-            <div id="countdownTicket"></div>
+            <div class="countdown" id="countdownTicket"></div>
         </div>
     </div>
 
     <div id="responseBodyChargeStatus" style="display: none;">
         <div>
             <label id="responseTextChargeStatus" class="form-label"></label>
-            <div id="countdownChargeStatus"></div>
+            <div class="countdown" id="countdownChargeStatus"></div>
         </div>
     </div>
 </div>

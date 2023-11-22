@@ -142,7 +142,7 @@ function sendChargeStatusRequest() {
     });
 }
 
-function enterTicketRequest() {
+function enterTicketRequest(inputValue) {
 
     const saveButton = document.querySelector("#sendTicketNumber");
 
@@ -151,8 +151,7 @@ function enterTicketRequest() {
 
     const spinner = document.querySelector('#spinner-border-ticket');
     spinner.removeAttribute('hidden');
-    const inputElement = document.getElementById('ticketNumberField');
-    const inputValue = inputElement.value;
+    
 
     //data structure to send to server
     const requestBodyMap = {
@@ -313,6 +312,24 @@ function validateInput() {
     }
     else {
         sendStorageRequest(inputValue);
+    }
+}
+
+function validateTicket() {
+    const inputElement = document.getElementById('ticketNumberField');
+    const inputValue = inputElement.value;
+
+    const regex = /t\d+n\d+[a-z]{2}/g
+
+    if (inputValue.length < 1) {
+        // Display an error message
+        showError('Ticket field must be filled!');
+    }
+    else if (!inputValue.match(regex)) {
+        showError('Ticket code is not in the correct format!');
+    }
+    else {
+        enterTicketRequest();
     }
 }
 
