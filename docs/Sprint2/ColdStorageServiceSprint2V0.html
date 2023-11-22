@@ -407,6 +407,10 @@
         Si riporta di seguito il modello di architettura logica sulla quale si baser&agrave; la progettazione
     </p>
 
+    <img class="bigimglim" src="../images/sprint2/coldstorageservice23arch.png" alt="Modello architettura logica">
+
+    <b>TODO: SPECIFICARE CHE DECIDIAMO DI IMPLEMENTARE AGGIORNAMENTO DEPOSITO COLDROOM CON COAPOBSERVER</b>
+
 </div>
 
 
@@ -434,8 +438,47 @@
  
 <div class="remark">
 
+    <h3>TicketManager</h3>
+
+    <p>
+        L'attore <b>ticketmanager</b> mantiene un'istanza della classe <code class="docutils literal notranslate"><span class="pre">TicketManager</span></code>, questa classe implementa metodi per la generazione di un nuovo ticket e gestisce lo storico dei ticket generati, esponendo metodi per salvare e caricare memoria persistente le informazioni.<br>
+    Si riporta di seguito l'UML della classe in questione.
+    </p>
+
+    <b>TODO INSERIRE UML</b>
+    <img src="" alt="">
+
+    <p>
+        La classe <code class="docutils literal notranslate"><span class="pre">TicketManager</span></code> mantiene i ticket come istanze della data class <code class="docutils literal notranslate"><span class="pre">Ticket</span></code>, si riportano di seguito le specifiche delle propriet&agrave; della classe.
+    </p>
+
+    <b>TODO UML TICKET</b>
+    <img src="" alt="">
+
+    <h5>Identificazione ticket</h5>
+
+    <p>
+        A ogni ticket viene associato un id intero incrementale che lo identifica univocamente, tuttavia questo valore &egrave; a solo uso interno del TicketManager, il sistema tratter&agrave; i ticket tramite la loro rappresentazione, ovvero il codice che viene scambiato con gli utenti del sistema.
+    </p>
+
+    <h5>Gestione tempo di creazione</h5>
+    <p>
+        A ogni ticket viene associato un timestamp campionato nel momento in cui viene restituito il valore dal metodo che lo genera, viene salvato come valore unix timestamp <code class="docutils literal notranslate"><span class="pre">long</span></code> in millisecondi.
+    </p>
+
     <h3>ColdStorageService</h3>
 
+    <h5>Delega al ticketmanager</h5>
+
+    <p>
+        Come specificato in precedenza, il messaggio <i>insertticket</i> pu&ograve; essere inviato a <i>coldstorageservice</i> ma verr&agrave; comunque gestito dal <i>ticketmanager</i>, questa funzionalit&agrave; &egrave; stata implementata utilizzando la keyword <code class="docutils literal notranslate"><span class="pre">delegate</span></code> messa a disposizione dal framework qak.
+    </p>
+    <p>
+        Nello stato iniziale dell'attore <i>coldstorageservice</i> &egrave; riportata la seguente istruzione:
+    </p>
+    <pre><code class="language-bash">delegate "insertticket" to ticketmanager</code></pre>
+
+    <h3>ServiceAccessGUI</h3>
 
 </div>
 
