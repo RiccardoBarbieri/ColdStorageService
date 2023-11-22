@@ -390,6 +390,30 @@
                 <td>initdeposit(TICKET)</td>
                 <td>Inizia una azione di deposito dopo la validazione di un ticket.</td>
             </tr>
+            <tr>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="blue bold center">Request</td>
+                <td>chargestatus</td>
+                <td>chargestatus()</td>
+                <td>Viene richiesto lo stato del carico depositato.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="blue bold center">Reply</td>
+                <td>chargetaken</td>
+                <td>chargetaken()</td>
+                <td>Il deposito è stato preso in carico dal transport trolley, il camion deve spostarsi da INDOOR.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="blue bold center">Reply</td>
+                <td>chargefailed</td>
+                <td>chargefailed()</td>
+                <td>Ci sono stati problemi durante la presa in carico del deposito.</td>
+            </tr>
         </tbody>
     </table>
 
@@ -409,7 +433,10 @@
 
     <img class="bigimglim" src="../images/sprint2/coldstorageservice23arch.png" alt="Modello architettura logica">
 
-    <b>TODO: SPECIFICARE CHE DECIDIAMO DI IMPLEMENTARE AGGIORNAMENTO DEPOSITO COLDROOM CON COAPOBSERVER</b>
+    <br>
+    <b>TODO: SPECIFICARE CHE DECIDIAMO DI IMPLEMENTARE AGGIORNAMENTO DEPOSITO COLDROOM CON COAPOBSERVER</b><br>
+
+    <b>TODO: AGGIORNARE ARCH CON CHARGESTATUS</b>
 
 </div>
 
