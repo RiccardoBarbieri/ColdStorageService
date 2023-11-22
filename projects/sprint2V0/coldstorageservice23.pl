@@ -3,7 +3,10 @@
 %====================================================================================
 request( storerequest, storerequest(FW) ).
 request( insertticket, insertticket(TICKET) ).
+request( chargestatus, chargestatus(arg) ).
 dispatch( initdeposit, initdeposit(TICKET) ).
+reply( chargetaken, chargetaken(arg) ).  %%for chargestatus
+reply( chargefailed, chargefailed(arg) ).  %%for chargestatus
 reply( loadaccepted, loadaccepted(TICKET) ).  %%for storerequest
 reply( loadrejected, loadrejected(arg) ).  %%for storerequest
 reply( ticketaccepted, ticketaccepted(arg) ).  %%for insertticket

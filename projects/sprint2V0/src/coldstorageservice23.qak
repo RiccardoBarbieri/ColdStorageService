@@ -238,15 +238,20 @@ QActor coldstorageservice context ctx_coldstorageservice {
 //					whenReply	chargefailedtt	->	chargeFailed
 
 	State chargeTakenTT {
-		replyTo	chargestatus with chargetaken : chargetaken(arg)
 		onMsg(chargetakentt : chargetakentt(FW)) {
 			println("CSS: charge of ${payloadArg(0)} taken") color blue
 		}
 		request transporttrolley -m depositstatus : depositstatus(arg)
 	}
-	Goto waiting
+	Transition t0	whenRequest	chargestatus	->	replyChargeStatus
+//	Goto waiting
 //	Transition t0	whenReply	chargedeposited	->	chargeDeposited
 //					whenReply	chargedepfailed	->	depositFailed
+
+	State replyChargeStatus {
+		replyTo	chargestatus with chargetaken : chargetaken(arg)
+	}
+	Goto waiting
 	
 	State chargeDeposited {
 		onMsg(chargedeposited : chargedeposited(FW)){

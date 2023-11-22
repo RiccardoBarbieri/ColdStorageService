@@ -59,8 +59,12 @@ class Ticketmanager ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("insertticket(TICKET)"), Term.createTerm("insertticket(TICKET)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 ticketManager.checkTicketValidity(payloadArg(0), System.currentTimeMillis(), TICKETTIME*1000L)  
-								answer("insertticket", "ticketaccepted", "ticketaccepted(arg)"   )  
+								if(  ticketManager.checkTicketValidity(payloadArg(0), System.currentTimeMillis(), TICKETTIME*1000L)  
+								 ){answer("insertticket", "ticketaccepted", "ticketaccepted(arg)"   )  
+								}
+								else
+								 {answer("insertticket", "ticketrejected", "ticketrejected(arg)"   )  
+								 }
 								forward("initdeposit", "initdeposit(${payloadArg(0)})" ,"coldstorageservice" ) 
 						}
 						//genTimer( actor, state )

@@ -159,6 +159,16 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition(edgeName="t09",targetState="replyChargeStatus",cond=whenRequest("chargestatus"))
+				}	 
+				state("replyChargeStatus") { //this:State
+					action { //it:State
+						answer("chargestatus", "chargetaken", "chargetaken(arg)"   )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
 				state("chargeDeposited") { //this:State
