@@ -5,18 +5,18 @@ Request 	storerequest		:		storerequest(FW)
 
 //SAG -> CSS(TM)
 Request		insertticket		:		insertticket(TICKET)
-//Request		chargestatus		:		chargestatus(arg)
+Request		chargestatus		:		chargestatus(arg)
 
 //TM -> CSS
 Dispatch	initdeposit			:		initdeposit(TICKET)
 
 //CSS -> SAG
+Reply		chargetaken			:		chargetaken(arg) for chargestatus
+Reply		chargefailed		:		chargefailed(arg) for chargestatus
 Reply		loadaccepted		:		loadaccepted(TICKET) for storerequest
 Reply		loadrejected		:		loadrejected(arg) for storerequest
 
 //TM -> SAG
-//Reply		chargetaken			:		chargetaken(arg) for chargestatus
-//Reply		chargefailed		:		chargefailed(arg) for chargestatus
 Reply		ticketaccepted		:		ticketaccepted(arg) for insertticket
 Reply		ticketrejected		:		ticketrejected(arg) for insertticket
 
@@ -132,9 +132,12 @@ QActor ticketmanager context ctx_coldstorageservice {
 	
 	State validateTicket {
 		onMsg(insertticket : insertticket(TICKET)) {
-			[# ticketManager.checkTicketValidity(payloadArg(0), System.currentTimeMillis(), TICKETTIME*1000L) #]
-			replyTo insertticket with ticketaccepted : ticketaccepted(arg)
-			
+			if [# ticketManager.checkTicketValidity(payloadArg(0), System.currentTimeMillis(), TICKETTIME*1000L) #] {
+			    replyTo insertticket with ticketaccepted : ticketaccepted(arg)
+            }
+			else {
+			    replyTo insertticket with ticketrejected : ticketrejected(arg)
+            }
 			forward coldstorageservice -m initdeposit : initdeposit($payloadArg(0))
 		}
 	}
@@ -235,7 +238,7 @@ QActor coldstorageservice context ctx_coldstorageservice {
 //					whenReply	chargefailedtt	->	chargeFailed
 
 	State chargeTakenTT {
-//		replyTo	chargestatus with chargetaken : chargetaken(arg)
+		replyTo	chargestatus with chargetaken : chargetaken(arg)
 		onMsg(chargetakentt : chargetakentt(FW)) {
 			println("CSS: charge of ${payloadArg(0)} taken") color blue
 		}
