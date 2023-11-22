@@ -58,15 +58,15 @@ function sendStorageRequest(quantityFw) {
             else {
                 setTimeout(() => {
                     if (resolvedValue.includes("loadaccepted")) {
-                        var ticketCodeTmp = resolvedValue.substring(resolvedValue.lastIndexOf("loadaccepted("), resolvedValue.length)
-                        var ticketCode = ticketCodeTmp.substring(0, ticketCodeTmp.indexOf(")"));
-                        showResponse("accepted", ticketCode)
+                        var ticketCodeTmp = resolvedValue.split("(")[2]
+                        var ticketCode = ticketCodeTmp.split(")")[0]
+                        showResponseStorageRequest("accepted", ticketCode)
                     }
                     else if (resolvedValue.includes("loadrejected")) {
-                        showResponse("rejected", null)
+                        showResponseStorageRequest("rejected", null)
                     }
                     else {
-                        showResponse("KO", null)
+                        showResponseStorageRequest("KO", null)
                     }
                 }, 2000);
             }
@@ -78,13 +78,6 @@ function sendStorageRequest(quantityFw) {
 }
 
 function sendChargeStatusRequest() {
-    const sendChargeStatusBtn = document.querySelector("#sendChargeStatusBtn");
-
-    sendChargeStatusBtn.firstElementChild.removeAttribute("hidden");
-    sendChargeStatusBtn.disabled = true
-
-    const spinnerChargeStatus = document.querySelector("#spinner-border-status");
-    spinnerChargeStatus.removeAttribute('hidden');
 
     //request to server
     const relativeEndpoint = '/sendChargeStatusRequest';
@@ -98,28 +91,6 @@ function sendChargeStatusRequest() {
             body: ""
         }
     ).then(response => {
-        if (response.ok) {
-            //Saving animation end OK
-            setTimeout(() => {
-                const statusRequest = document.getElementById('status-request');
-                statusRequest.removeAttribute('hidden');
-                spinnerChargeStatus.setAttribute('hidden', 'hidden');
-                sendChargeStatusBtn.firstElementChild.hidden = "hidden";
-                sendChargeStatusBtn.lastElementChild.textContent = 'Charge request sent';
-                sendChargeStatusBtn.disabled = true;
-            }, 1700);
-        } else {
-            //Saving animation end ERROR
-            setTimeout(() => {
-                const statusRequest = document.getElementById('status-request');
-                statusRequest.removeAttribute('hidden');
-                spinnerChargeStatus.setAttribute('hidden', 'hidden');
-                sendChargeStatusBtn.firstElementChild.hidden = "hidden";
-                sendChargeStatusBtn.lastElementChild.textContent = 'Error!';
-            }, 1700);
-        }
-        return response;
-    }).then(response => {
         response.text().then((resolvedValue) => {
 
             if (!response.ok) {
@@ -329,7 +300,7 @@ function validateTicket() {
         showError('Ticket code is not in the correct format!');
     }
     else {
-        enterTicketRequest();
+        enterTicketRequest(inputValue);
     }
 }
 

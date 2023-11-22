@@ -52,7 +52,7 @@ public class SagConnection extends ConnectionUtils {
         String functionName = "enterTicketRequest";
         try {
             String msg = ""+ CommUtils.buildRequest("ServiceAccessGUI",
-                    "ticketrequest", "ticketrequest("+ticketCode+")", actorName);
+                    "insertticket", "insertticket("+ticketCode+")", actorName);
             return sendRequest(conn, msg, functionName);
         } catch (Exception e) {
             CommUtils.outred(className + " " + functionName + " | ERROR: " + e.getMessage());

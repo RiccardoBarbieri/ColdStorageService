@@ -61,7 +61,7 @@ public class SagController {
         return new ResponseEntity<>(className + " sendStorageRequest | answer: " + answer, headers, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/sendChargeStatusRequest", consumes = "application/json")
+    @PostMapping(value = "/sendChargeStatusRequest")
     public ResponseEntity<String> sendChargeStatusRequest() {
 
         String answer = sagConnection.sendChargeStatusRequest(this.requestConn);
@@ -76,7 +76,7 @@ public class SagController {
 
     @PostMapping(value = "/enterTicketRequest", consumes = "application/json")
     public ResponseEntity<String> enterTicketRequest(@RequestBody TicketRequest ticketrequest){
-        if (ticketrequest == null || ticketrequest.getTicketCode() == null || ticketrequest.getTicketCode().equals("")) {
+        if (ticketrequest == null || ticketrequest.getTicketCode() == null || ticketrequest.getTicketCode().isEmpty()) {
             HttpHeaders headers = new HttpHeaders();
             return new ResponseEntity<>(className + " enterTicketRequest | ERROR: input error", headers, HttpStatus.BAD_REQUEST);
         }
