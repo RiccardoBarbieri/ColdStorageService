@@ -1,9 +1,9 @@
 package ticket
 
-import cli.System.Object
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.util.concurrent.ThreadLocalRandom
+import java.security.MessageDigest
+import java.security.SecureRandom
 import kotlin.streams.asSequence
 
 class TicketManager {
@@ -22,7 +22,9 @@ class TicketManager {
         representation += "n"
         representation += currentId.toString()
         representation += randomString()
-        tickets[representation] = Ticket(currentId, weight, representation)
+
+        val hash = getHash(representation)
+        tickets[hash] = Ticket(currentId, weight, hash, validated = false, validationTimeMs = 0)
         return representation
     }
 
@@ -33,14 +35,31 @@ class TicketManager {
     }
 
     private fun randomString(): String {
-        return ThreadLocalRandom.current().ints(STRING_LENGTH, 0, CHAR_POOL.size)
+        val sr: SecureRandom = SecureRandom.getInstance("SHA1PRNG")
+        return sr.ints(STRING_LENGTH, 0, CHAR_POOL.size)
             .asSequence()
             .map(CHAR_POOL::get)
             .joinToString("")
     }
 
+    private fun getHash(input: String, algorithm: String = "SHA-256"): String {
+        val bytes = MessageDigest
+            .getInstance(algorithm)
+            .digest(input.toByteArray())
+        return bytes.fold("") { str, it -> str + "%02x".format(it) }
+    }
+
     fun checkTicketValidity(ticketRepr: String, currentTimeMs: Long, ticketTimeMs: Long): Boolean {
-        val ticket = tickets[ticketRepr] ?: return false
+
+        val hash = getHash(ticketRepr)
+
+        val ticket = tickets[hash] ?: return false
+        if (ticket.validated) return false
+
+        ticket.validated = true
+        ticket.validationTimeMs = currentTimeMs
+        tickets[hash] = ticket
+
         return (currentTimeMs - ticket.generationTimeMs) < ticketTimeMs
     }
 
@@ -54,6 +73,7 @@ class TicketManager {
         val typeRef: TypeReference<HashMap<String, Ticket>> = object : TypeReference<HashMap<String, Ticket>>() {}
         return objectMapper.readValue(java.io.File(destination + filename), typeRef)
     }
+
 
 }
 
