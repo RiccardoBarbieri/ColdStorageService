@@ -63,6 +63,18 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					}	 	 
 					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
+				state("sendColdRoom") { //this:State
+					action { //it:State
+							val Arg1 = actualCurrentColdRoom
+									val Arg2 = tempCurrentColdRoom
+						answer("initcoldroom", "coldroom", "coldroom($Arg1,$Arg2)"   )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
+				}	 
 				state("waiting") { //this:State
 					action { //it:State
 						CommUtils.outblue("CSS: waiting for new storage request")
@@ -77,6 +89,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					transition(edgeName="t05",targetState="chargeFailed",cond=whenReply("chargefailedtt"))
 					transition(edgeName="t06",targetState="chargeDeposited",cond=whenReply("chargedeposited"))
 					transition(edgeName="t07",targetState="depositFailed",cond=whenReply("chargedepfailed"))
+					transition(edgeName="t08",targetState="sendColdRoom",cond=whenRequest("initcoldroom"))
 				}	 
 				state("checkAvailability") { //this:State
 					action { //it:State
@@ -113,7 +126,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t08",targetState="replyTicket",cond=whenReply("ticket"))
+					 transition(edgeName="t09",targetState="replyTicket",cond=whenReply("ticket"))
 				}	 
 				state("replyTicket") { //this:State
 					action { //it:State
@@ -159,7 +172,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t09",targetState="replyChargeStatus",cond=whenRequest("chargestatus"))
+					 transition(edgeName="t010",targetState="replyChargeStatus",cond=whenRequest("chargestatus"))
 				}	 
 				state("replyChargeStatus") { //this:State
 					action { //it:State

@@ -90,8 +90,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t010",targetState="moveToIndoorFromHome",cond=whenRequest("deposit"))
-					transition(edgeName="t011",targetState="somethingFailed",cond=whenDispatch("fail"))
+					 transition(edgeName="t011",targetState="moveToIndoorFromHome",cond=whenRequest("deposit"))
+					transition(edgeName="t012",targetState="somethingFailed",cond=whenDispatch("fail"))
 				}	 
 				state("returnHome") { //this:State
 					action { //it:State
@@ -104,9 +104,9 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t012",targetState="waiting",cond=whenReply("movedone"))
-					transition(edgeName="t013",targetState="moveFailed",cond=whenReply("movefailed"))
-					transition(edgeName="t014",targetState="restartToIndoor",cond=whenRequest("deposit"))
+					 transition(edgeName="t013",targetState="waiting",cond=whenReply("movedone"))
+					transition(edgeName="t014",targetState="moveFailed",cond=whenReply("movefailed"))
+					transition(edgeName="t015",targetState="restartToIndoor",cond=whenRequest("deposit"))
 				}	 
 				state("restartToIndoor") { //this:State
 					action { //it:State
@@ -122,8 +122,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t015",targetState="takeCharge",cond=whenReply("movecdone"))
-					transition(edgeName="t016",targetState="moveFailed",cond=whenReply("movecfailed"))
+					 transition(edgeName="t016",targetState="takeCharge",cond=whenReply("movecdone"))
+					transition(edgeName="t017",targetState="moveFailed",cond=whenReply("movecfailed"))
 				}	 
 				state("moveToIndoorFromHome") { //this:State
 					action { //it:State
@@ -141,8 +141,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t017",targetState="takeCharge",cond=whenReply("movedone"))
-					transition(edgeName="t018",targetState="chargeTakeFailed",cond=whenReply("movefailed"))
+					 transition(edgeName="t018",targetState="takeCharge",cond=whenReply("movedone"))
+					transition(edgeName="t019",targetState="chargeTakeFailed",cond=whenReply("movefailed"))
 				}	 
 				state("takeCharge") { //this:State
 					action { //it:State
@@ -164,7 +164,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t019",targetState="toPort",cond=whenRequest("depositstatus"))
+					 transition(edgeName="t020",targetState="toPort",cond=whenRequest("depositstatus"))
 				}	 
 				state("toPort") { //this:State
 					action { //it:State
@@ -177,8 +177,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t020",targetState="depositInColdRoom",cond=whenReply("movedone"))
-					transition(edgeName="t021",targetState="moveFailed",cond=whenReply("movefailed"))
+					 transition(edgeName="t021",targetState="depositInColdRoom",cond=whenReply("movedone"))
+					transition(edgeName="t022",targetState="moveFailed",cond=whenReply("movefailed"))
 				}	 
 				state("depositInColdRoom") { //this:State
 					action { //it:State
@@ -193,8 +193,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 				 	 		stateTimer = TimerActor("timer_depositInColdRoom", 
 				 	 					  scope, context!!, "local_tout_transporttrolley_depositInColdRoom", 1000.toLong() )
 					}	 	 
-					 transition(edgeName="t022",targetState="returnHome",cond=whenTimeout("local_tout_transporttrolley_depositInColdRoom"))   
-					transition(edgeName="t023",targetState="restartToIndoor",cond=whenRequest("deposit"))
+					 transition(edgeName="t023",targetState="returnHome",cond=whenTimeout("local_tout_transporttrolley_depositInColdRoom"))   
+					transition(edgeName="t024",targetState="restartToIndoor",cond=whenRequest("deposit"))
 				}	 
 			}
 		}

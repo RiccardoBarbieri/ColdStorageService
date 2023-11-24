@@ -2,6 +2,7 @@
 % coldstorageservice23 description   
 %====================================================================================
 request( storerequest, storerequest(FW) ).
+request( initcoldroom, initcoldroom(arg) ).
 request( insertticket, insertticket(TICKET) ).
 request( chargestatus, chargestatus(arg) ).
 dispatch( initdeposit, initdeposit(TICKET) ).
@@ -9,6 +10,7 @@ reply( chargetaken, chargetaken(arg) ).  %%for chargestatus
 reply( chargefailed, chargefailed(arg) ).  %%for chargestatus
 reply( loadaccepted, loadaccepted(TICKET) ).  %%for storerequest
 reply( loadrejected, loadrejected(arg) ).  %%for storerequest
+reply( coldroom, coldroom(ACTUAL,TEMP) ).  %%for initcoldroom
 reply( ticketaccepted, ticketaccepted(arg) ).  %%for insertticket
 reply( ticketrejected, ticketrejected(arg) ).  %%for insertticket
 request( generateticket, generateticket(FW) ).

@@ -2,6 +2,7 @@ System coldstorageservice23
 
 //SAG -> CSS
 Request 	storerequest		:		storerequest(FW)
+Request		initcoldroom		:		initcoldroom(arg)
 
 //SAG -> CSS(TM)
 Request		insertticket		:		insertticket(TICKET)
@@ -15,6 +16,7 @@ Reply		chargetaken			:		chargetaken(arg) for chargestatus
 Reply		chargefailed		:		chargefailed(arg) for chargestatus
 Reply		loadaccepted		:		loadaccepted(TICKET) for storerequest
 Reply		loadrejected		:		loadrejected(arg) for storerequest
+Reply		coldroom			:		coldroom(ACTUAL,TEMP) for initcoldroom
 
 //TM -> SAG
 Reply		ticketaccepted		:		ticketaccepted(arg) for insertticket
@@ -178,6 +180,14 @@ QActor coldstorageservice context ctx_coldstorageservice {
 	}
 	Goto waiting
 	
+	State sendColdRoom {
+		[#	val Arg1 = actualCurrentColdRoom
+			val Arg2 = tempCurrentColdRoom
+		#]
+		replyTo initcoldroom with coldroom : coldroom($Arg1,$Arg2)
+	}
+	Goto waiting
+	
 	State waiting {
 		println("CSS: waiting for new storage request") color blue
 	}
@@ -188,6 +198,7 @@ QActor coldstorageservice context ctx_coldstorageservice {
 					whenReply	chargefailedtt	->	chargeFailed		//3b
 					whenReply	chargedeposited	->	chargeDeposited		//4a
 					whenReply	chargedepfailed	->	depositFailed		//4b
+					whenRequest	initcoldroom	->	sendColdRoom
 	
 	State checkAvailability {
 		onMsg (storerequest : storerequest(FW)) {
