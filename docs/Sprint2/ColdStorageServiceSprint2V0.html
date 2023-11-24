@@ -77,7 +77,12 @@
     <h3>ServiceAccessGUI</h3>
 
     <p>
-        La <i>ServiceAccessGUI</i> è l'interfaccia grafica a disposizione dell'utente per accedere ai servizi forniti dal <i>ColdStorageService</i>.
+        La <i>ServiceAccessGUI</i> è l'interfaccia grafica a disposizione dell'utente per accedere ai servizi forniti dal <i>ColdStorageService</i>. <br>
+        Oltre a quanto già realizzato nella <a href="../Sprint1/ServiceAccessGUISimProjectV1.html">ServiceAccessGUI</a> relativa allo <i>Sprint1</i>, si aggiungono i requisiti di:
+        <ul>
+            <li>gestire il ticket, fornendolo all'utente e mostrando un campo di inserimento</li>
+            <li>mostrare il peso corrente all'interno della ColdRoom</li>
+        </ul>
     </p>
     <h5>Interazioni</h5>
     <p>
@@ -221,13 +226,32 @@
         Quindi, non abbiamo problemi di memorizzazione degli indirizzi a cui inviare i messaggi.
     </p>
 
+    <h5>Visualizzazione stato ColdRoom</h5>
     <p>
-        <b>TODO: AGGIUNGER UPDATERESOURCE / EVENT PER L'AGGIORNAMENTO DEL VALORE DELLA COLDROOM + DISCORSO UPDATE INIZIALE</b> <br>
-        <b>TODO: il campo per il ticket è disponibile</b>
+        La <i>SAG</i> dovrà essere aggiornata di pari passo con il materiale immagazzinato nella ColdRoom e <u>si suppone</u> dovrà averlo disponibile sin dall'inizializzazione. <br>
+        <br>
+        L'idea è quella di far inviare un <b>event</b> dal <i>CSS</i> alla <i>SAG</i> ad ogni aggiornamento di carico immagazzinato (ed una info iniziale, in risposta alla <i>storerequest()</i>), ma questo non soddisferrebbe il requisito di ottenere il peso all'apertura dell'applicazione. <br>
+        Abbiamo così pensato pensato di realizzare una semantica <b>request-reply</b>, utilizzata dalla <i>SAG</i> in apertura. Per contro, questa "appesentirebbe" il sistema qak, per una sola interazione poco necessaria: preferiamo quindi discuterne con il committente.
+
+        <p class="keypoint">
+            <b>COMMITTENTE:</b> discutere la necessità di avere in visualizzazione il peso corrente della <i>ColdRoom</i> all'inizializzazione della <i>SAG</i>
+        </p>
     </p>
 
+    <h5>Visualizzazione del ticket</h5>
     <p>
-        <b>TODO: comunicazione del ticket tramite visualizzazione in plain text sulla web app + maniera alternativa tipo documento</b>
+        Il ticket verrà restituito dal <i>CSS</i> e la <i>SAG</i> dovrà fornirlo all'utente. Per farlo, abbiamo pensato a due vie:
+        <ul>
+            <li>mostarlo in chiaro nell'applicazione web (all'interno della pagina)</li>
+            <li>fornirlo in maniera esterna all'applicazione</li>
+        </ul>
+        Mentre il primo modo semplifica la vita all'utente che dovrà fare solamente un copia-incolla all'interno della pagina, il secondo permette invece di far fronte a problemi come la chiusura dell'applicazione. <br>
+        Infatti, se una volta ottenuto il ticket (e fosse visualizzabile solo nella pagina) l'utente chiudesse per errore la pagina web, perderebbe la possibilità di inserirlo in quanto non se lo ricorderebbe (e dovrebbe effettuare una nuova richiesta di deposito). <br>
+        Al contrario, fornendo un via d'accesso al codice esterna all'app web (come un file <i>.pdf</i> scaricabile dall'app web), questo problema si eviterebbe.
+
+        <p class="keypoint">
+            <b>KEY-POINT:</b> fornire il <i>ticket</i> all'utente in modo <b>esterno</b> all'applicazione web <i>SAG</i>
+        </p>
     </p>
     
     <h3>Ticket</h3>
@@ -258,14 +282,110 @@
                 <li>come memorizzarlo ed effettuare il controllo di validità in fase di inserimento dalla <i>SAG</i></li>
             </ul>
 
-            <h5>Codice alfanumerico</h5>
-            <p><b>TODO: correggere formato e spiegare i vari campi</b></p>
+            <h5>Formato del ticket</h5>
             <p>
-                Il fatto di usaro un numero vero e proprio come codice sarebbe un limite molto forte, in quanto lo spazio di valori non sarebbe così ampio da garantire sicurezza (a meno di non usare un numero di cifre molto elevato). <br>
-                Abbiamo optato per l'utilizzo di un <b>codice alfanumerico</b> di <b>8 caratteri</b>, in modo da ottenere un buon trade-off tra costi di computazione e possibilità di collisione: abbiamo infatti uno spazio di valori possibili di più di 6500 miliardi, ampiamente abbastanza per i nostri scopi.
-                
+                Come detto nei requisiti, il codice del ticket sarà alfanumerico, possiamo utilizzarlo quindi per inserirci delle informazioni. <br>
+                In particolare, il ticket avrà le proprietà riportate in tabella.
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Descrizione</th>
+                            <th>Formattazione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>T = ticket <br>(Prolog non accetta variabili che inizino con un numero)</td>
+                            <td>t(FW)</td>
+                        </tr>
+                        <tr>
+                            <td>Peso in kg (senza decimali) del carico depositato</td>
+                            <td>Numero intero positivo da 2 cifre</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">coldstorageservice</td>
+                            <td class="orange bold center">ServiceAccessGUI</td>
+                            <td class="blue bold center">Reply</td>
+                            <td>loadrejected</td>
+                            <td>loadrejected()</td>
+                            <td>La richiesta &egrave; stata rifiutata.</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">ServiceAccessGUI</td>
+                            <td class="orange bold center">ticketmanager</td>
+                            <td class="blue bold center">Request</td>
+                            <td>insertticket</td>
+                            <td>insertticket(TICKET)</td>
+                            <td>Viene inviato il ticket inserito al ticketmanager.</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">ticketmanager</td>
+                            <td class="orange bold center">ServiceAccessGUI</td>
+                            <td class="blue bold center">Reply</td>
+                            <td>ticketaccepted</td>
+                            <td>ticketaccepted()</td>
+                            <td>Il ticket &egrave; stato validato e accettato dal sistema.</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">ticketmanager</td>
+                            <td class="orange bold center">ServiceAccessGUI</td>
+                            <td class="blue bold center">Reply</td>
+                            <td>ticketrejected</td>
+                            <td>ticketrejected()</td>
+                            <td>Il ticket &egrave; stato validato ma rifiutato dal sistema.</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">coldstorageservice</td>
+                            <td class="orange bold center">ticketmanager</td>
+                            <td class="blue bold center">Request</td>
+                            <td>generateticket</td>
+                            <td>generateticket(FW)</td>
+                            <td>Richiesta per la generazione di un ticket.</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">ticketmanager</td>
+                            <td class="orange bold center">coldstorageservice</td>
+                            <td class="blue bold center">Reply</td>
+                            <td>ticket</td>
+                            <td>ticket(TCIKET)</td>
+                            <td>Il ticket &egrave; stato generato.</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">ticketmanager</td>
+                            <td class="orange bold center">coldstorageservice</td>
+                            <td class="blue bold center">Dispatch</td>
+                            <td>initdeposit</td>
+                            <td>initdeposit(TICKET)</td>
+                            <td>Inizia una azione di deposito dopo la validazione di un ticket.</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">ServiceAccessGUI</td>
+                            <td class="orange bold center">coldstorageservice</td>
+                            <td class="blue bold center">Request</td>
+                            <td>chargestatus</td>
+                            <td>chargestatus()</td>
+                            <td>Viene richiesto lo stato del carico depositato.</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">coldstorageservice</td>
+                            <td class="orange bold center">ServiceAccessGUI</td>
+                            <td class="blue bold center">Reply</td>
+                            <td>chargetaken</td>
+                            <td>chargetaken()</td>
+                            <td>Il deposito è stato preso in carico dal transport trolley, il camion deve spostarsi da INDOOR.</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">coldstorageservice</td>
+                            <td class="orange bold center">ServiceAccessGUI</td>
+                            <td class="blue bold center">Reply</td>
+                            <td>chargefailed</td>
+                            <td>chargefailed()</td>
+                            <td>Ci sono stati problemi durante la presa in carico del deposito.</td>
+                        </tr>
+                    </tbody>
+                </table>
                 <p class="keypoint">
-                    <b>KEY-POINT:</b> il <i>"ticket number"</i> sarà un codice alfanumerico di 8 caratteri.
+                    <b>KEY-POINT:</b> il <i>"ticket code"</i> avrà il formato <b>t<pesoinkg>n<numeroincrementale></4caratterirandom></b>
                 </p>
             </p>
 
@@ -315,7 +435,7 @@
 
     </p>
 
-    <h3>ColdStorageService</h3>
+    <h3>TicketManager</h3>
 
     <p>
         Allo scopo di mantenere componenti che rispettano il principio di singola responsabilit&agrave; abbiamo deciso di creare un nuovo componente (attore): il <b>ticketmanager</b>; questo componente &egrave; incaricato di:
