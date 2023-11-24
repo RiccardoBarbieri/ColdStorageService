@@ -151,9 +151,9 @@ QActor ticketmanager context ctx_coldstorageservice {
 QActor coldstorageservice context ctx_coldstorageservice {
 	
 	[#	val maxColdRoom: Float = 10F
-		var actualCurrentColdRoom: Float = 0F
+		var ActualCurrentColdRoom: Float = 0F
 		
-		var tempCurrentColdRoom: Float = 0F
+		var TempCurrentColdRoom: Float = 0F
 		var LastDepositRequested: Float = 0F
 		
 		var accepted: Boolean = false
@@ -181,10 +181,10 @@ QActor coldstorageservice context ctx_coldstorageservice {
 	Goto waiting
 	
 	State sendColdRoom {
-		[#	val Arg1 = actualCurrentColdRoom
-			val Arg2 = tempCurrentColdRoom
+		[#	val Arg1 = ActualCurrentColdRoom
+			val Arg2 = TempCurrentColdRoom
 		#]
-		replyTo initcoldroom with coldroom : coldroom($Arg1,$Arg2)
+		replyTo initcoldroom with coldroom : coldroom($ActualCurrentColdRoom,$TempCurrentColdRoom)
 	}
 	Goto waiting
 	
@@ -204,18 +204,19 @@ QActor coldstorageservice context ctx_coldstorageservice {
 		onMsg (storerequest : storerequest(FW)) {
 			[# val FW = payloadArg(0).trim().toFloat() #]
 						
-			if [# (tempCurrentColdRoom + FW) <= maxColdRoom #] {
-				[#	tempCurrentColdRoom += FW
+			if [# (TempCurrentColdRoom + FW) <= maxColdRoom #] {
+				[#	TempCurrentColdRoom += FW
 					LastDepositRequested = FW
 					accepted = true
 				#]
-				println("CSS: load for $FW KG accepted, currentWeight = $actualCurrentColdRoom") color blue
+				println("CSS: load for $FW KG accepted, currentWeight = $ActualCurrentColdRoom") color blue
 			} else {
 				[# accepted = false #]
 				replyTo storerequest with loadrejected : loadrejected(arg)
-				println("CSS: load for $FW KG rejected, not enough space in ColdRoom, currentWeight = $actualCurrentColdRoom") color blue
+				println("CSS: load for $FW KG rejected, not enough space in ColdRoom, currentWeight = $ActualCurrentColdRoom") color blue
 			}
 		}
+		updateResource [# "tempcurrentcoldroom($TempCurrentColdRoom)" #]
 	}
 	Goto requestTicket if [# accepted #] else waiting
 	
@@ -267,10 +268,11 @@ QActor coldstorageservice context ctx_coldstorageservice {
 	State chargeDeposited {
 		onMsg(chargedeposited : chargedeposited(FW)){
 			[#	val FW = payloadArg(0).toFloat()
-				actualCurrentColdRoom += FW
+				ActualCurrentColdRoom += FW
 			#]
-			println("CSS: load of ${payloadArg(0)} deposited in ColdRoom, current weight = $actualCurrentColdRoom") color blue
+			println("CSS: load of ${payloadArg(0)} deposited in ColdRoom, current weight = $ActualCurrentColdRoom") color blue
 		}
+		updateResource [# "actualcurrentcoldroom($ActualCurrentColdRoom)" #]
 	}
 	Goto waiting
 	

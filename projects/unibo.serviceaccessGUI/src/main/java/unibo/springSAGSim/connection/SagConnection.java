@@ -24,6 +24,18 @@ public class SagConnection extends ConnectionUtils {
         return connectActorUsingCoap(actorCtxHost, actorCtxPort, actorCtx, actorName);
     }
 
+    public String sendInitColdRoom(Interaction conn) {
+        String functionName = "sendInitColdRoom";
+        try {
+            String msg = "" + CommUtils.buildRequest("ServiceAccessGUI",
+                    "initcoldroom", "initcoldroom(arg)", actorName);
+            return sendRequest(conn, msg, functionName);
+        } catch (Exception e) {
+            CommUtils.outred(className + " " + functionName + " | ERROR: " + e.getMessage());
+        }
+        return null;
+    }
+
     public String sendStorageRequest(Interaction conn, float fw) {
         String functionName = "sendStorageRequest";
         try {

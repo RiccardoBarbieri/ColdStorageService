@@ -17,11 +17,16 @@
     <h1 class="text-center"><span th:text="${arg}">Application name</span></h1>
     <h3 class="text-center">Deposit request simulation</h3>
 
-    <div id="coldRoomStatus" style="display: block;">
-        <div>
-            <label id="coldRoomStatusText" class="form-label"></label>
-        </div>
+    <div>
+        <label for="temp">Total weight reserved in ColdRoom:</label>
+        <span id="temp" th:text="${tempCurrentColdRoom}"></span>
     </div>
+    <div>
+        <label for="actual">Total weight actually stored in ColdRoom:</label>
+        <span id="actual" th:text="${actualCurrentColdRoom}"></span>
+    </div>
+
+    <div class="mb-3"></div>
 
     <div class="mb-3">
         <label for="quantity" class="form-label">Welcome, please enter the <b>quantity of food</b> (kg) you need to deposit. <br>

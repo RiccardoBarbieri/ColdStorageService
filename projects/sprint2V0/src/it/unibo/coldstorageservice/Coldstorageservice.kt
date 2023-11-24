@@ -19,9 +19,9 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 			val maxColdRoom: Float = 10F
-				var actualCurrentColdRoom: Float = 0F
+				var ActualCurrentColdRoom: Float = 0F
 				
-				var tempCurrentColdRoom: Float = 0F
+				var TempCurrentColdRoom: Float = 0F
 				var LastDepositRequested: Float = 0F
 				
 				var accepted: Boolean = false
@@ -65,9 +65,9 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 				}	 
 				state("sendColdRoom") { //this:State
 					action { //it:State
-							val Arg1 = actualCurrentColdRoom
-									val Arg2 = tempCurrentColdRoom
-						answer("initcoldroom", "coldroom", "coldroom($Arg1,$Arg2)"   )  
+							val Arg1 = ActualCurrentColdRoom
+									val Arg2 = TempCurrentColdRoom
+						answer("initcoldroom", "coldroom", "coldroom($ActualCurrentColdRoom,$TempCurrentColdRoom)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -96,18 +96,20 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 						if( checkMsgContent( Term.createTerm("storerequest(FW)"), Term.createTerm("storerequest(FW)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 val FW = payloadArg(0).trim().toFloat()  
-								if(  (tempCurrentColdRoom + FW) <= maxColdRoom  
-								 ){	tempCurrentColdRoom += FW
+								if(  (TempCurrentColdRoom + FW) <= maxColdRoom  
+								 ){	TempCurrentColdRoom += FW
 													LastDepositRequested = FW
 													accepted = true
-								CommUtils.outblue("CSS: load for $FW KG accepted, currentWeight = $actualCurrentColdRoom")
+								CommUtils.outblue("CSS: load for $FW KG accepted, currentWeight = $ActualCurrentColdRoom")
 								}
 								else
 								 { accepted = false  
 								 answer("storerequest", "loadrejected", "loadrejected(arg)"   )  
-								 CommUtils.outblue("CSS: load for $FW KG rejected, not enough space in ColdRoom, currentWeight = $actualCurrentColdRoom")
+								 CommUtils.outblue("CSS: load for $FW KG rejected, not enough space in ColdRoom, currentWeight = $ActualCurrentColdRoom")
 								 }
 						}
+						updateResourceRep( "tempcurrentcoldroom($TempCurrentColdRoom)"  
+						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -189,9 +191,11 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 						if( checkMsgContent( Term.createTerm("chargedeposited(FW)"), Term.createTerm("chargedeposited(FW)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 									val FW = payloadArg(0).toFloat()
-												actualCurrentColdRoom += FW
-								CommUtils.outblue("CSS: load of ${payloadArg(0)} deposited in ColdRoom, current weight = $actualCurrentColdRoom")
+												ActualCurrentColdRoom += FW
+								CommUtils.outblue("CSS: load of ${payloadArg(0)} deposited in ColdRoom, current weight = $ActualCurrentColdRoom")
 						}
+						updateResourceRep( "actualcurrentcoldroom($ActualCurrentColdRoom)"  
+						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

@@ -38,18 +38,40 @@ public class SagController {
     @Value("${spring.application.name}")
     String appName;
 
-    @GetMapping("/")
-    public String homePage(Model model) {
-        model.addAttribute("arg", appName);
-        return "main";
-    }
-
     @Autowired
     public SagController(SagConnection sagConnection) {
         this.sagConnection = sagConnection;
         this.observerConn = sagConnection.connectLocalActorUsingCoap();
         observerConn.observeResource(new CoapObserver());
         this.requestConn = sagConnection.connectLocalActorUsingCoap();
+    }
+
+    @GetMapping("/")
+    public String homePage(Model model) {
+        String temp = "ERROR";
+        String actual = "ERROR";
+
+        model.addAttribute("arg", appName);
+
+        if (this.requestConn == null) {
+            model.addAttribute("tempCurrentColdRoom", temp);
+            model.addAttribute("actualCurrentColdRoom", actual);
+        }
+
+        String answer = sagConnection.sendInitColdRoom(this.requestConn);
+        if (answer == null) {
+            model.addAttribute("tempCurrentColdRoom", temp);
+            model.addAttribute("actualCurrentColdRoom", actual);
+        }
+        else {
+            String both = answer.substring(answer.indexOf("coldroom(") + 9, answer.indexOf(")"));
+            temp = both.split(",")[0];
+            actual = both.split(",")[1];
+        }
+        model.addAttribute("tempCurrentColdRoom", temp);
+        model.addAttribute("actualCurrentColdRoom", actual);
+
+        return "main";
     }
 
     @PostMapping(value = "/sendStorageRequest", consumes = "application/json")
