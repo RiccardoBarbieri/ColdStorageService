@@ -273,6 +273,11 @@
     </p>
 
 
+    <p class="nota">
+        <b>COMMITTENTE:</b> abbiamo pensato di fornire alla <i>SAG</i> le informazioni relative sia al totale attualmente immagazzinato nella ColdRoom, sia a quanto è riservato ma non ancora depositato. <br>
+        Essendo entrambe le info in pancia al <i>CSS</i>, non ci sarebbe nessun overhead aggiuntivo per questa (a nostro parere utile) informazione, ma meglio discuterne con il committente.
+    </p>
+
     <h5 id="pdf_analisi_prob">Visualizzazione del ticket</h5>
     <p>
         Il ticket verrà restituito dal <i>CSS</i> e la <i>SAG</i> dovrà fornirlo all'utente. Per farlo, abbiamo pensato a due vie:
@@ -668,7 +673,7 @@ actualCurrentColdRoom += FW</code></pre>
     <p>
         Vediamo esserci il nuovo componente <b>CoapObserver</b>: osservatore che, ad ogni aggiornamento emesso dal ColdStorageService, avvisa tutte le entità registrate ad esso tramite <i>WebSocket</i>.
         <p>
-            Per l'aggiornamento automatico della pagina da parte del server utilizziamo le <b>WebSocket</b>. Abbiamo infatti un file <a href="../../springSAGSim/src/main/resources/static/js/ws_utils.js">ws_utils.js</a> che definisce la connessione e gestisce i messaggi in arrivo in maniera opportuna. <br>
+            Per l'aggiornamento automatico della pagina da parte del server utilizziamo le <b>WebSocket</b>. Abbiamo infatti un file <a href="../../projects/unibo.serviceaccessGUI/src/main/resources/static/js/ws_utils.js">ws_utils.js</a> che definisce la connessione e gestisce i messaggi in arrivo in maniera opportuna. <br>
             <ul>
                 <li><b>WebSocketConfiguration</b>: implementa la classe <i>WebSocketConfigurer</i> di <code class="docutils literal notranslate"><span class="pre">org.springframework.web.socket.config.annotation</span></code>.</li>
                 <li><b>WebSocketHandler</b>: memorizza le sessioni registrate e alle quali inviare i messaggi.</li>
@@ -687,7 +692,7 @@ actualCurrentColdRoom += FW</code></pre>
     </p>
 
     <p>
-        Qui il server risponde alla richiesta all'endpoint <code class="docutils literal notranslate"><span class="pre">/generatePdf</span></code> con il contenuto di un file pdf, questo contenuto binario &egrave; convertito in un <code class="docutils literal notranslate"><span class="pre">Blob</span></code> per poi essere salveto come pdf, a questo scopo si fa utilizzo della libreria <code class="docutils literal notranslate"><span class="pre">FileSaver.js</span></code>
+        Qui il server risponde alla richiesta all'endpoint <code class="docutils literal notranslate"><span class="pre">/generatePdf</span></code> con il contenuto di un file pdf, questo contenuto binario &egrave; convertito in un <code class="docutils literal notranslate"><span class="pre">Blob</span></code> per poi essere salvato come pdf, a questo scopo si fa utilizzo della libreria <code class="docutils literal notranslate"><span class="pre">FileSaver.js</span></code>
     </p>
 
     <pre><code class="language-javascript">function generatePdf(inputValue) {
