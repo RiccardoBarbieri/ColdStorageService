@@ -68,8 +68,8 @@ public class SagController {
             temp = both.split(",")[0];
             actual = both.split(",")[1];
         }
-        model.addAttribute("tempCurrentColdRoom", temp);
-        model.addAttribute("actualCurrentColdRoom", actual);
+        model.addAttribute("tempCurrentColdRoom", temp + " KG");
+        model.addAttribute("actualCurrentColdRoom", actual + " KG");
 
         return "main";
     }
@@ -136,7 +136,6 @@ public class SagController {
     public ResponseEntity<byte[]> generatePdf(@RequestBody TicketRequest ticketrequest) {
         Document document = new Document(PageSize.A7);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        System.out.println("__________________Ticket code: " + ticketrequest.getTicketCode());
         try {
             PdfWriter.getInstance(document, out);
         } catch (DocumentException e) {
