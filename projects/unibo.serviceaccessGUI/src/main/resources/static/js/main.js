@@ -3,9 +3,6 @@ window.reloadTime = 7000;
 
 function sendStorageRequest(quantityFw) {
 
-    // TODO MOCK
-    generatePdf("t10n2cd")
-    return
     const saveButton = document.querySelector("#save");
 
     saveButton.firstElementChild.removeAttribute("hidden");

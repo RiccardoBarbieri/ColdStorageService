@@ -18,9 +18,11 @@ function connect() {
     socket.onmessage = function (event) {
         console.log("ws-onmessage:" + `${event.data}`);
         if (`${event.data}`.includes("updateColdRoom")) {
-            var load = `${event.data}`.substring(`${event.data}`.indexOf("("), `${event.data}`.indexOf(")"))
-            const coldRoomStatusText = document.getElementById('coldRoomStatusText');
-            coldRoomStatusText.innerHTML = "Current ColdRoom load: " + load;
+            var both = `${event.data}`.substring(`${event.data}`.indexOf("coldroom(") + 9, `${event.data}`.indexOf(")"));
+            const actual = document.getElementById('actual');
+            actual.innerHTML = both.split(",")[1];
+            const temp = document.getElementById('temp');
+            temp.innerHTML = both.split(",")[0];
         }
         else if (`${event.data}`.includes("stomp")) {
             setTimeout(() => {
