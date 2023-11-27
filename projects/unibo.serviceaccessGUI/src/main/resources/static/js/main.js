@@ -329,6 +329,7 @@ function showError(message) {
 document.addEventListener("DOMContentLoaded", function () {
     const inputElement = document.getElementById('quantity');
     inputElement.value = ''; // Imposta il campo di input a una stringa vuota
+    connect();
 });
 
 function countdown(time, element) {

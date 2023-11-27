@@ -65,8 +65,8 @@ public class SagController {
         }
         else {
             String both = answer.substring(answer.indexOf("coldroom(") + 9, answer.indexOf(")"));
-            temp = both.split(",")[0];
-            actual = both.split(",")[1];
+            actual = both.split(",")[0];
+            temp = both.split(",")[1];
         }
         model.addAttribute("tempCurrentColdRoom", temp + " KG");
         model.addAttribute("actualCurrentColdRoom", actual + " KG");
