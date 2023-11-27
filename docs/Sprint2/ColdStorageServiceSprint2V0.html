@@ -662,7 +662,9 @@ actualCurrentColdRoom += FW</code></pre>
     <p>
         Di seguito, viene riportato il nuovo diagramma UML delle classi del progetto <i>Spring</i>.
     </p>
-    <b>TODO. grafico UML da intellij</b>
+
+    <img class="bigimglim" src="../images/sprint2/saguml.png"></img>
+
     <p>
         Vediamo esserci il nuovo componente <b>CoapObserver</b>: osservatore che, ad ogni aggiornamento emesso dal ColdStorageService, avvisa tutte le entità registrate ad esso tramite <i>WebSocket</i>.
         <p>
@@ -684,12 +686,49 @@ actualCurrentColdRoom += FW</code></pre>
         <b>KEY-POINT:</b> portabilità e semplicità d'uso tramite un file <i>.pdf</i> contente il ticket code.
     </p>
 
-    <b>TODO: CODICE CHE IMPLEMENTA DOWNLOAD PDF</b>
+    <p>
+        Qui il server risponde alla richiesta all'endpoint <code class="docutils literal notranslate"><span class="pre">/generatePdf</span></code> con il contenuto di un file pdf, questo contenuto binario &egrave; convertito in un <code class="docutils literal notranslate"><span class="pre">Blob</span></code> per poi essere salveto come pdf, a questo scopo si fa utilizzo della libreria <code class="docutils literal notranslate"><span class="pre">FileSaver.js</span></code>
+    </p>
+
+    <pre><code class="language-javascript">function generatePdf(inputValue) {
+
+    //data structure to send to server
+    const requestBodyMap = {
+        ticketCode: inputValue
+    }
+
+    //request to server
+    const relativeEndpoint = '/generatePdf';
+    fetch(
+        relativeEndpoint,
+        {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/pdf',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBodyMap)
+        }
+    ).then(response => {
+        return response.arrayBuffer();
+    }).then(data => {
+        var blob = new Blob([data], {type: 'application/pdf'});
+        saveAs(blob, 'ticket.pdf');
+    }).catch(error => {
+            console.log(error);
+    });
+}</code></pre>
 
     <h5>Front-end</h5>
     <p>
         Strettamente correlato alla sezione precedente, mostriamo la nuova grafica della <i>ServiceAccessGUI</i>. <br>
-        <b>TODO: aggiungere screen pagina</b> <br>
+
+    </p>
+    
+    <img class="imglim" src="../images/sprint2/sag_view.png"></img>
+
+    <p>
+
         Vediamo esserci il nuovo campo per l'inserimento del ticket. L'idea è che questo campo sia sempre disponibile all'interno della pagina, anche senza che la richiesta di deposito sia stata inviata. <br>
         In questo modo, diamo sempre la possibilità all'utente di inserire il ticket e questo si concilia perfettamente con il concetto della risorsa esterna contenente il ticket, come già spiegato in <a href="#pdf_analisi_prob">analisi del problema</a>.
     </p>
