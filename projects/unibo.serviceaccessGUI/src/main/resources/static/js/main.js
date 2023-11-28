@@ -3,9 +3,6 @@ window.reloadTime = 7000;
 
 function sendStorageRequest(quantityFw) {
 
-    // TODO MOCK
-    generatePdf("t10n2cd")
-    return
     const saveButton = document.querySelector("#save");
 
     saveButton.firstElementChild.removeAttribute("hidden");
@@ -332,6 +329,7 @@ function showError(message) {
 document.addEventListener("DOMContentLoaded", function () {
     const inputElement = document.getElementById('quantity');
     inputElement.value = ''; // Imposta il campo di input a una stringa vuota
+    connect();
 });
 
 function countdown(time, element) {

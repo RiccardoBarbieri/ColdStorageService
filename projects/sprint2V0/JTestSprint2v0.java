@@ -15,16 +15,17 @@ public class JTestSprint1v0 {
 	private final static String actorCtxPort = "8021";
 	private final static String actorCtxHost = "localhost";
 
-	private final static Float MAXW = 50;
+	private final static Float MAXW = 90;
+	private int loaded = 0;
 
 	private Interaction coapconn;
 
 	private String sendStorageRequest(String fw){
-		return sendMessage("storerequest", fw.toString());
+		return sendMessage("storerequest", fw);
 	}
 	
-	private String sendTicketRequest(){
-		return sendMessage("deposit", "");
+	private String sendTicketRequest(String ticketCode){
+		return sendMessage("insertticket", ticketCode);
 	}
 	
 	private String sendChargeStatusRequest(){
@@ -49,10 +50,12 @@ public class JTestSprint1v0 {
 	
 	private void implementProtocol(Float fw) {
 		String answer = sendStorageRequest(fw.toString());
-		if (fw <= MAXW) {
+		if (fw <= (MAXW - loaded)) {
 			assertTrue(answer.contains("loadaccepted"));
+			loaded += fw;
 
-			answer = sendTicketRequest();
+			String ticketCode = answer.split("loadaccepted(")[1].split(")")[0];
+			answer = sendTicketRequest(ticketCode);
 			assertTrue(answer.contains("ticketaccepted"));
 			
 			answer = sendChargeStatusRequest();
@@ -64,13 +67,10 @@ public class JTestSprint1v0 {
 	}
 
 	@Test
-	public void testRichiestaOK() {
-		implementProtocol(Float.valueOf(20));
-	}
-	
-	@Test
-	public void testRichiestaKO() {
-		implementProtocol(Float.valueOf(60));
+	public void test() {
+		for (int i = 0; i < 5; i++) {
+			implementProtocol(Float.valueOf(20));
+		}
 	}
 	
 	@Before

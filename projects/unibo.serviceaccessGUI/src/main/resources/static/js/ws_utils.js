@@ -17,10 +17,17 @@ function connect() {
 
     socket.onmessage = function (event) {
         console.log("ws-onmessage:" + `${event.data}`);
-        if (`${event.data}`.includes("updateColdRoom")) {
-            var load = `${event.data}`.substring(`${event.data}`.indexOf("("), `${event.data}`.indexOf(")"))
-            const coldRoomStatusText = document.getElementById('coldRoomStatusText');
-            coldRoomStatusText.innerHTML = "Current ColdRoom load: " + load;
+        if (`${event.data}`.includes("actualcurrent")) {
+            var msg = `${event.data}`
+            var actual = msg.split("(")[1].split(")")[0];
+            const actualElement = document.getElementById('actual');
+            actualElement.innerHTML = actual + " KG";
+        }
+        else if (`${event.data}`.includes("tempcurrent")) {
+            var msg = `${event.data}`
+            var temp = msg.split("(")[1].split(")")[0];
+            const tempElement = document.getElementById('temp');
+            tempElement.innerHTML = temp + " KG";
         }
         else if (`${event.data}`.includes("stomp")) {
             setTimeout(() => {
