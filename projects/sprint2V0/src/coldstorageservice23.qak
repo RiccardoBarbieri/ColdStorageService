@@ -110,7 +110,7 @@ Context ctx_coldstorageservice ip [host="localhost" port=8021]
 QActor ticketmanager context ctx_coldstorageservice {
 	
 	[#	val ticketManager: ticket.TicketManager = ticket.TicketManager()
-		val TICKETTIME = 10
+		val TICKETTIME = 50
 		
 	#]
 	
@@ -125,6 +125,7 @@ QActor ticketmanager context ctx_coldstorageservice {
 					whenRequest	insertticket	->	validateTicket
 	
 	State generateTicket {
+		println("TM: generating ticket") color yellow
 		onMsg (generateticket : generateticket(FW)) {
 			[# val NewTicket = ticketManager.generateTicket(payloadArg(0).toFloat()) #]
 			replyTo generateticket with ticket : ticket($NewTicket)
@@ -133,14 +134,17 @@ QActor ticketmanager context ctx_coldstorageservice {
 	Goto waiting
 	
 	State validateTicket {
+		println("TM: validating ticket") color yellow
 		onMsg(insertticket : insertticket(TICKET)) {
 			if [# ticketManager.checkTicketValidity(payloadArg(0), System.currentTimeMillis(), TICKETTIME*1000L) #] {
+				println("TM: ticket accepted") color yellow
 			    replyTo insertticket with ticketaccepted : ticketaccepted(arg)
+				forward coldstorageservice -m initdeposit : initdeposit($payloadArg(0))
             }
 			else {
+				println("TM: ticket rejected") color yellow
 			    replyTo insertticket with ticketrejected : ticketrejected(arg)
             }
-			forward coldstorageservice -m initdeposit : initdeposit($payloadArg(0))
 		}
 	}
 	Goto waiting
@@ -181,9 +185,6 @@ QActor coldstorageservice context ctx_coldstorageservice {
 	Goto waiting
 	
 	State sendColdRoom {
-		[#	val Arg1 = ActualCurrentColdRoom
-			val Arg2 = TempCurrentColdRoom
-		#]
 		replyTo initcoldroom with coldroom : coldroom($ActualCurrentColdRoom,$TempCurrentColdRoom)
 	}
 	Goto waiting

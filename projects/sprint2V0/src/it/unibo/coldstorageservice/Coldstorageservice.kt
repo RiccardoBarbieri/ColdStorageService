@@ -65,8 +65,6 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 				}	 
 				state("sendColdRoom") { //this:State
 					action { //it:State
-							val Arg1 = ActualCurrentColdRoom
-									val Arg2 = TempCurrentColdRoom
 						answer("initcoldroom", "coldroom", "coldroom($ActualCurrentColdRoom,$TempCurrentColdRoom)"   )  
 						//genTimer( actor, state )
 					}

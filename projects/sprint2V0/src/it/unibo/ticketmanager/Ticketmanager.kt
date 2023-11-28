@@ -19,7 +19,7 @@ class Ticketmanager ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 			val ticketManager: ticket.TicketManager = ticket.TicketManager()
-				val TICKETTIME = 10
+				val TICKETTIME = 50
 				
 				return { //this:ActionBasciFsm
 				state("s0") { //this:State
@@ -43,6 +43,7 @@ class Ticketmanager ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 				}	 
 				state("generateTicket") { //this:State
 					action { //it:State
+						CommUtils.outyellow("TM: generating ticket")
 						if( checkMsgContent( Term.createTerm("generateticket(FW)"), Term.createTerm("generateticket(FW)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 val NewTicket = ticketManager.generateTicket(payloadArg(0).toFloat())  
@@ -57,15 +58,18 @@ class Ticketmanager ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 				}	 
 				state("validateTicket") { //this:State
 					action { //it:State
+						CommUtils.outyellow("TM: validating ticket")
 						if( checkMsgContent( Term.createTerm("insertticket(TICKET)"), Term.createTerm("insertticket(TICKET)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								if(  ticketManager.checkTicketValidity(payloadArg(0), System.currentTimeMillis(), TICKETTIME*1000L)  
-								 ){answer("insertticket", "ticketaccepted", "ticketaccepted(arg)"   )  
+								 ){CommUtils.outyellow("TM: ticket accepted")
+								answer("insertticket", "ticketaccepted", "ticketaccepted(arg)"   )  
+								forward("initdeposit", "initdeposit(${payloadArg(0)})" ,"coldstorageservice" ) 
 								}
 								else
-								 {answer("insertticket", "ticketrejected", "ticketrejected(arg)"   )  
+								 {CommUtils.outyellow("TM: ticket rejected")
+								 answer("insertticket", "ticketrejected", "ticketrejected(arg)"   )  
 								 }
-								forward("initdeposit", "initdeposit(${payloadArg(0)})" ,"coldstorageservice" ) 
 						}
 						//genTimer( actor, state )
 					}
