@@ -39,6 +39,10 @@ td.center {
     color: darkorange;
 }
 
+.red {
+    color: rgb(255, 0, 0);
+}
+
 .darkgreen {
     color: darkgreen;
 }

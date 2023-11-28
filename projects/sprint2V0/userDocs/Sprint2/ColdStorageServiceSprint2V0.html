@@ -174,7 +174,7 @@
     </table>
 
     <p>
-        Dai requisiti non emerge nessun nuovo tipo di interazione tra i componenti gi&agrave; individuati, verranno discusse modifiche alle interazioni gi&agrave; presenti per integrare le nuove funzionalit&agrave; nell'analisi del problema.
+        Dai requisiti non emerge nessun nuovo tipo di interazione tra i componenti gi&agrave; individuati. Verranno discusse modifiche alle interazioni gi&agrave; presenti per integrare le nuove funzionalit&agrave; in fase di analisi del problema.
     </p>
 
     <p>
@@ -230,9 +230,46 @@
     <p>
         La <i>SAG</i> dovrà essere aggiornata di pari passo con il materiale immagazzinato nella ColdRoom e <u>si suppone</u> dovrà averlo disponibile sin dall'inizializzazione. <br>
         <br>
-        Per fornire questo valore rendiamo la <b>risorsa osservabile</b>, tutte le istanze di ServiceAccessGUI verranno notificate alle modifiche.
+        L'informazione, in pancia all'attore <i>coldstorageservice</i>, sarà fornita tramite l'emissione di un'evento da parte dell'attore stesso, ogni qualvolta che il carico immagazzinato sarà modificato. In questo modo, tutte le istanze di ServiceAccessGUI (ed in generale un qualsiasi componente interessato all'informazione) si sottoscriverà all'attore <i>coldstorageservice</i> in vece di osservatore.
 
-        Per risolvere il problema dell'<i>inizializzazione</i> introduciamo un nuovo messaggio <b>request-reply</b>, inviato dalla <i>SAG</i> al <i>CSS</i> all'avvio.
+        <p class="keypoint">
+            <b>KEY-POINT:</b> l'attore <i>coldstorageservice</i> sarà una <b>risorsa osservabile</b>
+        </p>
+    </p>
+    <p>
+        Per risolvere invece il problema dell'<i>inizializzazione</i>, introduciamo una nuova interazione <b>request-reply</b>, innescata dalla <i>SAG</i> verso il <i>CSS</i> all'avvio.
+        
+        
+    <table>
+        <thead>
+            <tr>
+                <th>Mittente</th>
+                <th>Destinatario</th>
+                <th>Tipologia interazione/messaggio</th>
+                <th>Identificatore messaggio</th>
+                <th>Payload</th>
+                <th>Descrizione</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="blue bold center">Request</td>
+                <td>initcoldroom</td>
+                <td>initcoldroom()</td>
+                <td>Richiesta del valore attuale della ColdRoom.</td>
+            </tr>
+            <tr>
+                <td class="orange bold center">coldstorageservice</td>
+                <td class="orange bold center">ServiceAccessGUI</td>
+                <td class="blue bold center">Reply</td>
+                <td>coldroom</td>
+                <td>coldroom(ACTUAL,TEMP)</td>
+                <td>Valore di kg nella ColdRoom effettivi e totali (contando anche quelli in coda).</td>
+            </tr>
+        </tbody>
+    </table>
     </p>
 
 
@@ -296,92 +333,24 @@
         </thead>
         <tbody>
             <tr>
-                <td>T = ticket <br>(Prolog non accetta variabili che inizino con un numero <b>PER LEO: IN REALTA ACCETTA SE INIZIANO PER NUMERO MA NON SE INIZANO PER 0, PERÒ LASCIAMO LA t</b>)</td>
-                <td>t(FW)</td>
+                <td>T = ticket</td>
+                <td>t</td>
             </tr>
             <tr>
-                <td>Peso in kg (senza decimali) del carico depositato</td>
-                <td>Numero intero positivo da 2 cifre</td>
+                <td>Peso in kg (senza il punto per la separazione del decimale) del carico depositato</td>
+                <td>Numero intero positivo</td>
             </tr>
             <tr>
-                <td class="orange bold center">coldstorageservice</td>
-                <td class="orange bold center">ServiceAccessGUI</td>
-                <td class="blue bold center">Reply</td>
-                <td>loadrejected</td>
-                <td>loadrejected()</td>
-                <td>La richiesta &egrave; stata rifiutata.</td>
+                <td>N = numero del ticket</td>
+                <td>n</td>
             </tr>
             <tr>
-                <td class="orange bold center">ServiceAccessGUI</td>
-                <td class="orange bold center">ticketmanager</td>
-                <td class="blue bold center">Request</td>
-                <td>insertticket</td>
-                <td>insertticket(TICKET)</td>
-                <td>Viene inviato il ticket inserito al ticketmanager.</td>
+                <td>Numero incrementale corrispondente ai ticket emessi dall'avvio del servizio <i>CSS</i></td>
+                <td>Numero intero positivo, incrementato di volta in volta</td>
             </tr>
             <tr>
-                <td class="orange bold center">ticketmanager</td>
-                <td class="orange bold center">ServiceAccessGUI</td>
-                <td class="blue bold center">Reply</td>
-                <td>ticketaccepted</td>
-                <td>ticketaccepted()</td>
-                <td>Il ticket &egrave; stato validato e accettato dal sistema.</td>
-            </tr>
-            <tr>
-                <td class="orange bold center">ticketmanager</td>
-                <td class="orange bold center">ServiceAccessGUI</td>
-                <td class="blue bold center">Reply</td>
-                <td>ticketrejected</td>
-                <td>ticketrejected()</td>
-                <td>Il ticket &egrave; stato validato ma rifiutato dal sistema.</td>
-            </tr>
-            <tr>
-                <td class="orange bold center">coldstorageservice</td>
-                <td class="orange bold center">ticketmanager</td>
-                <td class="blue bold center">Request</td>
-                <td>generateticket</td>
-                <td>generateticket(FW)</td>
-                <td>Richiesta per la generazione di un ticket.</td>
-            </tr>
-            <tr>
-                <td class="orange bold center">ticketmanager</td>
-                <td class="orange bold center">coldstorageservice</td>
-                <td class="blue bold center">Reply</td>
-                <td>ticket</td>
-                <td>ticket(TCIKET)</td>
-                <td>Il ticket &egrave; stato generato.</td>
-            </tr>
-            <tr>
-                <td class="orange bold center">ticketmanager</td>
-                <td class="orange bold center">coldstorageservice</td>
-                <td class="blue bold center">Dispatch</td>
-                <td>initdeposit</td>
-                <td>initdeposit(TICKET)</td>
-                <td>Inizia una azione di deposito dopo la validazione di un ticket.</td>
-            </tr>
-            <tr>
-                <td class="orange bold center">ServiceAccessGUI</td>
-                <td class="orange bold center">coldstorageservice</td>
-                <td class="blue bold center">Request</td>
-                <td>chargestatus</td>
-                <td>chargestatus()</td>
-                <td>Viene richiesto lo stato del carico depositato.</td>
-            </tr>
-            <tr>
-                <td class="orange bold center">coldstorageservice</td>
-                <td class="orange bold center">ServiceAccessGUI</td>
-                <td class="blue bold center">Reply</td>
-                <td>chargetaken</td>
-                <td>chargetaken()</td>
-                <td>Il deposito è stato preso in carico dal transport trolley, il camion deve spostarsi da INDOOR.</td>
-            </tr>
-            <tr>
-                <td class="orange bold center">coldstorageservice</td>
-                <td class="orange bold center">ServiceAccessGUI</td>
-                <td class="blue bold center">Reply</td>
-                <td>chargefailed</td>
-                <td>chargefailed()</td>
-                <td>Ci sono stati problemi durante la presa in carico del deposito.</td>
+                <td>2 caratteri generati casualmente per dare aleatorietà al codice</td>
+                <td>2 caratteri dell'alfabeto (minuscoli)</td>
             </tr>
         </tbody>
     </table>
@@ -391,7 +360,6 @@
     </p>
 
     <h5>Generazione</h5>
-    <p><b>TODO: veder se lo standard di Java è sicuro</b></p>
     <p>
         La generazione del codice deve avere i requisiti di univocità e di imprevedibilità. Nonostante non si stiano trattando dati sensibili è bene che per utente malevolo sia computazionalmente impossibile prevedere quale sia il prossimo codice che verrà generato; se così non fosse, l'utente potrebbe calcolare il codice ed immetterlo nella <i>SAG</i> prima che l'utente originale arrivi alla <i>INDOOR</i>, depositando al posto suo. <br>
         Conseguentemente a questi requisiti, dovremo usare uno <b>Pseudo Random Number Generator</b> crittograficamente sicuro (la sua implementazione sarà meglio trattata in fase di progettazione).
@@ -407,6 +375,11 @@
         Per effettuare il controllo, al momento dell'inserimento del codice il <i>CSS</i> ricalcolerà l'impronta tramite la stessa funzione hash per vedere se trova corrispondenza. <br>
     </p>
 
+    <p class="nota"> 
+        <b>Funzione hash</b> <br>
+        Anche qui necessitiamo di una funzione crittograficamente sicura, che sia efficiente, che non permetta il calcolo a ritroso e che soprattutto sia resistente alle collisioni (l'implementazione verrà discussa in fase di progettazione).
+    </p>
+
     <p>
         Una volta effettuata la validazione di un ticket non deve essere possibile riverificare lo stesso ticket.
     </p>
@@ -415,10 +388,7 @@
         Si predispone un meccanismo per invalidare il ticket ma mantenerlo nello storico di quelli generati.
     </p>
 
-    <p class="nota"> 
-        <b>Funzione hash</b> <br>
-        Anche qui necessitiamo di una funzione crittograficamente sicura, che sia efficiente, che non permetta il calcolo a ritroso e che soprattutto sia resistente alle collisioni (l'implementazione verrà discussa in fase di progettazione).
-    </p>
+
     
     <h5>Associazione ticket-richiesta</h5>
     <p>
@@ -435,7 +405,7 @@
     <h3>TicketManager</h3>
 
     <p>
-        Allo scopo di mantenere componenti che rispettano il principio di singola responsabilit&agrave; abbiamo deciso di creare un nuovo componente (attore): il <b>ticketmanager</b>; questo componente &egrave; incaricato di:
+        Con il fine di rispettare il principio di singola responsabilit&agrave; abbiamo deciso di creare il nuovo componente (attore) <b>ticketmanager</b>, che sarà incaricato di:
     </p>
     <ul>
         <li>generare un nuovo ticket</li>
@@ -444,10 +414,10 @@
     </ul>
 
     <p>
-        Di seguito si riporta il modello di interazione tra <i>ServiceAccessGUI</i>, <i>ColdStorageService</i> e il nuovo <i>TicketManager</i>.
+        Di seguito si riporta il modello di interazione tra <i>ServiceAccessGUI</i>, <i>ColdStorageService</i> e il nuovo <i>TicketManager</i>. <br>
+        I nuovi messaggi derivanti da questa analisi sono evidenziati con il colore rosso.
     </p>
 
-    <b>TODO: evidenziare i nuovi messaggi</b>
     <table>
         <thead>
             <tr>
@@ -488,7 +458,7 @@
                 <td class="orange bold center">ServiceAccessGUI</td>
                 <td class="orange bold center">ticketmanager</td>
                 <td class="blue bold center">Request</td>
-                <td>insertticket</td>
+                <td class="red">insertticket</td>
                 <td>insertticket(TICKET)</td>
                 <td>Viene inviato il ticket inserito al ticketmanager.</td>
             </tr>
@@ -496,7 +466,7 @@
                 <td class="orange bold center">ticketmanager</td>
                 <td class="orange bold center">ServiceAccessGUI</td>
                 <td class="blue bold center">Reply</td>
-                <td>ticketaccepted</td>
+                <td class="red">ticketaccepted</td>
                 <td>ticketaccepted()</td>
                 <td>Il ticket &egrave; stato validato e accettato dal sistema.</td>
             </tr>
@@ -504,7 +474,7 @@
                 <td class="orange bold center">ticketmanager</td>
                 <td class="orange bold center">ServiceAccessGUI</td>
                 <td class="blue bold center">Reply</td>
-                <td>ticketrejected</td>
+                <td class="red">ticketrejected</td>
                 <td>ticketrejected()</td>
                 <td>Il ticket &egrave; stato validato ma rifiutato dal sistema.</td>
             </tr>
@@ -512,7 +482,7 @@
                 <td class="orange bold center">coldstorageservice</td>
                 <td class="orange bold center">ticketmanager</td>
                 <td class="blue bold center">Request</td>
-                <td>generateticket</td>
+                <td class="red">generateticket</td>
                 <td>generateticket(FW)</td>
                 <td>Richiesta per la generazione di un ticket.</td>
             </tr>
@@ -520,15 +490,15 @@
                 <td class="orange bold center">ticketmanager</td>
                 <td class="orange bold center">coldstorageservice</td>
                 <td class="blue bold center">Reply</td>
-                <td>ticket</td>
-                <td>ticket(TCIKET)</td>
+                <td class="red">ticket</td>
+                <td>ticket(TICKET)</td>
                 <td>Il ticket &egrave; stato generato.</td>
             </tr>
             <tr>
                 <td class="orange bold center">ticketmanager</td>
                 <td class="orange bold center">coldstorageservice</td>
                 <td class="blue bold center">Dispatch</td>
-                <td>initdeposit</td>
+                <td class="red">initdeposit</td>
                 <td>initdeposit(TICKET)</td>
                 <td>Inizia una azione di deposito dopo la validazione di un ticket.</td>
             </tr>
@@ -560,7 +530,7 @@
                 <td class="orange bold center">ServiceAccessGUI</td>
                 <td class="orange bold center">coldstorageservice</td>
                 <td class="blue bold center">Request</td>
-                <td>initcoldroom</td>
+                <td class="red">initcoldroom</td>
                 <td>initcoldroom()</td>
                 <td>Richiesta del valore attuale della ColdRoom.</td>
             </tr>
@@ -568,21 +538,21 @@
                 <td class="orange bold center">coldstorageservice</td>
                 <td class="orange bold center">ServiceAccessGUI</td>
                 <td class="blue bold center">Reply</td>
-                <td>coldroom</td>
+                <td class="red">coldroom</td>
                 <td>coldroom(ACTUAL,TEMP)</td>
-                <td>Valore di kg nella ColdRoom effettivi e totale (contando anche quelle in coda).</td>
+                <td>Valore di kg nella ColdRoom effettivi e totali (contando anche quelli in coda).</td>
             </tr>
         </tbody>
     </table>
 
     <p class="keypoint">
-        <b>KEY-POINT:</b> Per mantenere un unico punto di accesso al sistema il messaggio <b>insertticket</b> pu&ograve; essere inviato a coldstorageservice che delegher&agrave; la gestione al ticketmanager.
+        <b>KEY-POINT:</b> il messaggio <b>insertticket</b> viene inviato a coldstorageservice che delegher&agrave; la gestione al ticketmanager. Abbiamo così un <b>unico punto d'accesso</b> al sistema.
     </p>
 
     <h3>Architettura logica</h3>
     
     <p>
-        Si riporta di seguito il modello di architettura logica sulla quale si baser&agrave; la progettazione
+        Si riporta di seguito il modello di architettura logica sulla quale si baser&agrave; la successiva fase di progettazione.
     </p>
 
     <img class="bigimglim" src="../images/sprint2/coldstorageservice23arch.png" alt="Modello architettura logica">
@@ -596,15 +566,14 @@
     <p>
         Per quanto riguarda i piani di test da implementare, rimanendo ad un <b>livello logico</b>, bisogna effettuare i seguenti controlli:
         <ul>
-            <li>ogni istanza deve gestire la visualizzazione in base agli aggiornamenti relativi solo ed esclusivamene alla sua sessione. In particolare:
+            <li>ogni istanza di <i>SAG</i> deve gestire la visualizzazione in base agli aggiornamenti relativi solo ed esclusivamene alla sua sessione. In particolare:
                 <ul>
-                    <li>ad ogni richiesta di deposito deve arrivare la risposta (accettata, rifiutata o un errore come il timeout)</li>
-                    <li>in caso di richiesta accettata deve essere essere visualizzato il messaggio di presa in carico</li>
+                    <li>ad ogni richiesta di deposito deve arrivare la risposta (accettata, rifiutata o un errore)</li>
+                    <li>in caso di richiesta accettata deve essere essere fornito il <i>ticket code</i></li>
                     <li>la pagina web non deve permettere di effettuare due richieste all'interno della stessa sessione/istanza</li>
                 </ul>
             </li>
-            <li>se arrivano due richieste di deposito con lo stesso identificativo, la seconda in ordine temporale deve essere rifiutata</li>
-            <li>non devono essere generati dal CSS dei codici di ticket uguali la cui validità temporale possa sovrapporsi</li>
+            <li>non devono essere generati dal <i>CSS</i> dei codici di ticket uguali la cui validità temporale possa sovrapporsi</li>
         </ul>
     </p>
 </div>
@@ -621,17 +590,13 @@
     Si riporta di seguito l'UML della classe in questione.
     </p>
 
-    <p><b>TODO: vedere se è fattibile inserirla</b></p>
-
-    <b>TODO INSERIRE UML</b>
-    <img src="" alt="">
+    <img class="imglim" src="../images/sprint2/uml_ticketmanager.png" alt="UML ticket manager">
 
     <p>
         La classe <code class="docutils literal notranslate"><span class="pre">TicketManager</span></code> mantiene i ticket come istanze della data class <code class="docutils literal notranslate"><span class="pre">Ticket</span></code>, si riportano di seguito le specifiche delle propriet&agrave; della classe.
     </p>
 
-    <b>TODO UML TICKET</b>
-    <img src="" alt="">
+    <img class="imglim" src="../images/sprint2/uml_ticket.png" alt="UML ticket manager">
 
     <h5>Identificazione ticket</h5>
 
