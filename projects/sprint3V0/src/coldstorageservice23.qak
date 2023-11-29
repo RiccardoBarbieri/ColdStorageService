@@ -53,6 +53,7 @@ Reply		movecfailed			:		movecfailed(arg) for moveclosest
 Dispatch	fail				:		fail(ERROR)
 
 //SONAR -> TT(TE)
+Dispatch	sonarstart			:		sonarstart(arg)
 Dispatch	sonarstop			:		sonarstop(arg)
 
 //SONAR -> CSS
@@ -112,6 +113,21 @@ Context ctx_coldstorageservice ip [host="localhost" port=8021]
 //	Goto s0
 //	
 //}
+//
+//QActor testauto context ctx_coldstorageservice {
+//	
+//	State s0 initial {
+//		delay 5000
+//		request testauto -m deposit : deposit(arg)
+//		println("sent message")
+//	}
+//	Transition t0 whenRequest deposit -> autoMsg
+//	
+//	State autoMsg {
+//		println("REACHED") color red
+//		
+//	}
+//}
 
 
 QActor ticketmanager context ctx_coldstorageservice {
@@ -159,141 +175,6 @@ QActor ticketmanager context ctx_coldstorageservice {
 	
 }
 
-QActor coldstorageservice context ctx_coldstorageservice {
-	
-	[#	val maxColdRoom: Float = 10F
-		var ActualCurrentColdRoom: Float = 0F
-		
-		var TempCurrentColdRoom: Float = 0F
-		var LastDepositRequested: Float = 0F
-		
-		var accepted: Boolean = false
-		
-		val weightTicketMap = mutableMapOf<String, Float>()
-		
-		val DLIMT = 20
-	#]
-	
-	State chargeFailed {
-		onMsg(chargefailedtt : chargefailedtt(FW)) {
-			println("CSS: TransportTrolley failed to take the current charge (${payloadArg(0)} KG)") color blue
-		}
-	}
-	
-	State depositFailed {
-		onMsg(chargedepfailed : chargedepfailed(FW)) {
-			println("CSS: TransportTrolley failed to deposit the current charge (${payloadArg(0)} KG)") color blue
-		}
-	}
-	
-	State s0 initial {
-		delegate "insertticket" to ticketmanager
-		
-		println("CSS: started") color blue
-	}
-	Goto waiting
-	
-	State sendColdRoom {
-		replyTo initcoldroom with coldroom : coldroom($ActualCurrentColdRoom,$TempCurrentColdRoom)
-	}
-	Goto waiting
-	
-	State sendDlimt {
-		replyTo givedlimt with dlimt : dlimt($DLIMT)
-	}
-	Goto waiting
-	
-	State waiting {
-		println("CSS: waiting for new storage request") color blue
-	}
-	Transition t0	whenRequest	storerequest	->	checkAvailability	//1
-//					whenRequest chargestatus	->	requestDeposit		//2
-					whenMsg		initdeposit		->	requestDeposit		//2
-					whenReply	chargetakentt	->	chargeTakenTT		//3a
-					whenReply	chargefailedtt	->	chargeFailed		//3b
-					whenReply	chargedeposited	->	chargeDeposited		//4a
-					whenReply	chargedepfailed	->	depositFailed		//4b
-					whenRequest	initcoldroom	->	sendColdRoom
-					whenRequest	givedlimt		->	sendDlimt
-	
-	State checkAvailability {
-		onMsg (storerequest : storerequest(FW)) {
-			[# val FW = payloadArg(0).trim().toFloat() #]
-						
-			if [# (TempCurrentColdRoom + FW) <= maxColdRoom #] {
-				[#	TempCurrentColdRoom += FW
-					LastDepositRequested = FW
-					accepted = true
-				#]
-				println("CSS: load for $FW KG accepted, currentWeight = $ActualCurrentColdRoom") color blue
-			} else {
-				[# accepted = false #]
-				replyTo storerequest with loadrejected : loadrejected(arg)
-				println("CSS: load for $FW KG rejected, not enough space in ColdRoom, currentWeight = $ActualCurrentColdRoom") color blue
-			}
-		}
-		updateResource [# "tempcurrentcoldroom($TempCurrentColdRoom)" #]
-	}
-	Goto requestTicket if [# accepted #] else waiting
-	
-	State requestTicket {
-		request ticketmanager -m generateticket : generateticket($LastDepositRequested)
-	}
-	Transition t0	whenReply	ticket	->	replyTicket
-	
-	State replyTicket {
-		onMsg(ticket : ticket(TICKET)) {
-			[# val Ticket = payloadArg(0) #]
-			println("CSS: Serving ticket") color blue
-		
-			replyTo storerequest with loadaccepted : loadaccepted($Ticket)
-			[# weightTicketMap[Ticket] = LastDepositRequested #]
-		}
-	}
-	Goto waiting
-	
-	State requestDeposit {
-		onMsg(initdeposit : initdeposit(TICKET)) {
-			[#	LastDepositRequested = weightTicketMap[payloadArg(0)]!!
-				weightTicketMap.remove(payloadArg(0))
-			#]
-			request transporttrolley -m deposit : deposit($LastDepositRequested)
-			println("CSS: requested deposit for $LastDepositRequested KG") color blue
-		}
-	}
-	Goto waiting
-//	Transition t0	whenReply	chargetakentt	->	chargeTakenTT
-//					whenReply	chargefailedtt	->	chargeFailed
-
-	State chargeTakenTT {
-		onMsg(chargetakentt : chargetakentt(FW)) {
-			println("CSS: charge of ${payloadArg(0)} taken") color blue
-		}
-		request transporttrolley -m depositstatus : depositstatus(arg)
-	}
-	Transition t0	whenRequest	chargestatus	->	replyChargeStatus
-//	Goto waiting
-//	Transition t0	whenReply	chargedeposited	->	chargeDeposited
-//					whenReply	chargedepfailed	->	depositFailed
-
-	State replyChargeStatus {
-		replyTo	chargestatus with chargetaken : chargetaken(arg)
-	}
-	Goto waiting
-	
-	State chargeDeposited {
-		onMsg(chargedeposited : chargedeposited(FW)){
-			[#	val FW = payloadArg(0).toFloat()
-				ActualCurrentColdRoom += FW
-			#]
-			println("CSS: load of ${payloadArg(0)} deposited in ColdRoom, current weight = $ActualCurrentColdRoom") color blue
-		}
-		updateResource [# "actualcurrentcoldroom($ActualCurrentColdRoom)" #]
-	}
-	Goto waiting
-	
-}
-
 
 QActor transporttrolley context ctx_coldstorageservice {
 	
@@ -312,8 +193,6 @@ QActor transporttrolley context ctx_coldstorageservice {
 	#]
 	
 	State s0 initial {
-		delegate "sonarstop" to trolleyexecutor
-		
 		println("TT: started") color green
 	}
 	Goto waiting
@@ -430,7 +309,12 @@ QActor transporttrolley context ctx_coldstorageservice {
 QActor trolleyexecutor context ctx_coldstorageservice {
 	
 	[#	var isMoving = false
+		var wasMoving = false
+		
 		var destinations = mutableListOf<Pair<Int,Int>>()
+		
+		var LastX: String = ""
+		var LastY: String = ""
 	#]
 	
 	
@@ -445,6 +329,25 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 	Transition t0	whenTime	10000			->	engageFail
 					whenReply	engagedone		->	setState
 					whenReply	engagerefused	->	engageFail
+					
+	State sonarInterrupt {
+		println("TE: interrupted by sonar") color magenta
+		if [# isMoving #] {
+			[# wasMoving = true #]
+		} else {
+			[# wasMoving = false #]
+		}
+		emit alarm : alarm(arg)
+		[# isMoving = false #]
+	}
+	Transition t0	whenMsg	sonarstart and [# wasMoving #]	->	sonarRestart
+					whenMsg	sonarstart and [# !wasMoving #]	->	waiting
+	
+	State sonarRestart {
+		println("TE: restarted by sonar")
+		request trolleyexecutor -m move : move($LastX,$LastY)
+	}
+	Transition t0	whenRequest	move ->	move
 					
 	State engageFail {
 		[# val ErrorString = "Ingaggiorobotfallito" #]
@@ -474,24 +377,28 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 	State waiting {
 		println("TE: waiting") color magenta
 	}
-	Transition t0	whenRequest	move							->	move
-					whenRequest	moveclosest and [# isMoving #]	->	stop
-					whenRequest moveclosest and [# !isMoving #]	->	askPosition
+	Transition t0	whenRequest		move							->	move
+					whenRequest		moveclosest and [# isMoving #]	->	stop
+					whenRequest 	moveclosest and [# !isMoving #]	->	askPosition
+					whenInterrupt	sonarstop						->	sonarInterrupt
 	
 	State move {
 		println("TE: move") color magenta
 		onMsg (move : move(X,Y)) {
 			[#	val X = payloadArg(0)
 				val Y = payloadArg(1)
+				LastX = X
+				LastY = Y
 			#]
 			request basicrobot -m moverobot : moverobot($X,$Y)
 			[# isMoving = true #]
 		}
 	}
-	Transition t0	whenTime	30000			->	timeout
-					whenRequest	moveclosest		->	stop
-					whenReply	moverobotdone	->	moveCompleted
-					whenReply	moverobotfailed	->	moveFail
+	Transition t0	whenTime		30000			->	timeout
+					whenRequest		moveclosest		->	stop
+					whenReply		moverobotdone	->	moveCompleted
+					whenReply		moverobotfailed	->	moveFail
+					whenInterrupt	sonarstop		->	sonarInterrupt
 					
 	State stop {
 		println("TE: stop") color magenta
@@ -524,15 +431,18 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 				val closest = utils.PosUtils.closestDestination(position, destinations)
 				val X = closest.first
 				val Y = closest.second
+				LastX = X.toString()
+				LastY = Y.toString()
 			#]
 			
 			request basicrobot -m moverobot : moverobot($X,$Y)
 			[# isMoving = true #]
 		}
 	}
-	Transition t0	whenTime	30000			->	timeout
-					whenReply	moverobotdone	->	movecCompleted
-					whenReply	moverobotfailed	->	movecFail
+	Transition t0	whenTime		30000			->	timeout
+					whenReply		moverobotdone	->	movecCompleted
+					whenReply		moverobotfailed	->	movecFail
+					whenInterrupt	sonarstop		->	sonarInterrupt
 
 	State moveCompleted {
 		[# isMoving = false #]
@@ -552,41 +462,140 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 		forward basicrobot -m disengage : disengage(arg)
 	}
 
-//	State stopAskPos {
-//		discardMsg On
-//		println("TE: stopAskPos") color magenta
-//		emit alarm : alarm(arg)
-//		[# isMoving = false #]
-//		request basicrobot -m getrobotstate : getrobotstate(arg)
-//	}
-//	Transition t0	whenTime	30000		->	timeout
-//					whenReply	robotstate	->	sendPosition
-//
-//	State askPosition {
-//		println("TE: askPosition") color magenta
-//		request basicrobot -m getrobotstate : getrobotstate(arg)
-//	}
-//	Transition t0	whenTime	30000		->	timeout
-//					whenReply	robotstate	->	sendPosition
-//	
-//	State sendPosition {
-//		println("TE: sendPosition") color magenta
-//		onMsg (robotstate : robotstate(POS,DIR)) {
-//			[#	val position = utils.PosUtils.posStringToPair(payloadArg(0).trim())
-//				
-//				val X = position.first
-//				val Y = position.second
-//			#]
-//			replyTo getposition with position : position($X,$Y)
-//		}
-//	}
-//	Goto waiting
+}
 
+
+QActor coldstorageservice context ctx_coldstorageservice {
+	
+	[#	val maxColdRoom: Float = 10F
+		var ActualCurrentColdRoom: Float = 0F
+		
+		var TempCurrentColdRoom: Float = 0F
+		var LastDepositRequested: Float = 0F
+		
+		var accepted: Boolean = false
+		
+		val weightTicketMap = mutableMapOf<String, Float>()
+		
+		val DLIMT = 20
+	#]
+	
+	State chargeFailed {
+		onMsg(chargefailedtt : chargefailedtt(FW)) {
+			println("CSS: TransportTrolley failed to take the current charge (${payloadArg(0)} KG)") color blue
+		}
+	}
+	
+	State depositFailed {
+		onMsg(chargedepfailed : chargedepfailed(FW)) {
+			println("CSS: TransportTrolley failed to deposit the current charge (${payloadArg(0)} KG)") color blue
+		}
+	}
+	
+	State s0 initial {
+		delegate "insertticket"	to ticketmanager
+		delegate "sonarstop"	to trolleyexecutor
+		delegate "sonarstart"	to trolleyexecutor
+		
+		println("CSS: started") color blue
+	}
+	Goto waiting
+	
+	State sendColdRoom {
+		replyTo initcoldroom with coldroom : coldroom($ActualCurrentColdRoom,$TempCurrentColdRoom)
+	}
+	Goto waiting
+	
+	State sendDlimt {
+		replyTo givedlimt with dlimt : dlimt($DLIMT)
+	}
+	Goto waiting
+	
+	State waiting {
+		println("CSS: waiting for new storage request") color blue
+	}
+	Transition t0	whenRequest	storerequest	->	checkAvailability	//1
+					whenMsg		initdeposit		->	requestDeposit		//2
+					whenReply	chargetakentt	->	chargeTakenTT		//3a
+					whenReply	chargefailedtt	->	chargeFailed		//3b
+					whenReply	chargedeposited	->	chargeDeposited		//4a
+					whenReply	chargedepfailed	->	depositFailed		//4b
+					whenRequest	initcoldroom	->	sendColdRoom
+					whenRequest	givedlimt		->	sendDlimt
+	
+	State checkAvailability {
+		onMsg (storerequest : storerequest(FW)) {
+			[# val FW = payloadArg(0).trim().toFloat() #]
+						
+			if [# (TempCurrentColdRoom + FW) <= maxColdRoom #] {
+				[#	TempCurrentColdRoom += FW
+					LastDepositRequested = FW
+					accepted = true
+				#]
+				println("CSS: load for $FW KG accepted, currentWeight = $ActualCurrentColdRoom") color blue
+			} else {
+				[# accepted = false #]
+				replyTo storerequest with loadrejected : loadrejected(arg)
+				println("CSS: load for $FW KG rejected, not enough space in ColdRoom, currentWeight = $ActualCurrentColdRoom") color blue
+			}
+		}
+		updateResource [# "tempcurrentcoldroom($TempCurrentColdRoom)" #]
+	}
+	Goto requestTicket if [# accepted #] else waiting
+	
+	State requestTicket {
+		request ticketmanager -m generateticket : generateticket($LastDepositRequested)
+	}
+	Transition t0	whenReply	ticket	->	replyTicket
+	
+	State replyTicket {
+		onMsg(ticket : ticket(TICKET)) {
+			[# val Ticket = payloadArg(0) #]
+			println("CSS: Serving ticket") color blue
+		
+			replyTo storerequest with loadaccepted : loadaccepted($Ticket)
+			[# weightTicketMap[Ticket] = LastDepositRequested #]
+		}
+	}
+	Goto waiting
+	
+	State requestDeposit {
+		onMsg(initdeposit : initdeposit(TICKET)) {
+			[#	LastDepositRequested = weightTicketMap[payloadArg(0)]!!
+				weightTicketMap.remove(payloadArg(0))
+			#]
+			request transporttrolley -m deposit : deposit($LastDepositRequested)
+			println("CSS: requested deposit for $LastDepositRequested KG") color blue
+		}
+	}
+	Goto waiting
+
+	State chargeTakenTT {
+		onMsg(chargetakentt : chargetakentt(FW)) {
+			println("CSS: charge of ${payloadArg(0)} taken") color blue
+		}
+		request transporttrolley -m depositstatus : depositstatus(arg)
+	}
+	Transition t0	whenRequest	chargestatus	->	replyChargeStatus
+	
+	State replyChargeStatus {
+		replyTo	chargestatus with chargetaken : chargetaken(arg)
+	}
+	Goto waiting
+	
+	State chargeDeposited {
+		onMsg(chargedeposited : chargedeposited(FW)){
+			[#	val FW = payloadArg(0).toFloat()
+				ActualCurrentColdRoom += FW
+			#]
+			println("CSS: load of ${payloadArg(0)} deposited in ColdRoom, current weight = $ActualCurrentColdRoom") color blue
+		}
+		updateResource [# "actualcurrentcoldroom($ActualCurrentColdRoom)" #]
+	}
+	Goto waiting
+	
 }
 
 
 
 ExternalQActor basicrobot context ctxbasicrobot
-
-
-

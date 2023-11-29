@@ -28,6 +28,7 @@ reply( movefailed, movefailed(arg) ).  %%for move
 reply( movecdone, movecdone(arg) ).  %%for moveclosest
 reply( movecfailed, movecfailed(arg) ).  %%for moveclosest
 dispatch( fail, fail(ERROR) ).
+dispatch( sonarstart, sonarstart(arg) ).
 dispatch( sonarstop, sonarstop(arg) ).
 request( givedlimt, givedlimt(arg) ).
 reply( dlimt, dlimt(arg) ).  %%for givedlimt
@@ -46,7 +47,7 @@ reply( robotstate, robotstate(POS,DIR) ).  %%for getrobotstate
 context(ctxbasicrobot, "127.0.0.1",  "TCP", "8020").
 context(ctx_coldstorageservice, "localhost",  "TCP", "8021").
  qactor( ticketmanager, ctx_coldstorageservice, "it.unibo.ticketmanager.Ticketmanager").
-  qactor( coldstorageservice, ctx_coldstorageservice, "it.unibo.coldstorageservice.Coldstorageservice").
   qactor( transporttrolley, ctx_coldstorageservice, "it.unibo.transporttrolley.Transporttrolley").
   qactor( trolleyexecutor, ctx_coldstorageservice, "it.unibo.trolleyexecutor.Trolleyexecutor").
+  qactor( coldstorageservice, ctx_coldstorageservice, "it.unibo.coldstorageservice.Coldstorageservice").
   qactor( basicrobot, ctxbasicrobot, "external").
