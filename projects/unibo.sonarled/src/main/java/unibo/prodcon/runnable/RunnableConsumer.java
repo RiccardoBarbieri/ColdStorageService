@@ -1,18 +1,21 @@
 package unibo.prodcon.runnable;
 
-import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 
 public abstract class RunnableConsumer implements Runnable {
 
-    protected final InputStream in;
+    protected final BufferedInputStream in;
 
-    public RunnableConsumer(InputStream in) {
+    protected final Thread t;
+
+    public RunnableConsumer(BufferedInputStream in) {
         this.in = in;
-        Thread t = new Thread(this);
-        t.start();
+        this.t = new Thread(this);
+        this.t.start();
     }
 
-    public abstract void consume(InputStream in) throws InterruptedException;
+    public abstract void consume(BufferedInputStream in) throws InterruptedException, IOException;
 
     @Override
     public void run() {
@@ -21,6 +24,8 @@ public abstract class RunnableConsumer implements Runnable {
                 consume(this.in);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }

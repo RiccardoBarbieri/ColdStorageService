@@ -14,7 +14,7 @@ public class Connector {
     private CoapConnection observerConn;
     private Interaction requestConn;
 
-    public Connector(Connection connection, Sonar sonarProducer, Led led, Sender senderConsumer) {
+    public Connector(Connection connection, Sonar sonarProducer, Led led, SenderConsumer senderConsumer) {
         this.connection = connection;
 
         this.observerConn = connection.connectLocalActorUsingCoap();
