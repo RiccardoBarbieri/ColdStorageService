@@ -25,3 +25,5 @@ openidea
 sharedgradle
 
 **/.settings
+
+projects/**/.idea

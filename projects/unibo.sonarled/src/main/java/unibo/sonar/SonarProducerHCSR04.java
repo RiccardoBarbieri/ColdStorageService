@@ -23,41 +23,41 @@ public class SonarProducerHCSR04 extends RunnableProducer implements Sonar {
     }
 
     public Float getDistance() throws InterruptedException {
-        Context pi4jContext = Pi4J.newAutoContext();
+//        Context pi4jContext = Pi4J.newAutoContext();
+//
+//        DigitalOutputConfigBuilder triggerPinConfig = DigitalOutputConfig.newBuilder(pi4jContext)
+//                .id("trigger")
+//                .address(TRIGGER_PIN)
+//                .initial(DigitalState.LOW)
+//                .shutdown(DigitalState.LOW)
+//                .provider("pigpio-digital-output");
+//        DigitalOutput triggerPin = pi4jContext.create(triggerPinConfig);
+//
+//        DigitalInputConfigBuilder echoPinConfig = DigitalInputConfig.newBuilder(pi4jContext)
+//                .id("echo")
+//                .address(ECHO_PIN)
+//                .provider("pigpio-digital-input");
+//        DigitalInput echoPin = pi4jContext.create(echoPinConfig);
+//
+//        triggerPin.high();
+//        Thread.sleep(0, 10000);
+//        triggerPin.low();
 
-        DigitalOutputConfigBuilder triggerPinConfig = DigitalOutputConfig.newBuilder(pi4jContext)
-                .id("trigger")
-                .address(TRIGGER_PIN)
-                .initial(DigitalState.LOW)
-                .shutdown(DigitalState.LOW)
-                .provider("pigpio-digital-output");
-        DigitalOutput triggerPin = pi4jContext.create(triggerPinConfig);
-
-        DigitalInputConfigBuilder echoPinConfig = DigitalInputConfig.newBuilder(pi4jContext)
-                .id("echo")
-                .address(ECHO_PIN)
-                .provider("pigpio-digital-input");
-        DigitalInput echoPin = pi4jContext.create(echoPinConfig);
-
-        triggerPin.high();
-        Thread.sleep(0, 10000);
-        triggerPin.low();
-
-        while (echoPin.isLow()) {
-            continue;
-        }
+//        while (echoPin.isLow()) {
+//            continue;
+//        }
         Long startTime = System.nanoTime();
-        while (echoPin.isHigh()) {
-            continue;
-        }
+//        while (echoPin.isHigh()) {
+//            continue;
+//        }
+        Thread.sleep(2934);
         Long endTime = System.nanoTime();
 
         long duration = endTime - startTime;
 
-        BigDecimal distance = BigDecimal.valueOf(duration / 2);
-        distance = distance.divide(BigDecimal.valueOf(1000000000), RoundingMode.HALF_UP);
-
-        return BigDecimal.valueOf(34300).multiply(distance).floatValue();
+        BigDecimal halfDuration = BigDecimal.valueOf(duration).divide(BigDecimal.valueOf(2), 1, RoundingMode.DOWN);
+        BigDecimal seconds = halfDuration.divide(BigDecimal.valueOf(1000000000), 9, RoundingMode.DOWN);
+        return BigDecimal.valueOf(34300).multiply(seconds).floatValue();
     }
 
     @Override
