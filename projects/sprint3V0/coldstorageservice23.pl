@@ -28,6 +28,9 @@ reply( movefailed, movefailed(arg) ).  %%for move
 reply( movecdone, movecdone(arg) ).  %%for moveclosest
 reply( movecfailed, movecfailed(arg) ).  %%for moveclosest
 dispatch( fail, fail(ERROR) ).
+dispatch( sonarstop, sonarstop(arg) ).
+request( givedlimt, givedlimt(arg) ).
+reply( dlimt, dlimt(arg) ).  %%for givedlimt
 request( engage, engage(OWNER,STEPTIME) ).
 reply( engagedone, engagedone(ARG) ).  %%for engage
 reply( engagerefused, engagerefused(ARG) ).  %%for engage
