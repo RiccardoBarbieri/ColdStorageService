@@ -13,30 +13,24 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import unibo.basicomm23.coap.CoapConnection;
 import unibo.basicomm23.interfaces.Interaction;
-import unibo.springSAGSim.connection.CoapObserver;
 import unibo.springSAGSim.connection.SagConnection;
+import unibo.springSAGSim.connection.websocket.CoapObserver;
 import unibo.springSAGSim.model.FWRequest;
 import unibo.springSAGSim.model.TicketRequest;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 @Controller
 public class SagController {
 
     public static final String className = "SagController";
-
+    @Value("${spring.application.name}")
+    String appName;
     private SagConnection sagConnection;
     private CoapConnection observerConn;
     private Interaction requestConn;
-
-    @Value("${spring.application.name}")
-    String appName;
 
     @Autowired
     public SagController(SagConnection sagConnection) {
@@ -62,8 +56,7 @@ public class SagController {
         if (answer == null) {
             model.addAttribute("tempCurrentColdRoom", temp);
             model.addAttribute("actualCurrentColdRoom", actual);
-        }
-        else {
+        } else {
             String both = answer.substring(answer.indexOf("coldroom(") + 9, answer.indexOf(")"));
             actual = both.split(",")[0];
             temp = both.split(",")[1];
@@ -110,7 +103,7 @@ public class SagController {
     }
 
     @PostMapping(value = "/enterTicketRequest", consumes = "application/json")
-    public ResponseEntity<String> enterTicketRequest(@RequestBody TicketRequest ticketrequest){
+    public ResponseEntity<String> enterTicketRequest(@RequestBody TicketRequest ticketrequest) {
         if (ticketrequest == null || ticketrequest.getTicketCode() == null || ticketrequest.getTicketCode().isEmpty()) {
             HttpHeaders headers = new HttpHeaders();
             return new ResponseEntity<>(className + " enterTicketRequest | ERROR: input error", headers, HttpStatus.BAD_REQUEST);
