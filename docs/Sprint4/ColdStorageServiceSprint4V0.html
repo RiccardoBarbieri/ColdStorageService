@@ -233,13 +233,7 @@
 
 <div class="remark">
     <p>
-        Per quanto riguarda i piani di test da implementare, rimanendo ad un <b>livello logico</b>, bisogna effettuare controllare che ogni istanza di <i>SAG</i> riceva le risposte dal <i>CSS</i> solo ed esclusivamente relativamente alla sua sessione. In particolare:
-        <ul>
-            <li>ad ogni richiesta di deposito deve arrivare la risposta (accettata, rifiutata o un errore)</li>
-            <li>in caso di richiesta accettata deve essere essere fornito il <i>ticket code</i></li>
-            <li>se il <i>ticket code</i> viene inserito correttamente, deve essere accettato, altrimenti rifiutato</li>
-            <li>in caso di ticket accettato, alla richiesta di stato del carico deve arrivare il messaggio <i>chargetaken</i></li>
-        </ul>
+        In accordo con il committente, non sono previsti piani di test per questo Sprint.
     </p>
 </div>
 
@@ -248,166 +242,7 @@
  
 <div class="remark">
 
-    <h3>TicketManager</h3>
-
-    <p>
-        L'attore <b>ticketmanager</b> mantiene un'istanza della classe <code class="docutils literal notranslate"><span class="pre">TicketManager</span></code>, questa classe implementa metodi per la generazione di un nuovo ticket e gestisce lo storico dei ticket generati, esponendo metodi per salvare e caricare memoria persistente le informazioni.<br>
-    Si riporta di seguito l'UML della classe in questione.
-    </p>
-
-    <img class="imglim" src="../images/sprint2/uml_ticketmanager.png" alt="UML ticket manager">
-
-    <p>
-        La classe <code class="docutils literal notranslate"><span class="pre">TicketManager</span></code> mantiene i ticket come istanze della data class <code class="docutils literal notranslate"><span class="pre">Ticket</span></code>, si riportano di seguito le specifiche delle propriet&agrave; della classe.
-    </p>
-
-    <img class="imglim" src="../images/sprint2/uml_ticket.png" alt="UML ticket manager">
-
-    <h5>Identificazione ticket</h5>
-
-    <p>
-        A ogni ticket viene associato un id intero incrementale che lo identifica univocamente, tuttavia questo valore &egrave; a solo uso interno del TicketManager, il sistema tratter&agrave; i ticket tramite la loro rappresentazione, ovvero il codice che viene scambiato con gli utenti del sistema.
-    </p>
-
-    <p>
-        Per generare i caratteri random che fanno parte della rappresentazione del ticket si fa utilizzo dei metodi offerti dalla classe <code class="docutils literal notranslate"><span class="pre">java.security.SecureRandom</span></code> che garantisce la sicurezza tramite l'utilizzo di uno PRNG.
-    </p>
-    <pre><code class="language-kotlin">private fun randomString(): String {
-    val sr: SecureRandom = SecureRandom.getInstance("SHA1PRNG")
-    return sr.ints(STRING_LENGTH, 0, CHAR_POOL.size)
-        .asSequence()
-        .map(CHAR_POOL::get)
-        .joinToString("")
-}</code></pre>
-
-    <h5>Gestione tempo di creazione</h5>
-    <p>
-        A ogni ticket viene associato un timestamp campionato nel momento in cui viene restituito il valore dal metodo che lo genera, viene salvato come valore unix timestamp <code class="docutils literal notranslate"><span class="pre">long</span></code> in millisecondi.
-    </p>
-
-    <pre><code class="language-kotlin">val generationTimeMs: Long</code></pre>
-
-    <h3>ColdStorageService</h3>
-
-    <h5>Delega al ticketmanager</h5>
-
-    <p>
-        Come specificato in precedenza, il messaggio <i>insertticket</i> pu&ograve; essere inviato a <i>coldstorageservice</i> ma verr&agrave; comunque gestito dal <i>ticketmanager</i>, questa funzionalit&agrave; &egrave; stata implementata utilizzando la keyword <code class="docutils literal notranslate"><span class="pre">delegate</span></code> messa a disposizione dal framework qak.
-    </p>
-    <p>
-        Nello stato iniziale dell'attore <i>coldstorageservice</i> &egrave; riportata la seguente istruzione:
-    </p>
-    <pre><code class="language-bash">delegate "insertticket" to ticketmanager</code></pre>
-
-    <h5>Associazione ticket-richiesta</h5>
-
-    <p>
-        &Egrave; stata implementata l'associazione tra ticket e richiesta utilizzando una <code class="docutils literal notranslate"><span class="pre">MutableMap</span></code>, dichiarata come segue:
-        <pre><code class="language-kotlin">val weightTicketMap = mutableMapOf&lt;String, Float&gt;()</code></pre><br>
-
-        Utilizzando questa mappa il ColdStorageService sar&agrave; in grado di comunicare al TransportTrolley il peso relativo alla ticket che sta gestendo, riottenendolo alla risposta del TransportTrolley  per finalizzare il deposito aggiungendo il valore alla variabile <code class="docutils literal notranslate"><span class="pre">actualCurrentColdRoom</span></code>, che mantiene il valore del peso di cibo effettivamente contenuto nella ColdRoom.
-        <pre><code class="language-kotlin">val FW = payloadArg(0).toFloat()    
-actualCurrentColdRoom += FW</code></pre>
-    </p>
-
-    <h3>ServiceAccessGUI</h3>
-
-    <p>
-        Abbiamo già parlato e analizzato buona parte della <i>SAG</i> nello <a href="../Sprint1/ServiceAccessGUISimProjectV1.html">Sprint precedente</a>. <br> 
-        E' stato anche introdotto il protocollo <b>Coap</b>, utilizzato per le interazioni tra la <i>SAG</i> e il servizio <i>ColdStorageService</i>. Relativamente a ciò, riportiamo nel <i>key-point</i> seguente un fatto fondamentale:
-    </p>
-    <p class="keypoint">
-        <b>KEY-POINT:</b> gli attori <i>qak</i> sono risorse <b>CoapObservable</b>, overro risorse osservabilei tramite la classe CoapObserver definita nella libreria <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code>.
-    </p>
-
-    <h5>Ricezione evento di aggiornamento ColdRoom</h5>
-    <p>
-        Essendo che la <i>SAG</i>, progetto in Spring, non appartiene al mondo di attori qak, non supporta direttamente la ricezione di un <i>event</i> da parte dell'attore qak <i>coldstorageservice</i>. <br>
-        Possiamo però ovviare al problema grazie alla primitiva <b>updateResuource</b>, disponibile in qak. Questa ha lo scopo di inviare un "event" a tutte quelle risorse che stanno osservando l'attore <i>qak</i> di interesse. <br>
-    </p>
-    <p>
-        Lato applicazione Spring, entra quindi in gioco la nuova entità <i>CoapObserver</i>, che ha lo scopo di porsi come osservatore dell'attore <i>coldstorageservice</i>. Sono necessarie inoltre le <i>WebSocket</i> per far giungere l'informazione dall'oggetto java alla pagina html di presentazione.
-    </p>
-    <p>
-        Di seguito, viene riportato il nuovo diagramma UML delle classi del progetto <i>Spring</i>.
-    </p>
-
-    <img class="bigimglim" src="../images/sprint2/saguml.png"></img>
-
-    <p>
-        Vediamo esserci il nuovo componente <b>CoapObserver</b>: osservatore che, ad ogni aggiornamento emesso dal ColdStorageService, avvisa tutte le entità registrate ad esso tramite <i>WebSocket</i>.
-        <p>
-            Per l'aggiornamento automatico della pagina da parte del server utilizziamo le <b>WebSocket</b>. Abbiamo infatti un file <a href="../../projects/unibo.serviceaccessGUI/src/main/resources/static/js/ws_utils.js">ws_utils.js</a> che definisce la connessione e gestisce i messaggi in arrivo in maniera opportuna. <br>
-            <ul>
-                <li><b>WebSocketConfiguration</b>: implementa la classe <i>WebSocketConfigurer</i> di <code class="docutils literal notranslate"><span class="pre">org.springframework.web.socket.config.annotation</span></code>.</li>
-                <li><b>WebSocketHandler</b>: memorizza le sessioni registrate e alle quali inviare i messaggi.</li>
-            </ul>
-        </p>
-    </p>
-
-    <h5>Visualizzazione del ticket</h5>
-    <p>
-        Abbiamo parlato in analisi del problema di fornire il codice all'utente in maniera esterna all'applicazione. <br>
-        Pensando in termini di portabilità e semplicità d'uso, abbiamo optato per la generazione di un file <b>pdf</b>, contenente il ticket. <br>
-        La scelta è stata mossa dal fatto che un file pdf è leggibile facilmente su tutti i dispositivi (smartphone, pc, tablet, ...) senza l'ausilio di applicazione esterne o non pre-installate. Inoltre, è facilmente scaricabile dalla pagina web.  
-    </p>
-    <p class="keypoint">
-        <b>KEY-POINT:</b> portabilità e semplicità d'uso tramite un file <i>.pdf</i> contente il ticket code.
-    </p>
-
-    <p>
-        Qui il server risponde alla richiesta all'endpoint <code class="docutils literal notranslate"><span class="pre">/generatePdf</span></code> con il contenuto di un file pdf, questo contenuto binario &egrave; convertito in un <code class="docutils literal notranslate"><span class="pre">Blob</span></code> per poi essere salvato come pdf, a questo scopo si fa utilizzo della libreria <code class="docutils literal notranslate"><span class="pre">FileSaver.js</span></code>
-    </p>
-
-    <pre><code class="language-javascript">function generatePdf(inputValue) {
-
-    //data structure to send to server
-    const requestBodyMap = {
-        ticketCode: inputValue
-    }
-
-    //request to server
-    const relativeEndpoint = '/generatePdf';
-    fetch(
-        relativeEndpoint,
-        {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/pdf',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBodyMap)
-        }
-    ).then(response => {
-        return response.arrayBuffer();
-    }).then(data => {
-        var blob = new Blob([data], {type: 'application/pdf'});
-        saveAs(blob, 'ticket.pdf');
-    }).catch(error => {
-            console.log(error);
-    });
-}</code></pre>
-
-    <h5>Front-end</h5>
-    <p>
-        Strettamente correlato alla sezione precedente, mostriamo la nuova grafica della <i>ServiceAccessGUI</i>. <br>
-
-    </p>
     
-    <img class="imglim" src="../images/sprint2/sag_view.png"></img>
-
-    <p>
-
-        Vediamo esserci il nuovo campo per l'inserimento del ticket. L'idea è che questo campo sia sempre disponibile all'interno della pagina, anche senza che la richiesta di deposito sia stata inviata. <br>
-        In questo modo, diamo sempre la possibilità all'utente di inserire il ticket e questo si concilia perfettamente con il concetto della risorsa esterna contenente il ticket, come già spiegato in <a href="#pdf_analisi_prob">analisi del problema</a>.
-    </p>
-</div>
-
-
-<h2>Testing</h2> 
- 
-<div class="remark">
-    I test pianificati nella <a href="#test_plans">sezione precedente</a> sono stati implementati tramite un'unità di test <a href="../../projects/sprint2V0/JTestSprint2v0.java" target="_blank" rel="noopener noreferrer">JUnit</a> all'interno del progetto <i>qak</i>.
 </div>
 
 
@@ -415,10 +250,15 @@ actualCurrentColdRoom += FW</code></pre>
 
 <div class="remark">
     <p>
-    Per il Deployment si fa riferimento alla sezione dello <a href="../Sprint1/ColdStorageServiceSprint1V1.html#deployment" target="_blank" rel="noopener noreferrer">Sprint1</a>. <br>
-    
-    Una più attenta analisi verrà rimandata in un documento successivo.
-    </p> 
+        Per il deployment ci si basa sulla sezione all'interno dello <a href="../Sprint1/ColdStorageServiceSprint1V1.html#deployment">Sprint1</a>. <br>
+        Relativamente alla <i>ServiceStatusGUI</i>, analogamente alla <a href="../Sprint1/ServiceAccessGUISimProjectV1.html#deployment">SAG</a>, riportiamo il comando per l'avvio dell'applicazione.
+
+        <p>
+            <i>ServiceStatusGUI</i> (progetto Spring) 
+            <pre><code class="language-bash">cd ./projects/unibo.servicestatusGUI
+    gradlew bootRun</code></pre>
+        </p>
+    </p>
 </div>
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
