@@ -1,9 +1,11 @@
 package unibo.prodcon.runnable;
 
+import unibo.prodcon.Consumer;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
-public abstract class RunnableConsumer implements Runnable {
+public abstract class RunnableConsumer implements Runnable, Consumer {
 
     protected final BufferedInputStream in;
 

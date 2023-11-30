@@ -2,3 +2,4 @@
 {"actor":"trolleyexecutor", "msgType":"dispatch", "curstate":"sonarInterrupt", "nextstate":"sonarRestart", "msgId":"sonarstart"}
 {"actor":"trolleyexecutor", "msgType":"dispatch", "curstate":"sonarInterrupt", "nextstate":"waiting", "msgId":"sonarstart"}
 {"actor":"coldstorageservice", "msgType":"dispatch", "curstate":"waiting", "nextstate":"requestDeposit", "msgId":"initdeposit"}
+{"actor":"sonarobserver", "msgType":"dispatch", "curstate":"observing", "nextstate":"evaluateDistance", "msgId":"sonarstart"}

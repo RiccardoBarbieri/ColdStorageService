@@ -6,6 +6,7 @@ import unibo.basicomm23.interfaces.Interaction;
 import unibo.connection.CoapObserver;
 import unibo.connection.Connection;
 import unibo.led.Led;
+import unibo.sender.SenderConsumer;
 import unibo.sonar.Sonar;
 
 public class Connector {

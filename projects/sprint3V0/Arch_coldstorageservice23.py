@@ -28,6 +28,7 @@ with Diagram('coldstorageservice23Arch', show=False, outformat='png', graph_attr
           transporttrolley=Custom('transporttrolley','./qakicons/symActorSmall.png')
           trolleyexecutor=Custom('trolleyexecutor','./qakicons/symActorSmall.png')
           coldstorageservice=Custom('coldstorageservice','./qakicons/symActorSmall.png')
+          sonarobserver=Custom('sonarobserver','./qakicons/symActorSmall.png')
      trolleyexecutor >> Edge( label='alarm', **eventedgeattr, fontcolor='red') >> sys
      coldstorageservice >> Edge(color='magenta', style='solid', decorate='true', label='<deposit<font color="darkgreen"> chargetakentt chargefailedtt</font> &nbsp; depositstatus<font color="darkgreen"> chargedeposited chargedepfailed</font> &nbsp; >',  fontcolor='magenta') >> transporttrolley
      coldstorageservice >> Edge(color='magenta', style='solid', decorate='true', label='<generateticket<font color="darkgreen"> ticket</font> &nbsp; >',  fontcolor='magenta') >> ticketmanager

@@ -1,4 +1,4 @@
-package unibo;
+package unibo.sender;
 
 import unibo.prodcon.runnable.RunnableConsumer;
 
@@ -13,7 +13,7 @@ public class SenderConsumer extends RunnableConsumer {
     }
 
     @Override
-    public void consume(BufferedInputStream in) throws InterruptedException, IOException {
+    public void consume(BufferedInputStream in) throws IOException {
         byte[] buffer = new byte[1024];
         int read = in.read(buffer);
         if (read > 0) {

@@ -1,10 +1,12 @@
 package unibo.prodcon.runnable;
 
+import unibo.prodcon.Producer;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public abstract class RunnableProducer implements Runnable {
+public abstract class RunnableProducer implements Runnable, Producer {
 
     protected final BufferedOutputStream out;
 

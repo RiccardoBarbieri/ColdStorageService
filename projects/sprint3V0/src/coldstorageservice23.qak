@@ -597,5 +597,27 @@ QActor coldstorageservice context ctx_coldstorageservice {
 }
 
 
+QActor sonarobserver context ctx_coldstorageservice {
+
+    State s0 initial {
+        println("SO: sonarobserver initialized") color yellow
+    }
+    Goto observing
+
+    State observing {
+
+    }
+    Transition t0 whenMsg sonarstart -> evaluateDistance
+
+    State evaluateDistance {
+//        onMsg (coapUpdate
+    }
+    Goto observing
+
+
+}
+
+
+
 
 ExternalQActor basicrobot context ctxbasicrobot

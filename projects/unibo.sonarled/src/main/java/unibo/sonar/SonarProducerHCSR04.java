@@ -7,7 +7,6 @@ import unibo.prodcon.runnable.RunnableProducer;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
