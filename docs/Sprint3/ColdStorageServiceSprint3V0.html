@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="stylesheet" href="../_static/template.css">
+<link rel="stylesheet" href="../_static/mine.css">
+<link rel="stylesheet" href="../_static/code.css">
+<link rel="stylesheet" href="../_static/colors.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/dockerfile.min.js"></script>
+
+
+<script>hljs.highlightAll();</script>
+<title>Sprint3</title>
+</head>
+    
+<body>
+
+<div id="top">
+
+    <h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE<font size="5"></font> </h1>
+
+</div>  
+
+<div class="body"> 
+
+    
+<h2>Introduction</h2>
+
+      
+<div class="remark" id="intro">
+    <p>
+        In questo Sprint verranno analizzati gli <b>Alarm Requirements</b> relativi al movimento del <i>TransportTrolley</i>.
+    </p>
+</div>
+
+
+<h2>Requirements</h2>
+ 
+<div class="remark">
+    <p>
+        <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements a questa pagina</a><br>
+    </p>
+
+    <p>
+    <bc id="goals">Goals dello Sprint3</bc>:
+    Gli <i>alarm requirements</i> vengono riassunti di seguito:
+    <ol>
+        <li>abbiamo un <i>sonar</i> (alarm device) ed un <i>led</i> (warning device) connessi ad un RaspberryPi</li>
+        <li>bisogna fermare il trolley quando il sonar </li>
+    </ol>
+    </p>
+    
+</div>
+
+
+<h2>Requirement analysis</h2>
+
+<div class="remark">
+
+    <p>
+        Viene riportato nel <a href="../documents/temafinale_sprint3.pdf" target="_blank" rel="noopener noreferrer">seguente documento</a> la versione del <i>TemaFinale23</i> analizzata contestualmente a questo Sprint.
+    </p>
+
+    <p class="nota">
+        Questo componente è alieno al progetto core del sistema (<i>qak</i>), non è per cui necessario, per ora, riportarne il modello architetturale.
+    </p>
+
+    <h3>Architettura logica</h3>
+    
+    <p>
+        Si riporta di seguito il modello di architettura logica, limitato al contesto di interesse di questo Sprint.
+    </p>
+
+    <b>TODO: inserire modello tagliato</b>
+    <img class="bigimglim" src="../images/sprint3/coldstorageservice23arch.png" alt="Modello architettura logica">
+
+    <p class="keypoint">
+        <b>ATTENZIONE:</b> <i>warning/alarm device</i> NON sono stati generati dal progetto <i>qak</i>, per cui vanno aggiornati manualmente a fronte di eventuali modifiche.
+    </p>
+</div>
+
+
+<h2 id="test_plans">Test plans</h2> 
+
+<div class="remark">
+    <p>
+        In accordo con il committente, non sono previsti piani di test per questo Sprint.
+    </p>
+</div>
+
+
+<h2>Project</h2> 
+ 
+<div class="remark">
+    
+</div>
+
+
+<h2>Deployment</h2> 
+
+<div class="remark">
+
+</div>
+
+<div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
+    GIT repo: https://github.com/RiccardBarbieri/ColdStorageService
+    <p>Riccardo Barbieri - riccardo.barbieri11@studio.unibo.it</p>
+    <img src="../images/foto/riccardo.jpg" width="15%" height="15%">
+    <p>Leonardo Ruberto - leonardo.ruberto@studio.unibo.it</p>
+    <img src="../images/foto/leonardo.jpg" width="15%" height="15%">
+    </div>
+</body>
+</html>

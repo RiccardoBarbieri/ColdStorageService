@@ -1,0 +1,34 @@
+{
+  "eff15f4113c8fbea1b74556262a64bd97782b04110e3b1b5584d9ab2217ec91f" : {
+    "id" : 0,
+    "weight" : 1.0,
+    "repr" : "eff15f4113c8fbea1b74556262a64bd97782b04110e3b1b5584d9ab2217ec91f",
+    "generationTimeMs" : 1701094411288,
+    "validated" : false,
+    "validationTimeMs" : 0
+  },
+  "1b700b1a7a68ba22c5c4b727e36e78cfb554936fbc48076b0a3698a3788082de" : {
+    "id" : 1,
+    "weight" : 2.0,
+    "repr" : "1b700b1a7a68ba22c5c4b727e36e78cfb554936fbc48076b0a3698a3788082de",
+    "generationTimeMs" : 1701094411289,
+    "validated" : false,
+    "validationTimeMs" : 0
+  },
+  "e3165b7378565d05af41518fbb26dd774a63e7e832073032d0026ffbb79e1436" : {
+    "id" : 2,
+    "weight" : 3.0,
+    "repr" : "e3165b7378565d05af41518fbb26dd774a63e7e832073032d0026ffbb79e1436",
+    "generationTimeMs" : 1701094411291,
+    "validated" : false,
+    "validationTimeMs" : 0
+  },
+  "e6c5d0e9c2a2bf08ac68c949d15aebbdf50e400a0a85814dcde8524db77dc1ca" : {
+    "id" : 3,
+    "weight" : 4.0,
+    "repr" : "e6c5d0e9c2a2bf08ac68c949d15aebbdf50e400a0a85814dcde8524db77dc1ca",
+    "generationTimeMs" : 1701094411292,
+    "validated" : false,
+    "validationTimeMs" : 0
+  }
+}
