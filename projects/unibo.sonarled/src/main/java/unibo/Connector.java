@@ -6,6 +6,7 @@ import unibo.basicomm23.interfaces.Interaction;
 import unibo.connection.CoapObserver;
 import unibo.connection.Connection;
 import unibo.led.Led;
+import unibo.sender.SenderConsumer;
 import unibo.sonar.Sonar;
 
 public class Connector {
@@ -14,7 +15,7 @@ public class Connector {
     private CoapConnection observerConn;
     private Interaction requestConn;
 
-    public Connector(Connection connection, Sonar sonarProducer, Led led, Sender senderConsumer) {
+    public Connector(Connection connection, Sonar sonarProducer, Led led, SenderConsumer senderConsumer) {
         this.connection = connection;
 
         this.observerConn = connection.connectLocalActorUsingCoap();

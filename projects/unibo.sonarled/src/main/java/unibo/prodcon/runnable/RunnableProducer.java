@@ -1,15 +1,18 @@
 package unibo.prodcon.runnable;
 
+import unibo.prodcon.Producer;
+
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public abstract class RunnableProducer implements Runnable {
+public abstract class RunnableProducer implements Runnable, Producer {
 
-    protected final OutputStream out;
+    protected final BufferedOutputStream out;
 
     protected final Thread t;
 
-    public RunnableProducer(OutputStream out) {
+    public RunnableProducer(BufferedOutputStream out) {
         this.out = out;
         this.t = new Thread(this);
         this.t.start();
@@ -23,7 +26,7 @@ public abstract class RunnableProducer implements Runnable {
 //        t.interrupt();
 //    }
 
-    public abstract void produce(OutputStream out) throws InterruptedException, IOException;
+    public abstract void produce(BufferedOutputStream out) throws InterruptedException, IOException;
 
     @Override
     public void run() {
