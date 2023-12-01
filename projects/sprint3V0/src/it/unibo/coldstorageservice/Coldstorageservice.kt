@@ -59,6 +59,8 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 						delegate("insertticket", "ticketmanager") 
 						delegate("sonarstop", "trolleyexecutor") 
 						delegate("sonarstart", "trolleyexecutor") 
+						delegate("distance", "sonarrec") 
+						CoapObserverSupport(myself, "localhost","8021","ctx_coldstorageservice","transporttrolley")
 						CommUtils.outblue("CSS: started")
 						//genTimer( actor, state )
 					}
@@ -77,15 +79,21 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					}	 	 
 					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
-				state("sendDlimt") { //this:State
+				state("forwardUpdate") { //this:State
 					action { //it:State
-						answer("givedlimt", "dlimt", "dlimt($DLIMT)"   )  
+						CommUtils.outcyan("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
+						 	   
+						if( checkMsgContent( Term.createTerm("coapUpdate(RESOURCE,VALUE)"), Term.createTerm("coapUpdate(RES,VAL)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								updateResourceRep( payloadArg(1)  
+								)
+						}
+						returnFromInterrupt(interruptedStateTransitions)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
 				state("waiting") { //this:State
 					action { //it:State
@@ -95,14 +103,14 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t039",targetState="checkAvailability",cond=whenRequest("storerequest"))
-					transition(edgeName="t040",targetState="requestDeposit",cond=whenDispatch("initdeposit"))
-					transition(edgeName="t041",targetState="chargeTakenTT",cond=whenReply("chargetakentt"))
-					transition(edgeName="t042",targetState="chargeFailed",cond=whenReply("chargefailedtt"))
-					transition(edgeName="t043",targetState="chargeDeposited",cond=whenReply("chargedeposited"))
-					transition(edgeName="t044",targetState="depositFailed",cond=whenReply("chargedepfailed"))
-					transition(edgeName="t045",targetState="sendColdRoom",cond=whenRequest("initcoldroom"))
-					transition(edgeName="t046",targetState="sendDlimt",cond=whenRequest("givedlimt"))
+					 transition(edgeName="t040",targetState="checkAvailability",cond=whenRequest("storerequest"))
+					transition(edgeName="t041",targetState="requestDeposit",cond=whenDispatch("initdeposit"))
+					transition(edgeName="t042",targetState="chargeTakenTT",cond=whenReply("chargetakentt"))
+					transition(edgeName="t043",targetState="chargeFailed",cond=whenReply("chargefailedtt"))
+					transition(edgeName="t044",targetState="chargeDeposited",cond=whenReply("chargedeposited"))
+					transition(edgeName="t045",targetState="depositFailed",cond=whenReply("chargedepfailed"))
+					transition(edgeName="t046",targetState="sendColdRoom",cond=whenRequest("initcoldroom"))
+					interrupthandle(edgeName="t047",targetState="forwardUpdate",cond=whenDispatch("coapUpdate"),interruptedStateTransitions)
 				}	 
 				state("checkAvailability") { //this:State
 					action { //it:State
@@ -141,7 +149,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t047",targetState="replyTicket",cond=whenReply("ticket"))
+					 transition(edgeName="t048",targetState="replyTicket",cond=whenReply("ticket"))
 				}	 
 				state("replyTicket") { //this:State
 					action { //it:State
@@ -187,7 +195,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t048",targetState="replyChargeStatus",cond=whenRequest("chargestatus"))
+					 transition(edgeName="t049",targetState="replyChargeStatus",cond=whenRequest("chargestatus"))
 				}	 
 				state("replyChargeStatus") { //this:State
 					action { //it:State

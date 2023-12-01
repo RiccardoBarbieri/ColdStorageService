@@ -52,6 +52,7 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope, isconfined: Boolean
 				}	 
 				state("sonarInterrupt") { //this:State
 					action { //it:State
+						discardMessages = true
 						CommUtils.outmagenta("TE: interrupted by sonar")
 						if(  isMoving  
 						 ){ wasMoving = true  
@@ -73,7 +74,7 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope, isconfined: Boolean
 				}	 
 				state("sonarRestart") { //this:State
 					action { //it:State
-						CommUtils.outblack("TE: restarted by sonar")
+						CommUtils.outmagenta("TE: restarted by sonar")
 						request("move", "move($LastX,$LastY)" ,"trolleyexecutor" )  
 						//genTimer( actor, state )
 					}
@@ -145,7 +146,7 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope, isconfined: Boolean
 					}))
 					transition(edgeName="t024",targetState="askPosition",cond=whenRequestGuarded("moveclosest",{ !isMoving  
 					}))
-					interrupthandle(edgeName="t025",targetState="sonarInterrupt",cond=whenDispatch("sonarstop"),interruptedStateTransitions)
+					transition(edgeName="t025",targetState="sonarInterrupt",cond=whenDispatch("sonarstop"))
 				}	 
 				state("move") { //this:State
 					action { //it:State
@@ -170,7 +171,7 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope, isconfined: Boolean
 					transition(edgeName="t027",targetState="stop",cond=whenRequest("moveclosest"))
 					transition(edgeName="t028",targetState="moveCompleted",cond=whenReply("moverobotdone"))
 					transition(edgeName="t029",targetState="moveFail",cond=whenReply("moverobotfailed"))
-					interrupthandle(edgeName="t030",targetState="sonarInterrupt",cond=whenDispatch("sonarstop"),interruptedStateTransitions)
+					transition(edgeName="t030",targetState="sonarInterrupt",cond=whenDispatch("sonarstop"))
 				}	 
 				state("stop") { //this:State
 					action { //it:State
@@ -236,7 +237,7 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope, isconfined: Boolean
 					 transition(edgeName="t035",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_moveClosest"))   
 					transition(edgeName="t036",targetState="movecCompleted",cond=whenReply("moverobotdone"))
 					transition(edgeName="t037",targetState="movecFail",cond=whenReply("moverobotfailed"))
-					interrupthandle(edgeName="t038",targetState="sonarInterrupt",cond=whenDispatch("sonarstop"),interruptedStateTransitions)
+					transition(edgeName="t038",targetState="sonarInterrupt",cond=whenDispatch("sonarstop"))
 				}	 
 				state("moveCompleted") { //this:State
 					action { //it:State

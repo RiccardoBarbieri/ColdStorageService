@@ -1,5 +1,7 @@
 {"actor":"transporttrolley", "msgType":"dispatch", "curstate":"waiting", "nextstate":"somethingFailed", "msgId":"fail"}
 {"actor":"trolleyexecutor", "msgType":"dispatch", "curstate":"sonarInterrupt", "nextstate":"sonarRestart", "msgId":"sonarstart"}
 {"actor":"trolleyexecutor", "msgType":"dispatch", "curstate":"sonarInterrupt", "nextstate":"waiting", "msgId":"sonarstart"}
+{"actor":"trolleyexecutor", "msgType":"dispatch", "curstate":"waiting", "nextstate":"sonarInterrupt", "msgId":"sonarstop"}
+{"actor":"trolleyexecutor", "msgType":"dispatch", "curstate":"move", "nextstate":"sonarInterrupt", "msgId":"sonarstop"}
+{"actor":"trolleyexecutor", "msgType":"dispatch", "curstate":"moveClosest", "nextstate":"sonarInterrupt", "msgId":"sonarstop"}
 {"actor":"coldstorageservice", "msgType":"dispatch", "curstate":"waiting", "nextstate":"requestDeposit", "msgId":"initdeposit"}
-{"actor":"sonarobserver", "msgType":"dispatch", "curstate":"observing", "nextstate":"evaluateDistance", "msgId":"sonarstart"}

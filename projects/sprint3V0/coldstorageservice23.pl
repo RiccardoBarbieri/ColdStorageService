@@ -30,8 +30,8 @@ reply( movecfailed, movecfailed(arg) ).  %%for moveclosest
 dispatch( fail, fail(ERROR) ).
 dispatch( sonarstart, sonarstart(arg) ).
 dispatch( sonarstop, sonarstop(arg) ).
-request( givedlimt, givedlimt(arg) ).
-reply( dlimt, dlimt(arg) ).  %%for givedlimt
+event( distance, distance(DIST) ).
+dispatch( coapUpdate, coapUpdate(RESOURCE,VALUE) ).
 request( engage, engage(OWNER,STEPTIME) ).
 reply( engagedone, engagedone(ARG) ).  %%for engage
 reply( engagerefused, engagerefused(ARG) ).  %%for engage
@@ -49,6 +49,6 @@ context(ctx_coldstorageservice, "localhost",  "TCP", "8021").
  qactor( ticketmanager, ctx_coldstorageservice, "it.unibo.ticketmanager.Ticketmanager").
   qactor( transporttrolley, ctx_coldstorageservice, "it.unibo.transporttrolley.Transporttrolley").
   qactor( trolleyexecutor, ctx_coldstorageservice, "it.unibo.trolleyexecutor.Trolleyexecutor").
+  qactor( sonarrec, ctx_coldstorageservice, "it.unibo.sonarrec.Sonarrec").
   qactor( coldstorageservice, ctx_coldstorageservice, "it.unibo.coldstorageservice.Coldstorageservice").
-  qactor( sonarobserver, ctx_coldstorageservice, "it.unibo.sonarobserver.Sonarobserver").
   qactor( basicrobot, ctxbasicrobot, "external").
