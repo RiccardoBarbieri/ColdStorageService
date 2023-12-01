@@ -146,6 +146,42 @@
         </p>
     </p>
 
+    <p>
+        Per ottenere l'informazione del numero di richieste depositate all'apertura dell'applicazione, aggiungiamo una nuova interazione <i>request-reply</i>, analogamente a quanto fatto per lo stato della ColdRoom.
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Mittente</th>
+                    <th>Destinatario</th>
+                    <th>Tipologia interazione/messaggio</th>
+                    <th>Identificatore messaggio</th>
+                    <th>Payload</th>
+                    <th>Descrizione</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="orange bold center">ServiceStatusGUI</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Request</td>
+                    <td>initreqrejected</td>
+                    <td>initreqrejected()</td>
+                    <td>Richiesta del numero attuale di richieste rifiuate.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">ServiceStatusGUI</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>reqrejected</td>
+                    <td>reqrejected(NUM)</td>
+                    <td>Numero di richieste rifiutate dall'inizio del servizio <i>ColdStorageService</i>.</td>
+                </tr>
+            </tbody>
+        </table>
+    
+    </p>
+
     <h5>Visualizzazione <u>stato corrente</u> del <i>TT</i> e <u>posizione</u> nella ColdRoom</h5>
 
     <p>
@@ -153,7 +189,7 @@
     </p>
 
     <p>
-        Per entrambi i requisiti (stato e posizione), deleghiamoo l'emissione dell'evento contenente le informazioni al <i>TransportTrolley</i>, ovvero colui che realizza la logica di movimento.
+        Per entrambi i requisiti (stato e posizione), deleghiamo l'emissione dell'evento contenente le informazioni al <i>TransportTrolley</i>, ovvero colui che realizza la logica di movimento.
     </p>
     <p>
         All'interno di <a href="../Sprint1/ColdStorageServiceSprint1V1.html#basicRobot_analisi" target="_blank" rel="noopener noreferrer">questa sezione</a> dello <i>Sprint1</i> sono presenti tutte le interazioni tra <i>TransportTrolley</i>, <i>TrolleyExecutor</i> e <i>BasicRobot</i>. Riportiamo di seguito solo quelle di interesse.
@@ -212,7 +248,50 @@
 
     <h5>Posizione del <i>TransportTrolley</i></h5>
     <p>
-        Mentre l'informazione sul movimento combacia bene con la <i>moverobot</i>, la stessa cosa non 
+        Mentre l'informazione sul movimento combacia bene con la <i>moverobot</i>, la stessa cosa non vale per la posizione. Questa va calcolata
+        <b>TODO: pensare a come recuperarla</b>
+    </p>
+
+    <p>
+        
+    <p>
+        Sia per stato sia per posizione, analagomente ai casi precedenti, dobbiamo introdurre una nuova interazione per l'inizializzazione.
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Mittente</th>
+                    <th>Destinatario</th>
+                    <th>Tipologia interazione/messaggio</th>
+                    <th>Identificatore messaggio</th>
+                    <th>Payload</th>
+                    <th>Descrizione</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="orange bold center">ServiceStatusGUI</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Request</td>
+                    <td>initstatett</td>
+                    <td>initstatett()</td>
+                    <td>Richiesta di stato e posizione del <i>TransportTrolley/i>.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">ServiceStatusGUI</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>statett</td>
+                    <td>statett(STATO, POS)</td>
+                    <td>Numero di richieste rifiutate dall'inizio del servizio <i>ColdStorageService</i>.</td>
+                </tr>
+            </tbody>
+        </table>
+    
+    </p>
+    </p>
+    <p class="keypoint">
+        <b>KEY-POINT:</b> abbiamo deciso di separare le interazioni di inizializzazione in base all'informazione di interesse. In questo modo, risultano interazioni riusabili in caso, in un futuro, altre componenti software siano interessati ad alcune di queste informazioni.
     </p>
     <h3>Architettura logica</h3>
     
@@ -241,8 +320,41 @@
 <h2>Project</h2> 
  
 <div class="remark">
+    <h3>Realizzazione <i>ServiceStatusGUI</i></h3>
+    <p>
+        La realizzazione di quest'applicazione, basata sul framework <b>SpringBoot</b>, segue l'analisi effettuata per la <a href="../Sprint2/ColdStorageServiceSprint2V0.html#project_sag" target="_blank" rel="noopener noreferrer">ServiceAccessGUI</a> relativamente allo <i>Sprint2</i>.
+        Non riportiamo quindi i concetti già visti di osservabilità basata sulla classe <i>CoapObserver</i>.
+    </p>
 
+    <h5>Back-end</h5>
+
+    <p>
+        Riportiamo il backend, dell'applicazione Spring. <br>
+
+        <b>TODO: INSERIRE UML </b>
+
+        <p class="nota">
+            Tutte le classi presenti sono già state analizzate e descritte negli sprint precedenti.
+        </p>
+    </p>
+
+    <h5>Front-end</h5>
+
+    <p>
+        Il front-end dell'applicazione non permette all'utente di interagire, ma solo di visualizzare le informazioni richieste, aggiornate ad ogni cambiamento.
     
+        <br>
+
+        <b>TODO: INSERIRE SCREEN FRONTEND </b>
+    </p>
+    
+    <h3>ColdStorageService</h3>
+
+    <p>
+        Gli update relativi allo stato della ColdRoom e del <i>TransportTrolley</i> sono già stati implementati nel progetto <i>qak</i> all'interno degli sprint precedenti.
+
+        <b>TODO COMPLETARE</b>
+    </p>
 </div>
 
 
