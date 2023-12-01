@@ -15,16 +15,15 @@ public abstract class RunnableProducer implements Runnable, Producer {
     public RunnableProducer(BufferedOutputStream out) {
         this.out = out;
         this.t = new Thread(this);
+    }
+
+    public void start() {
         this.t.start();
     }
 
-//    public void startProducer() {
-//        t.start();
-//    }
-//
-//    public void stopProducer() {
-//        t.interrupt();
-//    }
+    public void stop() {
+        this.t.interrupt();
+    }
 
     public abstract void produce(BufferedOutputStream out) throws InterruptedException, IOException;
 

@@ -3,9 +3,7 @@ package unibo.filter;
 import unibo.prodcon.Consumer;
 import unibo.prodcon.Producer;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public abstract class Filter {
 
@@ -16,14 +14,20 @@ public abstract class Filter {
     public abstract boolean filter(String message);
 
     public void forward(BufferedInputStream in, BufferedOutputStream out) throws InterruptedException, IOException {
-        byte[] buffer = new byte[1024];
-        int read = in.read(buffer);
-        if (read > 0) {
-            if (!filter(new String(buffer, 0, read))) {
-                out.write(buffer, 0, read);
-                out.flush();
+        OutputStreamWriter writer = new OutputStreamWriter(out);
+        BufferedWriter bufferedWriter = new BufferedWriter(writer);
+        InputStreamReader reader = new InputStreamReader(in);
+        BufferedReader bufferedReader = new BufferedReader(reader);
+
+        String line = bufferedReader.readLine();
+        if (line != null) {
+            if (!filter(line)) {
+                bufferedWriter.write(line);
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
             }
         }
+
     }
 
     public Filter(BufferedInputStream in, BufferedOutputStream out) {

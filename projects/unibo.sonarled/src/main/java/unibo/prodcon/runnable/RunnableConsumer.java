@@ -14,7 +14,14 @@ public abstract class RunnableConsumer implements Runnable, Consumer {
     public RunnableConsumer(BufferedInputStream in) {
         this.in = in;
         this.t = new Thread(this);
+    }
+
+    public void start() {
         this.t.start();
+    }
+
+    public void stop() {
+        this.t.interrupt();
     }
 
     public abstract void consume(BufferedInputStream in) throws InterruptedException, IOException;

@@ -10,9 +10,15 @@ public abstract class RunnableFilter extends Filter implements Runnable {
     public RunnableFilter(BufferedInputStream in, BufferedOutputStream out) {
         super(in, out);
         this.t = new Thread(this);
+    }
+
+    public void start() {
         this.t.start();
     }
 
+    public void stop() {
+        this.t.interrupt();
+    }
     @Override
     public void run() {
         while (true) {

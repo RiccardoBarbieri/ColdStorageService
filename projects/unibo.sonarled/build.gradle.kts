@@ -34,6 +34,13 @@ dependencies {
 
     implementation("com.pi4j:pi4j-core:2.4.0")
 
+	implementation("com.googlecode.json-simple:json-simple:1.1.1")
+
+    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
+
+    implementation("org.apache.logging.log4j:log4j-api:2.22.0")
+    implementation("org.apache.logging.log4j:log4j-core:2.22.0")
+
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

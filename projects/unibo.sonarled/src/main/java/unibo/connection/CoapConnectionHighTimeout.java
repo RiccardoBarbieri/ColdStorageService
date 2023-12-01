@@ -1,12 +1,16 @@
 package unibo.connection;
 
 import org.eclipse.californium.core.CoapClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import unibo.basicomm23.coap.CoapConnection;
 import unibo.basicomm23.utils.CommUtils;
 import unibo.basicomm23.utils.Connection;
 
 
 public class CoapConnectionHighTimeout extends CoapConnection {
+
+    private static final Logger logger = LoggerFactory.getLogger(CoapConnectionHighTimeout.class);
 
     public CoapConnectionHighTimeout(String address, String path) {
         super(address, path);
@@ -15,14 +19,10 @@ public class CoapConnectionHighTimeout extends CoapConnection {
 
     @Override
     protected void setCoapClient(String addressWithPort, String path) {
-        //CommUtils.outmagenta(  "    +++ CoapConn | setCoapClient addressWithPort=" +  addressWithPort  );
-        //url            = "coap://"+address + ":5683/"+ path;
+        logger.debug("setCoapClient addressWithPort=" + addressWithPort);
         this.url = "coap://" + addressWithPort + "/" + path;
-        if (Connection.trace) CommUtils.outyellow("    +++ CoapConn | setCoapClient url=" + url);
         this.client = new CoapClient(url);
         this.client.useExecutor(); //To be shutdown
-        if (Connection.trace)
-            CommUtils.outyellow("    +++ CoapConn | STARTS client url=" + url); //+ " client=" + client );
         this.client.setTimeout(15000L);
     }
 }
