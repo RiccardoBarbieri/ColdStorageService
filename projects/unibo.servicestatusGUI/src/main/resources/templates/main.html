@@ -12,33 +12,72 @@
     <script th:src="@{/js/main.js}"></script>
     <script th:src="@{/js/ws_utils.js}"></script>
     <script th:src="@{/js/sockjs.min.js}"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        section {
+            width: 45%; /* Imposta la larghezza della sezione al 45% della larghezza totale */
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 20px;
+        }
+
+        section:nth-child(odd) {
+            margin-right: 10px; /* Aggiunge uno spazio tra le sezioni 1 e 2 */
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        span {
+            font-weight: normal;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <h1 class="text-center"><span th:text="${arg}">Application name</span></h1>
     <h3 class="text-center">Check ColdStorageService Status</h3>
 
-    <div>
-        <label for="temp">Total weight reserved in ColdRoom:</label>
-        <span id="temp" th:text="${tempCurrentColdRoom}"></span>
-    </div>
-    <div>
-        <label for="actual">Total weight actually stored in ColdRoom:</label>
+    <!-- Section 1: Total weight in ColdRoom -->
+    <section>
+        <div>
+            <label for="temp">Total weight reserved in ColdRoom:</label>
+            <span id="temp" th:text="${tempCurrentColdRoom}"></span>
+        </div>
+    
+        <div>
+            <label for="actual">Total weight actually stored in ColdRoom:</label>
         <span id="actual" th:text="${actualCurrentColdRoom}"></span>
-    </div>
+        </div>
+    </section>
 
-    <div>
+    <!-- Section 2: Total requests rejected -->
+    <section>
         <label for="requestsRejected">Total requests rejected from the start of the service:</label>
         <span id="requestsRejected" th:text="${requestsRejected}"></span>
-    </div>
-    <div>
-        <label for="stateTT">Actual state of the Transport Trolley:</label>
+    </section>
+
+    <!-- Section 3: Transport Trolley Status -->
+    <section>
+        <div>
+            <label for="stateTT">Actual state of the Transport Trolley:</label>
         <span id="stateTT" th:text="${stateTT}"></span>
-    </div>
-    <div>
-        <label for="posTT">Actual position of the Transport Trolley:</label>
+        </div>
+    
+        <div>
+            <label for="posTT">Actual position of the Transport Trolley:</label>
         <span id="posTT" th:text="${posTT}"></span>
-    </div>
+        </div>
+    </section>
 </div>
 
 <div class="toast-container">
