@@ -3,6 +3,7 @@ System coldstorageservice23
 //SAG -> CSS
 Request 	storerequest		:		storerequest(FW)
 Request		initcoldroom		:		initcoldroom(arg)
+Request		initreqrejected		:		initreqrejected(arg)
 
 //SAG -> CSS(TM)
 Request		insertticket		:		insertticket(TICKET)
@@ -17,6 +18,7 @@ Reply		chargefailed		:		chargefailed(arg) for chargestatus
 Reply		loadaccepted		:		loadaccepted(TICKET) for storerequest
 Reply		loadrejected		:		loadrejected(arg) for storerequest
 Reply		coldroom			:		coldroom(ACTUAL,TEMP) for initcoldroom
+Reply		reqrejected			:		reqrejected(NUM) for initreqrejected
 
 //TM -> SAG
 Reply		ticketaccepted		:		ticketaccepted(arg) for insertticket
@@ -528,6 +530,8 @@ QActor coldstorageservice context ctx_coldstorageservice {
 		val weightTicketMap = mutableMapOf<String, Float>()
 		
 		val DLIMT = 20
+
+		var NumReqRejected: Integer = 0
 	#]
 	
 	State chargeFailed {
@@ -558,6 +562,11 @@ QActor coldstorageservice context ctx_coldstorageservice {
 	}
 	Goto waiting
 
+	State sendInitRejected {
+		replyTo initreqrejected with reqrejected : reqrejected($NumReqRejected)
+	}
+	Goto waiting
+
 	State forwardUpdate {
 		printCurrentMessage
 		onMsg (coapUpdate : coapUpdate(RES,VAL)) {
@@ -577,6 +586,7 @@ QActor coldstorageservice context ctx_coldstorageservice {
 					whenReply		chargedeposited	->	chargeDeposited		//4a
 					whenReply		chargedepfailed	->	depositFailed		//4b
 					whenRequest		initcoldroom	->	sendColdRoom
+					whenRequest 	initreqrejected ->  sendInitRejected
 //					whenRequest	givedlimt		->	sendDlimt
 					whenInterrupt	coapUpdate		->	forwardUpdate
 	
@@ -591,8 +601,11 @@ QActor coldstorageservice context ctx_coldstorageservice {
 				#]
 				println("CSS: load for $FW KG accepted, currentWeight = $ActualCurrentColdRoom") color blue
 			} else {
-				[# accepted = false #]
+				[# accepted = false 
+				   NumReqRejected += 1
+				#]
 				replyTo storerequest with loadrejected : loadrejected(arg)
+				updateResource [# "reqrejected($NumReqRejected)" #]
 				println("CSS: load for $FW KG rejected, not enough space in ColdRoom, currentWeight = $ActualCurrentColdRoom") color blue
 			}
 		}
