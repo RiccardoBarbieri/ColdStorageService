@@ -1,6 +1,96 @@
 body {
     background-color: #e3effc !important;
     padding: 20px;
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    display: flex;
+}
+
+#cont{
+    display: flex;
+}
+
+.title {
+    max-width: 600px !important;
+    max-height: 200px !important;
+    margin: 0 auto;
+    background-color: rgba(84, 147, 255, 0.18);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+    padding: 10px;
+}
+.sections {
+    display: flex;
+}
+
+#left {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#right {
+    flex: 1;
+    display: flex;
+    margin-left: 20px;
+}
+
+#rejected{
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+section {
+    text-align: center;
+    margin-bottom: 20px; /* Aggiunge spazio tra le sezioni */
+    padding: 10px;
+}
+
+.sections section {
+    background-color: #F5F7FA6E;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+}
+
+#right section{
+    flex: 1;
+    width: max-content;
+}
+
+label {
+    font-size: 24px;
+    align-self: center;
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.span{
+    margin-top: 5px;
+}
+#right .span{
+    margin-top: 30px;
+}
+.span label{
+    font-weight: normal;
+}
+.label{
+    margin-bottom: 10px;
+}
+#right .label{
+    margin-bottom: 40px;
+}
+span {
+    font-weight: bold;
+    font-size: 24px;
+    color: darkslategray;
+}
+
+h1 span{
+    font-size: 46px !important;
 }
 
 .container {
