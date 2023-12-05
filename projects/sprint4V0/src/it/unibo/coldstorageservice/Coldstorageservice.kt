@@ -27,6 +27,8 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 				var accepted: Boolean = false
 				
 				val weightTicketMap = mutableMapOf<String, Float>()
+				
+				val DLIMT = 20
 				return { //this:ActionBasciFsm
 				state("chargeFailed") { //this:State
 					action { //it:State
@@ -55,6 +57,10 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 				state("s0") { //this:State
 					action { //it:State
 						delegate("insertticket", "ticketmanager") 
+						delegate("sonarstop", "trolleyexecutor") 
+						delegate("sonarstart", "trolleyexecutor") 
+						delegate("distance", "sonarrec") 
+						CoapObserverSupport(myself, "localhost","8021","ctx_coldstorageservice","transporttrolley")
 						CommUtils.outblue("CSS: started")
 						//genTimer( actor, state )
 					}
@@ -73,6 +79,22 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					}	 	 
 					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
+				state("forwardUpdate") { //this:State
+					action { //it:State
+						CommUtils.outcyan("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
+						 	   
+						if( checkMsgContent( Term.createTerm("coapUpdate(RESOURCE,VALUE)"), Term.createTerm("coapUpdate(RES,VAL)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								updateResourceRep( payloadArg(1)  
+								)
+						}
+						returnFromInterrupt(interruptedStateTransitions)
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+				}	 
 				state("waiting") { //this:State
 					action { //it:State
 						CommUtils.outblue("CSS: waiting for new storage request")
@@ -81,13 +103,14 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t02",targetState="checkAvailability",cond=whenRequest("storerequest"))
-					transition(edgeName="t03",targetState="requestDeposit",cond=whenDispatch("initdeposit"))
-					transition(edgeName="t04",targetState="chargeTakenTT",cond=whenReply("chargetakentt"))
-					transition(edgeName="t05",targetState="chargeFailed",cond=whenReply("chargefailedtt"))
-					transition(edgeName="t06",targetState="chargeDeposited",cond=whenReply("chargedeposited"))
-					transition(edgeName="t07",targetState="depositFailed",cond=whenReply("chargedepfailed"))
-					transition(edgeName="t08",targetState="sendColdRoom",cond=whenRequest("initcoldroom"))
+					 transition(edgeName="t040",targetState="checkAvailability",cond=whenRequest("storerequest"))
+					transition(edgeName="t041",targetState="requestDeposit",cond=whenDispatch("initdeposit"))
+					transition(edgeName="t042",targetState="chargeTakenTT",cond=whenReply("chargetakentt"))
+					transition(edgeName="t043",targetState="chargeFailed",cond=whenReply("chargefailedtt"))
+					transition(edgeName="t044",targetState="chargeDeposited",cond=whenReply("chargedeposited"))
+					transition(edgeName="t045",targetState="depositFailed",cond=whenReply("chargedepfailed"))
+					transition(edgeName="t046",targetState="sendColdRoom",cond=whenRequest("initcoldroom"))
+					interrupthandle(edgeName="t047",targetState="forwardUpdate",cond=whenDispatch("coapUpdate"),interruptedStateTransitions)
 				}	 
 				state("checkAvailability") { //this:State
 					action { //it:State
@@ -126,7 +149,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t09",targetState="replyTicket",cond=whenReply("ticket"))
+					 transition(edgeName="t048",targetState="replyTicket",cond=whenReply("ticket"))
 				}	 
 				state("replyTicket") { //this:State
 					action { //it:State
@@ -172,7 +195,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t010",targetState="replyChargeStatus",cond=whenRequest("chargestatus"))
+					 transition(edgeName="t049",targetState="replyChargeStatus",cond=whenRequest("chargestatus"))
 				}	 
 				state("replyChargeStatus") { //this:State
 					action { //it:State
