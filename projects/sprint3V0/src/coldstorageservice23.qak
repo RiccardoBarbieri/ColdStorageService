@@ -59,15 +59,7 @@ Dispatch	sonarstop			:		sonarstop(arg)
 //SONAR -> CSS(SONARREC)
 Event		distance			:		distance(DIST)
 
-
 Dispatch	coapUpdate			:		coapUpdate(RESOURCE, VALUE)
-
-////SONAR -> CSS
-//Request		givedlimt			:		givedlimt(arg)
-//
-////CSS -> SONAR
-//Reply		dlimt				:		dlimt(arg) for givedlimt
-
 
 //BASICROBOT
 Request		engage				:		engage(OWNER, STEPTIME)
