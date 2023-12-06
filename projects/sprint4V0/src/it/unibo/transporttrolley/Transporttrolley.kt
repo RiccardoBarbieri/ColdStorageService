@@ -85,7 +85,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 				state("waiting") { //this:State
 					action { //it:State
 						CommUtils.outgreen("TT: waiting for new deposit request")
-						updateResourceRep( "ttstate(home)"  
+						updateResourceRep( "ttstate(stopped,home)"  
 						)
 						//genTimer( actor, state )
 					}
@@ -94,6 +94,16 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					}	 	 
 					 transition(edgeName="t02",targetState="moveToIndoorFromHome",cond=whenRequest("deposit"))
 					transition(edgeName="t03",targetState="somethingFailed",cond=whenDispatch("fail"))
+					transition(edgeName="t04",targetState="giveStateTT",cond=whenRequest("initstatett"))
+				}	 
+				state("giveStateTT") { //this:State
+					action { //it:State
+						answer("initstatett", "statett", "statett(STOPPED,HOME)"   )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 				}	 
 				state("returnHome") { //this:State
 					action { //it:State
@@ -101,16 +111,16 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 							val X = PortToHomeCoord.first
 									val Y = PortToHomeCoord.second
 						request("move", "move($X,$Y)" ,"trolleyexecutor" )  
-						updateResourceRep( "ttstate(moving)"  
+						updateResourceRep( "ttstate(moving,home)"  
 						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t04",targetState="waiting",cond=whenReply("movedone"))
-					transition(edgeName="t05",targetState="moveFailed",cond=whenReply("movefailed"))
-					transition(edgeName="t06",targetState="restartToIndoor",cond=whenRequest("deposit"))
+					 transition(edgeName="t05",targetState="waiting",cond=whenReply("movedone"))
+					transition(edgeName="t06",targetState="moveFailed",cond=whenReply("movefailed"))
+					transition(edgeName="t07",targetState="restartToIndoor",cond=whenRequest("deposit"))
 				}	 
 				state("restartToIndoor") { //this:State
 					action { //it:State
@@ -121,15 +131,15 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 									val Xs = messages.first
 									val Ys = messages.second
 						request("moveclosest", "moveclosest($Xs,$Ys)" ,"trolleyexecutor" )  
-						updateResourceRep( "ttstate(moving)"  
+						updateResourceRep( "ttstate(moving,indoor)"  
 						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t07",targetState="takeCharge",cond=whenReply("movecdone"))
-					transition(edgeName="t08",targetState="moveFailed",cond=whenReply("movecfailed"))
+					 transition(edgeName="t08",targetState="takeCharge",cond=whenReply("movecdone"))
+					transition(edgeName="t09",targetState="moveFailed",cond=whenReply("movecfailed"))
 				}	 
 				state("moveToIndoorFromHome") { //this:State
 					action { //it:State
@@ -142,22 +152,22 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 								request("move", "move($X,$Y)" ,"trolleyexecutor" )  
 								CommUtils.outgreen("TT: moving robot to indoor")
 						}
-						updateResourceRep( "ttstate(moving)"  
+						updateResourceRep( "ttstate(moving,indoor)"  
 						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t09",targetState="takeCharge",cond=whenReply("movedone"))
-					transition(edgeName="t010",targetState="chargeTakeFailed",cond=whenReply("movefailed"))
+					 transition(edgeName="t010",targetState="takeCharge",cond=whenReply("movedone"))
+					transition(edgeName="t011",targetState="chargeTakeFailed",cond=whenReply("movefailed"))
 				}	 
 				state("takeCharge") { //this:State
 					action { //it:State
 						CommUtils.outgreen("TT: loading charge")
 						delay(1000) 
 						CommUtils.outgreen("TT: charge loaded")
-						updateResourceRep( "ttstate(stopped)"  
+						updateResourceRep( "ttstate(stopped,indoor)"  
 						)
 						//genTimer( actor, state )
 					}
@@ -174,7 +184,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t011",targetState="toPort",cond=whenRequest("depositstatus"))
+					 transition(edgeName="t012",targetState="toPort",cond=whenRequest("depositstatus"))
 				}	 
 				state("toPort") { //this:State
 					action { //it:State
@@ -182,15 +192,15 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 									val Y = IndoorToPortCoord.second
 						CommUtils.outgreen("TT: moving to access port")
 						request("move", "move($X,$Y)" ,"trolleyexecutor" )  
-						updateResourceRep( "ttstate(moving)"  
+						updateResourceRep( "ttstate(moving,port)"  
 						)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t012",targetState="depositInColdRoom",cond=whenReply("movedone"))
-					transition(edgeName="t013",targetState="moveFailed",cond=whenReply("movefailed"))
+					 transition(edgeName="t013",targetState="depositInColdRoom",cond=whenReply("movedone"))
+					transition(edgeName="t014",targetState="moveFailed",cond=whenReply("movefailed"))
 				}	 
 				state("depositInColdRoom") { //this:State
 					action { //it:State
@@ -198,7 +208,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 						delay(1000) 
 						answer("depositstatus", "chargedeposited", "chargedeposited($CurrentLoad)"   )  
 						CommUtils.outgreen("TT: charge deposited")
-						updateResourceRep( "ttstate(stopped)"  
+						updateResourceRep( "ttstate(stopped,coldroom)"  
 						)
 						//genTimer( actor, state )
 					}
@@ -207,8 +217,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 				 	 		stateTimer = TimerActor("timer_depositInColdRoom", 
 				 	 					  scope, context!!, "local_tout_transporttrolley_depositInColdRoom", 1000.toLong() )
 					}	 	 
-					 transition(edgeName="t014",targetState="returnHome",cond=whenTimeout("local_tout_transporttrolley_depositInColdRoom"))   
-					transition(edgeName="t015",targetState="restartToIndoor",cond=whenRequest("deposit"))
+					 transition(edgeName="t015",targetState="returnHome",cond=whenTimeout("local_tout_transporttrolley_depositInColdRoom"))   
+					transition(edgeName="t016",targetState="restartToIndoor",cond=whenRequest("deposit"))
 				}	 
 			}
 		}

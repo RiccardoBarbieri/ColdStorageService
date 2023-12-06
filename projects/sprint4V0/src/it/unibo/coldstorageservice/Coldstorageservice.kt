@@ -29,6 +29,8 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 				val weightTicketMap = mutableMapOf<String, Float>()
 				
 				val DLIMT = 20
+		
+				var NumReqRejected: Integer = 0
 				return { //this:ActionBasciFsm
 				state("chargeFailed") { //this:State
 					action { //it:State
@@ -60,6 +62,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 						delegate("sonarstop", "trolleyexecutor") 
 						delegate("sonarstart", "trolleyexecutor") 
 						delegate("distance", "sonarrec") 
+						delegate("initstatett", "transporttrolley") 
 						CoapObserverSupport(myself, "localhost","8021","ctx_coldstorageservice","transporttrolley")
 						CommUtils.outblue("CSS: started")
 						//genTimer( actor, state )
@@ -72,6 +75,16 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 				state("sendColdRoom") { //this:State
 					action { //it:State
 						answer("initcoldroom", "coldroom", "coldroom($ActualCurrentColdRoom,$TempCurrentColdRoom)"   )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
+				}	 
+				state("sendInitRejected") { //this:State
+					action { //it:State
+						answer("initreqrejected", "reqrejected", "reqrejected($NumReqRejected)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -103,14 +116,15 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t040",targetState="checkAvailability",cond=whenRequest("storerequest"))
-					transition(edgeName="t041",targetState="requestDeposit",cond=whenDispatch("initdeposit"))
-					transition(edgeName="t042",targetState="chargeTakenTT",cond=whenReply("chargetakentt"))
-					transition(edgeName="t043",targetState="chargeFailed",cond=whenReply("chargefailedtt"))
-					transition(edgeName="t044",targetState="chargeDeposited",cond=whenReply("chargedeposited"))
-					transition(edgeName="t045",targetState="depositFailed",cond=whenReply("chargedepfailed"))
-					transition(edgeName="t046",targetState="sendColdRoom",cond=whenRequest("initcoldroom"))
-					interrupthandle(edgeName="t047",targetState="forwardUpdate",cond=whenDispatch("coapUpdate"),interruptedStateTransitions)
+					 transition(edgeName="t041",targetState="checkAvailability",cond=whenRequest("storerequest"))
+					transition(edgeName="t042",targetState="requestDeposit",cond=whenDispatch("initdeposit"))
+					transition(edgeName="t043",targetState="chargeTakenTT",cond=whenReply("chargetakentt"))
+					transition(edgeName="t044",targetState="chargeFailed",cond=whenReply("chargefailedtt"))
+					transition(edgeName="t045",targetState="chargeDeposited",cond=whenReply("chargedeposited"))
+					transition(edgeName="t046",targetState="depositFailed",cond=whenReply("chargedepfailed"))
+					transition(edgeName="t047",targetState="sendColdRoom",cond=whenRequest("initcoldroom"))
+					transition(edgeName="t048",targetState="sendInitRejected",cond=whenRequest("initreqrejected"))
+					interrupthandle(edgeName="t049",targetState="forwardUpdate",cond=whenDispatch("coapUpdate"),interruptedStateTransitions)
 				}	 
 				state("checkAvailability") { //this:State
 					action { //it:State
@@ -124,8 +138,11 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 								CommUtils.outblue("CSS: load for $FW KG accepted, currentWeight = $ActualCurrentColdRoom")
 								}
 								else
-								 { accepted = false  
+								 { accepted = false 
+								 				   NumReqRejected += 1
 								 answer("storerequest", "loadrejected", "loadrejected(arg)"   )  
+								 updateResourceRep( "reqrejected($NumReqRejected)"  
+								 )
 								 CommUtils.outblue("CSS: load for $FW KG rejected, not enough space in ColdRoom, currentWeight = $ActualCurrentColdRoom")
 								 }
 						}
@@ -149,7 +166,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t048",targetState="replyTicket",cond=whenReply("ticket"))
+					 transition(edgeName="t050",targetState="replyTicket",cond=whenReply("ticket"))
 				}	 
 				state("replyTicket") { //this:State
 					action { //it:State
@@ -195,7 +212,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t049",targetState="replyChargeStatus",cond=whenRequest("chargestatus"))
+					 transition(edgeName="t051",targetState="replyChargeStatus",cond=whenRequest("chargestatus"))
 				}	 
 				state("replyChargeStatus") { //this:State
 					action { //it:State

@@ -42,7 +42,7 @@ class Sonarrec ( name: String, scope: CoroutineScope, isconfined: Boolean=false 
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t039",targetState="checkDistance",cond=whenEvent("distance"))
+					 transition(edgeName="t040",targetState="checkDistance",cond=whenEvent("distance"))
 				}	 
 				state("checkDistance") { //this:State
 					action { //it:State
