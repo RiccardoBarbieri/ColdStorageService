@@ -149,5 +149,5 @@ img {
     align-self: flex-end;
     max-width: 100%;
     height: auto;
-    margin-top: auto; /* Allinea l'immagine al margine superiore */
+    margin-top: 20px; /* Allinea l'immagine al margine superiore */
 }
