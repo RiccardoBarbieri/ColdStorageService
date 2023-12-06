@@ -105,7 +105,7 @@ tasks.register<DockerPushImage>("pushImage") {
     dependsOn("buildImage")
     group = "unibobootdocker"
     description = "Push the docker image to the repository"
-    val dockerRepository = properties["dockerRepository"] ?: "riccardoob"
+    val dockerRepository = properties["dockerRepository"] ?: throw GradleException("dockerRepository property not set")
     images.add("${dockerRepository}/" + project.name.split(".").last().lowercase() + ":latest")
     images.add("${dockerRepository}/" + project.name.split(".").last().lowercase() + ":${project.version}")
 }

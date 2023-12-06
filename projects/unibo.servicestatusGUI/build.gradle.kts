@@ -8,10 +8,11 @@ plugins {
 	id("org.springframework.boot") version "2.7.8"
 	id("io.spring.dependency-management") version "1.0.15.RELEASE"
 	id("com.bmuschko.docker-spring-boot-application") version "9.3.2"
+    id("application")
 }
 
 group = "unibo"
-version = "0.0.1-SNAPSHOT"
+version = "1.2.0"
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_11
@@ -60,8 +61,21 @@ tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
     systemProperty("spring.profiles.active", properties["activeProfile"] ?: "dev")
 }
 
+tasks.register<Copy>("propcopy") {
+    dependsOn("processResources")
+    group = "help"
+    description = "Copy properties file to resources"
+    val activeProfile = properties["activeProfile"] ?: "dev"
+    from("src/main/resources/application-$activeProfile.properties")
+    into("src/main/resources/")
+    rename("application-$activeProfile.properties", "application.properties")
+}
+
 tasks.register<Dockerfile>("createDockerfile") {
+    mustRunAfter("propcopy")
+    mustRunAfter("bootDistTar")
     dependsOn("bootDistTar")
+    dependsOn("propcopy")
     group = "unibobootdocker"
     description = "Create Dockerfile"
 
@@ -87,7 +101,7 @@ tasks.register<Dockerfile>("createDockerfile") {
     volume("/data")
     addFile("./build/distributions/" + lastModified.name, "/")
     workingDir(lastModified.name.removeSuffix(".tar") + "/bin")
-    defaultCommand("bash", "./" + lastModified.name.removeSuffix(".tar"))
+    defaultCommand("bash", "./" + project.name)
 }
 
 tasks.register<DockerBuildImage>("buildImage") {
@@ -105,7 +119,7 @@ tasks.register<DockerPushImage>("pushImage") {
     dependsOn("buildImage")
     group = "unibobootdocker"
     description = "Push the docker image to the repository"
-    val dockerRepository = properties["dockerRepository"] ?: "riccardoob"
+    val dockerRepository = properties["dockerRepository"] ?: throw GradleException("dockerRepository property not set")
     images.add("${dockerRepository}/" + project.name.split(".").last().lowercase() + ":latest")
     images.add("${dockerRepository}/" + project.name.split(".").last().lowercase() + ":${project.version}")
 }

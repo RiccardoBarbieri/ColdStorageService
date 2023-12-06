@@ -1,0 +1,15 @@
+version: '3'
+services:
+  sag:
+    image: riccardoob/serviceaccessgui
+    ports:
+      - 8075:8075
+  stg:
+    image: riccardoob/servicestatussgui
+    ports:
+      - 8065:8065
+  css:
+    image: riccardoob/coldstorageservice
+    ports:
+#      - 8020:8020
+      - 8021:8021
