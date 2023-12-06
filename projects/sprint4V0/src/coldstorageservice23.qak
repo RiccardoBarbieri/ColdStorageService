@@ -235,8 +235,8 @@ QActor transporttrolley context ctx_coldstorageservice {
 	}
 	Transition t0	whenRequest	deposit		->	moveToIndoorFromHome
 					whenMsg		fail		->	somethingFailed
-					whenRequest	initstatett	->	giveStateTT 	
-	
+					whenRequest	initstatett	->	giveStateTT
+						
 	State giveStateTT {
 		replyTo initstatett with statett : statett(STOPPED,HOME)
 	}
