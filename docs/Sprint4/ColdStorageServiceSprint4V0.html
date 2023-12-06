@@ -31,7 +31,7 @@
       
 <div class="remark" id="intro">
     <p>
-        In questo Sprint verrà analizzata la <b>ServiceStatusGUI</b>, componente software per permettere ad un utente umano di supervisionare lo stato della ServiceStatusGUI.
+        In questo Sprint verrà analizzata la <b>ServiceStatusGUI</b>, componente software che permette ad un utente umano di supervisionare lo stato del <i>ColdStorageService</i>.
         <p class="nota">
             Ci poniamo già in un contesto in cui la <i>ServiceStatusGUI</i> sarà un'applicazione web realizzata tramite il framework <i>SpringBoot</i>, sia per uniformare lo stack tecnologico (<a href="../Sprint1/ServiceAccessGUISimProjectV1.html">ServiceAccessGUI</a>, <a href="../Sprint1/MapConfiguratorProject.html">MapConfigurator</a>), sia per diminuizione dei costi.
         </p>
@@ -43,7 +43,7 @@
  
 <div class="remark">
     <p>
-        <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements a questa pagina</a><br>
+        <a target="_blank" href="../documents/temafinale_sprint4.pdf">Descrizione requirements a questa pagina</a><br>
     </p>
 
     <p>
@@ -140,10 +140,6 @@
     <p>
         Analogamante alla visualizzazione del peso immagazzinato nella ColdRoom, sfruttiamo l'<b>osservabilità</b> degli attori <i>qak</i> ed il protocollo <b>Coap</b>. L'attore <i>coldstorageservice</i>, che gestisce le richieste di deposito, emetterà un <b>event</b> (<i>updateResuource</i>) con il valore aggiornato del numero di richieste rifiutare e la <i>SSG</i> si sottoscriverà come osservatore.  <br>
         Anche qui, non ci dilungheremo ulteriormente.
-
-        <p class="nota">
-            <b>COMMITTENTE:</b> valutare l'interesse di fornire, a costo praticamente nullo, anche l'info su quelle rifutate per via di errori nell'inserimento del ticket.
-        </p>
     </p>
 
     <p>
@@ -248,12 +244,10 @@
 
     <h5>Posizione del <i>TransportTrolley</i></h5>
     <p>
-        Mentre l'informazione sul movimento combacia bene con la <i>moverobot</i>, la stessa cosa non vale per la posizione. Questa va calcolata
-        <b>TODO: pensare a come recuperarla</b>
+        Mentre l'informazione sul movimento combacia bene con la <i>moverobot</i>, la stessa cosa non vale per la posizione. <br>
+        La possiamo però ottenere dai vari <b>stati qak</b> da cui emettere gli eventi (verrà rivisto in progettazione).
     </p>
 
-    <p>
-        
     <p>
         Sia per stato sia per posizione, analagomente ai casi precedenti, dobbiamo introdurre una nuova interazione per l'inizializzazione.
         
@@ -275,7 +269,7 @@
                     <td class="blue bold center">Request</td>
                     <td>initstatett</td>
                     <td>initstatett()</td>
-                    <td>Richiesta di stato e posizione del <i>TransportTrolley/i>.</td>
+                    <td>Richiesta di stato e posizione del <i>TransportTrolley</i>.</td>
                 </tr>
                 <tr>
                     <td class="orange bold center">coldstorageservice</td>
@@ -296,26 +290,15 @@
     <h3>Architettura logica</h3>
     
     <p>
-        Si riporta di seguito il modello di architettura logica, limitato al contesto di interesse della <i>ServiceStatusGUI</i>.
+        Si riporta di seguito il modello di architettura logica dell'intero sistema, comprensivo di <i>ServiceStatusGUI</i>.
     </p>
 
-    <b>TODO: inserire modello tagliato</b>
-    <img class="bigimglim" src="../images/sprint4/coldstorageservice23arch.png" alt="Modello architettura logica">
+    <img class="bigimglim img-border" src="../images/sprint4/coldstorageservice23arch.png" alt="Modello architettura logica">
 
     <p class="keypoint">
         <b>ATTENZIONE:</b> la <i>ServiceStatusGUI</i> NON è stata generata dal progetto <i>qak</i>, per cui va aggiornata manualmente a fronte di eventuali modifiche.
     </p>
 </div>
-
-
-<h2 id="test_plans">Test plans</h2> 
-
-<div class="remark">
-    <p>
-        In accordo con il committente, non sono previsti piani di test per questo Sprint.
-    </p>
-</div>
-
 
 <h2>Project</h2> 
  
@@ -329,9 +312,11 @@
     <h5>Back-end</h5>
 
     <p>
-        Riportiamo il backend, dell'applicazione Spring. <br>
+        Riportiamo il backend dell'applicazione Spring, analogo a quello della <i>ServiceAccessGUI</i>. <br>
 
-        <b>TODO: INSERIRE UML </b>
+        <p>
+            <img class="bigimglim" src="../images/sprint2/saguml.png"></img>
+        </p>
 
         <p class="nota">
             Tutte le classi presenti sono già state analizzate e descritte negli sprint precedenti.
@@ -343,17 +328,24 @@
     <p>
         Il front-end dell'applicazione non permette all'utente di interagire, ma solo di visualizzare le informazioni richieste, aggiornate ad ogni cambiamento.
     
-        <br>
-
-        <b>TODO: INSERIRE SCREEN FRONTEND </b>
+        <p>
+            <img class="midimglim" src="../images/sprint4/frontendssg.png" alt="Front-end SSG">
+        </p>
     </p>
     
     <h3>ColdStorageService</h3>
 
     <p>
-        Gli update relativi allo stato della ColdRoom e del <i>TransportTrolley</i> sono già stati implementati nel progetto <i>qak</i> all'interno degli sprint precedenti.
+        Gli <b>updateResource</b> relativi allo stato della ColdRoom e del <i>TransportTrolley</i> sono già stati implementati nel progetto <i>qak</i> all'interno degli sprint precedenti. <br> Abbiamo aggiunto poi le update relative all'<u>aggiornamento del numero di richieste rifiutate</u>, ogni volta che questo evento accade.
+    </p>
+    <p>
+        Inoltre, per quanto riguarda la gestione della richiesta <b>initstatett</b> da parte della <i>SSG</i>, avviene tramite un meccanismo di delega da parte di <i>coldstorageservice</i> a <i>transporttrolley</i>, in quanto nè quest'ultimo ad avere le informazioni necessarie.
+        <pre><code class="language-bash">delegate "initstatett" to transporttrolley</code></pre>
+    </p>
 
-        <b>TODO COMPLETARE</b>
+    <p>
+        Al fine di mostrare la flessibilità del sistema <b>qak</b> e l'importanza dei concetti di osservabilità, mostrimao le pochissime 
+        modifiche effettuate, relative al <a href="https://github.com/RiccardoBarbieri/ColdStorageService/commit/ecefc511cd9f5994ff69ea79a9644de06a06b0a5#diff-ee2260c4d0f2d9a84780ccdf0dee87ba02534b1e4081dce44176db061438ee1c">numero di richieste rifiutate</a> e allo <a href="https://github.com/RiccardoBarbieri/ColdStorageService/commit/6de76234e8f1ebdfcb036d38de5854a8324f9d4b">stato del tt</a>.
     </p>
 </div>
 
