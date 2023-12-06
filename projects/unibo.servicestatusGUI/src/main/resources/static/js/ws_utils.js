@@ -28,20 +28,25 @@ function connect() {
             const tempElement = document.getElementById('temp');
             tempElement.innerHTML = temp + " KG";
         }
-        else if (msg.includes("reqRejected")) {
+        else if (msg.includes("reqrejected")) {
             var num = msg.split("(")[1].split(")")[0];
             const tempElement = document.getElementById('requestsRejected');
             tempElement.innerHTML = num;
         }
-        else if (msg.includes("stateTT")) {
+        else if (msg.includes("ttstate")) {
             var both = msg.split("(")[1].split(")")[0];
             var stateTT = both.split(",")[0];
             const tempElement = document.getElementById('stateTT');
-            tempElement.innerHTML = stateTT;
+            tempElement.innerHTML = stateTT.toUpperCase();
 
             var posTT = both.split(",")[1];
             const tempElement2 = document.getElementById('posTT');
-            tempElement2.innerHTML = posTT;
+            if (stateTT === "stopped") {
+                tempElement2.innerHTML = "AT " + posTT.toUpperCase();
+            }
+            else {
+                tempElement2.innerHTML = "TO " + posTT.toUpperCase();
+            }
         }
         else if (`${event.data}`.includes("stomp")) {
             setTimeout(() => {
