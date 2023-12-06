@@ -41,11 +41,15 @@ function connect() {
 
             var posTT = both.split(",")[1];
             const tempElement2 = document.getElementById('posTT');
+            var immagine = document.getElementById('walle');
+
             if (stateTT === "stopped") {
                 tempElement2.innerHTML = "AT " + posTT.toUpperCase();
+                immagine.setAttribute('src', "/images/walle.png");
             }
             else {
                 tempElement2.innerHTML = "TO " + posTT.toUpperCase();
+                immagine.setAttribute('src', "/images/moving.gif");
             }
         }
         else if (`${event.data}`.includes("stomp")) {
