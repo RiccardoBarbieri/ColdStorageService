@@ -231,14 +231,14 @@ QActor transporttrolley context ctx_coldstorageservice {
 
 	State waiting {
 		println("TT: waiting for new deposit request") color green
-		updateResource [# "ttstate(home)" #]
+		updateResource [# "ttstate(stopped,home)" #]
 	}
-	Transition t0	whenRequest	deposit	->	moveToIndoorFromHome
-					whenMsg		fail	->	somethingFailed
-					whenRequest	initstatett	-> giveStateTT 	
+	Transition t0	whenRequest	deposit		->	moveToIndoorFromHome
+					whenMsg		fail		->	somethingFailed
+					whenRequest	initstatett	->	giveStateTT 	
 	
 	State giveStateTT {
-		replyTo initstatett with statett : statett("STOPPED", "HOME")
+		replyTo initstatett with statett : statett(STOPPED,HOME)
 	}
 	
 	State returnHome {
@@ -247,7 +247,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 			val Y = PortToHomeCoord.second
 		#]
 		request trolleyexecutor -m move : move($X,$Y)
-		updateResource [# "ttstate(moving_home)" #]
+		updateResource [# "ttstate(moving,home)" #]
 	}
 	Transition t0	whenReply	movedone	->	waiting
 					whenReply	movefailed	->	moveFailed
@@ -264,7 +264,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 		#]
 		
 		request trolleyexecutor -m moveclosest : moveclosest($Xs,$Ys)
-		updateResource [# "ttstate(moving_indoor)" #]
+		updateResource [# "ttstate(moving,indoor)" #]
 	}
 	Transition t0	whenReply	movecdone	->	takeCharge
 					whenReply	movecfailed	->	moveFailed
@@ -279,7 +279,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 			request trolleyexecutor -m move : move($X,$Y)
 			println("TT: moving robot to indoor") color green
 		}
-		updateResource [# "ttstate(moving_indoor)" #]
+		updateResource [# "ttstate(moving,indoor)" #]
 	}
 	Transition t0	whenReply	movedone	->	takeCharge
 					whenReply	movefailed	->	chargeTakeFailed
@@ -288,7 +288,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 		println("TT: loading charge") color green
 		delay 1000
 		println("TT: charge loaded") color green
-		updateResource [# "ttstate(stopped_indoor)" #]
+		updateResource [# "ttstate(stopped,indoor)" #]
 	}
 	Goto chargeTaken
 	
@@ -303,7 +303,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 		#]
 		println("TT: moving to access port") color green
 		request trolleyexecutor -m move : move($X,$Y)
-		updateResource [# "ttstate(moving_port)" #]
+		updateResource [# "ttstate(moving,port)" #]
 	}
 	Transition t0	whenReply	movedone		->	depositInColdRoom
 					whenReply	movefailed		->	moveFailed
@@ -313,7 +313,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 		delay 1000
 		replyTo depositstatus with chargedeposited : chargedeposited($CurrentLoad)
 		println("TT: charge deposited") color green
-		updateResource [# "ttstate(stopped_coldroom)" #]
+		updateResource [# "ttstate(stopped,coldroom)" #]
 	}
 	Transition t0	whenTime	1000							->	returnHome
 					whenRequest	deposit							->	restartToIndoor
