@@ -16,17 +16,24 @@
 </head>
 <body>
 <div class="container">
-    <h1 class="text-center"><span th:text="${arg}">Application name</span></h1>
-    <h3 class="text-center">Deposit request simulation</h3>
+    <div class="title">
+        <h1 class="text-center"><span class="gray" th:text="${arg}">Application name</span></h1>
+        <h3 class="text-center">Deposit request simulation</h3>
+    </div>
 
-    <div>
-        <label for="temp">Total weight reserved in ColdRoom:</label>
-        <span id="temp" th:text="${tempCurrentColdRoom}"></span>
-    </div>
-    <div>
-        <label for="actual">Total weight actually stored in ColdRoom:</label>
-        <span id="actual" th:text="${actualCurrentColdRoom}"></span>
-    </div>
+    <section>
+        <div>
+            <label id="label">Total weight in <i>ColdRoom</i></label>
+        </div>
+
+        <div class="span">
+            <label for="temp">Reserved: <span class="gray" id="temp" th:text="${tempCurrentColdRoom}"></span></label>
+        </div>
+
+        <div class="span">
+            <label for="actual">Actually stored: <span class="gray" id="actual" th:text="${actualCurrentColdRoom}"></span></label>
+        </div>
+    </section>
 
     <div class="mb-3"></div>
 
@@ -54,7 +61,7 @@
                placeholder="Ticket code">
         <button id="sendTicketNumber" class="btn btn-primary mt-3" onclick="validateTicket()">
             <span id="spinner-border-ticket" class="spinner-border spinner-border-sm me-2" aria-hidden="true" hidden="hidden"></span>
-            <span role="status" id="save-status-ticket">Enter ticket</span>
+            <span class="save-status-span" role="status" id="save-status-ticket">Enter ticket</span>
         </button>
     </div>
 
@@ -71,6 +78,7 @@
             <div class="countdown" id="countdownChargeStatus"></div>
         </div>
     </div>
+
 </div>
 
 <div class="toast-container">
