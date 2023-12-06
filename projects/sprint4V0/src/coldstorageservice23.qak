@@ -240,6 +240,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 	State giveStateTT {
 		replyTo initstatett with statett : statett(STOPPED,HOME)
 	}
+	Goto waiting
 	
 	State returnHome {
 		println("TT: returning HOME") color green
@@ -315,8 +316,8 @@ QActor transporttrolley context ctx_coldstorageservice {
 		println("TT: charge deposited") color green
 		updateResource [# "ttstate(stopped,coldroom)" #]
 	}
-	Transition t0	whenTime	1000							->	returnHome
-					whenRequest	deposit							->	restartToIndoor
+	Transition t0	whenTime	1000	->	returnHome
+					whenRequest	deposit	->	restartToIndoor
 
 }
 
@@ -538,7 +539,7 @@ QActor coldstorageservice context ctx_coldstorageservice {
 		
 		val DLIMT = 20
 
-		var NumReqRejected: Integer = 0
+		var NumReqRejected: Int = 0
 	#]
 	
 	State chargeFailed {

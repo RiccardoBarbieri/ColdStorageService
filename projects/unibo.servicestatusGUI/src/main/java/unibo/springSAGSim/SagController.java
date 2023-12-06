@@ -59,14 +59,14 @@ public class SagController {
 
         answer = sagConnection.sendInitRequestsRejected(this.requestConn);
         if (answer != null) {
-            reqRejected = answer.split("reqRejected(")[1].split(")")[0];
+            reqRejected = answer.split("reqrejected\\(")[1].split("\\)")[0];
         }
         model.addAttribute("requestsRejected", reqRejected);
 
 
         answer = sagConnection.sendInitStatoTT(this.requestConn);
         if (answer != null) {
-           String both = answer.split("stateTT(")[1].split(")")[0];
+           String both = answer.split("statett\\(")[1].split("\\)")[0];
            stateTT = both.split(",")[0];
            posTT = both.split(",")[1];
         }

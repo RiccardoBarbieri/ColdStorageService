@@ -104,6 +104,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
 				}	 
 				state("returnHome") { //this:State
 					action { //it:State

@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+
 public class LedControllerConsumer extends RunnableConsumer implements Led {
     private static final Logger logger = LoggerFactory.getLogger(LedControllerConsumer.class);
 
@@ -89,11 +90,13 @@ public class LedControllerConsumer extends RunnableConsumer implements Led {
         BufferedReader br = new BufferedReader(reader);
         String line = br.readLine();
         String msg = line.split("\\(")[1].split("\\)")[0];
+        String status = msg.split(",")[0].strip();
+        String pos = msg.split(",")[1].strip();
         System.out.println("______________LedController | Received: " + msg);
         if (msg != null) {
-            if (msg.contains("home")) {
+            if (status.contains("stopped") && pos.contains("home")) {
                 turnOff();
-            } else if (msg.contains("stopped")) {
+            } else if (status.contains("stopped") && !pos.contains("home")) {
                 turnOn();
             } else if (msg.contains("moving")) {
                 blink(-1, 500);
