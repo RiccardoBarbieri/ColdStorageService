@@ -33,6 +33,7 @@ class Ticketmanager ( name: String, scope: CoroutineScope, isconfined: Boolean=f
 				}	 
 				state("waiting") { //this:State
 					action { //it:State
+						CommUtils.outyellow("TM: waiting")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

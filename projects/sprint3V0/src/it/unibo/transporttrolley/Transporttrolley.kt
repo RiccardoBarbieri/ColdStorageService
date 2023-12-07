@@ -28,8 +28,10 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 				
 				var CurrentLoad: String = ""
 				
-				var returnHome: Boolean = false
+				var isMoving: Boolean = false
+				var wasMoving: Boolean = false
 				
+				var lastState: String = ""
 				return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -40,6 +42,34 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					sysaction { //it:State
 					}	 	 
 					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
+				}	 
+				state("sonarInterrupt") { //this:State
+					action { //it:State
+						discardMessages = true
+						CommUtils.outmagenta("TT: interrupted by sonar")
+						if(  isMoving  
+						 ){ wasMoving = true  
+						}
+						else
+						 { wasMoving = false  
+						 }
+						forward("stop", "stop(arg)" ,"trolleyexecutor" ) 
+						 isMoving = false  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t02",targetState="waiting",cond=whenDispatchGuarded("sonarstart",{ lastState == "waiting"  
+					}))
+					transition(edgeName="t03",targetState="returnHome",cond=whenDispatchGuarded("sonarstart",{ lastState == "returnHome"  
+					}))
+					transition(edgeName="t04",targetState="restartToIndoor",cond=whenDispatchGuarded("sonarstart",{ lastState == "restartToIndoor"  
+					}))
+					transition(edgeName="t05",targetState="moveToIndoorFromHome",cond=whenDispatchGuarded("sonarstart",{ lastState == "moveToIndoorFromHome"  
+					}))
+					transition(edgeName="t06",targetState="toPort",cond=whenDispatchGuarded("sonarstart",{ lastState == "toPort"  
+					}))
 				}	 
 				state("moveFailed") { //this:State
 					action { //it:State
@@ -84,6 +114,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 				}	 
 				state("waiting") { //this:State
 					action { //it:State
+						 lastState = "waiting"  
 						CommUtils.outgreen("TT: waiting for new deposit request")
 						updateResourceRep( "ttstate(home)"  
 						)
@@ -92,11 +123,13 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t02",targetState="moveToIndoorFromHome",cond=whenRequest("deposit"))
-					transition(edgeName="t03",targetState="somethingFailed",cond=whenDispatch("fail"))
+					 transition(edgeName="t07",targetState="moveToIndoorFromHome",cond=whenRequest("deposit"))
+					transition(edgeName="t08",targetState="somethingFailed",cond=whenDispatch("fail"))
+					transition(edgeName="t09",targetState="sonarInterrupt",cond=whenDispatch("sonarstop"))
 				}	 
 				state("returnHome") { //this:State
 					action { //it:State
+						 lastState = "returnHome"  
 						CommUtils.outgreen("TT: returning HOME")
 							val X = PortToHomeCoord.first
 									val Y = PortToHomeCoord.second
@@ -108,12 +141,14 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t04",targetState="waiting",cond=whenReply("movedone"))
-					transition(edgeName="t05",targetState="moveFailed",cond=whenReply("movefailed"))
-					transition(edgeName="t06",targetState="restartToIndoor",cond=whenRequest("deposit"))
+					 transition(edgeName="t010",targetState="waiting",cond=whenReply("movedone"))
+					transition(edgeName="t011",targetState="moveFailed",cond=whenReply("movefailed"))
+					transition(edgeName="t012",targetState="restartToIndoor",cond=whenRequest("deposit"))
+					transition(edgeName="t013",targetState="sonarInterrupt",cond=whenDispatch("sonarstop"))
 				}	 
 				state("restartToIndoor") { //this:State
 					action { //it:State
+						 lastState = "restartToIndoor"  
 						discardMessages = true
 						CommUtils.outgreen("TT: restarting to indoor")
 							val destinations = landmarkConf.getCoordinatesFor("I")
@@ -128,20 +163,21 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t07",targetState="takeCharge",cond=whenReply("movecdone"))
-					transition(edgeName="t08",targetState="moveFailed",cond=whenReply("movecfailed"))
+					 transition(edgeName="t014",targetState="takeCharge",cond=whenReply("movecdone"))
+					transition(edgeName="t015",targetState="moveFailed",cond=whenReply("movecfailed"))
+					transition(edgeName="t016",targetState="sonarInterrupt",cond=whenDispatch("sonarstop"))
 				}	 
 				state("moveToIndoorFromHome") { //this:State
 					action { //it:State
+						 lastState = "waiting"  
 						if( checkMsgContent( Term.createTerm("deposit(FW)"), Term.createTerm("deposit(FW)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 									CurrentLoad = payloadArg(0)
-												
-												val X = HomeToIndoorCoord.first
-												val Y = HomeToIndoorCoord.second
-								request("move", "move($X,$Y)" ,"trolleyexecutor" )  
-								CommUtils.outgreen("TT: moving robot to indoor")
 						}
+							val X = HomeToIndoorCoord.first
+									val Y = HomeToIndoorCoord.second
+						request("move", "move($X,$Y)" ,"trolleyexecutor" )  
+						CommUtils.outgreen("TT: moving robot to indoor")
 						updateResourceRep( "ttstate(moving)"  
 						)
 						//genTimer( actor, state )
@@ -149,8 +185,9 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t09",targetState="takeCharge",cond=whenReply("movedone"))
-					transition(edgeName="t010",targetState="chargeTakeFailed",cond=whenReply("movefailed"))
+					 transition(edgeName="t017",targetState="takeCharge",cond=whenReply("movedone"))
+					transition(edgeName="t018",targetState="chargeTakeFailed",cond=whenReply("movefailed"))
+					transition(edgeName="t019",targetState="sonarInterrupt",cond=whenDispatch("sonarstop"))
 				}	 
 				state("takeCharge") { //this:State
 					action { //it:State
@@ -174,10 +211,11 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t011",targetState="toPort",cond=whenRequest("depositstatus"))
+					 transition(edgeName="t020",targetState="toPort",cond=whenRequest("depositstatus"))
 				}	 
 				state("toPort") { //this:State
 					action { //it:State
+						 lastState = "toPort"  
 							val X = IndoorToPortCoord.first
 									val Y = IndoorToPortCoord.second
 						CommUtils.outgreen("TT: moving to access port")
@@ -189,8 +227,9 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t012",targetState="depositInColdRoom",cond=whenReply("movedone"))
-					transition(edgeName="t013",targetState="moveFailed",cond=whenReply("movefailed"))
+					 transition(edgeName="t021",targetState="depositInColdRoom",cond=whenReply("movedone"))
+					transition(edgeName="t022",targetState="moveFailed",cond=whenReply("movefailed"))
+					transition(edgeName="t023",targetState="sonarInterrupt",cond=whenDispatch("sonarstop"))
 				}	 
 				state("depositInColdRoom") { //this:State
 					action { //it:State
@@ -207,8 +246,9 @@ class Transporttrolley ( name: String, scope: CoroutineScope, isconfined: Boolea
 				 	 		stateTimer = TimerActor("timer_depositInColdRoom", 
 				 	 					  scope, context!!, "local_tout_transporttrolley_depositInColdRoom", 1000.toLong() )
 					}	 	 
-					 transition(edgeName="t014",targetState="returnHome",cond=whenTimeout("local_tout_transporttrolley_depositInColdRoom"))   
-					transition(edgeName="t015",targetState="restartToIndoor",cond=whenRequest("deposit"))
+					 transition(edgeName="t024",targetState="returnHome",cond=whenTimeout("local_tout_transporttrolley_depositInColdRoom"))   
+					transition(edgeName="t025",targetState="restartToIndoor",cond=whenRequest("deposit"))
+					transition(edgeName="t026",targetState="sonarInterrupt",cond=whenDispatch("sonarstop"))
 				}	 
 			}
 		}

@@ -23,6 +23,7 @@ reply( chargedeposited, chargedeposited(FW) ).  %%for depositstatus
 reply( chargedepfailed, chargedeposited(FW) ).  %%for depositstatus
 request( move, move(X,Y) ).
 request( moveclosest, moveclosest(Xs,Ys) ).
+dispatch( stop, stop(arg) ).
 reply( movedone, movedone(arg) ).  %%for move
 reply( movefailed, movefailed(arg) ).  %%for move
 reply( movecdone, movecdone(arg) ).  %%for moveclosest

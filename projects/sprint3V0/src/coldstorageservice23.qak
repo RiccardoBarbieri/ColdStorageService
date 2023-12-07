@@ -42,6 +42,7 @@ Reply		chargedepfailed		:		chargedeposited(FW) for depositstatus
 //TT -> TE
 Request		move				:		move(X,Y)
 Request		moveclosest			:		moveclosest(Xs,Ys)
+Dispatch	stop				:		stop(arg)
 
 //TE -> TT
 Reply		movedone			:		movedone(arg) for move
@@ -117,13 +118,22 @@ Context ctx_coldstorageservice ip [host="localhost" port=8021]
 //QActor testauto context ctx_coldstorageservice {
 //	
 //	State s0 initial {
-//		delay 5000
-//		request testauto -m deposit : deposit(arg)
-//		println("sent message")
+//		println("RETURNED________") color red
 //	}
-//	Transition t0 whenRequest deposit -> autoMsg
+//	Transition t0 	whenReply		movedone -> movedone
+//					whenInterrupt	stop 	-> state1
+//					
+//					
+//	State movedone {
+//		
+//	}
 //	
-//	State autoMsg {
+//	State state1 {
+//		
+//	}
+//	Transition t0 whenMsg coapUpdate -> state2
+//	
+//	State state2 {
 //		println("REACHED") color red
 //		
 //	}
@@ -142,7 +152,7 @@ QActor ticketmanager context ctx_coldstorageservice {
 	Goto waiting
 	
 	State waiting {
-		
+		println("TM: waiting") color yellow
 	}
 	Transition t0	whenRequest	generateticket	->	generateTicket
 					whenRequest	insertticket	->	validateTicket
@@ -186,14 +196,33 @@ QActor transporttrolley context ctx_coldstorageservice {
 		
 		var CurrentLoad: String = ""
 		
-		var returnHome: Boolean = false
+		var isMoving: Boolean = false
+		var wasMoving: Boolean = false
 		
+		var lastState: String = ""
 	#]
 	
 	State s0 initial {
 		println("TT: started") color green
 	}
 	Goto waiting
+	
+	State sonarInterrupt {
+		discardMsg On
+		println("TT: interrupted by sonar") color magenta
+		if [# isMoving #] {
+			[# wasMoving = true #]
+		} else {
+			[# wasMoving = false #]
+		}
+		forward trolleyexecutor -m stop : stop(arg)
+		[# isMoving = false #]
+	}
+	Transition t0	whenMsg sonarstart and [# lastState == "waiting" #] -> 				waiting
+					whenMsg sonarstart and [# lastState == "returnHome" #] -> 			returnHome
+					whenMsg sonarstart and [# lastState == "restartToIndoor" #] -> 		restartToIndoor
+					whenMsg sonarstart and [# lastState == "moveToIndoorFromHome" #] ->	moveToIndoorFromHome
+					whenMsg sonarstart and [# lastState == "toPort" #] -> 				toPort
 	
 	State moveFailed {
 		println("TT: contact with trolleyexecutor failed on move, try restarting the application") color green
@@ -218,13 +247,16 @@ QActor transporttrolley context ctx_coldstorageservice {
 	}
 
 	State waiting {
+		[# lastState = "waiting" #]
 		println("TT: waiting for new deposit request") color green
 		updateResource [# "ttstate(home)" #]
 	}
-	Transition t0	whenRequest	deposit	->	moveToIndoorFromHome
-					whenMsg		fail	->	somethingFailed
+	Transition t0	whenRequest	deposit		->	moveToIndoorFromHome
+					whenMsg		fail		->	somethingFailed
+					whenMsg		sonarstop	->	sonarInterrupt
 	
 	State returnHome {
+		[# lastState = "returnHome" #]
 		println("TT: returning HOME") color green
 		[#	val X = PortToHomeCoord.first
 			val Y = PortToHomeCoord.second
@@ -235,8 +267,10 @@ QActor transporttrolley context ctx_coldstorageservice {
 	Transition t0	whenReply	movedone	->	waiting
 					whenReply	movefailed	->	moveFailed
 					whenRequest	deposit		->	restartToIndoor
+					whenMsg		sonarstop	->	sonarInterrupt
 	
 	State restartToIndoor {
+		[# lastState = "restartToIndoor" #]
 		discardMsg On
 		println("TT: restarting to indoor") color green
 		
@@ -251,21 +285,24 @@ QActor transporttrolley context ctx_coldstorageservice {
 	}
 	Transition t0	whenReply	movecdone	->	takeCharge
 					whenReply	movecfailed	->	moveFailed
+					whenMsg		sonarstop	->	sonarInterrupt
 	
 	State moveToIndoorFromHome {
+		[# lastState = "waiting" #]
 		onMsg(deposit : deposit(FW)) {
 			[#	CurrentLoad = payloadArg(0)
-				
-				val X = HomeToIndoorCoord.first
-				val Y = HomeToIndoorCoord.second
 			#]
-			request trolleyexecutor -m move : move($X,$Y)
-			println("TT: moving robot to indoor") color green
 		}
+		[#	val X = HomeToIndoorCoord.first
+			val Y = HomeToIndoorCoord.second
+		#]
+		request trolleyexecutor -m move : move($X,$Y)
+		println("TT: moving robot to indoor") color green
 		updateResource [# "ttstate(moving)" #]
 	}
 	Transition t0	whenReply	movedone	->	takeCharge
 					whenReply	movefailed	->	chargeTakeFailed
+					whenMsg		sonarstop	->	sonarInterrupt
 	
 	State takeCharge {
 		println("TT: loading charge") color green
@@ -281,6 +318,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 	Transition t0	whenRequest	depositstatus	->	toPort
 	
 	State toPort {
+		[# lastState = "toPort" #]
 		[#	val X = IndoorToPortCoord.first
 			val Y = IndoorToPortCoord.second
 		#]
@@ -290,6 +328,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 	}
 	Transition t0	whenReply	movedone		->	depositInColdRoom
 					whenReply	movefailed		->	moveFailed
+					whenMsg		sonarstop	->	sonarInterrupt
 					
 	State depositInColdRoom {
 		discardMsg On
@@ -298,8 +337,9 @@ QActor transporttrolley context ctx_coldstorageservice {
 		println("TT: charge deposited") color green
 		updateResource [# "ttstate(stopped)" #]
 	}
-	Transition t0	whenTime	1000							->	returnHome
-					whenRequest	deposit							->	restartToIndoor
+	Transition t0	whenTime	1000		->	returnHome
+					whenRequest	deposit		->	restartToIndoor
+					whenMsg		sonarstop	->	sonarInterrupt
 
 }
 
@@ -328,26 +368,6 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 					whenReply	engagedone		->	setState
 					whenReply	engagerefused	->	engageFail
 					
-	State sonarInterrupt {
-		discardMsg On
-		println("TE: interrupted by sonar") color magenta
-		if [# isMoving #] {
-			[# wasMoving = true #]
-		} else {
-			[# wasMoving = false #]
-		}
-		emit alarm : alarm(arg)
-		[# isMoving = false #]
-	}
-	Transition t0	whenMsg	sonarstart and [# wasMoving #]	->	sonarRestart
-					whenMsg	sonarstart and [# !wasMoving #]	->	waiting
-	
-	State sonarRestart {
-		println("TE: restarted by sonar") color magenta
-		request trolleyexecutor -m move : move($LastX,$LastY)
-	}
-	Transition t0	whenRequest	move ->	move
-					
 	State engageFail {
 		[# val ErrorString = "Ingaggiorobotfallito" #]
 		forward transporttrolley -m fail : fail($ErrorString)
@@ -374,12 +394,20 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 	Goto waiting
 	
 	State waiting {
+		discardMsg On
 		println("TE: waiting") color magenta
 	}
-	Transition t0	whenRequest		move							->	move
-					whenRequest		moveclosest and [# isMoving #]	->	stop
-					whenRequest 	moveclosest and [# !isMoving #]	->	askPosition
-					whenMsg			sonarstop						->	sonarInterrupt
+	Transition t0	whenRequest	move							->	move
+					whenRequest	moveclosest and [# isMoving #]	->	stopAndAsk
+					whenRequest moveclosest and [# !isMoving #]	->	askPosition
+					whenMsg		stop		and	[# isMoving #]	->	stopAndWait
+					
+	State stopAndWait {
+		discardMsg On
+		println("TE: stop and wait")
+		emit alarm : alarm(arg)
+	}
+	Goto waiting
 	
 	State move {
 		println("TE: move") color magenta
@@ -394,12 +422,12 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 		}
 	}
 	Transition t0	whenTime		30000			->	timeout
-					whenRequest		moveclosest		->	stop
+					whenRequest		moveclosest		->	stopAndAsk
 					whenReply		moverobotdone	->	moveCompleted
 					whenReply		moverobotfailed	->	moveFail
-					whenMsg			sonarstop		->	sonarInterrupt
+//					whenMsg			sonarstop		->	sonarInterrupt
 					
-	State stop {
+	State stopAndAsk {
 		println("TE: stop") color magenta
 		onMsg (moveclosest : moveclosest(Xs,Ys)) {
 			[# destinations = utils.PosUtils.destStringListToPairs(payloadArg(0), payloadArg(1)) #]
@@ -441,7 +469,7 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 	Transition t0	whenTime		30000			->	timeout
 					whenReply		moverobotdone	->	movecCompleted
 					whenReply		moverobotfailed	->	movecFail
-					whenMsg			sonarstop		->	sonarInterrupt
+//					whenMsg			sonarstop		->	sonarInterrupt
 
 	State moveCompleted {
 		[# isMoving = false #]
@@ -467,7 +495,11 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 QActor sonarrec context ctx_coldstorageservice {
 	
 	[#	val DLIMT = 20
+		val MINT = 7000
 		var StoppedBySonar = false
+		
+		var StartTime = 0L
+		var Elapsed = 0L
 
  		var brokerAddr = "tcp://mqtt.eclipseprojects.io"
 		mqtt.connect(name, brokerAddr)
@@ -481,10 +513,12 @@ QActor sonarrec context ctx_coldstorageservice {
 	
 	State waiting {
 //		println("SR: waiting") color yellow 
+		
 	}
 	Transition t0	whenEvent	distance	->	checkDistance
 	
 	State checkDistance {
+		setDuration Elapsed from StartTime
 		onMsg (distance : distance(DIST)) {
 			[# val Distance: Float = payloadArg(0).toFloat() #]
 //			println("SR: received $Distance cm as distance") color yellow
@@ -495,10 +529,11 @@ QActor sonarrec context ctx_coldstorageservice {
 				}
 			}
 			else {
-				if [# !StoppedBySonar #] {
+				if [# !StoppedBySonar && Elapsed > StartTime #] {
 					forward coldstorageservice -m sonarstop : sonarstop(arg)
 					[# StoppedBySonar = true #]
 					println("SR: stopping trolley") color yellow
+					memoCurrentTime StartTime
 				}
 			}
 		}
@@ -538,7 +573,7 @@ QActor coldstorageservice context ctx_coldstorageservice {
 		delegate "insertticket"	to ticketmanager
 		delegate "sonarstop"	to trolleyexecutor
 		delegate "sonarstart"	to trolleyexecutor
-		delegate "distance"		to sonarrec
+//		delegate "distance"		to sonarrec
 		observeResource transporttrolley
 		
 		println("CSS: started") color blue
