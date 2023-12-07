@@ -239,12 +239,55 @@
         </tbody>
     </table>
 
+    <h3>Costanti</h3>
+
+    <p>
+        Contestualmente agli obiettivi di questo sprint si considerano le seguenti due costanti:    
+    </p>
+
+    <table>
+        <tr>
+            <th>Costante</th>
+            <th>Tipo</th>
+            <th>Descrizione</th>
+        </tr>
+        <tr>
+            <td class="green bold center" id="tickettime">DLIMT</td>
+            <td>Float</td>
+            <td>Quando il sonar rileva una distanza minore di questo valore il TransportTrolley deve essere fermato.</td>
+        </tr>
+        <tr>
+            <td class="green bold center" id="ticket">MINT</td>
+            <td>Int</td>
+            <td>Millisecondi che devono trascorrere perch&eacute; il robot possa essere nuovamente fermato dal sonar.</td>
+        </tr>
+    </table>
+
+    <h3>RaspberryPi</h3>
+
+    <p>
+        <b>TODO: paragrafo su cosa &egrave; e come si utilizza.</b>
+    </p>
+
+    <h4>Sonar</h4>
+    
+    <p>
+        <b>TODO: paragrafo su modello e caratteristiche, ref costante cm</b>
+    </p>
+
+    <h4>Led</h4>
+
+    <p>
+        <b>TODO: formalizza cos'&egrave;</b>
+    </p>
 </div>
 
 
 <h2>Problem analysis</h2>
 
 <div class="remark">
+
+    <h3>Interazioni</h3>
 
     <p>
         Partendo dai modelli individuati nell'analisi dei requisiti si pu&ograve; notare come alcuni di essi non offrono soluzioni che rispettano i principi della <b>clean architecture</b>.
@@ -312,6 +355,14 @@
     <p class="keypoint">
         <b>KEY-POINT:</b> si rendono osservabili le risorse <b>ttstate</b> e <b>distance</b> per uniformare con altre risorse della stessa tipologia (peso coldroom) gestite in sprint precedenti e necessarie in sprint successivi.
     </p>
+
+    <h5>Comunicazione con servizio</h5>
+
+    <p>
+        Come nel caso della ServiceAccessGUI, verr&agrave; impostato il servizio in modo da mantenere un unico punto di accesso, verranno internamente inoltrati i messaggi rilevanti.
+    </p>
+
+    <h3>Sonar</h3>
 
 </div>
 
