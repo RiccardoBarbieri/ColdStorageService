@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="stylesheet" href="../_static/template.css">
+<link rel="stylesheet" href="../_static/mine.css">
+<link rel="stylesheet" href="../_static/code.css">
+<link rel="stylesheet" href="../_static/colors.css">
+<link rel="stylesheet" href="../_static/sidebar.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/dockerfile.min.js"></script>
+
+
+<script>hljs.highlightAll();</script>
+<title>Progettazione MapConfigurator</title>
+</head>
+    
+<body>
+
+    <div class="sidebar">
+        <h1><a id="titleindex" href="../index/index.html">Indice</a></h1>
+        <ul>
+            <li><a href="../Sprint0/ColdStorageServiceSprint0V2.html">Sprint0</a></li>
+            <li><a href="../Sprint1/ColdStorageServiceSprint1V1.html">Sprint1</a></li>
+            <ul>
+                <li><a href="../Sprint1/ServiceAccessGUISimProjectV1.html">ServiceAccessGUI</a></li>
+                <li><a href="../Sprint1/MapConfiguratorProject.html">MapConfigurator</a></li>
+            </ul>
+            <li><a href="../Sprint2/ColdStorageServiceSprint2V0.html">Sprint2</a></li>
+            <li><a href="../Sprint3/ColdStorageServiceSprint3V0.html">Sprint3</a></li>
+            <li><a href="../Sprint4/ColdStorageServiceSprint4V0.html">Sprint4</a></li>
+            <li><a href="../Deployment/Deployment&Mantenaince.html">Deployment</a></li>
+        </ul>
+    </div>
+    
+    <div class="content">
+        <h2>Introduction</h2>
+        
+        <div class="remark">
+            <p>
+                Documento che tratta la realizzazione del <i>MapConfigurator</i>, in relazione all'analisi presente nello <a href="./ColdStorageServiceSprint1V1.html">Sprint1</a>. <br>
+            </p>
+        </div>
+        
+        <h2>Requirements</h2>
+         
+        <div class="remark">
+            <p>
+                <bc>Goals</bc> <br>
+            </p>
+            <p>
+                L'applicativo <i>MapConfigurator</i> deve permettere di:
+                <ul>
+                    <li>generare una rappresentazione della ServiceArea comprensibile alla macchina</li>
+                    <li>configurare i vari landmarks</li>
+                    <li>interagire in maniera semplice ed intuitiva</li>
+                </ul>
+            </p>
+        </div>
+        
+        <h2>Requirement analysis</h2>
+        
+        <div class="remark">
+            <h4><b>Requisito 1:</b> generare una rappresentazione della ServiceArea comprensibile alla macchina.</h4>
+            <p>
+                Con "comprensibile alla macchina", intendiamo la rappresentazione in forma testuale e binaria che è in grado di comprendere il software <b>basicRobot</b>. In particolare, quest'ultimo utilizza la classe <code class="docutils literal notranslate"><span class="pre">unibo.planner23.model.RoomMap</span></code>, che fa uso di questa rappresentazione. Di seguito, è riportato un esempio della versione testuale.
+        
+                <pre><code class="language-bash">|1, 1, 1, 1, 1, 1, 1, 
+        |1, 0, 0, 0, X, X, 1, 
+        |1, 0, 0, 0, X, X, 1, 
+        |1, 0, 0, 0, 0, 0, 1, 
+        |1, 1, 1, 1, 1, 1, 1, 
+                    </code></pre>
+        
+                <p class="nota">
+                    La forma <b>binaria</b> corrisponde ad un <i>dump binario</i> di un'istanza della classe <code class="docutils literal notranslate"><span class="pre">RoomMap</span></code>.
+                </p>
+            </p>
+        
+            <h4><b>Requisito 2:</b> configurare i vari landmarks.</h4>
+            Oltre alla generazione della mappa dell'area di servizio, l'utente dovrà avere la possibilità di inserire i quattro tipi di landmarks: 
+            <ul>
+                <li>PORT</li>
+                <li>INDOOR</li>
+                <li>HOME</li>
+                <li>COLDROOM</li>
+            </ul>
+            <p class="nota">
+                La rappresentazione dei landmarks dovrà anch'essa essere comprensibile alla macchina: questo aspetto è stato analizzato nella sezione <a href="./ColdStorageServiceSprint1V1.html#coordinate" target="_blank" rel="noopener noreferrer">coordinate</a> del progetto principale.
+            </p>
+        
+            <h4><b>Requisito 3:</b> interagire in maniera semplice ed intuitiva</h4>
+            <p>
+                Quest'applicativo deve risultare di semplice utilizzo da parte dell'utente: è infatti pensato per un eventuale cliente (personale NON tecnico) che debba realizzare una configurazione precisa per l'area di servizio.<br>
+            </p>
+        </div>
+        
+        <h2>Problem analysis</h2>
+        
+        <div class="remark">
+            <p>
+                Pensiamo al MapConfigurator come ad una <b>applicazione grafica web</b>. <br>
+                Al fine di garantire semplicità di utilizzo, abbiamo pensato di rappresentare la service area come una matrice di blocchi trascinabili. Si avrà quindi come base una matrice di blocchi M x N, ognuno deqi quali potrà avere associato uno tra i landmarks sopra definiti.
+            </p>
+        </div>
+        
+        <h2>Project</h2> 
+         
+        <div class="remark">
+        
+            <h3 id="mapconfigurator_project">MapConfigurator</h3>
+        
+            <p>
+                Come per la <a href="#sagsim_project">ServiceAccessGUISim</a> utilizziamo il framework <b>Spring Boot</b>.
+            </p>
+        
+            <div class="imgslide">
+                <figure>
+                    <img class="imglim img-border" src="../images/sprint1/mapconfempty.png" alt="Interfaccia MapConfigurator">
+                </figure>
+                <figure>
+                    <img class="imglim img-border" src="../images/sprint1/mapconf.png" alt="Interfaccia MapConfigurator">
+                </figure>
+            </div>
+        
+            <p>
+                Le feature principali dell'applicazione includono:
+                <ul>
+                    <li><b>blocchi trascinabili</b>: la griglia viene compilata trascinando i blocchi che rappresentano i landmark con una funzionalit&agrave; di <b>drag and drop</b>;</li>
+                    <li><b>griglia ridimensionabile</b>: &egrave; possibile ridimensionare la griglia tramite gli slider in alto, la dimensione di <i>default</i> &egrave; quella individuata utilizzando <code class="prettyprint">unibo.mapperQak23</code></li>
+                    <li><b>persistenza</b>: l'utente trover&agrave; la configurazione creata salvata tra sessioni, permettendo di riprendere la modifica dove era stata lasciata</li>
+                    <li><b>utilizzo intuitivo</b>: l'applicazione deve essere semplice da utilizzare nascondendo i dettagli della rappresentazione utilizzata dal planner</li>
+                </ul>
+            </p>
+        
+            <p>
+                I blocchi trascinati sulla mappa vengono considerati come <b>esplorati</b> e, nel caso del blocco della <span class="bold" style="color:rgb(64,64,228);">ColdRoom</span> marcati come <b>ostacoli</b> nella rappresentazione sotto forma di <code class="prettyprint">unibo.planner23.model.RoomMap</code>.
+            </p>
+        
+            <p>
+                Questa applicazione &egrave; completa nel rispetto delle funzionalit&agrave; di base che abbiamo considerato necessarie; &egrave; possibile, tuttavia, che in futuro venga estesa con feature di utilit&agrave; aggiuntive.
+            </p>
+            
+            <h5>Diagramma delle classi</h5>
+        
+            <p>
+                Infine, si riporta il <b>diagramma UML</b> delle classi dell'applicazione.
+            </p>
+                <img class="bigimglim" src="../images/sprint1/mapConfiguratorUML.png" alt="Diagramma UML">
+        
+        <h2>Deployment</h2> 
+        
+        <div class="remark">
+            Per il deployment, si rimanda alla <a href="./ColdStorageServiceSprint1V1.html#deployment" target="_blank" rel="noopener noreferrer">sezione apposita</a> del progetto principale.
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="stylesheet" href="../_static/template.css">
+<link rel="stylesheet" href="../_static/mine.css">
+<link rel="stylesheet" href="../_static/code.css">
+<link rel="stylesheet" href="../_static/colors.css">
+<link rel="stylesheet" href="../_static/sidebar.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/dockerfile.min.js"></script>
+
+
+<script>hljs.highlightAll();</script>
+<title>Sprint0</title>
+</head>
+    
+<body>
+
+    <div class="sidebar">
+        <h1><a id="titleindex" href="../index/index.html">Indice</a></h1>
+        <ul>
+            <li><a href="../Sprint0/ColdStorageServiceSprint0V2.html">Sprint0</a></li>
+            <li><a href="../Sprint1/ColdStorageServiceSprint1V1.html">Sprint1</a></li>
+            <ul>
+                <li><a href="../Sprint1/ServiceAccessGUISimProjectV1.html">ServiceAccessGUI</a></li>
+                <li><a href="../Sprint1/MapConfiguratorProject.html">MapConfigurator</a></li>
+            </ul>
+            <li><a href="../Sprint2/ColdStorageServiceSprint2V0.html">Sprint2</a></li>
+            <li><a href="../Sprint3/ColdStorageServiceSprint3V0.html">Sprint3</a></li>
+            <li><a href="../Sprint4/ColdStorageServiceSprint4V0.html">Sprint4</a></li>
+            <li><a href="../Deployment/Deployment&Mantenaince.html">Deployment</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <h2>Introduction</h2>
+        
+        <div class="remark">
+            <p>
+                <i>Sprint0</i> del progetto d'esame - Barbieri, Ruberto
+            </p>
+        </div>
+         
+        <h2>Requirements</h2>
+         
+        <div class="remark">
+            <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements</a><br>
+        
+        
+        <p>
+            <bc>Goals dello sprint 0</bc>:
+            <ol>
+                <li>Identificare i componenti principali del servizio <b>ColdStorageService</b></li>
+                <li>Formulare un modello di interazione dei componenti individuati</li>
+                <li>Modellare una architettura logica del sistema che faccia da punto di riferimento per gli sviluppi successivi</li>
+            </ol>
+        </p>
+        </div>
+        
+        <h2>Requirement analysis</h2>
+        
+        <div class="remark">
+            
+        <h4>Domain analysis</h4>
+        <p>
+            Nella seguente tabella vengono riportate le entit&agrave; trovate nel <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">documento dei requisiti</a>, con annessa una piccola descrizione basata su quanto deducibile dal suddetto documento. <br>
+            Successivamente, verranno <b>formalizzati</b> i principali concetti in modo da averne una definizione precisa e inequivocabile.
+        </p>
+        <table>
+            <tr>
+                <th>Termine</th>
+                <th>Descrizione</th>
+            </tr>
+            <tr>
+                <td class="green bold center" id="coldstorageservice">ColdStorageService</td>
+                <td>Rappresenta il servizio vero e proprio ed è composto da un insieme di elementi:
+                    <ul>
+                        <li><a href="#servicearea">Service area</a>;</li>
+                        <li><a href="#ddrrobot">DDR robot</a>;</li>
+                        <li><a href="#serviceaccessgui">ServiceAccessGUI</a>;</li>
+                        <li><a href="#servicestatusgui">ServiceStatusGUI</a>;</li>
+                        <li><a href="https://iss.riccardob.dev/TemaFinale23.html">Alarm system</a>.</li>
+                    </ul></td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="servicearea">Service area</td>
+                <td>Rappresentazione di una stanza piatta a pianta rettangolare nella quale il <a href="#transporttrolley">transport trolley</a> pu&ograve; navigare; contiene diversi punti di interesse:
+                <ul>
+                    <li><a href="#indoor">INDOOR</a>;</li>
+                    <li><a href="#coldroom">ColdRoom</a>;</li>
+                    <li><a href="#home">HOME</a>;</li>
+                </ul>e un ostacolo di posizione e dimensione predefinita.<br>
+                Viene <a href="#serviceareamodel">modellata come un rettangolo</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="indoor">INDOOR</td>
+                <td>Porta di accesso adibita all'inserimento del carico di cibo dal <a href="#camionrefrigerato">camion refrigerato</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="coldroom">ColdRoom</td>
+                <td>Contenitore refrigerato adibito al deposito di cibo ritirato da parte del <a href="#transporttrolley">transport trolley</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="home">HOME</td>
+                <td>Posizione di partenza del <a href="#trasnporttrolley">transport trolley</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="maxw">MAXW</td>
+                <td>Limite massimo di chilogrammi che la <a href="#coldroom">ColdRoom</a> pu&ograve; contenere in un dato momento</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="transporttrolley">Transport trolley</td>
+                <td>Entit&agrave; di forma quadrata e lato <a href="#rd">RD</a>, &egrave; inizialmente posizionato in <a href="#home">HOME</a> e pu&ograve; muoversi avanti e indietro, ruotare di 90° e fermarsi; sfrutta il DDR robot per muoversi nella <a href="#servicearea">Service area</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="rd">RD</td>
+                <td>Lunghezza del lato del <a href="#transporttrolley">transport trolley</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="ddrrobot">DDR robot</td>
+                <td>Differential Drive Robot fornito dal committente insieme al software <a href="#basicrobot">BasicRobot</a> per controllarlo. Mette in atto i comandi inviati dal <a href="#transporttrolley">transport trolley</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="azionedideposito">Azione di deposito</td>
+                <td>Operazione di deposito che coinvolge il <a href="#camionrefrigerato">camion refrigerato</a> e il <a href="transporttrolley">transport trolley</a>:
+                <ol>
+                    <li>il transport trolley preleva un <a href="#foodload">FoodLoad</a> dal camion refrigerato posizionandosi alla porta INDOOR;</li>
+                    <li>il transport trolley si sposta da INDOOR a PORT della ColdRoom;</li>
+                    <li>il carico viene depositato nella ColdRoom.</li>
+                </ol>
+                Quando l'azione termina, il transport trolley prende in carico una nuova azione di deposito (se &egrave; disponibile un <a href="#foodload">FoodLoad</a> ) o torna in HOME.</td>
+                </tr>
+            <tr>
+                <td class="green bold center" id="camionrefrigerato">Camion refrigerato</td>
+                <td>Entit&agrave; esterna al sistema che deposita <a href="#fw">FW</a> kg di prodotti alimentari alla porta <a href="#INDOOR">INDOOR</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="fw">FW</td>
+                <td>Quantit&agrave; di carico che un <a href="camionrefrigerato">camion refrigerato</a> deve richiede di depositare espressa in chilogrammi.</td>
+            </tr>
+                <td class="green bold center" id="foodload">FoodLoad</td>
+                <td>Carico di cibo (frutta, vegetali, ...) che necessita di essere refrigerato.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="serviceaccessgui">ServiceAccessGUI</td>
+                <td>Interfaccia grafica che permette a un utente di: 
+                    <ul>
+                        <li>visualizzare il peso corrente del materiale immagazzinato nella <a href="#coldroom">Cold Room</a>;</li>
+                        <li>inviare la richiesta di deposito di una <b>FoodLoad</b> <a href="#fw">FW</a> kg di prodotti alimentari, comunicando un <a href="#ticket">ticket</a> in caso di richiesta accettata;</li>
+                        <li>immettere il codice del ticket quando il <a href="#camionrefrigerato">camion refrigerato</a> si trova alla porta <a href="#INDOOR">INDOOR</a>, all'esterno della service area;</li>
+                        <li>visualizzare il messaggio di <a href="#chargetaken">charge taken</a>.</li>
+                    </ul></td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="servicestatusgui">ServiceStatusGUI</td>
+                <td>Interfaccia grafica che permette a un <b>service manager</b> di visualizzare:
+                <ul>
+                    <li>lo <a href="#statotransporttrolley">stato del transport trolley</a>;</li>
+                    <li>il <b>peso corrente</b> del cibo nella <a href="#coldroom">ColdRoom</a>;</li>
+                    <li>il <b>numero di richieste rifiutate</b> dall'inizio del servizio, considerando solo quelle rifiutate per mancanza di spazio nella ColdRoom.</li>
+                </ul></td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="servicemanager">Service manager</td>
+                <td>Utente umano che pu&agrave; interagire con la <a href="#servicestatusgui">ServiceStatusGUI</a> per monitorare lo <a href="#statoservicearea">stato della service area</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="sonar">Sonar</td>
+                <td>Dispositivo collegato a un RaspberryPi in grado di misurare la distanza di oggetti in fronte a esso.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="alarmdevice">Alarm device</td>
+                <td>Componente astratto che, sfruttando un <a href="#sonar">sonar</a>, comunica al transport trolley di fermarsi quando quando la distanza rilevata &egrave; inferiore a DLIMT.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="led">Led</td>
+                <td>
+                    Dispositivo collegato a un RaspberryPi usato come dispositivo di avviso: 
+                    <ul>
+                        <li>&egrave; <b>spento</b> se il <a href="#transporttrolley">transport trolley</a> &egrave; situato in HOME;</li>
+                        <li><b>lampeggia</b> se il transport trolley &egrave; in movimento;</li>
+                        <li>&egrave; <b>acceso</b> se il transport trolley non &egrave; in movimento.</li>
+                    </ul>
+            </tr>
+            <tr>
+                <td class="green bold center" id="warningdevice">Warning device</td>
+                <td>Componente astratto in grado di mostrare tre stati distinti:
+                    <ul>
+                        <li><a href="#transporttrolley">transport trolley</a> situato in HOME</li>
+                        <li>transport trolley in movimento</li>
+                        <li>transport trolley non in movimento (e non in HOME)</li>
+                    </ul>
+                Comanda al <a href="#led">led</a> di assumere un certo stato a seconda dello stato del transport trolley.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="dlimt">DLIMT</td>
+                <td>Distanza massima dal <a href="#sonar">sonar</a> per la quale si attivano i relativi <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">alarm requirements</a>: se viene rilevata una distanza minore l'<a href="#alarmsistem">alarm system</a> comunica al <a href="#transporttrolley">transport trolley</a> di fermarsi.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="mint">MINT</td>
+                <td>Tempo minimo che deve trascorrere prima che il <a href="#transportrolley">transport trolley</a> possa nuovamente gestire un messaggio di stop inviato dall'<a href="#alarmsystem">alarm system</a>, espresso in millisecondi.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="ticket">Ticket</td>
+                <td><b>Numero univoco</b> che rappresenta una prenotazione di deposito</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="tickettime">TICKETTIME</td>
+                <td>Quantit&agrave; di secondi che esprime la durata della validit&agrave; di un <a href="#ticket">ticket</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="chargetaken">Charge taken</td>
+                <td>Messaggio che rappresenta la presa in carico di un <a href="#foodload">FoodLoad</a> da parte del transport trolley. Questo messaggio &egrave; relativo ad una singola richiesta di deposito da parte di un <a href="#camionrefrigerato">camion refrigerato</a>.</td>
+            </tr>
+            <tr>
+                <td class="green bold center" id="statoservicearea">Stato service area</td>
+                <td>Informazioni riguardo la service area in un dato momento:
+                <ul>
+                    <li><a href="#ttstate">stato del transport trolley</a></li>
+                    <li>peso di cibo nella <a href="#coldroom">ColdRoom</a></li>
+                    <li>numero di richieste rifiutate</li>
+                </ul></td>
+            </tr>
+        </table>
+        
+        <p class="nota">
+            <b>Sonar e Led</b><br>
+            Per l'utilizzo dei dati del sonar e il controllo del led verr&agrave; usato software fornito dal committente unito a quello gi&agrave; disponibile alla nostra software house per abilitare la comunicazione con il transport trolley.
+        </p>
+        <h4>Formalizzazione dei concetti</h4>
+        
+        <h5 id="serviceareamodel">Service area</h5>
+        
+            
+            <p>
+                In base alla descrizione fornita dal cliente, abbiamo modellato la <a href="#servicearea">service area</a> come un rettangolo privo di ostacoli e circondato da 4 pareti, all'interno del quale sono presenti le 4 aree rilevanti descritte in precedenza:
+                <ul>
+                    <li><span class="bold" style="color:rgb(255,0,0);">HOME</span></li>
+                    <li><span class="bold" style="color:rgb(64,64,228);">ColdRoom</span></li>
+                    <li><span class="bold" style="color:rgb(43,169,43);">INDOOR</span></li>
+                    <li><span class="stroke" style="color:rgb(255,228,0);">PORT</span></li>
+                </ul>
+            </p>
+            <p class="nota">
+                In un colloquio con il committente è stata precisita l'assenza di ostacoli, a differenza dell'immagine presente nel <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">documento dei requisiti</a>.<br>
+            </p>
+        
+            <p>
+               <p>
+                Il committente ha fornito un ambiente virtuale, detto <i>WEnv</i>, che rappresenta la service area e all'interno il robot che ci lavora. Abbiamo utilizzato questa rappresentazione come punto di partenza per definire con precisione la service area. <br>
+                Per una definizione precisa diamo una misura in metri, basati sui dati ottenuti dall'ambiente <i>WEnv</i>. <br>
+            </p>
+        
+            <p>
+                Il modello definito è mostrato nell'immagine seguente: <br>
+               
+                <img class="bigimglim" src="../images/sprint0/servicearea.png" alt="Modello service area">
+            </p>
+                
+        
+            </p>
+        
+            <p class="keypoint">
+                <b>KEY-POINT</b>: la service area è stata modellata in metri per darne una definizione formale. Nei prossimi Sprint verr&agrave; analizzata nuovamente introducendo il nuovo concetto di misura <b>unitàRobot</b>.
+            </p>
+        
+           
+        <h5>Transport trolley e DDR Robot</h5>
+        
+            <p class="keypoint">
+                <b>KEY-POINT</b>: il transport trolley corrisponde ad un attuatore di comandi verso il <i>basicRobot</i>.
+            </p>
+        <p id="ttstate">
+            In questa analisi abbiamo inoltre identificato lo stato corrente del <a href="#transporttrolley">transport trolley</a> come le seguenti informazioni riguardo al transport trolley in un dato momento:
+        </p>
+        <ul>
+            <li>posizione nella <a href="#servicearea">service area</a>;</li>
+            <li>stato di movimento (<b>stopped</b>,<b>moving</b>).</li>
+        </ul>
+        
+        <h5>Ticket</h5>
+        <p>
+            Dal documento dei requisiti viene evidenziato come il ticket sia identificato da un numero; un analisi più approfondita verr&agrave; fatta nei successivi Sprint.
+        </p>
+        <p class="keypoint">
+            <b>KEY-POINT</b>: <i>TICKETTIME</i> non è una propriet&agrave; dell'entit&agrave; <i>ticket</i>, bensì del servizio ColdStorageService.
+        </p>
+        
+        <h4>Verbs analysis</h4>
+        <p>
+            La seguente tabella mette in luce le <b>azioni</b> che vengono compiute all'interno della logica applicativa, evidenziando qual è l'entit&agrave; che le compie e l'oggetto che fa parte dell'azione stessa.
+        </p>
+        <table>
+            <tr>
+            <th>Soggetto</th>
+            <th>Termine</th>
+            <th>Oggetto</th>
+            <th>Descrizione</th>
+            </tr>
+        
+            <tr>
+            <td rowspan=5><a href="#camionrefrigerato">Camion refrigerato</a></td>
+            <td class="green bold center" id="sendrequest">Sends a request</td>
+            <td>Peso <a href="#FW">FW</a></td>
+            <td>Il (guidatore del) camion invia una richiesta di deposito di <b>FW</b> kg di cibo tramite la <a href="#serviceaccessgui">ServiceAccessGUI</a>.</td>
+            </tr>
+        
+            <tr>
+                <!-- <td><a href="#camionrefrigerato">Camion refrigerato</a></td> -->
+                <td class="green bold center" id="drives">Drives to the INDOOR</td>
+                <td>-</td>
+                <td>Il (guidatore del) camion, in caso di richiesta accettata, va fino alla porta di INDOOR, prima della scadenza del ticket (<a href="#tickettime">TICKETTIME</a>).</td>
+            </tr>
+        
+            <tr>
+                <td class="green bold center" id="enterticket">Enters the ticket number</td>
+                <td><a href="#ticket">Ticket</a> number</td>
+                <td>Il (guidatore del) camion, inserisce il numero del ticket tramite la <a href="#serviceaccessgui">ServiceAccessGUI</a>.</td>
+            </tr>
+            
+            <tr>
+                <!-- <td><a href="#camionrefrigerato">Camion refrigerato</a></td> -->
+                <td class="green bold center" id="waits">Waits</td>
+                <td>Messaggio <a href="#chargetaken">charge taken</a></td>
+                <td>Il (guidatore del) camion attende fino a che il messaggio <a href="#chargetaken">Charge taken</a> non appare sulla <a href="#serviceaccessgui">ServiceAccessGUI</a>.</td>
+            </tr>
+        
+            <tr>
+                <!-- <td><a href="#camionrefrigerato">Camion refrigerato</a></td> -->
+                <td class="green bold center" id="leaveindoor">Leaves the INDOOR</td>
+                <td>-</td>
+                <td>Il (guidatore del) camion, in caso di <a href="#sendrequest">richiesta di deposito</a> rifiutata, o dopo aver <a href="#waits">atteso il messaggio</a>, lascia la <a href="#indoor">INDOOR</a>.</td>
+            </tr>
+        
+            <tr>
+                <td rowspan=3><a href="#coldstorageservice">ColdStorageService</a></td>
+                <td class="green bold center" id="acceptticket">Accepts a ticket</td>
+                <td><a href="#ticket">Ticket</a></td>
+                <td>Il servizio accetta il ticket che il (guidatore del) camion <a href="#enterticket">ha inserito</a>.</td>
+            </tr>
+        
+            <tr>
+                <!-- <td><a href="#coldstorageservice">ColdStorageService</a></td> -->
+                <td class="green bold center" id="acceptticket">Avvisa il transport trolley</td>
+                <td>Peso <a href="#FW">FW</a></td>
+                <td>Il servizio comunica al <a href="#transporttrolley">transport trolley</a> che c'&egrave; del cibo da depositare.</td>
+            </tr>
+        
+            <tr>
+                <!-- <td><a href="#coldstorageservice">ColdStorageService</a></td> -->
+                <td class="green bold center" id="sendmessage">Sends message <i>Charge taken</i></td>
+                <td><a href="#chargetaken">Charge taken</a></td>
+                <td>Il ColdStorageService comunica alla <a href="#serviceaccessgui">ServiceAccessGUI</a> che il transport trolley ha raccolto il carico.</td>
+            </tr>
+        
+            <tr>
+                <td rowspan=7><a href="#transporttrolley">Transport trolley</a></td>
+                <td class="green bold center" id="acceptticket">Accepts a ticket</td>
+                <td><a href="#ticket">Ticket</a></td>
+                <td>Il transport trolley accetta un nuovo ticket.</td>
+            </tr>
+        
+            <tr>
+                <!-- <td><a href="#transporttrolley">Transport trolley</a></td> -->
+                <td class="green bold center" id="reachesindoor">Reaches the INDOOR</td>
+                <td>-</td>
+                <td>Il transport trolley raggiunge la <a href="#INDOOR">INDOOR</a>.</td>
+            </tr>
+        
+            <tr>
+                <!-- <td><a href="#transporttrolley">Transport trolley</a></td> -->
+                <td class="green bold center" id="pickfood">Picks up the food</td>
+                <td>Peso <a href="#FW">FW</a></td>
+                <td>Il transport trolley prende il cibo da depositare dalla <a href="#INDOOR">INDOOR</a>.</td>
+            </tr>
+        
+            <tr>
+                <!-- <td><a href="#transporttrolley">Transport trolley</a></td> -->
+                <td class="green bold center" id="gotocoldroom">Goes to the ColdRoom</td>
+                <td>-</td>
+                <td>Il transport trolley si muove fino alla <a href="#coldroom">ColdRoom</a>.</td>
+            </tr>
+            
+            <tr>
+                <!-- <td><a href="#transporttrolley">Transport trolley</a></td> -->
+                <td class="green bold center" id="storefood">Stores the food</td>
+                <td>Peso <a href="#FW">FW</a></td>
+                <td>Il transport trolley deposita il cibo nella <a href="#coldroom">ColdRoom</a>, il completamento di questa azione determina la <b>fine dell'azione di deposito</b></td>
+            </tr>
+        
+            <tr>
+                <!-- <td><a href="#transporttrolley">Transport trolley</a></td> -->
+                <td class="green bold center" id="returnhome">Return to HOME</td>
+                <td>-</a></td>
+                <td>Il transport trolley ritorna alla <a href="#home">HOME</a> dopo aver <a href="#storefood">depositato</a> il cibo.</td>
+            </tr>
+        
+            <tr>
+                <!-- <td><a href="#coldstorageservice">ColdStorageService</a></td> -->
+                <td class="green bold center" id="sendmessage">Sends message <i>Charge taken</i></td>
+                <td><a href="#chargetaken">Charge taken</a></td>
+                <td>Il transport trolley comunica al <a href="#coldstorageservice">ColdStorageService</a> di aver raccolto il carico.</td>
+            </tr>
+        
+        </table>
+        
+        <h3>Software fornito dal cliente</h3>
+        
+            <p>
+               Il cliente fornisce il software <code id="basicrobot" class="prettyprint">basicrobot</code> utile a controllare il DDR robot, oltre a software per gestire l'accensione e spegnimento di un led e la raccolta dei dati da un sonar. 
+            </p>
+        
+        <h3>Modello logico</h3>
+            <p>
+                In questa fase verranno presi in analisi i macro-componenti del sistema e le interazioni che avvengono fra essi, con il fine di delineare l'architettura logica del sistema.
+            </p>
+            <p>
+                Abbiamo deciso di utilizzare il <a target="_blank" href="https://en.wikipedia.org/wiki/Actor_model">modello ad attori</a> per questo progetto in quanto rispecchia i requisiti analizzati dal <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">documento fornito dal cliente</a>: il sistema &egrave; costituito da componenti <b>eterogenei</b> che interagiscono tra di loro su <b>base distribuita</b>; inoltre abbiamo a disposizione librerie e un linguaggio di metamodellazione che supporteranno lo sviluppo orientato agli attori.
+            </p>
+        
+            <p>
+                Il linguaggio in questione &egrave; <a target="_blank" href="https://iss.riccardob.dev/QakActors23.html#qakactors23">QAK</a>, un linguaggio di modellazione eseguibile che permette di creare prototipi e sistemi funzionanti in breve tempo (rispetto a linguaggi tradizionali) semplificando gli aspetti pi&ugrave; complessi della gestione delle interazioni tramite una struttura basata su attori che operano in <a target="_blank" href="https://iss.riccardob.dev/Actors23.html#actors23-il-contesto">contesti</a>.<br>
+        
+            Oltre alla velocit&agrave; di sviluppo possibile con QAK, la scelta deriva dal fatto che il cliente ha fornito software per pilotare un DDR robot (o robot virtuali) compatibile con QAK.
+            </p>
+        
+            <p class="nota">
+                <b>basicrobot</b>, fornito dal committente, corrisponde ad un attore del mondo QAK.
+            </p>
+        
+        <h4>Messaggio Charge taken</h4>
+            <p>
+                Nell'analisi dei requisiti abbiamo identificato una <b>discrepanza</b> riguardo al messaggio <b>charge taken</b>: non &egrave; chiaro se il messaggio debba avere semantica richiesta-risposta o semantica dispatch (non attende risposta). <br>
+                Il committente, in un secondo colloquio, non ha dato nessuna preferenza riguardo alla tipologia di messaggio. <br>
+            </p>
+            <p class="keypoint">
+                <b>KEY-POINT</b>: il messaggio charge taken verr&agrave; modellato con semantica <b>request-reply</b>.
+            </p>
+            <p>
+                Abbiamo scelto di modellare il messaggio charge taken con semantica request-reply, in quanto sar&agrave; l'operatore del camion a richiedere lo stato del carico attraverso la ServiceAccessGUI. <br> 
+                In questo modo non può succedere che vi sia un attesa del messaggio indefinitivamente lunga (con semantica dispatch non sapremmo mai se e quando il messaggio arriverebbe). Avremmo potuto usare un timeout per la gestione della semantica dispatch, ma abbiamo preferito una soluzione più deterministica, con il controllo in mano all'utente.
+                <p>
+                    E' stato quindi aggiunto il nuovo messaggio <b>chargestatus</b> per richiedere lo stato del carico, mostrato nel modello sottostante.
+                </p>
+            </p>
+        
+            <img id="modello" class="bigimglim" src="../../projects/sprint0V2/coldstorageservice23arch.png" alt="Modello dispatch" height="70%" width="70%">
+        </div>
+        
+        <h2>Problem analysis</h2>
+        
+        <div class="remark">
+        
+            <p>
+                Dalla fase di analisi dei requisiti sono emerse diverse problematiche da affrontare, ma sono stati anche individuati con chiarezza dei componenti che andranno realizzati. <br>
+                Di seguito, &egrave; riportata la lista dei macro-componenti individuati, le cui descrizioni sono gi&agrave; state definite in fase di analisi dei requisiti:
+                <ul>
+                    <li>ColdStorageService</li>
+                    <li>TransportTrolley</li>
+                    <li>ServiceAccessGUI</li>
+                    <li>ServiceStatusGUI</li>
+                    <li>RaspberryPi</li>
+                    <ul>
+                        <li>Warning device (led)</li>
+                        <li>Alarm device (sonar)</li>
+                    </ul>
+                </ul>
+            </p>
+            <h3 id="suddivisioneSprint">Suddivisione in Sprint</h3>
+            <p>
+                Abbiamo pensato di utilizzare la tecnica <b>divide et impera</b>, separando quindi l'analisi dell'applicazione in parti più piccole ed analizzandole una ad una. <br>
+            Per fare ciò si &egrave; dovuto prima identificare quale fosse il <b>core business</b> dell'applicazione, basandosi sull'analisi dei requisiti appena redatta. Abbiamo scelto come tale l'interazione tra <i>ColdStorageService</i> e <i>TransportTrolley</i>, in quanto da essa si realizza il cuore della logica applicativa richiesta dal committente. Il focus sul <i>TransportTrolley</i> implica anche la presa in considerazione del concetto di <i>basicrobot</i>, gi&agrave; definito in analisi dei requisiti e fornito dal committente.<br>
+            <p>
+                La tecnica appena descritta ci ha permesso di dividere i requisiti da analizzare secondo un ordine di priorit&agrave;, concretizzato nella definizione di quattro <i>Sprint</i>, ognuno volto all'analisi di una diversa problematica:
+                <ol>
+                    <li><b>Sprint1</b>: ColdStorageService e TransportTrolley (analisi del core business)</li>
+                    <li><b>Sprint2</b>: ServiceAccessGUI</li>
+                    <li><b>Sprint3</b>: requisiti di allarme</li>
+                    <li><b>Sprint4</b>: ServiceStatusGUI</li>
+                </ol>
+            </p>
+        
+            Questa suddivisione preliminare verr&agrave; confermata di volta in volta nei successivi Sprint, sulla base delle nuove problematiche che sorgeranno e dei relativi modi per affrontarle. <br>
+        
+            </p>
+            <h3>Valutazioni in termini di tempo</h3>
+            <p>
+                Il fatto di aver acquisito un'ampia visione di contesto sull'applicazione (derivante dall'analisi dei requisiti) e di aver suddiviso il lavoro in macro-parti (corrispondenti agli Sprint), ci ha permesso di definire con un buon margine di errore il costo in termini di tempo per la realizzazione dell'applicazione. <br>
+            Il tempo che verr&agrave; impegato &egrave; poi strettamente dipendente da come verr&agrave; suddiviso il lavoro tra i membri del team di sviluppo (2 in questo caso), con possibilit&agrave; di parallelismo nell'analisi di problematiche diverse.
+            <p>
+                Abbiamo scelto di affrontare lo <i>Sprint1</i> assieme, in modo tale da essere certi di analizzare quello che &egrave; il core business dell'applicazione nella maniera più precisa possibile (pagando però in termini di tempo). <br>
+            Per i successivi Sprint, ovviamente al netto di eventuali nuove problematiche che sorgeranno, abbiamo invece deciso di dividerci l'analisi di <i>Sprint2</i> e <i>Sprint3</i>, che affrontano problematiche differenti. Per quanto riguarda lo <i>Sprint4</i>, pensiamo possa essere svolto il parallelo allo <i>Sprint2</i>, in quanto trattano problemi molto simili. Tuttavia, decisioni defintive verranno prese e/o confermate nei successivi <i>Sprint</i>.
+            </p> 
+            <p>In sintesi, per come abbiamo pensato la suddivisione del lavoro, questi sono i costi valutati in termini di tempo:
+                <ol>
+                    <li><b>Sprint1</b>: 2 persone - 20 ore</li>
+                    <li><b>Sprint2</b>: 1 persona - 11 ore</li>
+                    <li><b>Sprint3</b>: 1 persona - 16 ore</li>
+                    <li><b>Sprint4</b>: 1 persona - 5 ore</li>
+                </ol>
+                Impiego totale in termini di tempo: 42 ore in 2 persone.
+            </p>
+            
+            </p>
+           
+        
+        
+            <h3>Architettura logica</h3>
+        
+            <p>
+                Sulla base dell'analisi dei requisiti non siamo ancora in grado di definire un'architettura logica completa del sistema, che verr&agrave; rimandata ai successi Sprint, a valle di un'analisi più approfondita dei componenti e delle interazione presenti fra essi. <br>
+                Per ora, si utilizza come riferimento il <b>Modello dei requisiti</b> definito in fase di Analisi dei requisiti.
+            </p>
+        </div>
+        
+        <h2 id="test_plans">Test plans</h2> 
+        
+        <div class="remark">
+            <p>
+                Introduciamo un discorso sul <i>Camion refrigerato</i> e sul suo ruolo all'interno dell'applicazione (particolarmente in fase di test). <br>
+                Come gi&agrave; detto in fase di analisi dei requisiti, quest'entit&agrave; rappresenta l'utente umano che interagisce con il sistema (in particolar modo con la <i>ServiceAccessGUI</i>). Nonostante anche questo aspetto verr&agrave; trattato negli <i>Sprint</i> successivi, abbiamo considerato utile, all'interno del progetto <i>qak</i> di questo Sprint, modellare la <i>SAG</i> come <b>entit&agrave; mock</b> che simula l'interazione con il sistema. In pratica, la <i>SAG</i> si comporta come se ci fosse l'operatore del camion a interagirci.
+            </p>    
+            <p>
+                Per quanto riguarda i piani di test per l'applicazione, verranno per la maggior parte rimandati agli <i>Sprint</i> successivi, relativamente ai particolare problemi che verranno affrontati. <br>
+                Nel frattempo, abbiamo deciso di testare quello che per ora abbiamo potuto definire nel <a href="#modello_requisiti">modello dei requisiti</a>, ovvero l'interazione tra la <i>ServiceAccessGUI</i> e il <i>ColdStorageService</i>. <br> 
+                Abbiamo quindi sfruttato l'entit&agrave; mock sopra descritta per definire un'unit&agrave; di test Junit che ne simula il comportamento. Vi è quindi corrispondenza 1 ad 1 tra l'attore qak <i>serviceaccessgui</i> e l'unit&agrave; di test.
+           </p>
+        
+           <p class="keypoint">
+                <b>KEY-POINT</b>: verr&agrave; testata l'interazione <i>SAG</i> - <i>CSS</i> tramite un'unit&agrave; JUnit che simula il comportamento del Camion che interagisce con il <i>CSS</i> (tramite la <i>SAG</i>).
+           </p>
+        </div>
+        
+        <h2 id="test_plans">Testing</h2> 
+        
+        <div class="remark">
+           <p>
+                Come anticipato nella <a href="#test_plans">sezione precedente</a>, abbiamo implementato una unit&agrave; di test JUnit che simula il comportamento dell'utente umano (operatore del Camion) che interagisce con il <i>CSS</i> tramite la <i>ServiceAccessGui</i>. <br>
+                In particolare, abbiamo testato la gestione della richiesta di deposito da parte del <i>CSS</i>, sia in caso vi sia spazio disponibile nella ColdRoom, sia in caso non ci sia.
+                In caso di spazio disponibile (e quindi richiesta di deposito accettata), abbiamo testato tutto il protocollo di interazione finora definito tra <i>CSS</i> e <i>SAG</i>.
+           </p>
+        </div>
+    </div>
+</body>
+</html>

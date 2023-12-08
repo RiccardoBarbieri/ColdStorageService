@@ -1,0 +1,379 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="stylesheet" href="../_static/template.css">
+<link rel="stylesheet" href="../_static/mine.css">
+<link rel="stylesheet" href="../_static/code.css">
+<link rel="stylesheet" href="../_static/colors.css">
+<link rel="stylesheet" href="../_static/sidebar.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/dockerfile.min.js"></script>
+
+
+<script>hljs.highlightAll();</script>
+<title>Sprint4</title>
+</head>
+    
+<body>
+
+    <div class="sidebar">
+        <h1><a id="titleindex" href="../index/index.html">Indice</a></h1>
+        <ul>
+            <li><a href="../Sprint0/ColdStorageServiceSprint0V2.html">Sprint0</a></li>
+            <li><a href="../Sprint1/ColdStorageServiceSprint1V1.html">Sprint1</a></li>
+            <ul>
+                <li><a href="../Sprint1/ServiceAccessGUISimProjectV1.html">ServiceAccessGUI</a></li>
+                <li><a href="../Sprint1/MapConfiguratorProject.html">MapConfigurator</a></li>
+            </ul>
+            <li><a href="../Sprint2/ColdStorageServiceSprint2V0.html">Sprint2</a></li>
+            <li><a href="../Sprint3/ColdStorageServiceSprint3V0.html">Sprint3</a></li>
+            <li><a href="../Sprint4/ColdStorageServiceSprint4V0.html">Sprint4</a></li>
+            <li><a href="../Deployment/Deployment&Mantenaince.html">Deployment</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+            
+        <h2>Introduction</h2>
+        
+              
+        <div class="remark" id="intro">
+            <p>
+                In questo Sprint verrà analizzata la <b>ServiceStatusGUI</b>, componente software che permette ad un utente umano di supervisionare lo stato del <i>ColdStorageService</i>.
+                <p class="nota">
+                    Ci poniamo già in un contesto in cui la <i>ServiceStatusGUI</i> sarà un'applicazione web realizzata tramite il framework <i>SpringBoot</i>, sia per uniformare lo stack tecnologico (<a href="../Sprint1/ServiceAccessGUISimProjectV1.html">ServiceAccessGUI</a>, <a href="../Sprint1/MapConfiguratorProject.html">MapConfigurator</a>), sia per diminuizione dei costi.
+                </p>
+            </p>
+        </div>
+        
+        
+        <h2>Requirements</h2>
+         
+        <div class="remark">
+            <p>
+                <a target="_blank" href="../documents/temafinale_sprint4.pdf">Descrizione requirements a questa pagina</a><br>
+            </p>
+        
+            <p>
+            <bc id="goals">Goals dello Sprint4</bc>:
+            La <i>ServiceStatusGUI</i> dovrà mostrare:
+            <ol>
+                <li>il <b>peso attuale</b> del materiale immagazzinato nella ColdRoom</li>
+                <li>il numero di <b>richieste di deposito rifiutate</b> dall'inizio del servizio</li>
+                <li>lo <b>stato corrente</b> del <i>TransportTrolley</i> e la sua <b>posizione</b> nella stanza</li>
+            </ol>
+            </p>
+            
+        </div>
+        
+        
+        <h2>Requirement analysis</h2>
+        
+        <div class="remark">
+        
+            <p>
+                Viene riportato nel <a href="../documents/temafinale_sprint4.pdf" target="_blank" rel="noopener noreferrer">seguente documento</a> la versione del <i>TemaFinale23</i> analizzata contestualmente a questo Sprint.
+            </p>
+        
+            <p class="nota">
+                Questo componente è alieno al progetto core del sistema (<i>qak</i>), non è per cui necessario, per ora, riportarne il modello architetturale.
+            </p>
+        
+            <p>
+                Mentre i primi 2 requisiti risultano molto chiari, il terzo viene analizzato di seguito.
+            </p>
+        
+            <h5>Stato corrente del <i>TT</i> e <b>posizione</b></h5>
+            <p>
+                Dopo il colloqui con il committente, abbiamo chiarito che con <b>stato corrente</b> del <i>TransportTrolley</i> si intende l'informazione che sia:
+                <ul>
+                    <li>fermo</li>
+                    <li>in movimento</li>
+                </ul>
+                Mentre, per la <b>posizione</b>, dobbiamo fornire l'informazione <i>relativamente alla stanza che naviga</i>. <br>
+                Questo significa fornire all'utente anche una sorta di <u>rappresentazione della stanza</u> per dare un senso alla <i>posizione</i> del robot.
+            </p>
+        </div>
+        
+        <h2>Problem analysis</h2>
+        
+        <div class="remark">
+            <p class="keypoint">
+                <b>KEY-POINT:</b> ricordiamo che, come detto in <a href="#intro">introduzione</a>, la <i>ServiceStatusGUI</i> sarà un'applicazione web in <b>Spring</b>
+            </p>
+        
+            <p>
+                Di seguito, verranno analizzati i 3 requisiti presenti in <a href="#goals">Requirements</a>.
+            </p>
+            <h5>Visualizzazione del <u>peso attuale</u> del materiale immagazzinato nella ColdRoom</h5>
+        
+            <p>
+                Questa funzionalità è già stata implementata per la <i>ServiceAccessGUI</i> all'interno di <a href="../../docs/Sprint2/ColdStorageServiceSprint2V0.html#stato_coldRoom" target="_blank" rel="noopener noreferrer">questa sezione</a> dello <i>Sprint2</i>, per cui, vista anche l'uniformità dello stack tecnologico, non ci dilungheremo. <br>
+                Oltre al concetto di <b>osservabilità</b> (analogo), per quanto riguarda l'inizializzazione verrà utilizzata la stessa <i>request-reply</i> della <i>ServiceAccessGUI</i>, che riportiamo di seguito.
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mittente</th>
+                            <th>Destinatario</th>
+                            <th>Tipologia interazione/messaggio</th>
+                            <th>Identificatore messaggio</th>
+                            <th>Payload</th>
+                            <th>Descrizione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="orange bold center">ServiceStatusGUI</td>
+                            <td class="orange bold center">coldstorageservice</td>
+                            <td class="blue bold center">Request</td>
+                            <td>initcoldroom</td>
+                            <td>initcoldroom()</td>
+                            <td>Richiesta del valore attuale della ColdRoom.</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">coldstorageservice</td>
+                            <td class="orange bold center">ServiceStatusGUI</td>
+                            <td class="blue bold center">Reply</td>
+                            <td>coldroom</td>
+                            <td>coldroom(ACTUAL,TEMP)</td>
+                            <td>Valore di kg nella ColdRoom effettivi e totali (contando anche quelli in coda).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            
+            </p>
+        
+            <h5>Visualizzazione del numero di <u>richieste di deposito rifiutate</u> dall'inizio del servizio</h5>
+            <p>
+                Analogamante alla visualizzazione del peso immagazzinato nella ColdRoom, sfruttiamo l'<b>osservabilità</b> degli attori <i>qak</i> ed il protocollo <b>Coap</b>. L'attore <i>coldstorageservice</i>, che gestisce le richieste di deposito, emetterà un <b>event</b> (<i>updateResuource</i>) con il valore aggiornato del numero di richieste rifiutare e la <i>SSG</i> si sottoscriverà come osservatore.  <br>
+                Anche qui, non ci dilungheremo ulteriormente.
+            </p>
+        
+            <p>
+                Per ottenere l'informazione del numero di richieste depositate all'apertura dell'applicazione, aggiungiamo una nuova interazione <i>request-reply</i>, analogamente a quanto fatto per lo stato della ColdRoom.
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mittente</th>
+                            <th>Destinatario</th>
+                            <th>Tipologia interazione/messaggio</th>
+                            <th>Identificatore messaggio</th>
+                            <th>Payload</th>
+                            <th>Descrizione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="orange bold center">ServiceStatusGUI</td>
+                            <td class="orange bold center">coldstorageservice</td>
+                            <td class="blue bold center">Request</td>
+                            <td>initreqrejected</td>
+                            <td>initreqrejected()</td>
+                            <td>Richiesta del numero attuale di richieste rifiuate.</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">coldstorageservice</td>
+                            <td class="orange bold center">ServiceStatusGUI</td>
+                            <td class="blue bold center">Reply</td>
+                            <td>reqrejected</td>
+                            <td>reqrejected(NUM)</td>
+                            <td>Numero di richieste rifiutate dall'inizio del servizio <i>ColdStorageService</i>.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            
+            </p>
+        
+            <h5>Visualizzazione <u>stato corrente</u> del <i>TT</i> e <u>posizione</u> nella ColdRoom</h5>
+        
+            <p>
+                Anche qui, ci si basa sul concetto di osservabilità discusso appena sopra.
+            </p>
+        
+            <p>
+                Per entrambi i requisiti (stato e posizione), deleghiamo l'emissione dell'evento contenente le informazioni al <i>TransportTrolley</i>, ovvero colui che realizza la logica di movimento.
+            </p>
+            <p>
+                All'interno di <a href="../Sprint1/ColdStorageServiceSprint1V1.html#basicRobot_analisi" target="_blank" rel="noopener noreferrer">questa sezione</a> dello <i>Sprint1</i> sono presenti tutte le interazioni tra <i>TransportTrolley</i>, <i>TrolleyExecutor</i> e <i>BasicRobot</i>. Riportiamo di seguito solo quelle di interesse.
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mittente</th>
+                            <th>Destinatario</th>
+                            <th>Tipologia messaggio</th>
+                            <th>Identificatore</th>
+                            <th>Payload</th>
+                            <th>Significato</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="orange bold center">transporttrolley</td>
+                            <td class="orange bold center">trolleyexecutor</td>
+                            <td class="blue bold center">Request</td>
+                            <td>move</td>
+                            <td>move(X, Y)</td>
+                            <td>Il TT comunica al TE le coordinate verso cui effettuare lo spostamento</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">trolleyexecutor</td>
+                            <td class="orange bold center">transporttrolley</td>
+                            <td class="blue bold center">Reply</td>
+                            <td>movedone</td>
+                            <td>movedone()</td>
+                            <td>Lo spostamento è andato a buon fine</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">trolleyexecutor</td>
+                            <td class="orange bold center">transporttrolley</td>
+                            <td class="blue bold center">Reply</td>
+                            <td>movefailed</td>
+                            <td>movefailed()</td>
+                            <td>Lo spostamento NON è andato a buon fine</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </p>
+            <p class="nota">
+                Abbiamo omesso l'interazione <i>moveclosest</i> per ridondanza e comodità di visualizzazione.
+            </p>
+            <p>
+                Il <i>TransportTrolley</i> è il solo ad avere in pancia tutte le informazioni necessarie. In particolare, sa se il robot è in movimento o meno grazie all'interazione <i>move/moveclosest</i>: sarà necessario emettere un evento "movimento" alla richiesta <i>move</i> ed un altro evento "fermo", alla risposta <i>movedone/movefailed</i>
+            </p>
+            <p>
+                Per quanto riguarda la <b>posizione</b>, si può ricavare dalle coordinate che il <i>TT</i> invia al <i>TE</i> per implementare il movimento. Infatti, ricordiamo che il <i>TT</i> ha un mapping <i>landmarks-coordinate</i> che gli permette di conoscere la posizione del robot all'interno della stanza. <br>
+                Ancora una volta, sarà sufficiente emettere un evento <i>"descrittivo"</i> (HOME, INDOOR, ColdRoom), ogni volta che la posizione del robot cambia. Inoltre, potremo fornire informazioni come "sta andando verso HOME", sapendo appunto le coordinate verso cui lo si sta facendo muovere.
+                <p class="keypoint">
+                    <b>KEY-POINT:</b> in questo modo avremo la <b>posizione puntuale</b> del robot <u>solo quando è fermo</u>. Discutere quindi con il committente questa soluzione.
+                </p>
+            </p>
+        
+            <h5>Posizione del <i>TransportTrolley</i></h5>
+            <p>
+                Mentre l'informazione sul movimento combacia bene con la <i>moverobot</i>, la stessa cosa non vale per la posizione. <br>
+                La possiamo però ottenere dai vari <b>stati qak</b> da cui emettere gli eventi (verrà rivisto in progettazione).
+            </p>
+        
+            <p>
+                Sia per stato sia per posizione, analagomente ai casi precedenti, dobbiamo introdurre una nuova interazione per l'inizializzazione.
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mittente</th>
+                            <th>Destinatario</th>
+                            <th>Tipologia interazione/messaggio</th>
+                            <th>Identificatore messaggio</th>
+                            <th>Payload</th>
+                            <th>Descrizione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="orange bold center">ServiceStatusGUI</td>
+                            <td class="orange bold center">coldstorageservice</td>
+                            <td class="blue bold center">Request</td>
+                            <td>initstatett</td>
+                            <td>initstatett()</td>
+                            <td>Richiesta di stato e posizione del <i>TransportTrolley</i>.</td>
+                        </tr>
+                        <tr>
+                            <td class="orange bold center">coldstorageservice</td>
+                            <td class="orange bold center">ServiceStatusGUI</td>
+                            <td class="blue bold center">Reply</td>
+                            <td>statett</td>
+                            <td>statett(STATO, POS)</td>
+                            <td>Numero di richieste rifiutate dall'inizio del servizio <i>ColdStorageService</i>.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            
+            </p>
+            </p>
+            <p class="keypoint">
+                <b>KEY-POINT:</b> abbiamo deciso di separare le interazioni di inizializzazione in base all'informazione di interesse. In questo modo, risultano interazioni riusabili in caso, in un futuro, altre componenti software siano interessati ad alcune di queste informazioni.
+            </p>
+            <h3>Architettura logica</h3>
+            
+            <p>
+                Si riporta di seguito il modello di architettura logica dell'intero sistema, comprensivo di <i>ServiceStatusGUI</i>.
+            </p>
+        
+            <img class="bigimglim img-border" src="../images/sprint4/coldstorageservice23arch.png" alt="Modello architettura logica">
+        
+            <p class="keypoint">
+                <b>ATTENZIONE:</b> la <i>ServiceStatusGUI</i> NON è stata generata dal progetto <i>qak</i>, per cui va aggiornata manualmente a fronte di eventuali modifiche.
+            </p>
+        </div>
+        
+        <h2>Project</h2> 
+         
+        <div class="remark">
+            <h3>Realizzazione <i>ServiceStatusGUI</i></h3>
+            <p>
+                La realizzazione di quest'applicazione, basata sul framework <b>SpringBoot</b>, segue l'analisi effettuata per la <a href="../Sprint2/ColdStorageServiceSprint2V0.html#project_sag" target="_blank" rel="noopener noreferrer">ServiceAccessGUI</a> relativamente allo <i>Sprint2</i>.
+                Non riportiamo quindi i concetti già visti di osservabilità basata sulla classe <i>CoapObserver</i>.
+            </p>
+        
+            <h5>Back-end</h5>
+        
+            <p>
+                Riportiamo il backend dell'applicazione Spring, analogo a quello della <i>ServiceAccessGUI</i>. <br>
+        
+                <p>
+                    <img class="bigimglim" src="../images/sprint2/saguml.png"></img>
+                </p>
+        
+                <p class="nota">
+                    Tutte le classi presenti sono già state analizzate e descritte negli sprint precedenti.
+                </p>
+            </p>
+        
+            <h5>Front-end</h5>
+        
+            <p>
+                Il front-end dell'applicazione non permette all'utente di interagire, ma solo di visualizzare le informazioni richieste, aggiornate ad ogni cambiamento.
+            
+                <p>
+                    <img class="midimglim" src="../images/sprint4/frontendssg.png" alt="Front-end SSG">
+                </p>
+            </p>
+            
+            <h3>ColdStorageService</h3>
+        
+            <p>
+                Gli <b>updateResource</b> relativi allo stato della ColdRoom e del <i>TransportTrolley</i> sono già stati implementati nel progetto <i>qak</i> all'interno degli sprint precedenti. <br> Abbiamo aggiunto poi le update relative all'<u>aggiornamento del numero di richieste rifiutate</u>, ogni volta che questo evento accade.
+            </p>
+            <p>
+                Inoltre, per quanto riguarda la gestione della richiesta <b>initstatett</b> da parte della <i>SSG</i>, avviene tramite un meccanismo di delega da parte di <i>coldstorageservice</i> a <i>transporttrolley</i>, in quanto nè quest'ultimo ad avere le informazioni necessarie.
+                <pre><code class="language-bash">delegate "initstatett" to transporttrolley</code></pre>
+            </p>
+        
+            <p>
+                Al fine di mostrare la flessibilità del sistema <b>qak</b> e l'importanza dei concetti di osservabilità, mostrimao le pochissime 
+                modifiche effettuate, relative al <a href="https://github.com/RiccardoBarbieri/ColdStorageService/commit/ecefc511cd9f5994ff69ea79a9644de06a06b0a5#diff-ee2260c4d0f2d9a84780ccdf0dee87ba02534b1e4081dce44176db061438ee1c">numero di richieste rifiutate</a> e allo <a href="https://github.com/RiccardoBarbieri/ColdStorageService/commit/6de76234e8f1ebdfcb036d38de5854a8324f9d4b">stato del tt</a>.
+            </p>
+        </div>
+        
+        
+        <h2>Deployment</h2> 
+        
+        <div class="remark">
+            <p>
+                Per il deployment ci si basa sulla sezione all'interno dello <a href="../Sprint1/ColdStorageServiceSprint1V1.html#deployment">Sprint1</a>. <br>
+                Relativamente alla <i>ServiceStatusGUI</i>, analogamente alla <a href="../Sprint1/ServiceAccessGUISimProjectV1.html#deployment">SAG</a>, riportiamo il comando per l'avvio dell'applicazione.
+        
+                <p>
+                    <i>ServiceStatusGUI</i> (progetto Spring) 
+                    <pre><code class="language-bash">cd ./projects/unibo.servicestatusGUI
+            gradlew bootRun</code></pre>
+                </p>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

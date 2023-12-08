@@ -1,0 +1,773 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="stylesheet" href="../_static/template.css">
+<link rel="stylesheet" href="../_static/mine.css">
+<link rel="stylesheet" href="../_static/code.css">
+<link rel="stylesheet" href="../_static/colors.css">
+<link rel="stylesheet" href="../_static/sidebar.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/dockerfile.min.js"></script>
+
+
+<script>hljs.highlightAll();</script>
+<title>Sprint2</title>
+</head>
+    
+<body>
+
+    <div class="sidebar">
+        <h1><a id="titleindex" href="../index/index.html">Indice</a></h1>
+        <ul>
+            <li><a href="../Sprint0/ColdStorageServiceSprint0V2.html">Sprint0</a></li>
+            <li><a href="../Sprint1/ColdStorageServiceSprint1V1.html">Sprint1</a></li>
+            <ul>
+                <li><a href="../Sprint1/ServiceAccessGUISimProjectV1.html">ServiceAccessGUI</a></li>
+                <li><a href="../Sprint1/MapConfiguratorProject.html">MapConfigurator</a></li>
+            </ul>
+            <li><a href="../Sprint2/ColdStorageServiceSprint2V0.html">Sprint2</a></li>
+            <li><a href="../Sprint3/ColdStorageServiceSprint3V0.html">Sprint3</a></li>
+            <li><a href="../Sprint4/ColdStorageServiceSprint4V0.html">Sprint4</a></li>
+            <li><a href="../Deployment/Deployment&Mantenaince.html">Deployment</a></li>
+        </ul>
+    </div>
+<div class="content">
+
+    <h2>Introduction</h2>
+    
+    <div class="remark">
+        <p>
+            All'interno dello <a href="../Sprint1/ColdStorageServiceSprint1V0.html">Sprint1</a> è stato analizzato il <u>core-business</u> dell'applicazione, ovvero le funzionalità offerte dal <i>ColdStorageService</i>, usando la <a href="../Sprint1/ServiceAccessGUISimProjectV1.html">ServiceAccessGUI</a> come prompt per utilizzare i servizi. In questa fase, ci siamo occupati della logica del <i>ColdStorageService</i> usando un contesto semplificativo in cui vi fosse un'interazione per volta. <br>
+            In questo Sprint gestiremo invece la presenza di più utilizzatori simultanei, analizzando quindi il concetto di <b>ticket</b> e costruendo la versione finale della <b>ServiceAccessGUI</b>.
+        </p>
+    </div>
+    
+    
+    <h2>Requirements</h2>
+     
+    <div class="remark">
+        <p>
+            <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements a questa pagina</a><br>
+        </p>
+    
+        <p>
+        <bc>Goals dello Sprint2</bc>:
+        <ol>
+            <li>Definire cos'è il <b>ticket</b> e come gestirlo</li>
+            <li>Implementare la <b>ServiceAccessGUI</b> con il concetto di più utilizzatori contemporanei in un sistema distribuito</li>
+        </ol>
+        </p>
+        <p class="nota">
+            Visto quanto realizzato nell'analisi della <a href="../Sprint1/ServiceAccessGUISimProjectV1.html">ServiceAccessGUI</a> relativa allo <i>Sprint1</i>, abbiamo già pronta l'applicazione web di partenza, realizzata con il framework <b>SpringBoot</b>.
+        </p>
+    </div>
+    
+    
+    <h2>Requirement analysis</h2>
+    
+    <div class="remark">
+    
+        <p>
+            Si riporta il modello risultante dall'analisi in <a href="../Sprint1/ColdStorageServiceSprint1V1.html#modello_finale" target="_blank" rel="noopener noreferrer">Sprint1</a>, sul quale si baser&agrave; la seguente analisi.<br>
+            <p>
+                <img class="bigimglim imgborder" src="../images/sprint1/coldstorageservice23arch.png"></img>
+            </p>
+        </p>
+        <p>
+            Inoltre, viene riportato nei seguenti documenti la versione del <i>TemaFinale23</i> analizzata contestualmente a questo Sprint, ed in particolare ai due macro-argomenti:
+            <ul>
+                <li><a href="../documents/temafinale_sprint2_sag.pdf" target="_blank" rel="noopener noreferrer">ServiceAccessGUI</a></li>
+                <li><a href="../documents/temafinale_sprint2_ticket.pdf" target="_blank" rel="noopener noreferrer">gestione del ticket</a></li>
+            </ul>
+        </p>
+    
+        <h3>ServiceAccessGUI</h3>
+    
+        <p>
+            La <i>ServiceAccessGUI</i> è l'interfaccia grafica a disposizione dell'utente per accedere ai servizi forniti dal <i>ColdStorageService</i>. <br>
+            Oltre a quanto già realizzato nella <a href="../Sprint1/ServiceAccessGUISimProjectV1.html">ServiceAccessGUI</a> relativa allo <i>Sprint1</i>, si aggiungono i requisiti di:
+            <ul>
+                <li>gestire il ticket, fornendolo all'utente e mostrando un campo di inserimento</li>
+                <li>mostrare il peso corrente all'interno della ColdRoom</li>
+            </ul>
+        </p>
+        <h5>Interazioni</h5>
+        <p>
+            Di seguito, vengono riportate le interazioni presenti e già implementate nello <i>Sprint1</i>. <br>
+            Abbiamo tre attori:
+        <ul>
+            <li>FridgeTruck: utente umano</li>
+            <li>ServiceAccessGUI: interfaccia grafica (<a href="../Sprint1/ServiceAccessGUISimProjectV1.html" target="_blank" rel="noopener noreferrer">applicazione web</a> realizzata relativamente allo <i>Sprint1</i>)</li>
+            <li>coldstorageservice: attore <i>qak</i></li>
+        </ul>
+        </p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mittente</th>
+                    <th>Destinatario</th>
+                    <th>Tipologia interazione/messaggio</th>
+                    <th>Identificatore messaggio</th>
+                    <th>Payload</th>
+                    <th>Descrizione</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="orange bold center">FridgeTruck</td>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="blue bold center">Interazione umana</td>
+                    <td></td>
+                    <td></td>
+                    <td>Inserimento quantitativo di cibo da depositare in chilogrammi e innesco richiesta di deposito.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Request</td>
+                    <td>storerequest</td>
+                    <td>storerequest(FW)</td>
+                    <td>Richiesta di <b>storage</b> di <b>FW</b> chili di cibo.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>loadaccepted</td>
+                    <td>loadaccepted()</td>
+                    <td>La richiesta di deposito &egrave; stata accettata.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>loadrejected</td>
+                    <td>loadrejected()</td>
+                    <td>La richiesta &egrave; stata rifiutata.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">FridgeTruck</td>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="blue bold center">Interazione umana</td>
+                    <td></td>
+                    <td></td>
+                    <td>Innesco richiesta di stato del carico.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Request</td>
+                    <td>chargestatus</td>
+                    <td>chargestatus()</td>
+                    <td>Viene richiesto lo stato del carico depositato.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>chargetaken</td>
+                    <td>chargetaken()</td>
+                    <td>Il deposito è stato preso in carico dal transport trolley, il camion deve spostarsi da INDOOR.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>chargefailed</td>
+                    <td>chargefailed()</td>
+                    <td>Ci sono stati problemi durante la presa in carico del deposito.</td>
+                </tr>
+            </tbody>
+        </table>
+    
+        <p>
+            Dai requisiti non emerge nessun nuovo tipo di interazione tra i componenti gi&agrave; individuati. Verranno discusse modifiche alle interazioni gi&agrave; presenti per integrare le nuove funzionalit&agrave; in fase di analisi del problema.
+        </p>
+    
+        <p>
+            Ora, come visto nei <a href="../documents/temafinale_sprint2_ticket.pdf" target="_blank" rel="noopener noreferrer">requisiti</a>, a seguito di una richiesta accettata (<i>loadaccepted</i>), il <i>ColdStorageService</i> deve <b>fornire</b> il <b>ticket number</b>. <br>
+            Di conseguenza, dovrà essere presente nella <i>SAG</i> un campo per l'<b>inserimento del ticket</b>, da cui poi innescare la richiesta di deposito verso il <i>coldstorageservice</i>, specificando appunto il <i>ticket number</i>.
+        </p>
+        <p>
+            Inoltre, si aggiunge il requisito di visualizzare il peso corrente del materiale immagazzinato nella <a href="#coldroom">Cold Room</a>.
+        </p>
+        <p class="nota">   
+            L'applicazione deve mostrare visualizzazioni separate per ogni utente (operiamo in un contesto distribuito). Quindi, un'utente dovrà visualizzare l'accettazione (o rifiuto) della richiesta e l'eventuale presa in carico solo relativamente alla sua richiesta di deposito. 
+        </p>
+    
+        <h3>Ticket</h3>
+        <p>
+            <table>
+                <tr>
+                    <th>Termine</th>
+                    <th>Descrizione</th>
+                </tr>
+                <tr>
+                    <td class="green bold center" id="tickettime">TICKETTIME</td>
+                    <td>Quantit&agrave; di secondi che esprime la durata della validit&agrave; di un <a href="#ticket">ticket</a>.</td>
+                </tr>
+                <tr>
+                    <td class="green bold center" id="ticket">Ticket</td>
+                    <td>Rappresenta una prenotazione da parte dell'operatore di un camion refrigerato che identifica univocamente una azione di deposito in attesa di <i>charge taken</i>, &egrave; identificato da un <b>numero univoco</b>.</td>
+                </tr>
+            </table>
+            <p>
+                Il <b>ticket</b> è quindi l'elemento che il servizio <i>ColdStorageService</i> dovrà inizialmente fornire all'utilizzatore, per poi controllarne la validità in fase di inserimento.
+            </p>
+            <p class="nota">
+                Parlando con il committente si è scoperto non essere necessario che il <i>"numero"</i> del ticket sia propriamente un numero: intendiamolo quindi come un <b>codice</b>.
+            </p>
+        </p>
+    </div>
+    
+    
+    <h2>Problem analysis</h2>
+    
+    <div class="remark">
+        <h3>ServiceAccessGUI</h3>
+    
+        <h5>Contesto distribuito</h5>
+    
+        <p>
+            La <i>ServiceAccessGUI</i> dovrà notificare l'utente della presa in carico del proprio deposito. La separazione delle risposte in base alle varie istanze di <i>SAG</i> presenti è già stata realizzata grazie alla semantica request-reply definita in precedenza. <br>
+            Quindi, non abbiamo problemi di memorizzazione degli indirizzi a cui inviare i messaggi.
+        </p>
+    
+        <h5 id="stato_coldRoom">Visualizzazione stato ColdRoom</h5>
+        <p>
+            La <i>SAG</i> dovrà essere aggiornata di pari passo con il materiale immagazzinato nella ColdRoom e <u>si suppone</u> dovrà averlo disponibile sin dall'inizializzazione. <br>
+            <br>
+            L'informazione, in pancia all'attore <i>coldstorageservice</i>, sarà fornita tramite l'emissione di un'evento da parte dell'attore stesso, ogni qualvolta che il carico immagazzinato sarà modificato. In questo modo, tutte le istanze di ServiceAccessGUI (ed in generale un qualsiasi componente interessato all'informazione) si sottoscriverà all'attore <i>coldstorageservice</i> in vece di osservatore.
+    
+            <p class="keypoint">
+                <b>KEY-POINT:</b> l'attore <i>coldstorageservice</i> sarà una <b>risorsa osservabile</b>
+            </p>
+        </p>
+        <p>
+            Per risolvere invece il problema dell'<i>inizializzazione</i>, introduciamo una nuova interazione <b>request-reply</b>, innescata dalla <i>SAG</i> verso il <i>CSS</i> all'avvio.
+            
+            
+        <table>
+            <thead>
+                <tr>
+                    <th>Mittente</th>
+                    <th>Destinatario</th>
+                    <th>Tipologia interazione/messaggio</th>
+                    <th>Identificatore messaggio</th>
+                    <th>Payload</th>
+                    <th>Descrizione</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Request</td>
+                    <td>initcoldroom</td>
+                    <td>initcoldroom()</td>
+                    <td>Richiesta del valore attuale della ColdRoom.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>coldroom</td>
+                    <td>coldroom(ACTUAL,TEMP)</td>
+                    <td>Valore di kg nella ColdRoom effettivi e totali (contando anche quelli in coda).</td>
+                </tr>
+            </tbody>
+        </table>
+        </p>
+    
+    
+        <p class="nota">
+            <b>COMMITTENTE:</b> abbiamo pensato di fornire alla <i>SAG</i> le informazioni relative sia al totale attualmente immagazzinato nella ColdRoom, sia a quanto è riservato ma non ancora depositato. <br>
+            Essendo entrambe le info in pancia al <i>CSS</i>, non ci sarebbe nessun overhead aggiuntivo per questa (a nostro parere utile) informazione, ma meglio discuterne con il committente.
+        </p>
+    
+        <h5 id="pdf_analisi_prob">Visualizzazione del ticket</h5>
+        <p>
+            Il ticket verrà restituito dal <i>CSS</i> e la <i>SAG</i> dovrà fornirlo all'utente. Per farlo, abbiamo pensato a due vie:
+            <ul>
+                <li>mostarlo in chiaro nell'applicazione web (all'interno della pagina)</li>
+                <li>fornirlo in maniera esterna all'applicazione</li>
+            </ul>
+            Mentre il primo modo semplifica la vita all'utente che dovrà fare solamente un copia-incolla all'interno della pagina, il secondo permette invece di far fronte a problemi come la chiusura dell'applicazione. <br>
+            Infatti, se una volta ottenuto il ticket (e fosse visualizzabile solo nella pagina) l'utente chiudesse per errore la pagina web, perderebbe la possibilità di inserirlo in quanto non se lo ricorderebbe (e dovrebbe effettuare una nuova richiesta di deposito). <br>
+            Al contrario, fornendo un via d'accesso al codice esterna all'app web (come un file <i>.pdf</i> scaricabile dall'app web), questo problema si eviterebbe.
+    
+            <p class="keypoint">
+                <b>KEY-POINT:</b> fornire il <i>ticket</i> all'utente in modo <b>esterno</b> all'applicazione web <i>SAG</i>
+            </p>
+        </p>
+        
+        <h3>Ticket</h3>
+        <p>
+            Dall'analisi dei requisiti vediamo che, oltre al <b>codice</b>, un'altro elemento inerente alla gestione del <b>ticket</b> è il <b>TICKETTIME</b>. <br>
+            Dobbiamo pensare quindi come gestire la scadenza del ticket. <br>
+        </p>
+    
+        <h5>Validità temporale del ticket</h5>
+        <p>
+            Trattiamo il tempo di validità del ticket come un parametro configurabile alla definizione del <i>ColdStorageService</i>; quindi ogni ticket all'interno della stessa istanza del servizio avrà la stessa durata temporale di validità. <br>
+            Sappiamo poi che è il <i>ColdStorageService</i> a controllare la conformità del ticket (correttezza del codice e validità temporale). <br>
+            Decidiamo quindi di utilizzare la <b>data di emissione</b> come attributo del ticket, così che il <i>CSS</i> possa controllarne la validità calcolando il tempo attuale meno quello di emissione e vedere se è maggiore o meno del <b>TICKETTIME</b>.
+        </p>
+    
+        <p class="keypoint">
+            <b>KEY-POINT:</b> il TICKETTIME è un parametro configurabile del servizio <i>ColdStorageService</i>, non del ticket in sè.
+        </p>
+        <p class="keypoint">
+            <b>KEY-POINT:</b> ogni ticket avrà associata la propria data di emissione.
+        </p>
+        <h4>Codice univoco</h4>
+        <p>
+            Per quanto riguarda il <b>codice</b> abbiamo bisogno che sia univoco, così da non avere collisioni tra diverse richieste di deposito. <br>
+            Dobbiamo quindi pensare a:
+        </p>
+        <ul>
+            <li>che tipo di codice deve essere</li>
+            <li>come generarlo e garantire che non collida con altri</li>
+            <li>come memorizzarlo ed effettuare il controllo di validità in fase di inserimento dalla <i>SAG</i></li>
+        </ul>
+    
+        <h5>Formato del ticket</h5>
+        <p>
+            Come detto nei requisiti, il codice del ticket sarà alfanumerico, possiamo utilizzarlo quindi per inserirci delle informazioni. <br>
+            In particolare, il ticket avrà le proprietà riportate in tabella.
+        </p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Descrizione</th>
+                    <th>Formattazione</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>T = ticket</td>
+                    <td>t</td>
+                </tr>
+                <tr>
+                    <td>Peso in kg (senza il punto per la separazione del decimale) del carico depositato</td>
+                    <td>Numero intero positivo</td>
+                </tr>
+                <tr>
+                    <td>N = numero del ticket</td>
+                    <td>n</td>
+                </tr>
+                <tr>
+                    <td>Numero incrementale corrispondente ai ticket emessi dall'avvio del servizio <i>CSS</i></td>
+                    <td>Numero intero positivo, incrementato di volta in volta</td>
+                </tr>
+                <tr>
+                    <td>2 caratteri generati casualmente per dare aleatorietà al codice</td>
+                    <td>2 caratteri dell'alfabeto (minuscoli)</td>
+                </tr>
+            </tbody>
+        </table>
+    
+        <p class="keypoint">
+            <b>KEY-POINT:</b> il <i>"ticket code"</i> avrà il formato <b>t&lt;pesoinkg&gt;n&lt;numeroincrementale&gt;&lt;2caratterirandom&gt;</b>
+        </p>
+    
+        <h5>Generazione</h5>
+        <p>
+            La generazione del codice deve avere i requisiti di univocità e di imprevedibilità. Nonostante non si stiano trattando dati sensibili è bene che per utente malevolo sia computazionalmente impossibile prevedere quale sia il prossimo codice che verrà generato; se così non fosse, l'utente potrebbe calcolare il codice ed immetterlo nella <i>SAG</i> prima che l'utente originale arrivi alla <i>INDOOR</i>, depositando al posto suo. <br>
+            Conseguentemente a questi requisiti, dovremo usare uno <b>Pseudo Random Number Generator</b> crittograficamente sicuro (la sua implementazione sarà meglio trattata in fase di progettazione).
+        </p>
+        <p class="keypoint">
+    
+            <b>KEY-POINT (Requisito di sicurezza):</b> per la generazione del codice del ticket verrà usato un PRNG crittograficamente sicuro.
+        </p>
+    
+        <h5>Memorizzazione e controllo</h5>
+        <p>
+            Per questioni di sicurezza il <b>ticket</b> deve essere memorizzato in modo tale da non poter essere scoperto o dedotto dall'esterno. Per ottenere questo risultato possiamo usare una funzione <b>hash</b>: in questo modo memorizzeremo solamente l'impronta generata dalla suddetta funzione, risparmiando molto in termini di memoria occupata. <br>
+            Per effettuare il controllo, al momento dell'inserimento del codice il <i>CSS</i> ricalcolerà l'impronta tramite la stessa funzione hash per vedere se trova corrispondenza. <br>
+        </p>
+    
+        <p class="nota"> 
+            <b>Funzione hash</b> <br>
+            Anche qui necessitiamo di una funzione crittograficamente sicura, che sia efficiente, che non permetta il calcolo a ritroso e che soprattutto sia resistente alle collisioni (l'implementazione verrà discussa in fase di progettazione).
+        </p>
+    
+        <p>
+            Una volta effettuata la validazione di un ticket non deve essere possibile riverificare lo stesso ticket.
+        </p>
+    
+        <p class="nota">
+            Si predispone un meccanismo per invalidare il ticket ma mantenerlo nello storico di quelli generati.
+        </p>
+    
+    
+        
+        <h5>Associazione ticket-richiesta</h5>
+        <p>
+            Quando il <i>CSS</i> emette il ticket deve esserci un'associazione 1 ad 1 con la richiesta di deposito, così che, quando l'utente inserisce il codice, sia possibile risalire alla richiesta e alla quantità di kg <b>FW</b> da depositare.<br>
+            In questo modo non sarà necessario che la <i>SAG</i> invii due volte l'informazione relativa al quantità di cibo da depositare.
+        </p>
+        <p class="keypoint">
+            <b>KEY-POINT:</b> il <i>CSS</i> dovrà memorizzare l'associazione fra una determinata richiesta di deposito (con il relativo quantitativo FW) e il ticket emesso in risposta ad essa.
+        </p>
+        <p>
+            Questa associazione sar&agrave; utile per poter richiamare il valore del peso di una richiesta una volta depositata, allo scopo di aggiornare il valore del totale depositato nella ColdRoom.
+        </p>
+    
+        <h3>TicketManager</h3>
+    
+        <p>
+            Con il fine di rispettare il principio di singola responsabilit&agrave; abbiamo deciso di creare il nuovo componente (attore) <b>ticketmanager</b>, che sarà incaricato di:
+        </p>
+        <ul>
+            <li>generare un nuovo ticket</li>
+            <li>validare un ticket dato il suo codice</li>
+            <li>mantenere uno storico dei ticket generati</li>
+        </ul>
+    
+        <p>
+            Di seguito si riporta il modello di interazione tra <i>ServiceAccessGUI</i>, <i>ColdStorageService</i> e il nuovo <i>TicketManager</i>. <br>
+            I nuovi messaggi derivanti da questa analisi sono evidenziati con il colore rosso.
+        </p>
+    
+        <table>
+            <thead>
+                <tr>
+                    <th>Mittente</th>
+                    <th>Destinatario</th>
+                    <th>Tipologia interazione/messaggio</th>
+                    <th>Identificatore messaggio</th>
+                    <th>Payload</th>
+                    <th>Descrizione</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Request</td>
+                    <td>storerequest</td>
+                    <td>storerequest(FW)</td>
+                    <td>Richiesta di <b>storage</b> di <b>FW</b> chili di cibo.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>loadaccepted</td>
+                    <td>loadaccepted()</td>
+                    <td>La richiesta di deposito &egrave; stata accettata.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>loadrejected</td>
+                    <td>loadrejected()</td>
+                    <td>La richiesta &egrave; stata rifiutata.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="orange bold center">ticketmanager</td>
+                    <td class="blue bold center">Request</td>
+                    <td class="red">insertticket</td>
+                    <td>insertticket(TICKET)</td>
+                    <td>Viene inviato il ticket inserito al ticketmanager.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">ticketmanager</td>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="blue bold center">Reply</td>
+                    <td class="red">ticketaccepted</td>
+                    <td>ticketaccepted()</td>
+                    <td>Il ticket &egrave; stato validato e accettato dal sistema.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">ticketmanager</td>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="blue bold center">Reply</td>
+                    <td class="red">ticketrejected</td>
+                    <td>ticketrejected()</td>
+                    <td>Il ticket &egrave; stato validato ma rifiutato dal sistema.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">ticketmanager</td>
+                    <td class="blue bold center">Request</td>
+                    <td class="red">generateticket</td>
+                    <td>generateticket(FW)</td>
+                    <td>Richiesta per la generazione di un ticket.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">ticketmanager</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Reply</td>
+                    <td class="red">ticket</td>
+                    <td>ticket(TICKET)</td>
+                    <td>Il ticket &egrave; stato generato.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">ticketmanager</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Dispatch</td>
+                    <td class="red">initdeposit</td>
+                    <td>initdeposit(TICKET)</td>
+                    <td>Inizia una azione di deposito dopo la validazione di un ticket.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Request</td>
+                    <td>chargestatus</td>
+                    <td>chargestatus()</td>
+                    <td>Viene richiesto lo stato del carico depositato.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>chargetaken</td>
+                    <td>chargetaken()</td>
+                    <td>Il deposito è stato preso in carico dal transport trolley, il camion deve spostarsi da INDOOR.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="blue bold center">Reply</td>
+                    <td>chargefailed</td>
+                    <td>chargefailed()</td>
+                    <td>Ci sono stati problemi durante la presa in carico del deposito.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="blue bold center">Request</td>
+                    <td class="red">initcoldroom</td>
+                    <td>initcoldroom()</td>
+                    <td>Richiesta del valore attuale della ColdRoom.</td>
+                </tr>
+                <tr>
+                    <td class="orange bold center">coldstorageservice</td>
+                    <td class="orange bold center">ServiceAccessGUI</td>
+                    <td class="blue bold center">Reply</td>
+                    <td class="red">coldroom</td>
+                    <td>coldroom(ACTUAL,TEMP)</td>
+                    <td>Valore di kg nella ColdRoom effettivi e totali (contando anche quelli in coda).</td>
+                </tr>
+            </tbody>
+        </table>
+    
+        <p class="keypoint">
+            <b>KEY-POINT:</b> il messaggio <b>insertticket</b> viene inviato a coldstorageservice che delegher&agrave; la gestione al ticketmanager. Abbiamo così un <b>unico punto d'accesso</b> al sistema.
+        </p>
+    
+        <h3>Architettura logica</h3>
+        
+        <p>
+            Si riporta di seguito il modello di architettura logica sulla quale si baser&agrave; la successiva fase di progettazione.
+        </p>
+    
+        <img class="bigimglim" src="../images/sprint2/coldstorageservice23arch.png" alt="Modello architettura logica">
+    
+        <p class="keypoint">
+            <b>ATTENZIONE:</b> la <i>ServiceAccessGUI</i> NON è stata generata dal progetto <i>qak</i>, per cui va aggiornata manualmente a fronte di eventuali modifiche.
+        </p>
+    </div>
+    
+    
+    <h2 id="test_plans">Test plans</h2> 
+    
+    <div class="remark">
+        <p>
+            Per quanto riguarda i piani di test da implementare, rimanendo ad un <b>livello logico</b>, bisogna effettuare controllare che ogni istanza di <i>SAG</i> riceva le risposte dal <i>CSS</i> solo ed esclusivamente relativamente alla sua sessione. In particolare:
+            <ul>
+                <li>ad ogni richiesta di deposito deve arrivare la risposta (accettata, rifiutata o un errore)</li>
+                <li>in caso di richiesta accettata deve essere essere fornito il <i>ticket code</i></li>
+                <li>se il <i>ticket code</i> viene inserito correttamente, deve essere accettato, altrimenti rifiutato</li>
+                <li>in caso di ticket accettato, alla richiesta di stato del carico deve arrivare il messaggio <i>chargetaken</i></li>
+            </ul>
+        </p>
+    </div>
+    
+    
+    <h2>Project</h2> 
+     
+    <div class="remark">
+    
+        <h3>TicketManager</h3>
+    
+        <p>
+            L'attore <b>ticketmanager</b> mantiene un'istanza della classe <code class="docutils literal notranslate"><span class="pre">TicketManager</span></code>, questa classe implementa metodi per la generazione di un nuovo ticket e gestisce lo storico dei ticket generati, esponendo metodi per salvare e caricare memoria persistente le informazioni.<br>
+        Si riporta di seguito l'UML della classe in questione.
+        </p>
+    
+        <img class="imglim" src="../images/sprint2/uml_ticketmanager.png" alt="UML ticket manager">
+    
+        <p>
+            La classe <code class="docutils literal notranslate"><span class="pre">TicketManager</span></code> mantiene i ticket come istanze della data class <code class="docutils literal notranslate"><span class="pre">Ticket</span></code>, si riportano di seguito le specifiche delle propriet&agrave; della classe.
+        </p>
+    
+        <img class="imglim" src="../images/sprint2/uml_ticket.png" alt="UML ticket manager">
+    
+        <h5>Identificazione ticket</h5>
+    
+        <p>
+            A ogni ticket viene associato un id intero incrementale che lo identifica univocamente, tuttavia questo valore &egrave; a solo uso interno del TicketManager, il sistema tratter&agrave; i ticket tramite la loro rappresentazione, ovvero il codice che viene scambiato con gli utenti del sistema.
+        </p>
+    
+        <p>
+            Per generare i caratteri random che fanno parte della rappresentazione del ticket si fa utilizzo dei metodi offerti dalla classe <code class="docutils literal notranslate"><span class="pre">java.security.SecureRandom</span></code> che garantisce la sicurezza tramite l'utilizzo di uno PRNG.
+        </p>
+        <pre><code class="language-kotlin">private fun randomString(): String {
+        val sr: SecureRandom = SecureRandom.getInstance("SHA1PRNG")
+        return sr.ints(STRING_LENGTH, 0, CHAR_POOL.size)
+            .asSequence()
+            .map(CHAR_POOL::get)
+            .joinToString("")
+    }</code></pre>
+    
+        <h5>Gestione tempo di creazione</h5>
+        <p>
+            A ogni ticket viene associato un timestamp campionato nel momento in cui viene restituito il valore dal metodo che lo genera, viene salvato come valore unix timestamp <code class="docutils literal notranslate"><span class="pre">long</span></code> in millisecondi.
+        </p>
+    
+        <pre><code class="language-kotlin">val generationTimeMs: Long</code></pre>
+    
+        <h3>ColdStorageService</h3>
+    
+        <h5>Delega al ticketmanager</h5>
+    
+        <p>
+            Come specificato in precedenza, il messaggio <i>insertticket</i> pu&ograve; essere inviato a <i>coldstorageservice</i> ma verr&agrave; comunque gestito dal <i>ticketmanager</i>, questa funzionalit&agrave; &egrave; stata implementata utilizzando la keyword <code class="docutils literal notranslate"><span class="pre">delegate</span></code> messa a disposizione dal framework qak.
+        </p>
+        <p>
+            Nello stato iniziale dell'attore <i>coldstorageservice</i> &egrave; riportata la seguente istruzione:
+        </p>
+        <pre><code class="language-bash">delegate "insertticket" to ticketmanager</code></pre>
+    
+        <h5>Associazione ticket-richiesta</h5>
+    
+        <p>
+            &Egrave; stata implementata l'associazione tra ticket e richiesta utilizzando una <code class="docutils literal notranslate"><span class="pre">MutableMap</span></code>, dichiarata come segue:
+            <pre><code class="language-kotlin">val weightTicketMap = mutableMapOf&lt;String, Float&gt;()</code></pre><br>
+    
+            Utilizzando questa mappa il ColdStorageService sar&agrave; in grado di comunicare al TransportTrolley il peso relativo alla ticket che sta gestendo, riottenendolo alla risposta del TransportTrolley  per finalizzare il deposito aggiungendo il valore alla variabile <code class="docutils literal notranslate"><span class="pre">actualCurrentColdRoom</span></code>, che mantiene il valore del peso di cibo effettivamente contenuto nella ColdRoom.
+            <pre><code class="language-kotlin">val FW = payloadArg(0).toFloat()    
+    actualCurrentColdRoom += FW</code></pre>
+        </p>
+    
+        <h3 id="project_sag">ServiceAccessGUI</h3>
+    
+        <p>
+            Abbiamo già parlato e analizzato buona parte della <i>SAG</i> nello <a href="../Sprint1/ServiceAccessGUISimProjectV1.html">Sprint precedente</a>. <br> 
+            E' stato anche introdotto il protocollo <b>Coap</b>, utilizzato per le interazioni tra la <i>SAG</i> e il servizio <i>ColdStorageService</i>. Relativamente a ciò, riportiamo nel <i>key-point</i> seguente un fatto fondamentale:
+        </p>
+        <p class="keypoint">
+            <b>KEY-POINT:</b> gli attori <i>qak</i> sono risorse <b>CoapObservable</b>, overro risorse osservabilei tramite la classe CoapObserver definita nella libreria <code class="docutils literal notranslate"><span class="pre">unibo.basicomm23</span></code>.
+        </p>
+    
+        <h5>Ricezione evento di aggiornamento ColdRoom</h5>
+        <p>
+            Essendo che la <i>SAG</i>, progetto in Spring, non appartiene al mondo di attori qak, non supporta direttamente la ricezione di un <i>event</i> da parte dell'attore qak <i>coldstorageservice</i>. <br>
+            Possiamo però ovviare al problema grazie alla primitiva <b>updateResuource</b>, disponibile in qak. Questa ha lo scopo di inviare un "event" a tutte quelle risorse che stanno osservando l'attore <i>qak</i> di interesse. <br>
+        </p>
+        <p>
+            Lato applicazione Spring, entra quindi in gioco la nuova entità <i>CoapObserver</i>, che ha lo scopo di porsi come osservatore dell'attore <i>coldstorageservice</i>. Sono necessarie inoltre le <i>WebSocket</i> per far giungere l'informazione dall'oggetto java alla pagina html di presentazione.
+        </p>
+        <p>
+            Di seguito, viene riportato il nuovo diagramma UML delle classi del progetto <i>Spring</i>.
+        </p>
+    
+        <img class="bigimglim" src="../images/sprint2/saguml.png"></img>
+    
+        <p>
+            Vediamo esserci il nuovo componente <b>CoapObserver</b>: osservatore che, ad ogni aggiornamento emesso dal ColdStorageService, avvisa tutte le entità registrate ad esso tramite <i>WebSocket</i>.
+            <p>
+                Per l'aggiornamento automatico della pagina da parte del server utilizziamo le <b>WebSocket</b>. Abbiamo infatti un file <a href="../../projects/unibo.serviceaccessGUI/src/main/resources/static/js/ws_utils.js">ws_utils.js</a> che definisce la connessione e gestisce i messaggi in arrivo in maniera opportuna. <br>
+                <ul>
+                    <li><b>WebSocketConfiguration</b>: implementa la classe <i>WebSocketConfigurer</i> di <code class="docutils literal notranslate"><span class="pre">org.springframework.web.socket.config.annotation</span></code>.</li>
+                    <li><b>WebSocketHandler</b>: memorizza le sessioni registrate e alle quali inviare i messaggi.</li>
+                </ul>
+            </p>
+        </p>
+    
+        <h5>Visualizzazione del ticket</h5>
+        <p>
+            Abbiamo parlato in analisi del problema di fornire il codice all'utente in maniera esterna all'applicazione. <br>
+            Pensando in termini di portabilità e semplicità d'uso, abbiamo optato per la generazione di un file <b>pdf</b>, contenente il ticket. <br>
+            La scelta è stata mossa dal fatto che un file pdf è leggibile facilmente su tutti i dispositivi (smartphone, pc, tablet, ...) senza l'ausilio di applicazione esterne o non pre-installate. Inoltre, è facilmente scaricabile dalla pagina web.  
+        </p>
+        <p class="keypoint">
+            <b>KEY-POINT:</b> portabilità e semplicità d'uso tramite un file <i>.pdf</i> contente il ticket code.
+        </p>
+    
+        <p>
+            Qui il server risponde alla richiesta all'endpoint <code class="docutils literal notranslate"><span class="pre">/generatePdf</span></code> con il contenuto di un file pdf, questo contenuto binario &egrave; convertito in un <code class="docutils literal notranslate"><span class="pre">Blob</span></code> per poi essere salvato come pdf, a questo scopo si fa utilizzo della libreria <code class="docutils literal notranslate"><span class="pre">FileSaver.js</span></code>
+        </p>
+    
+        <pre><code class="language-javascript">function generatePdf(inputValue) {
+    
+        //data structure to send to server
+        const requestBodyMap = {
+            ticketCode: inputValue
+        }
+    
+        //request to server
+        const relativeEndpoint = '/generatePdf';
+        fetch(
+            relativeEndpoint,
+            {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/pdf',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBodyMap)
+            }
+        ).then(response => {
+            return response.arrayBuffer();
+        }).then(data => {
+            var blob = new Blob([data], {type: 'application/pdf'});
+            saveAs(blob, 'ticket.pdf');
+        }).catch(error => {
+                console.log(error);
+        });
+    }</code></pre>
+    
+        <h5>Front-end</h5>
+        <p>
+            Strettamente correlato alla sezione precedente, mostriamo la nuova grafica della <i>ServiceAccessGUI</i>. <br>
+    
+        </p>
+        
+        <img class="imglim" src="../images/sprint2/sag_view.png"></img>
+    
+        <p>
+    
+            Vediamo esserci il nuovo campo per l'inserimento del ticket. L'idea è che questo campo sia sempre disponibile all'interno della pagina, anche senza che la richiesta di deposito sia stata inviata. <br>
+            In questo modo, diamo sempre la possibilità all'utente di inserire il ticket e questo si concilia perfettamente con il concetto della risorsa esterna contenente il ticket, come già spiegato in <a href="#pdf_analisi_prob">analisi del problema</a>.
+        </p>
+    </div>
+    
+    
+    <h2>Testing</h2> 
+     
+    <div class="remark">
+        I test pianificati nella <a href="#test_plans">sezione precedente</a> sono stati implementati tramite un'unità di test <a href="../../projects/sprint2V0/JTestSprint2v0.java" target="_blank" rel="noopener noreferrer">JUnit</a> all'interno del progetto <i>qak</i>.
+    </div>
+    
+    
+    <h2>Deployment</h2> 
+    
+    <div class="remark">
+        <p>
+        Per il Deployment si fa riferimento alla sezione dello <a href="../Sprint1/ColdStorageServiceSprint1V1.html#deployment" target="_blank" rel="noopener noreferrer">Sprint1</a>. <br>
+        
+        Una più attenta analisi verrà rimandata in un documento successivo.
+        </p> 
+    </div>
+</div>
+</body>
+</html>
