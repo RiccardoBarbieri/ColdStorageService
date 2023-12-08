@@ -69,6 +69,7 @@ public class LedControllerConsumer extends RunnableConsumer implements Led {
                         Thread.sleep(milliseconds);
                     } catch (InterruptedException e) {
                         System.out.println("LedControllerConsumer | blink | interrupted");
+                        System.exit(0);
                     }
                 }
             });

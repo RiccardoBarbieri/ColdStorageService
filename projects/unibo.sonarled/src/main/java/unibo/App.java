@@ -68,8 +68,5 @@ public class App {
         sender.start();
         ledUpdatesFilter.start();
         ledController.start();
-
-//        while (true) {
-//        }
     }
 }
