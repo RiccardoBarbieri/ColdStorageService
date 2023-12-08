@@ -36,6 +36,20 @@ cp -r _static ../projects/sprint2V0/userDocs
 mkdir ../projects/sprint2V0/userDocs/Sprint2
 cp Sprint2/ColdStorageServiceSprint2V0.html ../projects/sprint2V0/userDocs/Sprint2
 
+rm -r ../projects/sprint3V0/userDocs
+mkdir ../projects/sprint3V0/userDocs
+cp -r images ../projects/sprint3V0/userDocs
+cp -r _static ../projects/sprint3V0/userDocs
+mkdir ../projects/sprint3V0/userDocs/Sprint3
+cp Sprint3/ColdStorageServiceSprint3V0.html ../projects/sprint3V0/userDocs/Sprint3
+
+rm -r ../projects/sprint4V0/userDocs
+mkdir ../projects/sprint4V0/userDocs
+cp -r images ../projects/sprint4V0/userDocs
+cp -r _static ../projects/sprint4V0/userDocs
+mkdir ../projects/sprint4V0/userDocs/Sprint4
+cp Sprint4/ColdStorageServiceSprint4V0.html ../projects/sprint4V0/userDocs/Sprint4
+
 rm -r ../projects/unibo.serviceaccessGUISimV0/userDocs
 mkdir ../projects/unibo.serviceaccessGUISimV0/userDocs
 cp -r images ../projects/unibo.serviceaccessGUISimV0/userDocs
@@ -48,7 +62,14 @@ mkdir ../projects/unibo.serviceaccessGUISimV1/userDocs
 cp -r images ../projects/unibo.serviceaccessGUISimV1/userDocs
 cp -r _static ../projects/unibo.serviceaccessGUISimV1/userDocs
 mkdir ../projects/unibo.serviceaccessGUISimV1/userDocs/Sprint1
-cp Sprint1/ServiceAccessGUISimProjectV1.html ../projects/unibo.serviceaccessGUISimV1/userDocs/Sprint1
+cp Sprint1/ServiceAccessGUISimProjectV1.html ../projects/unibo.serviceaccessGUI/userDocs/Sprint1
+
+rm -r ../projects/unibo.serviceaccessGUI/userDocs
+mkdir ../projects/unibo.serviceaccessGUI/userDocs
+cp -r images ../projects/unibo.serviceaccessGUI/userDocs
+cp -r _static ../projects/unibo.serviceaccessGUI/userDocs
+mkdir ../projects/unibo.serviceaccessGUI/userDocs/Sprint2
+cp Sprint2/ColdStorageServiceSprint2V0.html ../projects/unibo.serviceaccessGUI/userDocs/Sprint2
 
 rm -r ../projects/unibo.mapConfigurator/userDocs
 mkdir ../projects/unibo.mapConfigurator/userDocs
