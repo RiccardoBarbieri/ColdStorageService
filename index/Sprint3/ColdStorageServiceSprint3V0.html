@@ -1,0 +1,407 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="stylesheet" href="../_static/template.css">
+<link rel="stylesheet" href="../_static/mine.css">
+<link rel="stylesheet" href="../_static/code.css">
+<link rel="stylesheet" href="../_static/colors.css">
+<link rel="stylesheet" href="../_static/sidebar.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/dockerfile.min.js"></script>
+
+
+<script>hljs.highlightAll();</script>
+<title>Sprint3</title>
+</head>
+    
+<body>
+
+    <div class="sidebar">
+        <ul>
+            <li><a href="../Sprint0/ColdStorageServiceSprint0V2.html">Sprint0</a></li>
+            <li><a href="../Sprint1/ColdStorageServiceSprint1V1.html">Sprint1</a> <ul>
+                <li><a href="../Sprint1/ServiceAccessGUISimProjectV1.html"></a></li>
+                <li><a href="../Sprint1/MapConfiguratorProject.html"></a></li>
+            </ul></li>
+            <li><a href="../Sprint2/ColdStorageServiceSprint2V0.html">Sprint2</a></li>
+            <li><a href="../Sprint3/ColdStorageServiceSprint3V0.html">Sprint3</a></li>
+            <li><a href="../Sprint4/ColdStorageServiceSprint4V0.html">Sprint4</a></li>
+            <li><a href="../Deployment/Deployment&Mantenaince.html">Deployment</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div id="top">
+
+            <h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE<font size="5"></font> </h1>
+        
+        </div>  
+        
+        <div class="body"> 
+        
+            
+        <h2>Introduction</h2>
+        
+              
+        <div class="remark" id="intro">
+            <p>
+                In questo Sprint verranno analizzati gli <b>Alarm Requirements</b> relativi al movimento del <i>TransportTrolley</i>.
+            </p>
+        </div>
+        
+        
+        <h2>Requirements</h2>
+         
+        <div class="remark">
+            <p>
+                <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements a questa pagina</a><br>
+            </p>
+        
+            <p>
+            <bc id="goals">Goals dello Sprint3</bc>:
+            Gli <i>alarm requirements</i> vengono riassunti di seguito:
+                <ol>
+                    <li>abbiamo un <i>sonar</i> (alarm device) ed un <i>led</i> (warning device) connessi ad un RaspberryPi</li>
+                    <li>bisogna fermare il trolley quando il sonar rileva una distanza inferiore ad DLIMT</li>
+                    <li>il trolley non deve essere fermato nuovamente se non sono passati almeno MINT millisecondi dall'interruzione precedente</li>
+                </ol>
+            </p>
+            
+        </div>
+        
+        
+        <h2>Requirement analysis</h2>
+        
+        <div class="remark">
+        
+            <p>
+                Viene riportato nel <a href="../documents/temafinale_sprint3.pdf" target="_blank" rel="noopener noreferrer">seguente documento</a> la versione del <i>TemaFinale23</i> analizzata contestualmente a questo Sprint.
+            </p>
+        
+            <p class="nota">
+                Questo componente è alieno al progetto core del sistema (<i>qak</i>), non è per cui necessario, per ora, riportarne il modello architetturale.
+            </p>
+        
+            <h3>Architettura logica</h3>
+            
+            <p>
+                Si riporta di seguito il modello di architettura logica, limitato al contesto di interesse di questo Sprint.
+            </p>
+        
+            <img class="bigimglim" src="../images/sprint3/coldstorageservice23arch.png" alt="Modello architettura logica">
+        
+            <p class="keypoint">
+                <b>ATTENZIONE:</b> <i>warning/alarm device</i> NON vengono generati dal modello qak, saranno aggiornati manualmente a fronte di eventuali modifiche.
+            </p>
+        
+            <h3>Modello di interazione</h3>
+        
+            <h4>Alarm device</h4>
+        
+            <p>
+                Data la natura del vincolo che impone al TransportTrolley di fermarsi sar&agrave; necessario decidere se inviare al TransportTrolley un segnale di stop quando viene rilevata una certa distanza oppure inviare tutte le rilevazioni di distanza generate dal <i>warning device</i> sul <i>RaspberryPi</i>, lasciando che sia esso a decidere quando fermarsi (a seconda di DLIMT e MINT).
+            </p>
+        
+            <p>
+                Da questa domanda emergono due possibili modelli di interazione relativi alle misure rilevate dal sonar:
+            </p>
+        
+            <p>
+                Modello 1:
+            </p>
+        
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mittente</th>
+                        <th>Destinatario</th>
+                        <th>Tipologia interazione/messaggio</th>
+                        <th>Identificatore messaggio</th>
+                        <th>Payload</th>
+                        <th>Descrizione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="orange bold center">RaspberryPi</td>
+                        <td class="orange bold center">transporttrolley</td>
+                        <td class="blue bold center">Dispatch</td>
+                        <td>sonarstop</td>
+                        <td>sonarstop()</td>
+                        <td>Indica al transporttrolley di fermarsi.</td>
+                    </tr>
+                    <tr>
+                        <td class="orange bold center">RaspberryPi</td>
+                        <td class="orange bold center">transporttrolley</td>
+                        <td class="blue bold center">Dispatch</td>
+                        <td>sonarstart</td>
+                        <td>sonarstart()</td>
+                        <td>Indica al transporttrolley di ripartire.</td>
+                    </tr>
+                </tbody>
+            </table>
+        
+            <p>
+                Modello 2:
+            </p>
+        
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mittente</th>
+                        <th>Destinatario</th>
+                        <th>Tipologia interazione/messaggio</th>
+                        <th>Identificatore messaggio</th>
+                        <th>Payload</th>
+                        <th>Descrizione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="orange bold center">RaspberryPi</td>
+                        <td class="orange bold center"></td>
+                        <td class="blue bold center">Event</td>
+                        <td>distance</td>
+                        <td>distance(DIST)</td>
+                        <td>Il sonar ha rilevato un nuovo dato.</td>
+                    </tr>
+                    <tr>
+                        <td class="orange bold center">sonar</td>
+                        <td class="orange bold center">transporttrolley</td>
+                        <td class="blue bold center">Dispatch</td>
+                        <td>sonarstop</td>
+                        <td>sonarstop()</td>
+                        <td>Indica al transporttrolley di fermarsi.</td>
+                    </tr>
+                    <tr>
+                        <td class="orange bold center">sonar</td>
+                        <td class="orange bold center">transporttrolley</td>
+                        <td class="blue bold center">Dispatch</td>
+                        <td>sonarstart</td>
+                        <td>sonarstart()</td>
+                        <td>Indica al transporttrolley di ripartire.</td>
+                    </tr>
+                </tbody>
+            </table>
+        
+            <h4>Warning device</h4>
+        
+            <p>
+                Il <i>warning device</i> deve essere in grado di mostrare tra stati diversi: TT fermo, TT in movimento e TT in HOME, il <i>led</i> si presta a questo scopo:
+            </p>
+            <ul>
+                <li>fermo: led <i>acceso</i></li>
+                <li>movimento: led <i>lampeggiante</i></li>
+                <li>home: led <i>spento</i></li>
+            </ul>
+        
+            <p>
+                Per fare in modo che il RaspberryPi abbia le informazioni relative allo stato del TransportTrolley &egrave; possibile agire in due modi differenti, si propongono quindi due modelli di interazione:
+            </p>
+        
+            <p>
+                Modello 1:
+            </p>
+        
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mittente</th>
+                        <th>Destinatario</th>
+                        <th>Tipologia interazione/messaggio</th>
+                        <th>Identificatore messaggio</th>
+                        <th>Payload</th>
+                        <th>Descrizione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="orange bold center">transporttrolley</td>
+                        <td class="orange bold center">RaspberryPi</td>
+                        <td class="blue bold center">Dispatch</td>
+                        <td>ttstate</td>
+                        <td>ttstate(STATE)</td>
+                        <td>Lo stato del TransportTrolley &egrave; cambiato.</td>
+                    </tr>
+                </tbody>
+            </table>
+        
+            <p>
+                Modello 2:
+            </p>
+        
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mittente</th>
+                        <th>Destinatario</th>
+                        <th>Tipologia interazione/messaggio</th>
+                        <th>Identificatore messaggio</th>
+                        <th>Payload</th>
+                        <th>Descrizione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="orange bold center">transporttrolley</td>
+                        <td class="orange bold center">RaspberryPi</td>
+                        <td class="blue bold center">Event</td>
+                        <td>ttstate</td>
+                        <td>ttstate(STATE)</td>
+                        <td>Lo stato del TransportTrolley &egrave; cambiato.</td>
+                    </tr>
+                </tbody>
+            </table>
+        
+            <h3>Costanti</h3>
+        
+            <p>
+                Contestualmente agli obiettivi di questo sprint si considerano le seguenti due costanti:    
+            </p>
+        
+            <table>
+                <tr>
+                    <th>Costante</th>
+                    <th>Tipo</th>
+                    <th>Descrizione</th>
+                </tr>
+                <tr>
+                    <td class="green bold center" id="tickettime">DLIMT</td>
+                    <td>Float</td>
+                    <td>Quando il sonar rileva una distanza minore di questo valore il TransportTrolley deve essere fermato.</td>
+                </tr>
+                <tr>
+                    <td class="green bold center" id="ticket">MINT</td>
+                    <td>Int</td>
+                    <td>Millisecondi che devono trascorrere perch&eacute; il robot possa essere nuovamente fermato dal sonar.</td>
+                </tr>
+            </table>
+        
+            <h3>RaspberryPi</h3>
+        
+            <p>
+                <b>TODO: paragrafo su cosa &egrave; e come si utilizza.</b>
+            </p>
+        
+            <h4>Sonar</h4>
+            
+            <p>
+                <b>TODO: paragrafo su modello e caratteristiche, ref costante cm</b>
+            </p>
+        
+            <h4>Led</h4>
+        
+            <p>
+                <b>TODO: formalizza cos'&egrave;</b>
+            </p>
+        </div>
+        
+        
+        <h2>Problem analysis</h2>
+        
+        <div class="remark">
+        
+            <h3>Interazioni</h3>
+        
+            <p>
+                Partendo dai modelli individuati nell'analisi dei requisiti si pu&ograve; notare come alcuni di essi non offrono soluzioni che rispettano i principi della <b>clean architecture</b>.
+            </p>
+        
+            <p>
+                Se si utilizzasse il modello che prevede un <b>Dispatch</b> per l'informazione sullo stato del TransportTrolley si creerebbe una relazione stretta tra i due componenti; &egrave; preferibile implementare un modello di interazione che non prevede la conoscenza dell'esistenza del RaspberryPi da parte del TransportTrolley.
+            </p>
+        
+            <p>
+                Facendo riferimento al <i>warning device</i> si decide invece di inviare la distanza al TransportTrolley, lasciando che esso implementi la logica di arresto e ripartenza per mantenere il <b>business core</b> all'interno del servizio e non su un componente esterno (che potrebbe essere sostituito con altre implementazioni).
+            </p>
+        
+            <p>
+                Alla luce di queste considerazioni si sceglie di proseguire con il seguente modello di interazione:
+            </p>
+        
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mittente</th>
+                        <th>Destinatario</th>
+                        <th>Tipologia interazione/messaggio</th>
+                        <th>Identificatore messaggio</th>
+                        <th>Payload</th>
+                        <th>Descrizione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="orange bold center">RaspberryPi</td>
+                        <td class="orange bold center"></td>
+                        <td class="blue bold center">Observable resource</td>
+                        <td>distance</td>
+                        <td>distance(DIST)</td>
+                        <td>Il sonar ha rilevato un nuovo dato.</td>
+                    </tr>
+                    <tr>
+                        <td class="orange bold center">sonar</td>
+                        <td class="orange bold center">transporttrolley</td>
+                        <td class="blue bold center">Dispatch</td>
+                        <td>sonarstop</td>
+                        <td>sonarstop()</td>
+                        <td>Indica al transporttrolley di fermarsi.</td>
+                    </tr>
+                    <tr>
+                        <td class="orange bold center">sonar</td>
+                        <td class="orange bold center">transporttrolley</td>
+                        <td class="blue bold center">Dispatch</td>
+                        <td>sonarstart</td>
+                        <td>sonarstart()</td>
+                        <td>Indica al transporttrolley di ripartire.</td>
+                    </tr>
+                    <tr>
+                        <td class="orange bold center">transporttrolley</td>
+                        <td class="orange bold center">RaspberryPi</td>
+                        <td class="blue bold center">Observable resource</td>
+                        <td>ttstate</td>
+                        <td>ttstate(STATE)</td>
+                        <td>Lo stato del TransportTrolley &egrave; cambiato.</td>
+                    </tr>
+                </tbody>
+            </table>
+        
+            <p class="keypoint">
+                <b>KEY-POINT:</b> si rendono osservabili le risorse <b>ttstate</b> e <b>distance</b> per uniformare con altre risorse della stessa tipologia (peso coldroom) gestite in sprint precedenti e necessarie in sprint successivi.
+            </p>
+        
+            <h5>Comunicazione con servizio</h5>
+        
+            <p>
+                Come nel caso della ServiceAccessGUI, verr&agrave; impostato il servizio in modo da mantenere un unico punto di accesso, verranno internamente inoltrati i messaggi rilevanti.
+            </p>
+        
+            <h3>Sonar</h3>
+        
+        </div>
+        
+        <h2>Project</h2> 
+         
+        <div class="remark">
+            
+        </div>
+        
+        
+        <h2>Deployment</h2> 
+        
+        <div class="remark">
+        
+        </div>
+        
+        <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
+            GIT repo: https://github.com/RiccardBarbieri/ColdStorageService
+            <p>Riccardo Barbieri - riccardo.barbieri11@studio.unibo.it</p>
+            <img src="../images/foto/riccardo.jpg" width="15%" height="15%">
+            <p>Leonardo Ruberto - leonardo.ruberto@studio.unibo.it</p>
+            <img src="../images/foto/leonardo.jpg" width="15%" height="15%">
+            </div>
+    </div>
+</body>
+</html>
