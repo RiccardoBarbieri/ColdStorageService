@@ -201,3 +201,13 @@ div.imagedesc{
     margin: 10px;
 	border-radius: 25px;
 }
+
+#authors {
+    display: flex;
+    justify-content: space-between;
+}
+
+.author-info {
+    text-align: center; /* Per centrare il testo all'interno di ogni blocco */
+    width: 48%; /* Imposta una larghezza appropriata per entrambi i div */
+}

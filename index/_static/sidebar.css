@@ -6,7 +6,7 @@ body {
 
 .sidebar {
     height: 100%;
-    width: 250px;
+    width: 230px;
     position: fixed;
     z-index: 1;
     top: 0;
@@ -15,20 +15,49 @@ body {
     padding-top: 20px;
 }
 
-.sidebar h2 {
+#titleindex {
     color: white;
     text-align: center;
+    background-color: #111 !important;
+    margin-bottom: 20px;
+    font-size: 36px !important;
+    transition: 0.3s;
+}
+
+.sidebar h1 {
+    color: white;
+    text-align: center;
+    background-color: #111 !important;
+    margin-bottom: 20px;
+    font-size: 36px!important;
+    transition: 0.3s;
 }
 
 .sidebar ul {
+    margin-left: 10px;
     list-style-type: none;
     padding: 0;
-    text-align: center;
+    text-align: left;
 }
 
 .sidebar li {
-    padding: 8px;
+    padding: 8px !important;
 }
+
+.sidebar ul ul{
+    text-indent: 20px;
+}
+
+.sidebar ul ul li{
+    padding-top: 2px !important;
+}
+
+ol, ul, li {
+    margin: 0;
+    margin-left: 10px;
+    padding: 0;
+    padding-bottom: 5px;
+  }
 
 .sidebar a {
     text-decoration: none;
@@ -42,7 +71,11 @@ body {
     color: #87CEEB;
 }
 
+#titleindex:hover {
+    color: #87CEEB; |
+}
+
 .content {
-    margin-left: 260px;
+    margin-left: 240px;
     padding: 16px;
 }
