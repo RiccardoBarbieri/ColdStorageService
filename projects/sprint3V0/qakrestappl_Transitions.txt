@@ -11,4 +11,6 @@
 {"actor":"transporttrolley", "msgType":"dispatch", "curstate":"toPort", "nextstate":"sonarInterrupt", "msgId":"sonarstop"}
 {"actor":"transporttrolley", "msgType":"dispatch", "curstate":"depositInColdRoom", "nextstate":"sonarInterrupt", "msgId":"sonarstop"}
 {"actor":"trolleyexecutor", "msgType":"dispatch", "curstate":"waiting", "nextstate":"stopAndWait", "msgId":"stop"}
+{"actor":"trolleyexecutor", "msgType":"dispatch", "curstate":"move", "nextstate":"stopAndWait", "msgId":"stop"}
+{"actor":"trolleyexecutor", "msgType":"dispatch", "curstate":"moveClosest", "nextstate":"stopAndWait", "msgId":"stop"}
 {"actor":"coldstorageservice", "msgType":"dispatch", "curstate":"waiting", "nextstate":"requestDeposit", "msgId":"initdeposit"}

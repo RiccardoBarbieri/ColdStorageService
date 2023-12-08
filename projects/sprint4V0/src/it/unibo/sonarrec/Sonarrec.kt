@@ -19,7 +19,11 @@ class Sonarrec ( name: String, scope: CoroutineScope, isconfined: Boolean=false 
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 			val DLIMT = 20
+				val MINT = 7000
 				var StoppedBySonar = false
+				
+				var StartTime = 0L
+				var Elapsed = 0L
 		
 		 		var brokerAddr = "tcp://mqtt.eclipseprojects.io"
 				mqtt.connect(name, brokerAddr)
@@ -42,7 +46,7 @@ class Sonarrec ( name: String, scope: CoroutineScope, isconfined: Boolean=false 
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t040",targetState="checkDistance",cond=whenEvent("distance"))
+					 transition(edgeName="t049",targetState="checkDistance",cond=whenEvent("distance"))
 				}	 
 				state("checkDistance") { //this:State
 					action { //it:State
@@ -51,15 +55,18 @@ class Sonarrec ( name: String, scope: CoroutineScope, isconfined: Boolean=false 
 								 val Distance: Float = payloadArg(0).toFloat()  
 								if(  Distance > DLIMT  
 								 ){if(  StoppedBySonar  
-								 ){forward("sonarstart", "sonarstart(arg)" ,"coldstorageservice" ) 
+								 ){forward("sonarstart", "sonarstart(arg)" ,"transporttrolley" ) 
+								CommUtils.outyellow("SR: restarting trolley")
 								 StoppedBySonar = false  
 								}
 								}
 								else
-								 {if(  !StoppedBySonar  
-								  ){forward("sonarstop", "sonarstop(arg)" ,"coldstorageservice" ) 
+								 {Elapsed = getDuration(StartTime)
+								 if(  !StoppedBySonar && Elapsed > MINT  
+								  ){forward("sonarstop", "sonarstop(arg)" ,"transporttrolley" ) 
 								  StoppedBySonar = true  
 								 CommUtils.outyellow("SR: stopping trolley")
+								 StartTime = getCurrentTime()
 								 }
 								 }
 						}

@@ -122,6 +122,20 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope, isconfined: Boolean
 						discardMessages = true
 						CommUtils.outblack("TE: stop and wait")
 						emit("alarm", "alarm(arg)" ) 
+						answer("move", "movedone", "movedone(arg)"   )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="waiting", cond=doswitch() )
+				}	 
+				state("stopAndWait") { //this:State
+					action { //it:State
+						discardMessages = true
+						CommUtils.outblack("TE: stop and wait")
+						answer("moveclosest", "movecdone", "movecdone(arg)"   )  
+						emit("alarm", "alarm(arg)" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -152,6 +166,8 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope, isconfined: Boolean
 					transition(edgeName="t035",targetState="stopAndAsk",cond=whenRequest("moveclosest"))
 					transition(edgeName="t036",targetState="moveCompleted",cond=whenReply("moverobotdone"))
 					transition(edgeName="t037",targetState="moveFail",cond=whenReply("moverobotfailed"))
+					transition(edgeName="t038",targetState="stopAndWait",cond=whenDispatchGuarded("stop",{ isMoving  
+					}))
 				}	 
 				state("stopAndAsk") { //this:State
 					action { //it:State
@@ -171,8 +187,8 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope, isconfined: Boolean
 				 	 		stateTimer = TimerActor("timer_stopAndAsk", 
 				 	 					  scope, context!!, "local_tout_trolleyexecutor_stopAndAsk", 500.toLong() )
 					}	 	 
-					 transition(edgeName="t038",targetState="askPosition",cond=whenTimeout("local_tout_trolleyexecutor_stopAndAsk"))   
-					transition(edgeName="t039",targetState="askPosition",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t039",targetState="askPosition",cond=whenTimeout("local_tout_trolleyexecutor_stopAndAsk"))   
+					transition(edgeName="t040",targetState="askPosition",cond=whenReply("moverobotfailed"))
 				}	 
 				state("askPosition") { //this:State
 					action { //it:State
@@ -189,8 +205,8 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope, isconfined: Boolean
 				 	 		stateTimer = TimerActor("timer_askPosition", 
 				 	 					  scope, context!!, "local_tout_trolleyexecutor_askPosition", 30000.toLong() )
 					}	 	 
-					 transition(edgeName="t040",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_askPosition"))   
-					transition(edgeName="t041",targetState="moveClosest",cond=whenReply("robotstate"))
+					 transition(edgeName="t041",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_askPosition"))   
+					transition(edgeName="t042",targetState="moveClosest",cond=whenReply("robotstate"))
 				}	 
 				state("moveClosest") { //this:State
 					action { //it:State
@@ -214,9 +230,11 @@ class Trolleyexecutor ( name: String, scope: CoroutineScope, isconfined: Boolean
 				 	 		stateTimer = TimerActor("timer_moveClosest", 
 				 	 					  scope, context!!, "local_tout_trolleyexecutor_moveClosest", 30000.toLong() )
 					}	 	 
-					 transition(edgeName="t042",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_moveClosest"))   
-					transition(edgeName="t043",targetState="movecCompleted",cond=whenReply("moverobotdone"))
-					transition(edgeName="t044",targetState="movecFail",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t043",targetState="timeout",cond=whenTimeout("local_tout_trolleyexecutor_moveClosest"))   
+					transition(edgeName="t044",targetState="movecCompleted",cond=whenReply("moverobotdone"))
+					transition(edgeName="t045",targetState="movecFail",cond=whenReply("moverobotfailed"))
+					transition(edgeName="t046",targetState="stopAndWait",cond=whenDispatchGuarded("stop",{ isMoving  
+					}))
 				}	 
 				state("moveCompleted") { //this:State
 					action { //it:State

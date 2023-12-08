@@ -328,7 +328,7 @@ QActor transporttrolley context ctx_coldstorageservice {
 	}
 	Transition t0	whenReply	movedone		->	depositInColdRoom
 					whenReply	movefailed		->	moveFailed
-					whenMsg		sonarstop	->	sonarInterrupt
+					whenMsg		sonarstop		->	sonarInterrupt
 					
 	State depositInColdRoom {
 		discardMsg On
@@ -406,6 +406,15 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 		discardMsg On
 		println("TE: stop and wait")
 		emit alarm : alarm(arg)
+		replyTo move with movedone : movedone(arg)
+	}
+	Goto waiting
+	
+	State stopAndWait {
+		discardMsg On
+		println("TE: stop and wait")
+		replyTo moveclosest with movecdone : movecdone(arg)
+		emit alarm : alarm(arg)
 	}
 	Goto waiting
 	
@@ -425,7 +434,7 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 					whenRequest		moveclosest		->	stopAndAsk
 					whenReply		moverobotdone	->	moveCompleted
 					whenReply		moverobotfailed	->	moveFail
-//					whenMsg			sonarstop		->	sonarInterrupt
+					whenMsg			stop and [# isMoving #]	->	stopAndWait
 					
 	State stopAndAsk {
 		println("TE: stop") color magenta
@@ -469,6 +478,7 @@ QActor trolleyexecutor context ctx_coldstorageservice {
 	Transition t0	whenTime		30000			->	timeout
 					whenReply		moverobotdone	->	movecCompleted
 					whenReply		moverobotfailed	->	movecFail
+					whenMsg			stop and [# isMoving #]	->	stopAndWait
 //					whenMsg			sonarstop		->	sonarInterrupt
 
 	State moveCompleted {
@@ -524,13 +534,14 @@ QActor sonarrec context ctx_coldstorageservice {
 //			println("SR: received $Distance cm as distance") color yellow
 			if [# Distance > DLIMT #] {
 				if [# StoppedBySonar #] {
-					forward coldstorageservice -m sonarstart : sonarstart(arg)
+					println("SR: restarting trolley") color yellow
+					forward transporttrolley -m sonarstart : sonarstart(arg)
 					[# StoppedBySonar = false #]
 				}
 			}
 			else {
 				if [# !StoppedBySonar && Elapsed > StartTime #] {
-					forward coldstorageservice -m sonarstop : sonarstop(arg)
+					forward transporttrolley -m sonarstop : sonarstop(arg)
 					[# StoppedBySonar = true #]
 					println("SR: stopping trolley") color yellow
 					memoCurrentTime StartTime
@@ -571,8 +582,8 @@ QActor coldstorageservice context ctx_coldstorageservice {
 	
 	State s0 initial {
 		delegate "insertticket"	to ticketmanager
-		delegate "sonarstop"	to trolleyexecutor
-		delegate "sonarstart"	to trolleyexecutor
+		delegate "sonarstop"	to transporttrolley
+		delegate "sonarstart"	to transporttrolley
 //		delegate "distance"		to sonarrec
 		observeResource transporttrolley
 		

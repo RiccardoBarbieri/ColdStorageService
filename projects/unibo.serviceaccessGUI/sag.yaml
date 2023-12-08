@@ -4,12 +4,25 @@ services:
     image: riccardoob/serviceaccessgui
     ports:
       - 8075:8075
+    networks:
+      - shared
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+#    command: ["bash", "./unibo.serviceaccessGUI"]
   stg:
-    image: riccardoob/servicestatussgui
+    image: riccardoob/servicestatusgui
     ports:
       - 8065:8065
-  css:
-    image: riccardoob/coldstorageservice
-    ports:
-#      - 8020:8020
-      - 8021:8021
+    networks:
+      - shared
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+#  css:
+#    image: riccardoob/coldstorageservice
+#    ports:
+##      - 8020:8020
+#      - 8021:8021
+networks:
+  shared:
+    driver: bridge

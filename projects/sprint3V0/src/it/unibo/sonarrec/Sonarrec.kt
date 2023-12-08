@@ -46,7 +46,7 @@ class Sonarrec ( name: String, scope: CoroutineScope, isconfined: Boolean=false 
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t045",targetState="checkDistance",cond=whenEvent("distance"))
+					 transition(edgeName="t047",targetState="checkDistance",cond=whenEvent("distance"))
 				}	 
 				state("checkDistance") { //this:State
 					action { //it:State
@@ -56,13 +56,14 @@ class Sonarrec ( name: String, scope: CoroutineScope, isconfined: Boolean=false 
 								 val Distance: Float = payloadArg(0).toFloat()  
 								if(  Distance > DLIMT  
 								 ){if(  StoppedBySonar  
-								 ){forward("sonarstart", "sonarstart(arg)" ,"coldstorageservice" ) 
+								 ){CommUtils.outyellow("SR: restarting trolley")
+								forward("sonarstart", "sonarstart(arg)" ,"transporttrolley" ) 
 								 StoppedBySonar = false  
 								}
 								}
 								else
 								 {if(  !StoppedBySonar && Elapsed > StartTime  
-								  ){forward("sonarstop", "sonarstop(arg)" ,"coldstorageservice" ) 
+								  ){forward("sonarstop", "sonarstop(arg)" ,"transporttrolley" ) 
 								  StoppedBySonar = true  
 								 CommUtils.outyellow("SR: stopping trolley")
 								 StartTime = getCurrentTime()
