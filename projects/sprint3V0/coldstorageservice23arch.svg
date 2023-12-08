@@ -5,24 +5,22 @@
 <!-- Title: coldstorageservice23Arch Pages: 1 -->
 
 <svg
-   width="1384pt"
+   width="2453pt"
    height="1105pt"
-   viewBox="0.00 0.00 1384.00 1105.00"
+   viewBox="0.00 0.00 2453.00 1105.00"
    version="1.1"
-   id="svg34"
+   id="svg38"
    sodipodi:docname="coldstorageservice23arch.svg"
    inkscape:version="1.3.1 (1:1.3.1+202311172155+91b66b0783)"
-   xml:space="preserve"
-   inkscape:export-filename="coldstorageservice23arch.png"
-   inkscape:export-xdpi="96"
-   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
-     id="defs34" /><sodipodi:namedview
-     id="namedview34"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs38" />
+  <sodipodi:namedview
+     id="namedview38"
      pagecolor="#ffffff"
      bordercolor="#000000"
      borderopacity="0.25"
@@ -31,616 +29,649 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="pt"
-     inkscape:zoom="1.0231214"
-     inkscape:cx="751.13277"
-     inkscape:cy="1107.3955"
-     inkscape:window-width="1900"
-     inkscape:window-height="1020"
-     inkscape:window-x="10"
-     inkscape:window-y="10"
+     inkscape:zoom="0.81635809"
+     inkscape:cx="956.07554"
+     inkscape:cy="884.41581"
+     inkscape:window-width="1920"
+     inkscape:window-height="1080"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg34" /><g
+     inkscape:current-layer="svg38" />
+  <g
      id="graph0"
      class="graph"
-     transform="translate(242.75977,840.03697)"><title
-       id="title1">coldstorageservice23Arch</title><polygon
-       fill="#ffffff"
+     transform="scale(1 1) rotate(0) translate(144 961)">
+    <title
+       id="title1">coldstorageservice23Arch</title>
+    <polygon
+       fill="white"
        stroke="transparent"
-       points="1240,144 -144,144 -144,-961 1240,-961 "
-       id="polygon1"
-       transform="matrix(0.84667509,0,0,0.93159359,89.565936,56.512633)"
-       inkscape:export-filename="polygon1.png"
-       inkscape:export-xdpi="96"
-       inkscape:export-ydpi="96" /><text
+       points="-144,144 -144,-961 2309,-961 2309,144 -144,144"
+       id="polygon1" />
+    <text
        text-anchor="middle"
-       x="548"
+       x="1082.5"
        y="-10.4"
        font-family="Sans-Serif"
-       font-size="22px"
+       font-size="22.00"
        fill="#2d3436"
-       id="text1">coldstorageservice23Arch</text><g
+       id="text1">coldstorageservice23Arch</text>
+    <g
        id="clust1"
-       class="cluster"><title
-         id="title2">cluster_env</title><path
+       class="cluster">
+      <title
+         id="title2">cluster_env</title>
+      <path
          fill="#e5f5fd"
          stroke="#aeb6be"
-         d="m 20,-40 c 0,0 1064,0 1064,0 6,0 12,-6 12,-12 0,0 0,-745 0,-745 0,-6 -6,-12 -12,-12 0,0 -1064,0 -1064,0 -6,0 -12,6 -12,12 0,0 0,745 0,745 0,6 6,12 12,12"
-         id="path2" /><text
+         d="M20,-40C20,-40 2145,-40 2145,-40 2151,-40 2157,-46 2157,-52 2157,-52 2157,-797 2157,-797 2157,-803 2151,-809 2145,-809 2145,-809 20,-809 20,-809 14,-809 8,-803 8,-797 8,-797 8,-52 8,-52 8,-46 14,-40 20,-40"
+         id="path2" />
+      <text
          text-anchor="middle"
          x="27"
-         y="-795.40002"
+         y="-795.4"
          font-family="Sans-Serif"
-         font-size="12px"
+         font-size="12.00"
          fill="#2d3436"
-         id="text2">env</text></g><g
+         id="text2">env</text>
+    </g>
+    <g
        id="clust2"
-       class="cluster"><title
-         id="title3">cluster_ctxbasicrobot</title><path
-         fill="#ffffe0"
+       class="cluster">
+      <title
+         id="title3">cluster_ctxbasicrobot</title>
+      <path
+         fill="lightyellow"
          stroke="#aeb6be"
-         d="m 934,-594 c 0,0 142,0 142,0 6,0 12,-6 12,-12 0,0 0,-162 0,-162 0,-6 -6,-12 -12,-12 0,0 -142,0 -142,0 -6,0 -12,6 -12,12 0,0 0,162 0,162 0,6 6,12 12,12"
-         id="path3" /><text
+         d="M934,-594C934,-594 1076,-594 1076,-594 1082,-594 1088,-600 1088,-606 1088,-606 1088,-768 1088,-768 1088,-774 1082,-780 1076,-780 1076,-780 934,-780 934,-780 928,-780 922,-774 922,-768 922,-768 922,-606 922,-606 922,-600 928,-594 934,-594"
+         id="path3" />
+      <text
          text-anchor="middle"
          x="1005"
-         y="-758.40002"
+         y="-758.4"
          font-family="Sans-Serif"
-         font-size="22px"
+         font-size="22.00"
          fill="#2d3436"
-         id="text3">ctxbasicrobot</text></g><g
+         id="text3">ctxbasicrobot</text>
+    </g>
+    <g
        id="clust3"
-       class="cluster"><title
-         id="title4">cluster_ctx_coldstorageservice</title><path
-         fill="#ffffe0"
+       class="cluster">
+      <title
+         id="title4">cluster_ctx_coldstorageservice</title>
+      <path
+         fill="lightyellow"
          stroke="#aeb6be"
-         d="m 28,-48 c 0,0 1023,0 1023,0 6,0 12,-6 12,-12 0,0 0,-342 0,-342 0,-6 -6,-12 -12,-12 0,0 -1023,0 -1023,0 -6,0 -12,6 -12,12 0,0 0,342 0,342 0,6 6,12 12,12"
-         id="path4" /><text
+         d="M28,-48C28,-48 2137,-48 2137,-48 2143,-48 2149,-54 2149,-60 2149,-60 2149,-402 2149,-402 2149,-408 2143,-414 2137,-414 2137,-414 28,-414 28,-414 22,-414 16,-408 16,-402 16,-402 16,-60 16,-60 16,-54 22,-48 28,-48"
+         id="path4" />
+      <text
          text-anchor="middle"
          x="150.5"
-         y="-392.39999"
+         y="-392.4"
          font-family="Sans-Serif"
-         font-size="22px"
+         font-size="22.00"
          fill="#2d3436"
-         id="text4">ctx_coldstorageservice</text></g><!-- 2293d48bd4c54c1594ea8d188d0ac9cb --><g
+         id="text4">ctx_coldstorageservice</text>
+    </g>
+    <!-- 3f69b206f5e64b0b8c33636853c2aac8 -->
+    <g
        id="node1"
-       class="node"><title
-         id="title5">2293d48bd4c54c1594ea8d188d0ac9cb</title><image
+       class="node">
+      <title
+         id="title5">3f69b206f5e64b0b8c33636853c2aac8</title>
+      <image
          xlink:href="qakicons/symActorSmall.png"
-         width="101"
-         height="91.146301"
-         preserveAspectRatio="xMinYMin"
+         width="101px"
+         height="91.1463px"
+         preserveAspectRatio="xMinYMin meet"
          x="24"
          y="-350.573"
-         id="image5" /><text
+         id="image5" />
+      <text
          text-anchor="middle"
          x="74.5"
-         y="-240.10001"
+         y="-240.1"
          font-family="Sans-Serif"
-         font-size="13px"
+         font-size="13.00"
          fill="#2d3436"
-         id="text5">trolleyexecutor</text><text
-         text-anchor="middle"
-         x="46.87244"
-         y="170.47157"
-         font-family="Sans-Serif"
-         font-size="13px"
-         fill="#2d3436"
-         id="text5-7"
-         style="fill:#ff00ff"><tspan
-           style="opacity:1;fill:#ff00ff"
-           id="tspan6">chargestatus</tspan></text><text
-         text-anchor="middle"
-         x="528.46735"
-         y="133.99931"
-         font-family="Sans-Serif"
-         font-size="13px"
-         fill="#2d3436"
-         id="text5-2"><tspan
-           sodipodi:role="line"
-           id="tspan2"
-           x="528.46735"
-           y="133.99931">ServiceAccessGUI</tspan></text><g
-         id="g1"
-         transform="translate(159.73877,329.01384)"><text
-           text-anchor="middle"
-           x="-26.70369"
-           y="-158.54228"
-           font-family="Sans-Serif"
-           font-size="13px"
-           fill="#2d3436"
-           id="text5-0"
-           style="fill:#006400;fill-opacity:1">chargetaken</text><g
-           id="g1-9"
-           transform="translate(90.291955,-0.38204047)"><text
-             text-anchor="middle"
-             x="-32.70369"
-             y="-158.16023"
-             font-family="Sans-Serif"
-             font-size="13px"
-             fill="#2d3436"
-             id="text5-3"
-             style="fill:#006400;fill-opacity:1">chargefailed</text><text
-             text-anchor="middle"
-             x="66.952507"
-             y="-157.68645"
-             font-family="Sans-Serif"
-             font-size="13px"
-             fill="#2d3436"
-             id="text5-7-5"
-             style="fill:#ff00ff"><tspan
-               style="opacity:1;fill:#ff00ff"
-               id="tspan6-6">storerequest</tspan></text><text
-             text-anchor="middle"
-             x="155.55167"
-             y="-157.45888"
-             font-family="Sans-Serif"
-             font-size="13px"
-             fill="#2d3436"
-             id="text5-0-2"
-             style="fill:#006400;fill-opacity:1">loadaccepted</text><text
-             text-anchor="middle"
-             x="244.11328"
-             y="-157.45888"
-             font-family="Sans-Serif"
-             font-size="13px"
-             fill="#2d3436"
-             id="text5-3-9"
-             style="fill:#006400;fill-opacity:1">loadrejected</text><text
-             text-anchor="middle"
-             x="-212.60873"
-             y="-174.01013"
-             font-family="Sans-Serif"
-             font-size="13px"
-             fill="#2d3436"
-             id="text5-7-5-6"
-             style="fill:#ff00ff"><tspan
-               style="opacity:1;fill:#ff00ff"
-               id="tspan6-6-0">insertticket</tspan></text><text
-             text-anchor="middle"
-             x="-124.00957"
-             y="-175.27014"
-             font-family="Sans-Serif"
-             font-size="13px"
-             fill="#2d3436"
-             id="text5-0-2-6"
-             style="fill:#006400;fill-opacity:1">ticketaccepted</text><text
-             text-anchor="middle"
-             x="-29.187691"
-             y="-175.27014"
-             font-family="Sans-Serif"
-             font-size="13px"
-             fill="#2d3436"
-             id="text5-3-9-2"
-             style="fill:#006400;fill-opacity:1">ticketrejected</text><text
-             text-anchor="middle"
-             x="99.984001"
-             y="-174.86963"
-             font-family="Sans-Serif"
-             font-size="13px"
-             fill="#2d3436"
-             id="text5-7-5-6-6"
-             style="fill:#ff00ff"><tspan
-               style="opacity:1;fill:#ff00ff"
-               id="tspan6-6-0-7">initcoldroom</tspan></text><text
-             text-anchor="middle"
-             x="173.70229"
-             y="-173.67747"
-             font-family="Sans-Serif"
-             font-size="13px"
-             fill="#2d3436"
-             id="text5-0-2-6-5"
-             style="fill:#006400;fill-opacity:1">coldroom</text></g><text
-           xml:space="preserve"
-           style="font-size:9px;fill:#000000;stroke-width:0.75"
-           x="150.26112"
-           y="-208.50761"
-           id="text6"><tspan
-             sodipodi:role="line"
-             id="tspan3"
-             style="stroke-width:0.75"
-             x="150.26112"
-             y="-208.50761" /></text></g></g><!-- 06b95933e67145168802c302c7550863 --><g
+         id="text5">trolleyexecutor</text>
+    </g>
+    <!-- f5150e1d9c1b4bb081d1573879941822 -->
+    <g
        id="node2"
-       class="node"><title
-         id="title6">06b95933e67145168802c302c7550863</title><image
+       class="node">
+      <title
+         id="title6">f5150e1d9c1b4bb081d1573879941822</title>
+      <image
          xlink:href="qakicons/system.png"
-         width="101"
-         height="27.6577"
-         preserveAspectRatio="xMinYMin"
+         width="101px"
+         height="27.6577px"
+         preserveAspectRatio="xMinYMin meet"
          x="954"
-         y="-504.82901"
-         id="image6" /></g><!-- 2293d48bd4c54c1594ea8d188d0ac9cb&#45;&gt;06b95933e67145168802c302c7550863 --><g
+         y="-504.829"
+         id="image6" />
+    </g>
+    <!-- 3f69b206f5e64b0b8c33636853c2aac8&#45;&gt;f5150e1d9c1b4bb081d1573879941822 -->
+    <g
        id="edge1"
-       class="edge"><title
-         id="title7">2293d48bd4c54c1594ea8d188d0ac9cb-&gt;06b95933e67145168802c302c7550863</title><path
+       class="edge">
+      <title
+         id="title7">3f69b206f5e64b0b8c33636853c2aac8-&gt;f5150e1d9c1b4bb081d1573879941822</title>
+      <path
          fill="none"
-         stroke="#ff0000"
-         stroke-dasharray="1, 5"
-         d="m 100,-373.73 c 0,-52.99 0,-117.27 0,-117.27 0,0 843.93,0 843.93,0"
-         id="path7" /><polygon
-         fill="#ff0000"
-         stroke="#ff0000"
-         points="953.93,-491 943.93,-487.5 943.93,-494.5 "
-         id="polygon7" /><text
+         stroke="red"
+         stroke-dasharray="1,5"
+         d="M100,-373.73C100,-426.72 100,-491 100,-491 100,-491 943.93,-491 943.93,-491"
+         id="path7" />
+      <polygon
+         fill="red"
+         stroke="red"
+         points="943.93,-494.5 953.93,-491 943.93,-487.5 943.93,-494.5"
+         id="polygon7" />
+      <text
          text-anchor="middle"
-         x="526.44495"
-         y="-477.74649"
+         x="523.5"
+         y="-459.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#ff0000"
-         id="text7">alarm</text></g><!-- e53cc8a716a542d7b52f9017a06f0c21 --><g
+         font-size="13.00"
+         fill="red"
+         id="text7">alarm</text>
+    </g>
+    <!-- 4414111ce9924518b3d7a8240c75d5f3 -->
+    <g
        id="node4"
-       class="node"><title
-         id="title8">e53cc8a716a542d7b52f9017a06f0c21</title><image
+       class="node">
+      <title
+         id="title8">4414111ce9924518b3d7a8240c75d5f3</title>
+      <image
          xlink:href="qakicons/symActorSmall.png"
-         width="101"
-         height="91.146301"
-         preserveAspectRatio="xMinYMin"
+         width="101px"
+         height="91.1463px"
+         preserveAspectRatio="xMinYMin meet"
          x="954"
          y="-350.573"
-         id="image8" /><text
+         id="image8" />
+      <text
          text-anchor="middle"
          x="1004.5"
-         y="-240.10001"
+         y="-240.1"
          font-family="Sans-Serif"
-         font-size="13px"
+         font-size="13.00"
          fill="#2d3436"
-         id="text8">transporttrolley</text></g><!-- 2293d48bd4c54c1594ea8d188d0ac9cb&#45;&gt;e53cc8a716a542d7b52f9017a06f0c21 --><g
-       id="edge7"
-       class="edge"><title
-         id="title9">2293d48bd4c54c1594ea8d188d0ac9cb-&gt;e53cc8a716a542d7b52f9017a06f0c21</title><path
+         id="text8">transporttrolley</text>
+    </g>
+    <!-- 3f69b206f5e64b0b8c33636853c2aac8&#45;&gt;4414111ce9924518b3d7a8240c75d5f3 -->
+    <g
+       id="edge9"
+       class="edge">
+      <title
+         id="title9">3f69b206f5e64b0b8c33636853c2aac8-&gt;4414111ce9924518b3d7a8240c75d5f3</title>
+      <path
          fill="none"
-         stroke="#0000ff"
-         d="m 125.16,-282.17 c 0,0 818.63,0 818.63,0"
-         id="path9" /><polygon
-         fill="#0000ff"
-         stroke="#0000ff"
-         points="953.79,-282.17 943.79,-278.67 943.79,-285.67 "
-         id="polygon9" /><text
+         stroke="blue"
+         d="M125.16,-270.75C125.16,-270.75 943.79,-270.75 943.79,-270.75"
+         id="path9" />
+      <polygon
+         fill="blue"
+         stroke="blue"
+         points="943.79,-274.25 953.79,-270.75 943.79,-267.25 943.79,-274.25"
+         id="polygon9" />
+      <text
          text-anchor="start"
-         x="501.37711"
-         y="-266.82233"
+         x="506.5"
+         y="-239.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#0000ff"
-         id="text9">fail  </text></g><!-- 1f6de9c9a25149e1b33d64f49fd20be2 --><g
+         font-size="13.00"
+         fill="blue"
+         id="text9">fail   </text>
+    </g>
+    <!-- 56f5f83ddbc24939a7d0d76f3d88f308 -->
+    <g
        id="node6"
-       class="node"><title
-         id="title10">1f6de9c9a25149e1b33d64f49fd20be2</title><image
+       class="node">
+      <title
+         id="title10">56f5f83ddbc24939a7d0d76f3d88f308</title>
+      <image
          xlink:href="qakicons/externalQActor.png"
-         width="101"
-         height="90.772202"
-         preserveAspectRatio="xMinYMin"
+         width="101px"
+         height="90.7722px"
+         preserveAspectRatio="xMinYMin meet"
          x="954"
-         y="-716.38599"
-         id="image10" /><text
+         y="-716.386"
+         id="image10" />
+      <text
          text-anchor="middle"
          x="1004.5"
-         y="-606.09998"
+         y="-606.1"
          font-family="Sans-Serif"
-         font-size="13px"
+         font-size="13.00"
          fill="#2d3436"
-         id="text10">basicrobot(ext)</text></g><!-- 2293d48bd4c54c1594ea8d188d0ac9cb&#45;&gt;1f6de9c9a25149e1b33d64f49fd20be2 --><g
+         id="text10">basicrobot(ext)</text>
+    </g>
+    <!-- 3f69b206f5e64b0b8c33636853c2aac8&#45;&gt;56f5f83ddbc24939a7d0d76f3d88f308 -->
+    <g
        id="edge5"
-       class="edge"><title
-         id="title11">2293d48bd4c54c1594ea8d188d0ac9cb-&gt;1f6de9c9a25149e1b33d64f49fd20be2</title><path
+       class="edge">
+      <title
+         id="title11">3f69b206f5e64b0b8c33636853c2aac8-&gt;56f5f83ddbc24939a7d0d76f3d88f308</title>
+      <path
          fill="none"
-         stroke="#ff00ff"
-         d="m 50,-373.62 c 0,-111.63 0,-320.21 0,-320.21 0,0 893.86,0 893.86,0"
-         id="path11" /><polygon
-         fill="#ff00ff"
-         stroke="#ff00ff"
-         points="953.86,-693.83 943.86,-690.33 943.86,-697.33 "
-         id="polygon11" /><text
+         stroke="magenta"
+         d="M50,-373.62C50,-485.25 50,-693.83 50,-693.83 50,-693.83 943.86,-693.83 943.86,-693.83"
+         id="path11" />
+      <polygon
+         fill="magenta"
+         stroke="magenta"
+         points="943.86,-697.33 953.86,-693.83 943.86,-690.33 943.86,-697.33"
+         id="polygon11" />
+      <text
          text-anchor="start"
          x="152"
-         y="-567.59998"
+         y="-567.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#ff00ff"
-         id="text11">engage</text><text
+         font-size="13.00"
+         fill="magenta"
+         id="text11">engage</text>
+      <text
          text-anchor="start"
          x="202"
-         y="-567.59998"
+         y="-567.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#006400"
-         id="text12">engagedone engagerefused</text><text
+         font-size="13.00"
+         fill="darkgreen"
+         id="text12"> engagedone engagerefused</text>
+      <text
          text-anchor="start"
          x="393"
-         y="-567.59998"
+         y="-567.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#ff00ff"
-         id="text13">  moverobot</text><text
+         font-size="13.00"
+         fill="magenta"
+         id="text13">   moverobot</text>
+      <text
          text-anchor="start"
          x="479"
-         y="-567.59998"
+         y="-567.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#006400"
-         id="text14">moverobotdone moverobotfailed</text><text
+         font-size="13.00"
+         fill="darkgreen"
+         id="text14"> moverobotdone moverobotfailed</text>
+      <text
          text-anchor="start"
          x="702"
-         y="-567.59998"
+         y="-567.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#ff00ff"
-         id="text15">  getrobotstate</text><text
+         font-size="13.00"
+         fill="magenta"
+         id="text15">   getrobotstate</text>
+      <text
          text-anchor="start"
          x="807"
-         y="-567.59998"
+         y="-567.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#006400"
-         id="text16">robotstate</text><text
+         font-size="13.00"
+         fill="darkgreen"
+         id="text16"> robotstate</text>
+      <text
          text-anchor="start"
          x="881"
-         y="-567.59998"
+         y="-567.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#ff00ff"
-         id="text17"> </text><polyline
+         font-size="13.00"
+         fill="magenta"
+         id="text17">   </text>
+      <polyline
          fill="none"
-         stroke="#ff00ff"
+         stroke="magenta"
          points="895,-563 152,-563 523.76,-693.83 "
-         id="polyline17" /></g><!-- 2293d48bd4c54c1594ea8d188d0ac9cb&#45;&gt;1f6de9c9a25149e1b33d64f49fd20be2 --><g
-       id="edge8"
-       class="edge"><title
-         id="title17">2293d48bd4c54c1594ea8d188d0ac9cb-&gt;1f6de9c9a25149e1b33d64f49fd20be2</title><path
+         id="polyline17" />
+    </g>
+    <!-- 3f69b206f5e64b0b8c33636853c2aac8&#45;&gt;56f5f83ddbc24939a7d0d76f3d88f308 -->
+    <g
+       id="edge11"
+       class="edge">
+      <title
+         id="title17">3f69b206f5e64b0b8c33636853c2aac8-&gt;56f5f83ddbc24939a7d0d76f3d88f308</title>
+      <path
          fill="none"
-         stroke="#0000ff"
-         d="m 75,-373.62 c 0,-100.14 0,-274.55 0,-274.55 0,0 868.87,0 868.87,0"
-         id="path17" /><polygon
-         fill="#0000ff"
-         stroke="#0000ff"
-         points="953.87,-648.17 943.87,-644.67 943.87,-651.67 "
-         id="polygon17" /><text
+         stroke="blue"
+         d="M75,-373.62C75,-473.76 75,-648.17 75,-648.17 75,-648.17 943.87,-648.17 943.87,-648.17"
+         id="path17" />
+      <polygon
+         fill="blue"
+         stroke="blue"
+         points="943.87,-651.67 953.87,-648.17 943.87,-644.67 943.87,-651.67"
+         id="polygon17" />
+      <text
          text-anchor="start"
          x="431"
-         y="-651.59998"
+         y="-651.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#0000ff"
-         id="text18">setrobotstate   disengage  </text></g><!-- 7058707eb1f44b91bcf43921400d7cf2 --><g
+         font-size="13.00"
+         fill="blue"
+         id="text18">setrobotstate   disengage   </text>
+    </g>
+    <!-- 840b18d1dd6343388eaee638ae6eeca3 -->
+    <g
        id="node3"
-       class="node"><title
-         id="title18">7058707eb1f44b91bcf43921400d7cf2</title><image
+       class="node">
+      <title
+         id="title18">840b18d1dd6343388eaee638ae6eeca3</title>
+      <image
          xlink:href="qakicons/symActorSmall.png"
-         width="101"
-         height="91.146301"
-         preserveAspectRatio="xMinYMin"
-         x="24"
-         y="-170.573"
-         id="image18" /><text
+         width="101px"
+         height="91.1463px"
+         preserveAspectRatio="xMinYMin meet"
+         x="1732"
+         y="-288.573"
+         id="image18" />
+      <text
          text-anchor="middle"
-         x="74.5"
-         y="-60.099998"
+         x="1782.5"
+         y="-178.1"
          font-family="Sans-Serif"
-         font-size="13px"
+         font-size="13.00"
          fill="#2d3436"
-         id="text19">coldstorageservice</text></g><!-- 7058707eb1f44b91bcf43921400d7cf2&#45;&gt;e53cc8a716a542d7b52f9017a06f0c21 --><g
+         id="text19">coldstorageservice</text>
+    </g>
+    <!-- 840b18d1dd6343388eaee638ae6eeca3&#45;&gt;4414111ce9924518b3d7a8240c75d5f3 -->
+    <g
        id="edge2"
-       class="edge"><title
-         id="title19">7058707eb1f44b91bcf43921400d7cf2-&gt;e53cc8a716a542d7b52f9017a06f0c21</title><path
+       class="edge">
+      <title
+         id="title19">840b18d1dd6343388eaee638ae6eeca3-&gt;4414111ce9924518b3d7a8240c75d5f3</title>
+      <path
          fill="none"
-         stroke="#ff00ff"
-         d="m 75,-193.67 c 0,-12.32 0,-21.33 0,-21.33 0,0 930,0 930,0 0,0 0,-11.33 0,-11.33"
-         id="path19" /><polygon
-         fill="#ff00ff"
-         stroke="#ff00ff"
-         points="1005,-236.33 1008.5,-226.33 1001.5,-226.33 "
-         id="polygon19" /><text
+         stroke="magenta"
+         d="M1731.75,-261.5C1731.75,-261.5 1065.03,-261.5 1065.03,-261.5"
+         id="path19" />
+      <polygon
+         fill="magenta"
+         stroke="magenta"
+         points="1065.03,-258 1055.03,-261.5 1065.03,-265 1065.03,-258"
+         id="polygon19" />
+      <text
          text-anchor="start"
-         x="228.5"
-         y="-236.60001"
+         x="1115"
+         y="-309.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#ff00ff"
-         id="text20">deposit</text><text
+         font-size="13.00"
+         fill="magenta"
+         id="text20">deposit</text>
+      <text
          text-anchor="start"
-         x="277.5"
-         y="-236.60001"
+         x="1164"
+         y="-309.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#006400"
-         id="text21">chargetakentt chargefailedtt</text><text
+         font-size="13.00"
+         fill="darkgreen"
+         id="text21"> chargetakentt chargefailedtt</text>
+      <text
          text-anchor="start"
-         x="473.5"
-         y="-236.60001"
+         x="1360"
+         y="-309.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#ff00ff"
-         id="text22">  depositstatus</text><text
+         font-size="13.00"
+         fill="magenta"
+         id="text22">   depositstatus</text>
+      <text
          text-anchor="start"
-         x="576.5"
-         y="-236.60001"
+         x="1463"
+         y="-309.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#006400"
-         id="text23">chargedeposited chargedepfailed</text><text
+         font-size="13.00"
+         fill="darkgreen"
+         id="text23"> chargedeposited chargedepfailed</text>
+      <text
          text-anchor="start"
-         x="804.5"
-         y="-236.60001"
+         x="1691"
+         y="-309.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#ff00ff"
-         id="text24"> </text><polyline
+         font-size="13.00"
+         fill="magenta"
+         id="text24">   </text>
+      <polyline
          fill="none"
-         stroke="#ff00ff"
-         points="818.5,-232 228.5,-232 75,-215 "
-         id="polyline24" /></g><!-- 784eeb3ba71b472aa94d7e11c96772f3 --><g
+         stroke="magenta"
+         points="1705,-305 1115,-305 1409.62,-261.5 "
+         id="polyline24" />
+    </g>
+    <!-- d93fdbf87da845989016df694a1636d0 -->
+    <g
        id="node5"
-       class="node"><title
-         id="title24">784eeb3ba71b472aa94d7e11c96772f3</title><image
+       class="node">
+      <title
+         id="title24">d93fdbf87da845989016df694a1636d0</title>
+      <image
          xlink:href="qakicons/symActorSmall.png"
-         width="101"
-         height="91.146301"
-         preserveAspectRatio="xMinYMin"
-         x="954"
-         y="-170.573"
-         id="image24" /><text
+         width="101px"
+         height="91.1463px"
+         preserveAspectRatio="xMinYMin meet"
+         x="2040"
+         y="-288.573"
+         id="image24" />
+      <text
          text-anchor="middle"
-         x="1004.5"
-         y="-60.099998"
+         x="2090.5"
+         y="-178.1"
          font-family="Sans-Serif"
-         font-size="13px"
+         font-size="13.00"
          fill="#2d3436"
-         id="text25">ticketmanager</text></g><!-- 7058707eb1f44b91bcf43921400d7cf2&#45;&gt;784eeb3ba71b472aa94d7e11c96772f3 --><g
+         id="text25">ticketmanager</text>
+    </g>
+    <!-- 840b18d1dd6343388eaee638ae6eeca3&#45;&gt;d93fdbf87da845989016df694a1636d0 -->
+    <g
        id="edge3"
-       class="edge"><title
-         id="title25">7058707eb1f44b91bcf43921400d7cf2-&gt;784eeb3ba71b472aa94d7e11c96772f3</title><path
+       class="edge">
+      <title
+         id="title25">840b18d1dd6343388eaee638ae6eeca3-&gt;d93fdbf87da845989016df694a1636d0</title>
+      <path
          fill="none"
-         stroke="#ff00ff"
-         d="m 125.16,-102.17 c 0,0 818.63,0 818.63,0"
-         id="path25" /><polygon
-         fill="#ff00ff"
-         stroke="#ff00ff"
-         points="953.79,-102.17 943.79,-98.67 943.79,-105.67 "
-         id="polygon25" /><polygon
-         fill="#ff00ff"
-         stroke="#ff00ff"
-         points="953.79,-102.17 943.79,-98.67 943.79,-105.67 "
-         id="polygon25-1"
-         transform="rotate(-90,537.44564,361.11676)" /><text
+         stroke="magenta"
+         d="M1833.02,-220.17C1833.02,-220.17 2029.96,-220.17 2029.96,-220.17"
+         id="path25" />
+      <polygon
+         fill="magenta"
+         stroke="magenta"
+         points="2029.96,-223.67 2039.96,-220.17 2029.96,-216.67 2029.96,-223.67"
+         id="polygon25" />
+      <text
          text-anchor="start"
-         x="447"
-         y="-171.60001"
+         x="1860"
+         y="-216.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#ff00ff"
-         id="text26">generateticket</text><text
+         font-size="13.00"
+         fill="magenta"
+         id="text26">generateticket</text>
+      <text
          text-anchor="start"
-         x="544"
-         y="-171.60001"
+         x="1957"
+         y="-216.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#006400"
-         id="text27">ticket</text><text
+         font-size="13.00"
+         fill="darkgreen"
+         id="text27"> ticket</text>
+      <text
          text-anchor="start"
-         x="586"
-         y="-171.60001"
+         x="1999"
+         y="-216.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#ff00ff"
-         id="text28"> </text><polyline
+         font-size="13.00"
+         fill="magenta"
+         id="text28">   </text>
+      <polyline
          fill="none"
-         stroke="#ff00ff"
-         points="600,-167 447,-167 523.69,-102.17 "
-         id="polyline28" /></g><!-- e53cc8a716a542d7b52f9017a06f0c21&#45;&gt;2293d48bd4c54c1594ea8d188d0ac9cb --><g
+         stroke="magenta"
+         points="2013,-212 1860,-212 1936.68,-220.17 "
+         id="polyline28" />
+    </g>
+    <!-- 4414111ce9924518b3d7a8240c75d5f3&#45;&gt;3f69b206f5e64b0b8c33636853c2aac8 -->
+    <g
        id="edge4"
-       class="edge"><title
-         id="title28">e53cc8a716a542d7b52f9017a06f0c21-&gt;2293d48bd4c54c1594ea8d188d0ac9cb</title><path
+       class="edge">
+      <title
+         id="title28">4414111ce9924518b3d7a8240c75d5f3-&gt;3f69b206f5e64b0b8c33636853c2aac8</title>
+      <path
          fill="none"
-         stroke="#ff00ff"
-         d="m 953.84,-327.83 c 0,0 -818.63,0 -818.63,0"
-         id="path28" /><polygon
-         fill="#ff00ff"
-         stroke="#ff00ff"
-         points="125.21,-327.83 135.21,-331.33 135.21,-324.33 "
-         id="polygon28" /><text
+         stroke="magenta"
+         d="M953.84,-305C953.84,-305 135.21,-305 135.21,-305"
+         id="path28" />
+      <polygon
+         fill="magenta"
+         stroke="magenta"
+         points="135.21,-301.5 125.21,-305 135.21,-308.5 135.21,-301.5"
+         id="polygon28" />
+      <text
          text-anchor="start"
          x="289"
-         y="-300.60001"
+         y="-302.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#ff00ff"
-         id="text29">move</text><text
+         font-size="13.00"
+         fill="magenta"
+         id="text29">move</text>
+      <text
          text-anchor="start"
          x="326"
-         y="-300.60001"
+         y="-302.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#006400"
-         id="text30">movedone movefailed</text><text
+         font-size="13.00"
+         fill="darkgreen"
+         id="text30"> movedone movefailed</text>
+      <text
          text-anchor="start"
          x="479"
-         y="-300.60001"
+         y="-302.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#ff00ff"
-         id="text31">  moveclosest</text><text
+         font-size="13.00"
+         fill="magenta"
+         id="text31">   moveclosest</text>
+      <text
          text-anchor="start"
          x="576"
-         y="-300.60001"
+         y="-302.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#006400"
-         id="text32">movecdone movecfailed</text><text
+         font-size="13.00"
+         fill="darkgreen"
+         id="text32"> movecdone movecfailed</text>
+      <text
          text-anchor="start"
          x="744"
-         y="-300.60001"
+         y="-302.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#ff00ff"
-         id="text33"> </text><polyline
+         font-size="13.00"
+         fill="magenta"
+         id="text33">   </text>
+      <polyline
          fill="none"
-         stroke="#ff00ff"
-         points="758,-296 289,-296 523.55,-327.83 "
-         id="polyline33" /></g><!-- 784eeb3ba71b472aa94d7e11c96772f3&#45;&gt;7058707eb1f44b91bcf43921400d7cf2 --><g
+         stroke="magenta"
+         points="758,-298 289,-298 523.55,-305 "
+         id="polyline33" />
+    </g>
+    <!-- 4414111ce9924518b3d7a8240c75d5f3&#45;&gt;3f69b206f5e64b0b8c33636853c2aac8 -->
+    <g
+       id="edge8"
+       class="edge">
+      <title
+         id="title33">4414111ce9924518b3d7a8240c75d5f3-&gt;3f69b206f5e64b0b8c33636853c2aac8</title>
+    </g>
+    <!-- 4414111ce9924518b3d7a8240c75d5f3&#45;&gt;840b18d1dd6343388eaee638ae6eeca3 -->
+    <g
        id="edge6"
-       class="edge"><title
-         id="title33">784eeb3ba71b472aa94d7e11c96772f3-&gt;7058707eb1f44b91bcf43921400d7cf2</title><path
+       class="edge">
+      <title
+         id="title34">4414111ce9924518b3d7a8240c75d5f3-&gt;840b18d1dd6343388eaee638ae6eeca3</title>
+      <path
          fill="none"
-         stroke="#0000ff"
-         d="m 953.84,-147.83 c 0,0 -818.63,0 -818.63,0"
-         id="path33" /><polygon
-         fill="#0000ff"
-         stroke="#0000ff"
-         points="125.21,-147.83 135.21,-151.33 135.21,-144.33 "
-         id="polygon33" /><text
+         stroke="blue"
+         d="M1055.25,-286.5C1055.25,-286.5 1721.97,-286.5 1721.97,-286.5"
+         id="path34" />
+      <polygon
+         fill="blue"
+         stroke="blue"
+         points="1721.97,-290 1731.97,-286.5 1721.97,-283 1721.97,-290"
+         id="polygon34" />
+      <text
          text-anchor="start"
-         x="528.1416"
-         y="-132.78967"
+         x="1363"
+         y="-246.6"
          font-family="Sans-Serif"
-         font-size="13px"
-         fill="#0000ff"
-         id="text34">initdeposit  </text></g></g><path
-     fill="none"
-     stroke="#ff00ff"
-     d="M 718.70377,997.70865 608.47011,914.99648"
-     id="path25-2-2"
-     style="stroke-width:0.334709"
-     sodipodi:nodetypes="cc" /><path
-     fill="none"
-     stroke="#ff00ff"
-     d="m 234.25403,998.46987 c 0,0 541.43073,0 541.43073,0"
-     id="path25-2-0"
-     style="stroke-width:0.813257" /><g
-     transform="matrix(0.01472387,0,0,-0.01472387,734.33482,954.22571)"
-     fill="#000000"
-     stroke="none"
-     id="g12"><path
-       d="M 382,4890 C 270,4873 155,4787 107,4682 L 85,4635 V 3075 1515 l 26,-56 c 37,-79 90,-133 167,-171 l 67,-33 697,-3 c 559,-2 698,-5 698,-15 0,-7 -22,-125 -50,-262 L 1640,727 1515,526 c -76,-122 -125,-210 -125,-226 1,-35 22,-59 61,-70 50,-15 1727,-13 1768,1 35,12 51,35 51,73 0,16 -49,104 -124,225 l -124,198 -51,254 c -28,140 -51,257 -51,262 0,4 126,7 280,7 h 280 V 856 c 0,-444 2,-462 71,-540 22,-25 61,-54 91,-67 l 53,-24 h 570 570 l 49,24 c 56,28 107,77 133,129 17,35 18,94 18,1248 v 1211 l -30,48 c -35,57 -99,109 -153,125 -20,6 -90,14 -154,17 l -118,6 -2,801 -3,801 -26,55 c -52,110 -151,182 -276,200 -81,11 -3810,12 -3891,0 z m 3912,-162 c 52,-16 108,-72 124,-124 9,-31 12,-232 12,-808 v -766 h -102 -101 l 7,719 c 8,810 11,780 -61,801 -27,8 -551,10 -1866,8 l -1829,-3 -24,-28 -24,-28 V 3091 c 0,-1002 3,-1417 11,-1440 6,-17 19,-36 29,-41 12,-6 558,-10 1514,-10 h 1496 v -97 -98 l -1518,-2 c -1057,-2 -1533,1 -1571,8 -70,14 -132,73 -149,141 -16,63 -17,2984 -1,3041 13,49 63,105 114,128 38,18 125,19 1969,19 1494,0 1938,-3 1970,-12 z M 4070,4180 V 3960 H 2330 590 v 220 220 h 1740 1740 z m 0,-764 v -384 l -183,-4 c -175,-4 -186,-5 -239,-31 -64,-31 -111,-80 -142,-146 -20,-45 -21,-61 -24,-573 l -3,-528 H 2035 590 v 1025 1025 h 1740 1740 z m 769,-582 c 35,-29 51,-76 51,-151 v -53 h -620 -620 v 78 c 1,44 6,87 14,101 28,51 23,50 603,51 h 541 z m 51,-1214 V 770 h -625 -625 v 850 850 h 625 625 z M 2760,1247 c 0,-2 20,-104 45,-227 25,-123 45,-227 45,-232 0,-4 -234,-8 -521,-8 h -521 l 5,23 c 3,12 25,118 48,235 l 42,212 h 428 c 236,0 429,-1 429,-3 z m 218,-743 c 40,-64 72,-118 69,-120 -2,-2 -326,-3 -720,-2 l -717,3 72,117 73,118 h 575 575 z m 1912,64 c -1,-70 -17,-119 -49,-152 l -31,-31 -530,-3 c -586,-3 -581,-3 -620,60 -15,24 -20,50 -20,101 v 67 h 625 625 z"
-       id="path1" /><path
-       d="m 815,4225 c -30,-30 -32,-64 -4,-99 20,-25 23,-26 133,-26 105,0 114,2 134,23 29,31 28,72 -3,102 -23,23 -31,25 -130,25 -99,0 -107,-2 -130,-25 z"
-       id="path2-3" /><path
-       d="m 1246,4229 c -34,-27 -36,-77 -3,-107 21,-20 34,-22 134,-22 109,0 112,1 132,26 28,35 26,69 -4,99 -22,23 -31,25 -128,25 -90,0 -108,-3 -131,-21 z"
-       id="path3-6" /><path
-       d="m 1678,4236 c -41,-31 -37,-113 7,-130 9,-3 64,-6 121,-6 91,0 107,3 124,20 27,27 27,83 -2,110 -19,18 -35,20 -127,20 -71,-1 -112,-5 -123,-14 z"
-       id="path4-7" /><path
-       d="m 868,3524 c -51,-27 -50,-102 2,-129 25,-13 112,-15 629,-15 h 600 l 27,23 c 20,17 27,33 27,57 0,24 -7,40 -27,57 l -27,23 h -602 c -513,-1 -606,-3 -629,-16 z"
-       id="path5" /><path
-       d="m 855,3085 c -30,-30 -32,-64 -4,-99 l 20,-26 h 1165 c 1151,0 1164,0 1184,20 30,30 27,83 -6,109 -27,21 -28,21 -1181,21 H 879 Z"
-       id="path6" /><path
-       d="m 893,2713 c -13,-2 -32,-16 -43,-30 -19,-24 -20,-40 -20,-328 0,-283 1,-304 19,-326 l 19,-24 309,-3 c 302,-3 310,-2 336,18 l 27,21 v 310 c 0,183 -4,318 -10,329 -19,35 -64,40 -344,39 -149,-1 -281,-4 -293,-6 z m 497,-353 V 2160 H 1190 990 v 200 200 h 200 200 z"
-       id="path7-5" /><path
-       d="m 1783,2713 c -13,-2 -32,-16 -43,-30 -19,-24 -20,-40 -20,-319 0,-310 3,-333 47,-353 16,-7 124,-11 318,-11 h 294 l 28,24 28,24 v 311 c 0,310 0,311 -23,333 -22,23 -25,23 -315,24 -160,1 -302,0 -314,-3 z m 497,-353 v -200 h -200 -200 v 200 200 h 200 200 z"
-       id="path8" /><path
-       d="m 2674,2713 c -12,-2 -30,-13 -40,-25 -18,-19 -19,-42 -19,-330 v -310 l 28,-24 28,-24 h 294 c 194,0 302,4 318,11 44,20 47,43 47,354 v 294 l -24,28 -24,28 -294,1 c -161,1 -303,0 -314,-3 z m 496,-353 v -200 h -200 -200 v 200 200 h 200 200 z"
-       id="path9-3" /><path
-       d="m 3935,2285 c -30,-30 -32,-64 -4,-99 l 20,-26 h 175 c 161,0 176,2 194,20 28,28 26,81 -3,108 -22,21 -33,22 -191,22 -164,0 -167,0 -191,-25 z"
-       id="path10" /><path
-       d="m 3931,1924 c -28,-35 -26,-69 4,-99 l 24,-25 h 303 c 326,1 327,1 347,53 11,29 6,52 -17,80 -14,15 -42,17 -328,17 h -313 z"
-       id="path11-5" /><path
-       d="m 3961,1599 c -50,-20 -50,-25 -51,-327 V 989 l 25,-24 24,-25 h 306 c 289,0 306,1 324,19 30,30 32,63 29,343 -3,253 -3,258 -26,280 -22,23 -25,23 -315,25 -174,1 -302,-2 -316,-8 z m 499,-329 v -180 l -197,2 -198,3 -3,178 -2,177 h 200 200 z"
-       id="path12" /></g><path
-     fill="none"
-     stroke="#ff00ff"
-     d="m 316.64455,915.19346 c 0,0 414.27014,0 414.27014,0"
-     id="path25-2"
-     style="stroke-width:0.711374" /><path
-     fill="none"
-     stroke="#ff00ff"
-     d="m 316.83761,915.70397 c 0,0 0,-131.59252 0,-131.59252"
-     id="path25-2-9"
-     style="stroke-width:0.400934" /></svg>
+         font-size="13.00"
+         fill="blue"
+         id="text35">coapUpdate   </text>
+    </g>
+    <!-- d93fdbf87da845989016df694a1636d0&#45;&gt;840b18d1dd6343388eaee638ae6eeca3 -->
+    <g
+       id="edge7"
+       class="edge">
+      <title
+         id="title35">d93fdbf87da845989016df694a1636d0-&gt;840b18d1dd6343388eaee638ae6eeca3</title>
+      <path
+         fill="none"
+         stroke="blue"
+         d="M2039.98,-265.83C2039.98,-265.83 1843.04,-265.83 1843.04,-265.83"
+         id="path35" />
+      <polygon
+         fill="blue"
+         stroke="blue"
+         points="1843.04,-262.33 1833.04,-265.83 1843.04,-269.33 1843.04,-262.33"
+         id="polygon35" />
+      <text
+         text-anchor="start"
+         x="1894.5"
+         y="-277.6"
+         font-family="Sans-Serif"
+         font-size="13.00"
+         fill="blue"
+         id="text36">initdeposit   </text>
+    </g>
+    <!-- 825331e304794d8c831e6fce7f2c2d37 -->
+    <g
+       id="node7"
+       class="node">
+      <title
+         id="title36">825331e304794d8c831e6fce7f2c2d37</title>
+      <image
+         xlink:href="qakicons/symActorSmall.png"
+         width="101px"
+         height="91.1463px"
+         preserveAspectRatio="xMinYMin meet"
+         x="954"
+         y="-170.573"
+         id="image36" />
+      <text
+         text-anchor="middle"
+         x="1004.5"
+         y="-60.1"
+         font-family="Sans-Serif"
+         font-size="13.00"
+         fill="#2d3436"
+         id="text37">sonarrec</text>
+    </g>
+    <!-- 825331e304794d8c831e6fce7f2c2d37&#45;&gt;840b18d1dd6343388eaee638ae6eeca3 -->
+    <g
+       id="edge10"
+       class="edge">
+      <title
+         id="title37">825331e304794d8c831e6fce7f2c2d37-&gt;840b18d1dd6343388eaee638ae6eeca3</title>
+      <path
+         fill="none"
+         stroke="blue"
+         d="M1055.25,-184C1055.25,-184 1721.97,-184 1721.97,-184"
+         id="path37" />
+      <polygon
+         fill="blue"
+         stroke="blue"
+         points="1721.97,-187.5 1731.97,-184 1721.97,-180.5 1721.97,-187.5"
+         id="polygon37" />
+      <text
+         text-anchor="start"
+         x="1330"
+         y="-156.6"
+         font-family="Sans-Serif"
+         font-size="13.00"
+         fill="blue"
+         id="text38">sonarstart   sonarstop   </text>
+    </g>
+  </g>
+</svg>
