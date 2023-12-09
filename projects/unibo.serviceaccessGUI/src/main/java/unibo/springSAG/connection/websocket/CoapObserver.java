@@ -1,9 +1,8 @@
-package unibo.springSAGSim.connection.websocket;
+package unibo.springSAG.connection.websocket;
 
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import unibo.basicomm23.utils.CommUtils;
-import unibo.springSAGSim.connection.websocket.WebSocketConfiguration;
 
 public class CoapObserver implements CoapHandler {
     private static final String className        = "CoapObserver";

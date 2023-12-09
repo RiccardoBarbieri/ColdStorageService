@@ -1,10 +1,10 @@
-package unibo.springSAGSim;
+package unibo.springSSG;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.stereotype.Component;
-import unibo.springSAGSim.connection.websocket.WebSocketHandler;
+import unibo.springSSG.connection.websocket.WebSocketHandler;
 
 @Component
 public class ShutdownHook implements ApplicationListener<ContextClosedEvent> {

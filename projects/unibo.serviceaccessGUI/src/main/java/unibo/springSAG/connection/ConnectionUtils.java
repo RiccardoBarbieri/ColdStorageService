@@ -1,8 +1,6 @@
-package unibo.springSAGSim.connection;
+package unibo.springSAG.connection;
 
-import org.springframework.beans.factory.annotation.Value;
 import unibo.basicomm23.interfaces.Interaction;
-import unibo.basicomm23.coap.CoapConnection;
 import unibo.basicomm23.utils.CommSystemConfig;
 import unibo.basicomm23.utils.CommUtils;
 

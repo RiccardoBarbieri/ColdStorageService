@@ -1,4 +1,4 @@
-package unibo.springSAGSim.model;
+package unibo.springSAG.model;
 
 public class TicketRequest {
 

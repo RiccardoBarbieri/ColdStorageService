@@ -1,4 +1,4 @@
-package unibo.springSAGSim.connection;
+package unibo.springSAG.connection;
 
 import org.eclipse.californium.core.CoapClient;
 import unibo.basicomm23.coap.CoapConnection;

@@ -1,4 +1,4 @@
-package unibo.springSAGSim;
+package unibo.springSAG;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import unibo.basicomm23.coap.CoapConnection;
 import unibo.basicomm23.interfaces.Interaction;
-import unibo.springSAGSim.connection.SagConnection;
-import unibo.springSAGSim.connection.websocket.CoapObserver;
-import unibo.springSAGSim.model.FWRequest;
-import unibo.springSAGSim.model.TicketRequest;
+import unibo.springSAG.connection.SagConnection;
+import unibo.springSAG.connection.websocket.CoapObserver;
+import unibo.springSAG.model.FWRequest;
+import unibo.springSAG.model.TicketRequest;
 
 import java.io.ByteArrayOutputStream;
 

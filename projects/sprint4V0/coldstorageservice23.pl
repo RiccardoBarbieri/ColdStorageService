@@ -49,7 +49,7 @@ event( alarm, alarm(X) ).
 request( getrobotstate, getrobotstate(ARG) ).
 reply( robotstate, robotstate(POS,DIR) ).  %%for getrobotstate
 %====================================================================================
-context(ctxbasicrobot, "127.0.0.1",  "TCP", "8020").
+context(ctxbasicrobot, "basicrobot23",  "TCP", "8020").
 context(ctx_coldstorageservice, "localhost",  "TCP", "8021").
  qactor( ticketmanager, ctx_coldstorageservice, "it.unibo.ticketmanager.Ticketmanager").
   qactor( transporttrolley, ctx_coldstorageservice, "it.unibo.transporttrolley.Transporttrolley").

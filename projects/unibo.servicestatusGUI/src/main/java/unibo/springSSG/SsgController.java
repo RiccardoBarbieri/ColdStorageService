@@ -1,4 +1,4 @@
-package unibo.springSAGSim;
+package unibo.springSSG;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,25 +7,25 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import unibo.basicomm23.coap.CoapConnection;
 import unibo.basicomm23.interfaces.Interaction;
-import unibo.springSAGSim.connection.SagConnection;
-import unibo.springSAGSim.connection.websocket.CoapObserver;
+import unibo.springSSG.connection.SsgConnection;
+import unibo.springSSG.connection.websocket.CoapObserver;
 
 @Controller
-public class SagController {
+public class SsgController {
 
     public static final String className = "SagController";
     @Value("${spring.application.name}")
     String appName;
-    private SagConnection sagConnection;
+    private SsgConnection ssgConnection;
     private CoapConnection observerConn;
     private Interaction requestConn;
 
     @Autowired
-    public SagController(SagConnection sagConnection) {
-        this.sagConnection = sagConnection;
-        this.observerConn = sagConnection.connectLocalActorUsingCoap();
+    public SsgController(SsgConnection ssgConnection) {
+        this.ssgConnection = ssgConnection;
+        this.observerConn = ssgConnection.connectLocalActorUsingCoap();
         observerConn.observeResource(new CoapObserver());
-        this.requestConn = sagConnection.connectLocalActorUsingCoap();
+        this.requestConn = ssgConnection.connectLocalActorUsingCoap();
     }
 
     @GetMapping("/")
@@ -47,7 +47,7 @@ public class SagController {
             return "main";
         }
 
-        String answer = sagConnection.sendInitColdRoom(this.requestConn);
+        String answer = ssgConnection.sendInitColdRoom(this.requestConn);
         if (answer != null) {
             String both = answer.substring(answer.indexOf("coldroom(") + 9, answer.indexOf(")"));
             actual = both.split(",")[0] + " KG";
@@ -57,14 +57,14 @@ public class SagController {
         model.addAttribute("actualCurrentColdRoom", actual);
         
 
-        answer = sagConnection.sendInitRequestsRejected(this.requestConn);
+        answer = ssgConnection.sendInitRequestsRejected(this.requestConn);
         if (answer != null) {
             reqRejected = answer.split("reqrejected\\(")[1].split("\\)")[0];
         }
         model.addAttribute("requestsRejected", reqRejected);
 
 
-        answer = sagConnection.sendInitStatoTT(this.requestConn);
+        answer = ssgConnection.sendInitStatoTT(this.requestConn);
         if (answer != null) {
            String both = answer.split("statett\\(")[1].split("\\)")[0];
            stateTT = both.split(",")[0];

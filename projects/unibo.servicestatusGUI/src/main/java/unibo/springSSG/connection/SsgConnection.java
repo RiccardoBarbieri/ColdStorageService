@@ -1,13 +1,12 @@
-package unibo.springSAGSim.connection;
+package unibo.springSSG.connection;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import unibo.basicomm23.coap.CoapConnection;
 import unibo.basicomm23.interfaces.Interaction;
 import unibo.basicomm23.utils.CommUtils;
 
 @Component
-public class SagConnection extends ConnectionUtils {
+public class SsgConnection extends ConnectionUtils {
 
     private static final String className = "SagConnection";
     @Value("${actor.ctx}")
@@ -27,7 +26,7 @@ public class SagConnection extends ConnectionUtils {
     public String sendInitColdRoom(Interaction conn) {
         String functionName = "sendInitColdRoom";
         try {
-            String msg = "" + CommUtils.buildRequest("ServiceAccessGUI",
+            String msg = "" + CommUtils.buildRequest("ServiceStatusGUI",
                     "initcoldroom", "initcoldroom(arg)", actorName);
             return sendRequest(conn, msg, functionName);
         } catch (Exception e) {
@@ -36,11 +35,11 @@ public class SagConnection extends ConnectionUtils {
         return null;
     }
 
-    public String sendStorageRequest(Interaction conn, float fw) {
-        String functionName = "sendStorageRequest";
+    public String sendInitRequestsRejected(Interaction conn) {
+        String functionName = "sendInitRequestsRejected";
         try {
-            String msg = "" + CommUtils.buildRequest("ServiceAccessGUI",
-                    "storerequest", "storerequest(" + fw + ")", actorName);
+            String msg = "" + CommUtils.buildRequest("ServiceStatusGUI",
+                    "initreqrejected", "initreqrejected(arg)", actorName);
             return sendRequest(conn, msg, functionName);
         } catch (Exception e) {
             CommUtils.outred(className + " " + functionName + " | ERROR: " + e.getMessage());
@@ -48,11 +47,11 @@ public class SagConnection extends ConnectionUtils {
         return null;
     }
 
-    public String sendChargeStatusRequest(Interaction conn) {
-        String functionName = "sendChargeStatusRequest";
+    public String sendInitStatoTT(Interaction conn) {
+        String functionName = "sendInitStatoTT";
         try {
-            String msg = "" + CommUtils.buildRequest("ServiceAccessGUI",
-                    "chargestatus", "chargestatus(arg)", actorName);
+            String msg = "" + CommUtils.buildRequest("ServiceStatusGUI",
+                    "initstatett", "initstatett(arg)", actorName);
             return sendRequest(conn, msg, functionName);
         } catch (Exception e) {
             CommUtils.outred(className + " " + functionName + " | ERROR: " + e.getMessage());
@@ -60,17 +59,6 @@ public class SagConnection extends ConnectionUtils {
         return null;
     }
 
-    public String enterTicketRequest(Interaction conn, String ticketCode) {
-        String functionName = "enterTicketRequest";
-        try {
-            String msg = ""+ CommUtils.buildRequest("ServiceAccessGUI",
-                    "insertticket", "insertticket("+ticketCode+")", actorName);
-            return sendRequest(conn, msg, functionName);
-        } catch (Exception e) {
-            CommUtils.outred(className + " " + functionName + " | ERROR: " + e.getMessage());
-        }
-        return null;
-    }
 
     private String sendRequest(Interaction conn, String msg, String functionName) {
         String answer = "";

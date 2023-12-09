@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "unibo"
-version = "1.2.0"
+version = "1.2.1"
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_11
@@ -65,13 +65,10 @@ tasks.register<Copy>("propcopy") {
     dependsOn("processResources")
     group = "help"
     description = "Copy properties file to resources"
-
-    doLast {
-        val activeProfile = properties["activeProfile"] ?: "dev"
-        from("src/main/resources/application-$activeProfile.properties")
-        into("src/main/resources/")
-        rename("application-$activeProfile.properties", "application.properties")
-    }
+    val activeProfile = properties["activeProfile"] ?: "dev"
+    from("src/main/resources/application-$activeProfile.properties")
+    into("src/main/resources/")
+    rename("application-$activeProfile.properties", "application.properties")
 }
 
 tasks.register<Dockerfile>("createDockerfile") {

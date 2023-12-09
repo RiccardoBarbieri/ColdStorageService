@@ -1,4 +1,4 @@
-package unibo.springSAGSim.connection;
+package unibo.springSSG.connection;
 
 import unibo.basicomm23.interfaces.Interaction;
 import unibo.basicomm23.utils.CommSystemConfig;

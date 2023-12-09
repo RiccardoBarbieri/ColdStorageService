@@ -1,4 +1,4 @@
-package unibo.springSAGSim.connection.websocket;
+package unibo.springSSG.connection.websocket;
 
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
