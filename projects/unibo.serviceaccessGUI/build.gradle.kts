@@ -65,10 +65,12 @@ tasks.register<Copy>("propcopy") {
     dependsOn("processResources")
     group = "help"
     description = "Copy properties file to resources"
-    val activeProfile = properties["activeProfile"] ?: "dev"
-    from("src/main/resources/application-$activeProfile.properties")
-    into("src/main/resources/")
-    rename("application-$activeProfile.properties", "application.properties")
+    doLast {
+        val activeProfile = properties["activeProfile"] ?: "dev"
+        from("src/main/resources/application-$activeProfile.properties")
+        into("src/main/resources/")
+        rename("application-$activeProfile.properties", "application.properties")
+    }
 }
 
 tasks.register<Dockerfile>("createDockerfile") {
@@ -79,38 +81,42 @@ tasks.register<Dockerfile>("createDockerfile") {
     group = "unibobootdocker"
     description = "Create Dockerfile"
 
-    val fileRegex = Regex(".*-boot-(.*)\\.tar")
-    val inputDir: Directory = project.layout.projectDirectory.dir("build/distributions")
-    val lastModified = inputDir.asFileTree.files.filter {
-        it.name.matches(fileRegex)
-    }.maxByOrNull { it.lastModified() }
+    doFirst {
+        val fileRegex = Regex(".*-boot-(.*)\\.tar")
+        val inputDir: Directory = project.layout.projectDirectory.dir("build/distributions")
+        val lastModified = inputDir.asFileTree.files.filter {
+            it.name.matches(fileRegex)
+        }.maxByOrNull { it.lastModified() }
 
-    //nessuna distribuzione disponibile
-    if (lastModified == null) {
-        println("No file found")
-        return@register
-    }
-    //controllo che file scelto sia della versione corrente
-    if (fileRegex.matchEntire(lastModified.name)?.groupValues?.get(1)?.contains(project.version.toString()) == false) {
-        println("Mismatched version, check distribution files")
-        return@register
-    }
+        //nessuna distribuzione disponibile
+        if (lastModified == null) {
+            println("No file found")
+            return@doFirst
+        }
+        //controllo che file scelto sia della versione corrente
+        if (fileRegex.matchEntire(lastModified.name)?.groupValues?.get(1)?.contains(project.version.toString()) == false) {
+            println("Mismatched version, check distribution files")
+            return@doFirst
+        }
 
-    from("openjdk:11")
-    exposePort(springProps["server.port"].toString().toInt())
-    volume("/data")
-    addFile("./build/distributions/" + lastModified.name, "/")
-    workingDir(lastModified.name.removeSuffix(".tar") + "/bin")
-    defaultCommand("bash", "./" + project.name)
+        from("openjdk:11")
+        exposePort(springProps["server.port"].toString().toInt())
+        volume("/data")
+        addFile("./build/distributions/" + lastModified.name, "/")
+        workingDir(lastModified.name.removeSuffix(".tar") + "/bin")
+        defaultCommand("bash", "./" + project.name)
+    }
 }
 
 tasks.register<DockerBuildImage>("buildImage") {
     dependsOn("createDockerfile")
+    mustRunAfter("createDockerfile")
     group = "unibobootdocker"
     description = "Dockerize the spring boot application"
-    val dockerRepository = properties["dockerRepository"] ?: throw GradleException("dockerRepository property not set")
+
     dockerFile.set(file(layout.projectDirectory.toString() + "/build/docker/Dockerfile"))
     inputDir.set(file(layout.projectDirectory))
+    val dockerRepository = properties["dockerRepository"] ?: throw GradleException("dockerRepository property not set")
     images.add("${dockerRepository}/" + project.name.split(".").last().lowercase() + ":latest")
     images.add("${dockerRepository}/" + project.name.split(".").last().lowercase() + ":${project.version}")
 }
