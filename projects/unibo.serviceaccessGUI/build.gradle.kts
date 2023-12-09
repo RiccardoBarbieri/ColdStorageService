@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "unibo"
-version = "3.0"
+version = "3.0.0"
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_11
