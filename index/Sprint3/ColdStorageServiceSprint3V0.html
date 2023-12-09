@@ -36,75 +36,76 @@
 
     <div class="content">
         <h2>Introduction</h2>
-        
-              
+
+            
         <div class="remark" id="intro">
             <p>
                 In questo Sprint verranno analizzati gli <b>Alarm Requirements</b> relativi al movimento del <i>TransportTrolley</i>.
             </p>
         </div>
-        
-        
+
+
         <h2>Requirements</h2>
-         
+        
         <div class="remark">
             <p>
                 <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements a questa pagina</a><br>
             </p>
-        
+
             <p>
             <bc id="goals">Goals dello Sprint3</bc>:
             Gli <i>alarm requirements</i> vengono riassunti di seguito:
-                <ol>
-                    <li>abbiamo un <i>sonar</i> (alarm device) ed un <i>led</i> (warning device) connessi ad un RaspberryPi</li>
-                    <li>bisogna fermare il trolley quando il sonar rileva una distanza inferiore ad DLIMT</li>
-                    <li>il trolley non deve essere fermato nuovamente se non sono passati almeno MINT millisecondi dall'interruzione precedente</li>
-                </ol>
             </p>
+            <ol>
+                <li>abbiamo un <i>sonar</i> (alarm device) ed un <i>led</i> (warning device) connessi ad un RaspberryPi</li>
+                <li>bisogna fermare il trolley quando il sonar rileva una distanza inferiore ad DLIMT</li>
+                <li>il trolley non deve essere fermato nuovamente se non sono passati almeno MINT millisecondi dall'interruzione precedente</li>
+            </ol>
+
             
         </div>
-        
-        
+
+
         <h2>Requirement analysis</h2>
-        
+
         <div class="remark">
-        
+
             <p>
                 Viene riportato nel <a href="../documents/temafinale_sprint3.pdf" target="_blank" rel="noopener noreferrer">seguente documento</a> la versione del <i>TemaFinale23</i> analizzata contestualmente a questo Sprint.
             </p>
-        
+
             <p class="nota">
                 Questo componente è alieno al progetto core del sistema (<i>qak</i>), non è per cui necessario, per ora, riportarne il modello architetturale.
             </p>
-        
+
             <h3>Architettura logica</h3>
             
             <p>
                 Si riporta di seguito il modello di architettura logica, limitato al contesto di interesse di questo Sprint.
             </p>
-        
+
             <img class="bigimglim" src="../images/sprint3/coldstorageservice23arch.png" alt="Modello architettura logica">
-        
+
             <p class="keypoint">
                 <b>ATTENZIONE:</b> <i>warning/alarm device</i> NON vengono generati dal modello qak, saranno aggiornati manualmente a fronte di eventuali modifiche.
             </p>
-        
+
             <h3>Modello di interazione</h3>
-        
+
             <h4>Alarm device</h4>
-        
+
             <p>
                 Data la natura del vincolo che impone al TransportTrolley di fermarsi sar&agrave; necessario decidere se inviare al TransportTrolley un segnale di stop quando viene rilevata una certa distanza oppure inviare tutte le rilevazioni di distanza generate dal <i>warning device</i> sul <i>RaspberryPi</i>, lasciando che sia esso a decidere quando fermarsi (a seconda di DLIMT e MINT).
             </p>
-        
+
             <p>
                 Da questa domanda emergono due possibili modelli di interazione relativi alle misure rilevate dal sonar:
             </p>
-        
+
             <p>
                 Modello 1:
             </p>
-        
+
             <table>
                 <thead>
                     <tr>
@@ -135,11 +136,11 @@
                     </tr>
                 </tbody>
             </table>
-        
+
             <p>
                 Modello 2:
             </p>
-        
+
             <table>
                 <thead>
                     <tr>
@@ -178,9 +179,9 @@
                     </tr>
                 </tbody>
             </table>
-        
+
             <h4>Warning device</h4>
-        
+
             <p>
                 Il <i>warning device</i> deve essere in grado di mostrare tra stati diversi: TT fermo, TT in movimento e TT in HOME, il <i>led</i> si presta a questo scopo:
             </p>
@@ -189,15 +190,15 @@
                 <li>movimento: led <i>lampeggiante</i></li>
                 <li>home: led <i>spento</i></li>
             </ul>
-        
+
             <p>
                 Per fare in modo che il RaspberryPi abbia le informazioni relative allo stato del TransportTrolley &egrave; possibile agire in due modi differenti, si propongono quindi due modelli di interazione:
             </p>
-        
+
             <p>
                 Modello 1:
             </p>
-        
+
             <table>
                 <thead>
                     <tr>
@@ -220,11 +221,11 @@
                     </tr>
                 </tbody>
             </table>
-        
+
             <p>
                 Modello 2:
             </p>
-        
+
             <table>
                 <thead>
                     <tr>
@@ -247,13 +248,13 @@
                     </tr>
                 </tbody>
             </table>
-        
+
             <h3>Costanti</h3>
-        
+
             <p>
                 Contestualmente agli obiettivi di questo sprint si considerano le seguenti due costanti:    
             </p>
-        
+
             <table>
                 <tr>
                     <th>Costante</th>
@@ -271,49 +272,79 @@
                     <td>Millisecondi che devono trascorrere perch&eacute; il robot possa essere nuovamente fermato dal sonar.</td>
                 </tr>
             </table>
-        
+
             <h3>RaspberryPi</h3>
-        
-            <p>
-                <b>TODO: paragrafo su cosa &egrave; e come si utilizza.</b>
-            </p>
-        
-            <h4>Sonar</h4>
+
             
             <p>
-                <b>TODO: paragrafo su modello e caratteristiche, ref costante cm</b>
+                I requisiti specificano che il componenti <i>sonar</i> e <i>led</i> sono connessi a un <b>RaspberryPi</b>, un <b>single board computer</b> equipaggiato con una serie di GPIO (General Purpose Input/Output) pin utili a connettere e interagire con varie tipologie di dispositivi hardware.
             </p>
-        
-            <h4>Led</h4>
-        
+
+            <p class="keypoint">
+                <b>KEYPOINT</b>: Questo componente cosistuir&agrave; un nodo esterno al sistema ColdStorageService.
+            </p>
+
             <p>
-                <b>TODO: formalizza cos'&egrave;</b>
+                Si riporta di seguito il pinout dei GPIOs del dispositivo, sar&agrave; utile in seguito per definire lo schema di collegamento dei componenti.
             </p>
+
+            <img src="../images/sprint3/pinout.png" class="imglim" alt="RaspberryPi pinout"></img>
+
+            <h4>Sonar</h4>
+
+            <p>
+                Il sonar &egrave; un componente di input che fornisce la distanza degli oggetti di fronte ad esso entro un certo limite e in un certo cono di efficacia.<br>
+                Il committente ha specificato la tipologia esatta di sonar da utilizzare per il nodo ovvero una <b>Sonar HC-SR04</b>; questo sonar &egrave; efficace in un range <b>2cm-400cm</b> e in una area delimitata da un angolo di <b>30 gradi</b> di fronte ad esso.
+            </p>
+
+            <img class="imglim" src="../images/sprint3/sonar_spec.jpg" alt="Sonar work">
+            <img class="imglim" src="../images/sprint3/sonar_graph.jpg" alt="Trigger sonar reading">
+            
+            <p>
+                Per leggere un dato rilevato dal sonar &egrave; necessario inviare un impulso sul pin <b>Trigger</b> per almeno <b>10&#xB5;s</b>, questo comunica al sonar di inviare 8 volte un impulso a 40kHz, successivamente viene inviato sul pin echo un impulso di durata andata e ritorno del segnale acustico generato, conoscendo la velocit&agrave; del suono &egrave; possibile calcolare la distanza dell'oggetto.
+            </p>
+
+            <h4>Led</h4>
+
+            <p>
+                Il led &egrave; un componente di output con due pin: uno per fornire differenza di potenziale, l'altro per la messa a terra. La sua luminosit&agrave; potrebbe essere modificata tramite un potenziale analogico, tuttavia il raspberry non supporta questa funzionalit&agrave;, pertanto il nostro led avr&agrave; soltanto 2 stati: on e off (e un terzo stato lampeggiante).
+
+                <img class="imglim" src="../images/sprint3/led.png" alt="Pinout led">
+            </p>
+
         </div>
-        
-        
+
+
         <h2>Problem analysis</h2>
-        
+
         <div class="remark">
-        
+
+            <h3>Architettura logica</h3>
+
+            <p>
+                Si riporta di seguito l'architattura logica di partenza.
+            </p>
+
+            <img src="../images/sprint3/midarch.png" alt="">
+
             <h3>Interazioni</h3>
-        
+
             <p>
                 Partendo dai modelli individuati nell'analisi dei requisiti si pu&ograve; notare come alcuni di essi non offrono soluzioni che rispettano i principi della <b>clean architecture</b>.
             </p>
-        
+
             <p>
                 Se si utilizzasse il modello che prevede un <b>Dispatch</b> per l'informazione sullo stato del TransportTrolley si creerebbe una relazione stretta tra i due componenti; &egrave; preferibile implementare un modello di interazione che non prevede la conoscenza dell'esistenza del RaspberryPi da parte del TransportTrolley.
             </p>
-        
+
             <p>
                 Facendo riferimento al <i>warning device</i> si decide invece di inviare la distanza al TransportTrolley, lasciando che esso implementi la logica di arresto e ripartenza per mantenere il <b>business core</b> all'interno del servizio e non su un componente esterno (che potrebbe essere sostituito con altre implementazioni).
             </p>
-        
+
             <p>
                 Alla luce di queste considerazioni si sceglie di proseguire con il seguente modello di interazione:
             </p>
-        
+
             <table>
                 <thead>
                     <tr>
@@ -360,32 +391,283 @@
                     </tr>
                 </tbody>
             </table>
-        
+
             <p class="keypoint">
                 <b>KEY-POINT:</b> si rendono osservabili le risorse <b>ttstate</b> e <b>distance</b> per uniformare con altre risorse della stessa tipologia (peso coldroom) gestite in sprint precedenti e necessarie in sprint successivi.
             </p>
-        
-            <h5>Comunicazione con servizio</h5>
-        
+
             <p>
-                Come nel caso della ServiceAccessGUI, verr&agrave; impostato il servizio in modo da mantenere un unico punto di accesso, verranno internamente inoltrati i messaggi rilevanti.
+                Per fermare il TransportTrolley si rende necessario introdurre un nuovo messaggio per comunicare lo stop al trolleyexecutor, in quanto utilizzare direttamente un evento di <i>alarm</i> diretto al basicrobot violerebbe il principio di singola responsabilit&agrave;, quindi il nuovo messaggio <b>stop</b> sar&agrave; diretto al trolleyexecutor.
             </p>
-        
-            <h3>Sonar</h3>
-        
+
+            <p>
+                Si definisce questo messaggio come <b>dispatch</b>, in quanto non &egrave; necessario per il TransportTrolley ottenere una risposta dopo aver inviato questo istruzione.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mittente</th>
+                        <th>Destinatario</th>
+                        <th>Tipologia interazione/messaggio</th>
+                        <th>Identificatore messaggio</th>
+                        <th>Payload</th>
+                        <th>Descrizione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="orange bold center">transporttrolley</td>
+                        <td class="orange bold center">trolleyexecutor</td>
+                        <td class="blue bold center">Dispatch</td>
+                        <td>stop</td>
+                        <td>stop()</td>
+                        <td>Il transporttrolley comunica al trolleyexecutor di fermarsi.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p class="nota">
+                Come nel caso della ServiceAccessGUI, verr&agrave; impostato il servizio in modo da mantenere un unico punto di accesso, verranno internamente <b>inoltrati</b> e <b>delegati</b> i messaggi rilevanti.
+            </p>
+
+            <h3>Collegamento componenti</h3>
+
+            <p>
+                Si riporta di seguito la configurazione minima per collegare i componenti <i>sonar</i> e <i>led</i> al RaspberryPi.
+            </p>
+
+            <img class="imglim" src="../images/sprint3/schematic.png" alt="Schema connessione raspberry">
+            
+            <p>
+                Utilizzando la numerazione <a href="https://pi4j.com/getting-started/understanding-the-pins/" target="_blank">BCM</a> si definisce la seguente configurazione:
+            </p>
+
+            <ul>
+                <li>Sonar</li>
+                <ul>
+                    <li>Trigger: BCM 15</li>
+                    <li>Echo: BCM 16</li>
+                </ul>
+                <li>Led</li>
+                <ul>
+                    <li>Vcc: BCM 18</li>
+                </ul>
+            </ul>
+
+            <p>
+                Si denota come il sonar possa rilevare soltanto oggetti in un cono di 30 gradi di fronte ad esso e in un range non minore di 2cm e maggiore 400cm.
+            </p>
+
+
+            <h3>Nuova architettura logica</h3>
+
+            <p>
+                Si riporta di seguito l'architattura logica di finale.
+            </p>
+
+            <img src="../images/sprint3/newarch.png" alt="">
+
+
         </div>
-        
+
         <h2>Project</h2> 
-         
+        
+        <div class="remark">
+
+            <h3>Interazione GPIO</h3>
+
+            <p>
+                Per interagire con i pin GPIO del RaspberryPi esistono svariate librerie, per poter integrare questa funzionalit&agrave; con lo stack software gi&agrave; a nostra disposizione per le comunicazioni si &egrave; deciso di utilizzare la libreria <a href="https://pi4j.com/">Pi4J</a>, questa libreria utilizza la numerazione <b>BCM</b>.
+            </p>
+
+            <h4>Sonar</h4>
+
+            <p>
+                Abbiamo realizzato una interfaccia <code class="docutils literal notranslate"><span class="pre">Sonar</span></code> che definisce i metodi che una implementazione di un Sonar deve esporre:
+            </p>
+            <pre><code class="language-java">public interface Sonar {
+
+            Float getDistance() throws InterruptedException;
+        }</code></pre>
+
+            <p>
+                Abbiamo realizzato due implementazioni, la prima &egrave; una implementazione simulata per fini di testing, l'altra &egrave; l'implementazione che sfrutta <code class="docutils literal notranslate"><span class="pre">Pi4J</span></code> per comandare i GPIO del Raspberry e restituire la distanza letta, di seguito un estratto di codice della configurazione del contesto di utilizzo dei pin.
+            </p>
+
+            <pre><code class="language-java">private final DigitalOutput triggerPin
+        Context pi4jContext = Pi4J.newAutoContext();
+        DigitalOutputConfigBuilder triggerPinConfig = DigitalOutputConfig.newBuilder(pi4jContext)
+                .id("trigger")
+                .address(TRIGGER_PIN)
+                .initial(DigitalState.LOW)
+                .shutdown(DigitalState.LOW)
+                .provider("pigpio-digital-output");
+        this.triggerPin = pi4jContext.create(triggerPinConfig);</code></pre>
+            
+            <p>
+                Per ottenere la distanza dal sonar l'implementazione del metodo <code class="docutils literal notranslate"><span class="pre">getDistance()</span></code> utilizza gli oggetti <code class="docutils literal notranslate"><span class="pre">DigitalOutput</span></code> e <code class="docutils literal notranslate"><span class="pre">DigitalInput</span></code> per inviare e leggere segnali low e high dai GPIO.
+            </p>
+
+            <pre><code class="language-java">triggerPin.high();
+        Thread.sleep(0, 10000);
+        triggerPin.low();
+
+        while (echoPin.isLow()) {
+            continue;
+        }
+        Long startTime = System.nanoTime();
+        while (echoPin.isHigh()) {
+            continue;
+        }
+        Long endTime = System.nanoTime();
+
+        long duration = endTime - startTime;
+
+        BigDecimal halfDuration = BigDecimal.valueOf(duration).divide(BigDecimal.valueOf(2), 1, RoundingMode.DOWN);
+        BigDecimal seconds = halfDuration.divide(BigDecimal.valueOf(1000000000), 9, RoundingMode.DOWN);
+        return BigDecimal.valueOf(34300).multiply(seconds).floatValue();
+        </code></pre>
+            
+
+            <h4>Led</h4>
+
+            <p>
+                La configurazione del pin per gestire il led &egrave; simile a quella del sonar, si differenza per il fatto che il led richiede soltanto un pin <code class="docutils literal notranslate"><span class="pre">DigitalOutput</span></code>.
+            </p>
+
+            <h3>Interazioni</h3>
+
+            <h4>Observer ttstate</h4>
+
+            <p>
+                Allo scopo di inviare eventi e ricevere aggiornamenti sulle risorse coinvolte si riutilizzeranno componenti gi&agrave; definiti per il componente ServiceAccessGUI, in particolare un <code class="docutils literal notranslate"><span class="pre">CoapObserver</span></code> verr&agrave; istanziato per ricevere gli aggiornamenti sulla risorsa <code class="docutils literal notranslate"><span class="pre">ttstate</span></code>.
+            </p>
+
+            <h4>Generatore eventi sonar</h4>
+
+            <p>
+                Per inviare al ColdStorageService gli eventi per comunicare la distanza rilevata dal sonar abbiamod deciso di stabilire una connessione MQTT, abbiamo scelto MQTT dato che il framework QActor implementa le funzionalit&agrave; necessarie per iscriversi alla ricezione di eventi pubblicati su un particolare topic.
+            </p>
+
+            <p>
+                MQTT implementa una architettura pub/sub topic, dove un client pu&ograve; <b>pubblicare</b> eventi su un topic e un altro client si <b>iscrive</b> al topic del quale vuole ricevere aggiornamenti.
+            </p>
+
+            <p>
+                Il sonar pubblicher&agrave; gli eventi <b>distance</b> sul topic <code class="docutils literal notranslate"><span class="pre">"unibo/sonar/events"</span></code>.
+            </p>    
+
+            <h4>Sonarrec</h4>
+
+            <p>
+                Nel ColdStorageService si introduce il nuovo attore <code class="docutils literal notranslate"><span class="pre">sonarrec</span></code>, questo attore utilizzer&agrave; un client mqtt per ricevere i messaggi pubblicati, tutti i messaggi gestiti verranno pubblicati sul <b>broker</b> mqtt pubblico <a href="mqtt.eclipseprojects.io">mqtt.eclipseprojects.io</a>.
+            </p>
+
+            <pre><code class="language-java">var brokerAddr = "tcp://mqtt.eclipseprojects.io"
+        mqtt.connect(name, brokerAddr)
+        mqtt.subscribe(this, "unibo/sonar/events")</code></pre>
+
+            <p>
+                Questo componente &egrave; incaricato di implementare la logica di gestione dei limiti <code class="docutils literal notranslate"><span class="pre">DLIMT</span></code> e <code class="docutils literal notranslate"><span class="pre">MINT</span></code>, il nuovo attore valuta se la ditanza ricevuta comporta uno stop o restart del TransportTrolley, comunicandolo tramite i messaggi <code class="docutils literal notranslate"><span class="pre">sonarstart</span></code> e <code class="docutils literal notranslate"><span class="pre">sonarstop</span></code>.
+            </p>
+
+            <h3>TransportTrolley</h3>
+
+            <p>
+                L'attore transporttrolley &egrave; stato adattato per supportare la ricezione di <code class="docutils literal notranslate"><span class="pre">sonarstop</span></code> e <code class="docutils literal notranslate"><span class="pre">sonarstart</span></code>.
+            </p>
+
+            <p>
+                Alla ricezione di <code class="docutils literal notranslate"><span class="pre">sonarstop</span></code> il transporttrolley arresta il trolleyexecutor e si mette in attesa di un messaggio <code class="docutils literal notranslate"><span class="pre">sonarstart</span></code>, quando arriva il transporttrolley riprende dallo stato che aveva lasciato in precedenza.
+            </p>
+
+            <h3>Struttura producer/consumer</h3>
+
+            <p>
+                I nuovi componenti introdotti in questo sprint saranno strutturati come <b>producer</b> e <b>consumer</b>, in particolare:
+            </p>
+            <ul>
+                <li>Led: consumer</li>
+                <li>Sonar: producer</li>
+            </ul>
+
+            <p>
+                I producer implementeranno il metodo <b>produce</b> e i consumer il metodo <b>consume</b>, si estendo inoltre il concetto di consumer/produce a quello di <b>runnable consumer</b> e <b>runnable producer</b>. I runnable producer o consumer sono entit&agrave; che mantengono un <code class="docutils literal notranslate"><span class="pre">Thread</span></code> che richiama il metodo produce o consume durante la loro esistenza.
+            </p>
+
+            <p>
+                Alcuni producer e consumer possono aggiungere un delay tra le chiamate del metodo produce.
+            </p>
+
+            <h4>Filter</h4>
+
+            <p>
+                Abbiamo introdotto anche il concetto di filtro, interponibile tra un producer e un consumer, che implementa una particolare funzione <code class="docutils literal notranslate"><span class="pre">boolean filter(Object data)</span></code> che deve restituire <code class="docutils literal notranslate"><span class="pre">true</span></code> quando il dato non deve essere inoltrato.
+            </p>
+
+            <p>
+                Ogni filtro implementa di default la funzione <code class="docutils literal notranslate"><span class="pre">void forward(InputStream in, OutputStream out)</span></code> che inoltra il messaggio ricevuto da un consumer a un producer se non deve essere filtrato secondo la funzione filter.
+            </p>
+
+            <p>
+                Anche i filter vengono estesi a <b>runnable filter</b>.
+            </p>
+
+            <p>
+                Questo concetto si rende utile per il sonar allo scopo di filtrare quei valori prodotti dal componente che sono fuori dal range nelle specifiche. Per il led si render&agrave; utile per filtrare i messaggi ricevuti dall'observer che non sono di interesse per il cambiamento di stato del led.
+            </p>
+
+            <h4>Comunicazione componenti</h4>
+
+            <p>
+                I componenti elencati vengono messi in comunicazione tramite una serie di <code class="docutils literal notranslate"><span class="pre">PipedOutputStream</span></code> e <code class="docutils literal notranslate"><span class="pre">PipedInputStream</span></code>.
+            </p>
+
+            <p>
+                Verr&agrave; creato un <code class="docutils literal notranslate"><span class="pre">OutputStream</span></code> per ogni consumer e filtro e un <code class="docutils literal notranslate"><span class="pre">InputStream</span></code> per ogni produce e filter; a partire da questi stream verranno creati <code class="docutils literal notranslate"><span class="pre">PipedOutputStream</span></code> e <code class="docutils literal notranslate"><span class="pre">PipedInputStream</span></code>, verranno poi connessi tramite il metodo <code class="docutils literal notranslate"><span class="pre">connect</span></code>.
+            </p>
+
+            <pre><code class="language-java">PipedOutputStream observerToFilter = new PipedOutputStream();
+        PipedInputStream filterFromObserver = new PipedInputStream();
+        PipedOutputStream filterToLed = new PipedOutputStream();
+        PipedInputStream ledFromFilter = new PipedInputStream();
+
+        // Connect the pipes
+        sonarToCleaner.connect(cleanerFromSonar);
+        cleanerToSender.connect(senderFromCleaner);</code></pre>
+
+
+            <h4>UML</h4>
+
+            <p>
+                Di seguito si riporta il diagramma UML delle classi coinvolte.
+            </p>
+
+            <img class="bigimglim" src="../images/sprint3/uml_consumer.png" alt="Consumer UML">
+            <img class="bigimglim" src="../images/sprint3/uml_producer.png" alt="Producer UML">
+
+        </div>
+
+
+        <h2>Deployment</h2> 
+
         <div class="remark">
             
-        </div>
-        
-        
-        <h2>Deployment</h2> 
-        
-        <div class="remark">
-        
+            <h3>Configurazione RaspberryPi</h3>
+
+            <p>
+                Per configurare il RaspberryPi &egrave; necessario installare un sistema operativo su una microSD, l'OS scelto &egrave; RaspbianOS, dato che offre alcuni tool specifici per configurare il Raspberry come <code class="docutils literal notranslate"><span class="pre">raspi-config</span></code>.
+            </p>
+
+            <p>
+                Una volta installato il sistema operativo &egrave; necessario installare le dipendenza java, ovvero OpenJDK 11, e copiare le librerie necessarie a compilare ed eseguire il codice, in particolare <b>Pi4J</b>.
+            </p>
+
+            <p>
+                Vengono resi disponibili due script, <code class="docutils literal notranslate"><span class="pre">compile</span></code> e <code class="docutils literal notranslate"><span class="pre">run</span></code> per compilare ed eseguire il codice.
+            </p>
+
         </div>
     </div>
 </body>
