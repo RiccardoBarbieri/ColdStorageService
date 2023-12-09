@@ -1,4 +1,4 @@
-package unibo.springSAGSim.connection.websocket;
+package unibo.springSAG.connection.websocket;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
