@@ -9,10 +9,12 @@ import unibo.filter.LedUpdatesFilter;
 import unibo.filter.RunnableFilter;
 import unibo.filter.SonarCleanerFilter;
 import unibo.led.LedControllerConsumer;
+import unibo.led.LedControllerConsumerSim;
 import unibo.prodcon.runnable.RunnableConsumer;
 import unibo.prodcon.runnable.RunnableProducer;
 import unibo.sender.MqttControllerConsumer;
 import unibo.sonar.SonarProducerHCSR04;
+import unibo.sonar.SonarProducerSim;
 
 import java.io.*;
 
@@ -50,9 +52,11 @@ public class App {
 
         // Setup led controller
         RunnableConsumer ledController = new LedControllerConsumer(new BufferedInputStream(ledFromFilter));
+//        RunnableConsumer ledController = new LedControllerConsumerSim(new BufferedInputStream(ledFromFilter));
 
         // Setup sonar
         RunnableProducer sonar = new SonarProducerHCSR04(new BufferedOutputStream(sonarToCleaner), 1000);
+//        RunnableProducer sonar = new SonarProducerSim(new BufferedOutputStream(sonarToCleaner), 1000);
 
         // Setup sonar cleaner filter
         RunnableFilter sonarCleanerFilter = new SonarCleanerFilter(new BufferedInputStream(cleanerFromSonar), new BufferedOutputStream(cleanerToSender), 2f, 170f);

@@ -7,7 +7,7 @@
 
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
-    application
+    id("application")
 }
 
 repositories {
@@ -50,7 +50,25 @@ java {
     }
 }
 
+//sourceSets {
+//    main {
+//        java {
+//            srcDirs("src/main/java")
+//        }
+//    }
+//}
+
+tasks.jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(sourceSets.main.get().output) {
+    }
+    manifest {
+        attributes["Main-Class"] = "unibo.Messenger"
+    }
+}
+
 application {
     // Define the main class for the application.
-    mainClass.set("unibo.Messenger")
+    mainClass.set("unibo.App")
 }
+

@@ -27,8 +27,6 @@ class Coldstorageservice ( name: String, scope: CoroutineScope, isconfined: Bool
 				var accepted: Boolean = false
 				
 				val weightTicketMap = mutableMapOf<String, Float>()
-				
-				val DLIMT = 20
 		
 				var NumReqRejected: Int = 0
 				return { //this:ActionBasciFsm
