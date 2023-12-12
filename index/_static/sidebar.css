@@ -79,3 +79,9 @@ ol, ul, li {
     margin-left: 240px;
     padding: 16px;
 }
+
+.evidenziato {
+    background-color: yellow;
+    color: black;
+    font-weight: bold;
+}
