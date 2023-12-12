@@ -6,9 +6,11 @@
 <link rel="stylesheet" href="../_static/code.css">
 <link rel="stylesheet" href="../_static/colors.css">
 <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/dockerfile.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/gradle.min.js"></script>
 
 
 <script>hljs.highlightAll();</script>
@@ -49,6 +51,71 @@
 <h2 id="deployment">Deployment</h2> 
 
 <div class="remark">
+    <h3>Docker</h3>
+
+    <p>
+        Abbiamo scelto di utilizzare <a href="https://docs.docker.com/">Docker</a> per effettuare il deployment dei vari servizi coinvolti dato che ci permette di effettuare un deployment completo tramite un singolo file docker-compose.
+    </p>
+
+    <h4>Generazione immagini</h4>
+
+    <p>
+        Le immagini utilizzate, escluse quelle di <b>wenv</b> e <b>basicrobot</b> possono essere generate automaticamente tramite apposite task gradle, le task in questione sono:
+    </p>
+    <ul>
+        <li>createDockerfile</li>
+        <li>buildImage</li>
+        <li>pushImage</li>
+    </ul>
+    <p>
+        con significato intuitivo.
+    </p>
+
+    <p>
+        Per la creazione di queste task sono state estese le task offerte dal plugin gradle <a href="https://bmuschko.github.io/gradle-docker-plugin/current/user-guide/">gradle-docker-plugin</a> che offrono una gamma di metodi utili a compilare un Dockerfile in modo dichiarativo.
+    </p>
+
+    <p>
+        Di seguito si riporta un esempio di task gradle <b>createDockerfile</b>, la pi&ugrave; interessante tra quelle create, che crea il Dockerfile per l'applicazione qak coldstorageservice.
+    </p>
+
+    <pre><code class="language-gradle">tasks.register<Dockerfile>("createDockerfile") {
+    mustRunAfter("distTar")
+    dependsOn("distTar")
+    group = "unibobootdocker"
+    description = "Create Dockerfile"
+
+    doFirst {
+        val inputTarFile =
+            project.layout.projectDirectory.file("build/distributions/" + project.name + "-" + project.version + ".tar")
+
+        from("openjdk:11")
+        exposePort(8021)
+        exposePort(8020)
+        volume("/data")
+        addFile("./build/distributions/${inputTarFile.asFile.name}", "/")
+        workingDir(inputTarFile.asFile.name.removeSuffix(".tar") + "/bin")
+        copyFile("./*.pl", "./")
+        copyFile("./*.json", "./")
+        copyFile("./*.bin", "./")
+        copyFile("./*.txt", "./")
+        defaultCommand("bash", "./" + project.name)
+    }
+}</code></pre>
+
+    <p>
+        Questa particolare task &egrave; specifica per un progetto qak, sono state create task anche per gli applicativi spring, dove &egrave; possibile ottenere informazioni come le porte da esporre dai file di configurazione <code class="docutils literal notranslate"><span class="pre">application.properties</span></code>.
+    </p>
+
+    <p>
+        La task <b>buildImage</b> genera immagini con incluso il nome della repository sulla quale andranno caricate, includendo inoltre i tag delle versioni e <b>latest</b>: per creare una nuova immagine senza sovrascrivere le precedenti baster&agrave; cambiare il valore di <code class="docutils literal notranslate"><span class="pre">version</span></code> nel file <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code>.
+    </p>
+
+    <h3>RaspberryPi sonarled</h3>
+
+    <p>
+        Tuttavia per il componente che verr&agrave; messo in esecuzione sul RaspberryPi si &egrave; deciso di creare una distribuzione tar, tramite la task gradle <b>distTar</b> offerta dal plugin <b>application</b>; questa distribuzione mette a disposizione un conveniente script per avviare il metodo <code class="docutils literal notranslate"><span class="pre">main</span></code> specificato includendo automaticamente tutte le dipendenze necessarie.
+    </p>
 
 </div>
 
