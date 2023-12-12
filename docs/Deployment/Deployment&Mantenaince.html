@@ -14,7 +14,7 @@
 
 
 <script>hljs.highlightAll();</script>
-<title>Sprint0</title>
+<title>Deployment&Manteinance</title>
 </head>
     
 <body>
@@ -122,7 +122,20 @@
 <h2 id="manteinance">Manteinance</h2> 
 
 <div class="remark">
+    <p>
+        Il processo di mantenimento del codice è spesso un'impresa complessa in quanto bisogna affrontare sfide come la gestione delle dipendenze, la coerenza ambientale e la compatibilità tra diverse configurazioni di sistema. In questo contesto, Docker diventa indispensabile, semplificando notevolmente queste operazioni. 
+    </p>
+    <p>
+        Con Docker, il codice e le sue dipendenze vengono incapsulati in un ambiente autosufficiente, eliminando così i conflitti tra le diverse versioni delle librerie o dei framework utilizzati. In questo modo, è possibile evitare molte delle problematiche legate alle dipendenze che possono emergere nel tempo, semplificando notevolmente la gestione a lungo termine.
+    </p>
+    <p>
+        Un altro punto cruciale è la facilità di distribuzione e aggiornamento. I container Docker possono essere facilmente spostati tra diversi ambienti senza dover preoccuparsi delle differenze tra le infrastrutture sottostanti. Questo semplifica il processo di distribuzione delle nuove versioni dell'applicazione e l'applicazione di aggiornamenti senza interruzioni significative. Inoltre, Docker Hub e altri registri di container consentono di gestire e distribuire facilmente le immagini dei container, facilitando ulteriormente il processo di manutenzione.
+    </p>
 
+
+    <p class="nota">
+        Se un giorno il committente vorrà distribuire gli attori su nodi diversi (e quindi in contesti diversi) srà sufficiente utilizzare le task gradle per generare il nuovo dockerfile e la nuova immagine docker, in modo del tutto automatizzato.
+    </p>
 </div>
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
