@@ -193,7 +193,16 @@
                     Conseguentemente a questi requisiti, dovremo usare uno <b>Pseudo Random Number Generator</b> crittograficamente sicuro.
                 </p>
 
-                <b>TODO: inserire implementazione</b>
+                <p>
+                    Per generare i caratteri random che fanno parte della rappresentazione del ticket si fa utilizzo dei metodi offerti dalla classe <code class="docutils literal notranslate"><span class="pre">java.security.SecureRandom</span></code> che garantisce la sicurezza tramite l'utilizzo di uno PRNG.
+                </p>
+                <pre><code class="language-kotlin">private fun randomString(): String {
+                val sr: SecureRandom = SecureRandom.getInstance("SHA1PRNG")
+                return sr.ints(STRING_LENGTH, 0, CHAR_POOL.size)
+                    .asSequence()
+                    .map(CHAR_POOL::get)
+                    .joinToString("")
+            }</code></pre>
 
                 <h5>Memorizzazione</h5>
                 <p>
