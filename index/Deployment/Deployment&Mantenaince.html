@@ -13,13 +13,13 @@
 
 
 <script>hljs.highlightAll();</script>
-<title>Sprint0</title>
+<title>Deployment</title>
 </head>
     
 <body>
 
     <div class="sidebar">
-        <h1><a id="titleindex" href="../index/index.html">Indice</a></h1>
+        <h1><a id="titleindex" href="../index.html">Indice</a></h1>
         <ul>
             <li><a href="../Sprint0/ColdStorageServiceSprint0V2.html">Sprint0</a></li>
             <li><a href="../Sprint1/ColdStorageServiceSprint1V1.html">Sprint1</a></li>
@@ -30,7 +30,7 @@
             <li><a href="../Sprint2/ColdStorageServiceSprint2V0.html">Sprint2</a></li>
             <li><a href="../Sprint3/ColdStorageServiceSprint3V0.html">Sprint3</a></li>
             <li><a href="../Sprint4/ColdStorageServiceSprint4V0.html">Sprint4</a></li>
-            <li><a href="../Deployment/Deployment&Mantenaince.html">Deployment</a></li>
+            <li><a href="../Deployment/Deployment&Mantenaince.html"><span class="evidenziato">Deployment</span></a></li>
         </ul>
     </div>
 
@@ -60,13 +60,91 @@
     <h2 id="deployment">Deployment</h2> 
 
     <div class="remark">
+        <h3>Docker</h3>
+
+        <p>
+            Abbiamo scelto di utilizzare <a href="https://docs.docker.com/">Docker</a> per effettuare il deployment dei vari servizi coinvolti dato che ci permette di effettuare un deployment completo tramite un singolo file docker-compose.
+        </p>
+
+        <h4>Generazione immagini</h4>
+
+        <p>
+            Le immagini utilizzate, escluse quelle di <b>wenv</b> e <b>basicrobot</b> possono essere generate automaticamente tramite apposite task gradle, le task in questione sono:
+        </p>
+        <ul>
+            <li>createDockerfile</li>
+            <li>buildImage</li>
+            <li>pushImage</li>
+        </ul>
+        <p>
+            con significato intuitivo.
+        </p>
+
+        <p>
+            Per la creazione di queste task sono state estese le task offerte dal plugin gradle <a href="https://bmuschko.github.io/gradle-docker-plugin/current/user-guide/">gradle-docker-plugin</a> che offrono una gamma di metodi utili a compilare un Dockerfile in modo dichiarativo.
+        </p>
+
+        <p>
+            Di seguito si riporta un esempio di task gradle <b>createDockerfile</b>, la pi&ugrave; interessante tra quelle create, che crea il Dockerfile per l'applicazione qak coldstorageservice.
+        </p>
+
+        <pre><code class="language-gradle">tasks.register<Dockerfile>("createDockerfile") {
+        mustRunAfter("distTar")
+        dependsOn("distTar")
+        group = "unibobootdocker"
+        description = "Create Dockerfile"
+
+        doFirst {
+            val inputTarFile =
+                project.layout.projectDirectory.file("build/distributions/" + project.name + "-" + project.version + ".tar")
+
+            from("openjdk:11")
+            exposePort(8021)
+            exposePort(8020)
+            volume("/data")
+            addFile("./build/distributions/${inputTarFile.asFile.name}", "/")
+            workingDir(inputTarFile.asFile.name.removeSuffix(".tar") + "/bin")
+            copyFile("./*.pl", "./")
+            copyFile("./*.json", "./")
+            copyFile("./*.bin", "./")
+            copyFile("./*.txt", "./")
+            defaultCommand("bash", "./" + project.name)
+        }
+    }</code></pre>
+
+        <p>
+            Questa particolare task &egrave; specifica per un progetto qak, sono state create task anche per gli applicativi spring, dove &egrave; possibile ottenere informazioni come le porte da esporre dai file di configurazione <code class="docutils literal notranslate"><span class="pre">application.properties</span></code>.
+        </p>
+
+        <p>
+            La task <b>buildImage</b> genera immagini con incluso il nome della repository sulla quale andranno caricate, includendo inoltre i tag delle versioni e <b>latest</b>: per creare una nuova immagine senza sovrascrivere le precedenti baster&agrave; cambiare il valore di <code class="docutils literal notranslate"><span class="pre">version</span></code> nel file <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code>.
+        </p>
+
+        <h3>RaspberryPi sonarled</h3>
+
+        <p>
+            Tuttavia per il componente che verr&agrave; messo in esecuzione sul RaspberryPi si &egrave; deciso di creare una distribuzione tar, tramite la task gradle <b>distTar</b> offerta dal plugin <b>application</b>; questa distribuzione mette a disposizione un conveniente script per avviare il metodo <code class="docutils literal notranslate"><span class="pre">main</span></code> specificato includendo automaticamente tutte le dipendenze necessarie.
+        </p>
 
     </div>
 
     <h2 id="manteinance">Manteinance</h2> 
 
     <div class="remark">
+        <p>
+            Il processo di mantenimento del codice è spesso un'impresa complessa in quanto bisogna affrontare sfide come la gestione delle dipendenze, la coerenza ambientale e la compatibilità tra diverse configurazioni di sistema. In questo contesto, Docker diventa indispensabile, semplificando notevolmente queste operazioni. 
+        </p>
+        <p>
+            Con Docker, il codice e le sue dipendenze vengono incapsulati in un ambiente autosufficiente, eliminando così i conflitti tra le diverse versioni delle librerie o dei framework utilizzati. In questo modo, è possibile evitare molte delle problematiche legate alle dipendenze che possono emergere nel tempo, semplificando notevolmente la gestione a lungo termine.
+        </p>
+        <p>
+            Un altro punto cruciale è la facilità di distribuzione e aggiornamento. I container Docker possono essere facilmente spostati tra diversi ambienti senza dover preoccuparsi delle differenze tra le infrastrutture sottostanti. Questo semplifica il processo di distribuzione delle nuove versioni dell'applicazione e l'applicazione di aggiornamenti senza interruzioni significative. Inoltre, Docker Hub e altri registri di container consentono di gestire e distribuire facilmente le immagini dei container, facilitando ulteriormente il processo di manutenzione.
+        </p>
 
+
+        <p class="nota">
+            Se un giorno il committente vorrà distribuire gli attori su nodi diversi (e quindi in contesti diversi) srà sufficiente utilizzare le task gradle per generare il nuovo dockerfile e la nuova immagine docker, in modo del tutto automatizzato.
+        </p>
     </div>
 </div>
 </body>

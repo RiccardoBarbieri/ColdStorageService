@@ -27,7 +27,7 @@ public class SagConnection extends ConnectionUtils {
     public String sendStorageRequest(Interaction conn, float fw) {
         String functionName = "sendStorageRequest";
         try {
-            String msg = "" + CommUtils.buildRequest("serviceaccessguisim",
+            String msg = "" + CommUtils.buildRequest("serviceaccessgui",
                     "storerequest", "storerequest(" + fw + ")", actorName);
             return sendRequest(conn, msg, functionName);
         } catch (Exception e) {
@@ -39,7 +39,7 @@ public class SagConnection extends ConnectionUtils {
     public String sendChargeStatusRequest(Interaction conn) {
         String functionName = "sendChargeStatusRequest";
         try {
-            String msg = "" + CommUtils.buildRequest("serviceaccessguisim",
+            String msg = "" + CommUtils.buildRequest("serviceaccessgui",
                     "chargestatus", "chargestatus(arg)", actorName);
             return sendRequest(conn, msg, functionName);
         } catch (Exception e) {

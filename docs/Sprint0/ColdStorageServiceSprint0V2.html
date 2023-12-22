@@ -434,6 +434,9 @@
         <p>
             E' stato quindi aggiunto il nuovo messaggio <b>chargestatus</b> per richiedere lo stato del carico, mostrato nel modello sottostante.
         </p>
+        <p class="keypoint">
+            <b>KEY-POINT</b>: evitando la semantica <i>dispatch</i> facciamo si che al <i>ColdStorageService</i> non serva conoscere la <i>ServiceAccessGUI</i>, ma dovrà semplicemente rispondere ad una richiesta. In questo modo viene rispettato il principio della <b>clean architecture</b>.
+        </p>
     </p>
 
     <img id="modello" class="bigimglim" src="../../projects/sprint0V2/coldstorageservice23arch.png" alt="Modello dispatch" height="70%" width="70%">

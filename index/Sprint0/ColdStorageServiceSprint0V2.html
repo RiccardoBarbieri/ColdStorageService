@@ -19,9 +19,9 @@
 <body>
 
     <div class="sidebar">
-        <h1><a id="titleindex" href="../index/index.html">Indice</a></h1>
+        <h1><a id="titleindex" href="../index.html">Indice</a></h1>
         <ul>
-            <li><a href="../Sprint0/ColdStorageServiceSprint0V2.html">Sprint0</a></li>
+            <li><a href="../Sprint0/ColdStorageServiceSprint0V2.html"><span class="evidenziato">Sprint0</span></a></li>
             <li><a href="../Sprint1/ColdStorageServiceSprint1V1.html">Sprint1</a></li>
             <ul>
                 <li><a href="../Sprint1/ServiceAccessGUISimProjectV1.html">ServiceAccessGUI</a></li>
@@ -46,7 +46,9 @@
         <h2>Requirements</h2>
          
         <div class="remark">
-            <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements</a><br>
+            <p>
+                <a target="_blank" href="https://iss.riccardob.dev/TemaFinale23.html">Descrizione requirements</a><br>
+            </p>
         
         
         <p>
@@ -444,6 +446,9 @@
                 <p>
                     E' stato quindi aggiunto il nuovo messaggio <b>chargestatus</b> per richiedere lo stato del carico, mostrato nel modello sottostante.
                 </p>
+            </p>
+            <p class="keypoint">
+                <b>KEY-POINT</b>: evitando la semantica <i>dispatch</i> facciamo si che al <i>ColdStorageService</i> non serva conoscere la <i>ServiceAccessGUI</i>, ma dovrà semplicemente rispondere ad una richiesta. In questo modo viene rispettato il principio della <b>clean architecture</b>.
             </p>
         
             <img id="modello" class="bigimglim" src="../../projects/sprint0V2/coldstorageservice23arch.png" alt="Modello dispatch" height="70%" width="70%">
