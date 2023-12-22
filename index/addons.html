@@ -32,6 +32,10 @@
                 <li><a href="#pdf">Visualizzazione tramite pdf</a></li>
             </ul>
             <li><a class="textbig" href="#deployment">Deployment con Docker</a></li>
+            <ul>
+                <li><a href="#gradle">Task gradle</a></li>
+                <li><a href="#docker">Docker</a></li>
+            </ul>
         </ul>
     </div>
 
@@ -75,7 +79,10 @@
                 </ul>
 
                 <p class="nota">
-                    Non abbiamo trattato la <b>cifratura del messaggio</b> durante il suo passaggio <b>in rete</b>. In caso voglia essere implementato, è necessario usare algoritmi di cifratura e decifratura del messaggio con cifrario simmetrico, che implica la condivisione di un segreto tra il componente <i>ServiceAccessGUI</i> e il servizio principale <i>ColdStorageService</i>.
+                    Non abbiamo trattato la <b>cifratura del messaggio</b> durante il suo passaggio <b>in rete</b>. In caso voglia essere implementato, è necessario usare algoritmi di cifratura e decifratura con cifrario simmetrico, che implica la condivisione di un segreto tra il componente <i>ServiceAccessGUI</i> e il servizio principale <i>ColdStorageService</i>. <br>
+                    <p class="nota">
+                        Proponiamo al <b>committente</b> l'aggiunta al sistema <i>qak</i> di un canale di comunicazione con possibilità di cifratura.
+                    </p>
                 </p>
             </p>
 
@@ -127,15 +134,61 @@
                 <p class="keypoint">
                     <b>KEY-POINT:</b> fornire il <i>ticket</i> all'utente in modo <b>esterno</b> all'applicazione web <i>SAG</i>
                 </p>
+
+                <p>
+                    <p>
+                        Abbiamo parlato in analisi del problema di fornire il codice all'utente in maniera esterna all'applicazione. <br>
+                        Pensando in termini di portabilità e semplicità d'uso, abbiamo optato per la generazione di un file <b>pdf</b>, contenente il ticket. <br>
+                        La scelta è stata mossa dal fatto che un file pdf è leggibile facilmente su tutti i dispositivi (smartphone, pc, tablet, ...) senza l'ausilio di applicazione esterne o non pre-installate. Inoltre, è facilmente scaricabile dalla pagina web.  
+                    </p>
+                    <p class="keypoint">
+                        <b>KEY-POINT:</b> portabilità e semplicità d'uso tramite un file <i>.pdf</i> contente il ticket code.
+                    </p>
+                
+                    <p>
+                        Qui il server risponde alla richiesta all'endpoint <code class="docutils literal notranslate"><span class="pre">/generatePdf</span></code> con il contenuto di un file pdf, questo contenuto binario &egrave; convertito in un <code class="docutils literal notranslate"><span class="pre">Blob</span></code> per poi essere salvato come pdf, a questo scopo si fa utilizzo della libreria <code class="docutils literal notranslate"><span class="pre">FileSaver.js</span></code>
+                    </p>
+                
+                    <pre><code class="language-javascript">function generatePdf(inputValue) {
+                
+                    //data structure to send to server
+                    const requestBodyMap = {
+                        ticketCode: inputValue
+                    }
+                
+                    //request to server
+                    const relativeEndpoint = '/generatePdf';
+                    fetch(
+                        relativeEndpoint,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/pdf',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(requestBodyMap)
+                        }
+                    ).then(response => {
+                        return response.arrayBuffer();
+                    }).then(data => {
+                        var blob = new Blob([data], {type: 'application/pdf'});
+                        saveAs(blob, 'ticket.pdf');
+                    }).catch(error => {
+                            console.log(error);
+                    });
+                }</code></pre>
+                
+                </p>
             </p>
         </div>
         
         
-        <h2 id="deployment">Deployment con Docker</h2>    
+        <h2 id="deployment">Deployment</h2>    
         <div class="remark">
-            <p>
-               
-            </p>
+            
+            <h3 id="gradle">Task gradle</h3>
+
+            <h3 id="docker">Docker</h3>
         </div>
     </div>
 </body>
