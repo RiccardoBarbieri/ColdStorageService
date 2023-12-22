@@ -57,10 +57,103 @@
         <div class="remark">
             
             <h3 id="ottimizzazione">Ottimizzazione percorso</h3>
-        
 
+            <h4>Problema</h4>
+            <p>
+                Il percorso che il VirtualRobot effettua per raggiungere una posizione comunicata viene determinato dal basicrobot.
+            </p>
+            <p>
+                Il TransportTrolley tuttavia potrebbe doversi recare in posizioni non determinate da una singola coppia di coordinate ma <b>multiple coppie</b> come nel caso della INDOOR o PORT, per questo tipo di destinazioni &egrave; possibile ottimizzare ulteriormente il percorso scegliendo quella <b>pi&ugrave; vicina</b> alla posizione corrente del robot.
+            </p>
+
+            <h4>Soluzione</h4>
+
+            <p>
+                Una possibile soluzione a questo problema consiste nell'aggiungere un ulteriore livello di astrazione che estende il protocollo offerto dal basicrobot con un nuovo tipo di interazione che permette di richiedere lo spostamento verso la coordinata pi&ugrave; vicina tra una lista specificata. 
+            </p>
+
+            <h5>TrolleyExecutor</h5>
+            <p>
+                La nostra implementazione consiste nell'aggiunta dell'attore <b>trolleyexecutor</b> che sostituisce il basicrobot dal punto di vista del transporttrolley.
+            </p>
+
+            <p>
+                Il TrolleyExecutor comunica con il basicrobot e espone il seguente protocollo di interazione:
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Messaggio</th>
+                        <th>Payload</th>
+                        <th>Semantica</th>
+                        <th>Risposte</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>move</td>
+                        <td>move(X,Y)</td>
+                        <td>Req-Rep</td>
+                        <td>movedone, movefailed</td>
+                    </tr>
+                    <tr>
+                        <td>stop</td>
+                        <td>stop()</td>
+                        <td>Dispatch</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>moveclosest</td>
+                        <td>moveclosest(Xs,Ys)</td>
+                        <td>Req-Rep</td>
+                        <td>movecdone, movecfailed</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p>
+                Abbiamo progettato il comando <b>moveclosest</b> per funzionare sia se inviato in un momento in cui il VirtualRobot &egrave; fermo sia quando &egrave; in movimento.
+            </p>
+            <p>
+                Alla ricezione della richiesta il trolleyexecutor arresta il basicrobot tramite l'evento <b>alarm</b> se in movimento, procede poi a richiedere al basicrobot la posizione del VirtualRobot e la utilizza per calcolare la destinazione pi&ugrave; vicina tra quelle inviate con la richiesta moveclosest, una volta ottenuta la destinazione pi&ugrave; vicina comunica al basicrobot di spostare il VirtualRobot a quella coordinata.
+            </p>
+
+            <p>
+                L'implementazione di questi comandi &egrave; consultabile nel file <a href="./code/coldstorageservice23.qak">coldstorageservice23.qak</a> del progetto sprint4V0.
+            </p>
+            
             <h3 id="servicearea">Gestione service area</h3>
 
+            <h4>Problema</h4>
+            <p>
+                Un problema emerso nell'analisi dello Sprint1 &egrave; quello della configurazione della Service Area, dove con configurazione si intende la creazione di una mappa che il basicrobot &egrave; in grado di utilizzare per navigare l'area a disposizione.
+            </p>
+
+            <p>
+                &Egrave; necessario fornire uno strumento per generare il file in formato testuale utilizzato dal basicrobot che permetta di specificare la posizione dei landmark di interesse per il servizio in modo da generare anche una associazione tra i landmark e le loro coordinate per permettere al TransportTrolley di conoscere la posizione dei landmark.
+            </p>
+            
+            <h4>Soluzione</h4>
+
+            <p>
+                Per creare l'associazione tra landmark e coordinate &egrave; stata predisposta la classe <a href="./code/LandmarkCoordinates.kt">LandmarkCoordinates</a> che mette a disposizione metodi di utilit&agrave; per ottenere le coordinate di un determinato landmark.
+            </p>
+
+            <p>
+                L'applicativo che permette di configurare la Service Area generer&agrave; una istanza di questa classe con le corrette associazioni.
+            </p>
+
+            <h5>MapConfigurato</h5>
+
+            <p>
+                Il MapConfigurator &egrave; una applicazione web realizzata con SpringBoot e JavaScript che permette di creare configurazioni della Service Area in modo intuitivo, trascinando i blocchi necessari negli appositi spazi.
+            </p>
+
+            <p>
+                La mappa che il MapConfigurator usa come default &egrave; una semplice mappa che configura i bordi dell'area come visitati e privi di ostacoli e i blocchi interni come non visitati.
+            </p>
+
+            <img class="imglim" src="./images/sprint1/mapconf.png" alt="MapConfigurator interface">
         </div>
 
 
@@ -151,32 +244,32 @@
                 
                     <pre><code class="language-javascript">function generatePdf(inputValue) {
                 
-                    //data structure to send to server
-                    const requestBodyMap = {
-                        ticketCode: inputValue
-                    }
-                
-                    //request to server
-                    const relativeEndpoint = '/generatePdf';
-                    fetch(
-                        relativeEndpoint,
-                        {
-                            method: 'POST',
-                            headers: {
-                                'Accept': 'application/pdf',
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(requestBodyMap)
-                        }
-                    ).then(response => {
-                        return response.arrayBuffer();
-                    }).then(data => {
-                        var blob = new Blob([data], {type: 'application/pdf'});
-                        saveAs(blob, 'ticket.pdf');
-                    }).catch(error => {
-                            console.log(error);
-                    });
-                }</code></pre>
+    //data structure to send to server
+    const requestBodyMap = {
+        ticketCode: inputValue
+    }
+    
+    //request to server
+    const relativeEndpoint = '/generatePdf';
+    fetch(
+        relativeEndpoint,
+        {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/pdf',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBodyMap)
+        }
+    ).then(response => {
+        return response.arrayBuffer();
+    }).then(data => {
+        var blob = new Blob([data], {type: 'application/pdf'});
+        saveAs(blob, 'ticket.pdf');
+    }).catch(error => {
+            console.log(error);
+    });
+}</code></pre>
                 
                 </p>
             </p>
