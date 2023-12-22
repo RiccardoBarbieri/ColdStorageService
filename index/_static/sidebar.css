@@ -72,7 +72,7 @@ ol, ul, li {
 }
 
 #titleindex:hover {
-    color: #87CEEB; |
+    color: #87CEEB;
 }
 
 .content {
@@ -84,4 +84,22 @@ ol, ul, li {
     background-color: yellow;
     color: black;
     font-weight: bold;
+}
+
+.sidebar-large {
+    width: 280px !important;
+}
+
+.textbig {
+    font-size: 22px !important;
+    color: rgb(243, 211, 149)  !important;
+}
+
+.content-small {
+    margin-left: 270px;
+    padding: 16px;
+}
+
+.sidebar-large ul ul{
+    margin-bottom: 30px !important;
 }

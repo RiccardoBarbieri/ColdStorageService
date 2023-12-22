@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="stylesheet" href="./_static/template.css">
+<link rel="stylesheet" href="./_static/mine.css">
+<link rel="stylesheet" href="./_static/code.css">
+<link rel="stylesheet" href="./_static/colors.css">
+<link rel="stylesheet" href="./_static/sidebar.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/dockerfile.min.js"></script>
+
+
+<script>hljs.highlightAll();</script>
+<title>Addons</title>
+</head>
+    
+<body>
+
+    <div class="sidebar sidebar-large">
+        <h1><a id="titleindex" href="#intro">Addons</a></h1>
+        <ul>
+            <li><a class="textbig" href="#movimento_robot">Movimento robot</a></li>
+            <ul>
+                <li><a href="#ottimizzazione">Ottimizzazione percorso</a></li>
+                <li><a href="#servicearea">Gestione service area</a></li>
+            </ul>
+            <li><a class="textbig" href="#ticket">Gestione ticket</a></li>
+            <ul>
+                <li><a href="#sicurezza">Requisiti di sicurezza</a></li>
+                <li><a href="#pdf">Visualizzazione tramite pdf</a></li>
+            </ul>
+            <li><a class="textbig" href="#deployment">Deployment con Docker</a></li>
+        </ul>
+    </div>
+
+    <div class="content-small">
+            
+        <h2 id="intro">Introduction</h2> 
+        <div class="remark">
+            <p>
+                In questo documento vengono analizzati tutti gli <b>addons</b> portati al progetto <i>ColdStorageService</i> dell'anno accademico 2022/2023. Per ognuno di essi sono riportate l'analisi effettuata e la specifica implementazione.
+                <p>
+                    Al link che segue è presente il <a href="./documents/temafinale.pdf" target="_blank" rel="noopener noreferrer">documento dei requisiti</a> a cui fare riferimento. <br>
+                    Di seguito è invece presente l'<a href="./index.html" target="_blank" rel="noopener noreferrer">indice</a> del progetto, da cui navigare tutti gli Sprint.
+                </p>
+            </p>
+        </div>
+
+
+        <h2 id="movimento_robot">Movimento del robot</h2> 
+        <div class="remark">
+            
+            <h3 id="ottimizzazione">Ottimizzazione percorso</h3>
+        
+
+            <h3 id="servicearea">Gestione service area</h3>
+
+        </div>
+
+
+        <h2 id="ticket">Gestione del ticket</h2> 
+        <div class="remark">
+            
+            <h3 id="sicurezza">Requisiti di sicurezza</h3>
+
+            <h4>Problema</h4>
+            <p>
+                Far si che il <i>ticket number</i> rispetti i seguenti requisiti:
+                <ul>
+                    <li>non deve essere replicato (univocità)</li>
+                    <li>non deve essere prevedibile</li>
+                    <li>deve essere mantenuto segreto</li>
+                </ul>
+
+                <p class="nota">
+                    Non abbiamo trattato la <b>cifratura del messaggio</b> durante il suo passaggio <b>in rete</b>. In caso voglia essere implementato, è necessario usare algoritmi di cifratura e decifratura del messaggio con cifrario simmetrico, che implica la condivisione di un segreto tra il componente <i>ServiceAccessGUI</i> e il servizio principale <i>ColdStorageService</i>.
+                </p>
+            </p>
+
+            <h4>Soluzione</h4>
+            <p>
+                <p class="keypoint">
+                    <b>KEY-POINT:</b> il ticket viene analizzato, dal punto di vista della sicurezza, similmente ad una password.
+                </p>
+                <h5>Generazione</h5>
+                <p>
+                    La generazione del codice deve avere i requisiti di univocità e di imprevedibilità. Nonostante non si stiano trattando dati sensibili è bene che per utente malevolo sia computazionalmente impossibile prevedere quale sia il prossimo codice che verrà generato; se così non fosse, l'utente potrebbe calcolare il codice ed immetterlo nella <i>SAG</i> prima che l'utente originale arrivi alla <i>INDOOR</i>, depositando al posto suo. <br>
+                    
+                    Conseguentemente a questi requisiti, dovremo usare uno <b>Pseudo Random Number Generator</b> crittograficamente sicuro.
+                </p>
+
+                <b>TODO: inserire implementazione</b>
+
+                <h5>Memorizzazione</h5>
+                <p>
+                    Per questioni di sicurezza il <b>ticket</b> deve essere memorizzato in modo tale da non poter essere scoperto o dedotto dall'esterno. Per ottenere questo risultato possiamo usare una funzione <b>hash</b>: in questo modo memorizzeremo solamente l'impronta generata dalla suddetta funzione, risparmiando molto in termini di memoria occupata. <br>
+                    Per effettuare il controllo, al momento dell'inserimento del codice il <i>CSS</i> ricalcolerà l'impronta tramite la stessa funzione hash per vedere se trova corrispondenza. <br>
+                </p>
+            
+                <p class="nota"> 
+                    <b>Funzione hash</b> <br>
+                    Anche qui necessitiamo di una funzione crittograficamente sicura, che sia efficiente, che non permetta il calcolo a ritroso e che soprattutto sia resistente alle collisioni.
+                </p>
+
+                <b>TODO: inserire implementazione</b>
+
+            </p>
+            <h3 id="pdf">Visualizzazione tramite pdf</h3>
+
+            <h4>Problema</h4>
+            <p>
+                Sappiamo che il ticket verrà restituito dal <i>CSS</i> e la <i>SAG</i> dovrà fornirlo all'utente. <br>
+                Ci siamo posti dunque il problema di fornire all'utente il ticket in maniera semplice, comoda e soprattutto resistente ad eventuali chiusure dell'applicazione <i>ServiceAccessGUI</i>. <br>
+                Infatti, se una volta ottenuto il ticket (e fosse visualizzabile solo nella pagina) l'utente chiudesse per errore la pagina web, perderebbe la possibilità di inserirlo in quanto non se lo ricorderebbe (e dovrebbe effettuare una nuova richiesta di deposito). <br>
+            </p>
+
+            <h4>Soluzione</h4>
+            <p>
+                Al fine di fornire il ticket all'utente, abbiamo pensato a due vie:
+                <ul>
+                    <li>mostarlo in chiaro nell'applicazione web (all'interno della pagina)</li>
+                    <li>fornirlo in maniera esterna all'applicazione</li>
+                </ul>
+                Mentre il primo modo semplifica la vita all'utente che dovrà fare solamente un copia-incolla all'interno della pagina, il secondo permette invece di far fronte a problemi come la chiusura dell'applicazione, sopra discussi. <br>
+                <p class="keypoint">
+                    <b>KEY-POINT:</b> fornire il <i>ticket</i> all'utente in modo <b>esterno</b> all'applicazione web <i>SAG</i>
+                </p>
+            </p>
+        </div>
+        
+        
+        <h2 id="deployment">Deployment con Docker</h2>    
+        <div class="remark">
+            <p>
+               
+            </p>
+        </div>
+    </div>
+</body>
+</html>
