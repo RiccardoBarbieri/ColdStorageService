@@ -1,21 +1,22 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
+
 <head>
-<link rel="stylesheet" href="./_static/template.css">
-<link rel="stylesheet" href="./_static/mine.css">
-<link rel="stylesheet" href="./_static/code.css">
-<link rel="stylesheet" href="./_static/colors.css">
-<link rel="stylesheet" href="./_static/sidebar.css">
-<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/dockerfile.min.js"></script>
+    <link rel="stylesheet" href="./_static/template.css">
+    <link rel="stylesheet" href="./_static/mine.css">
+    <link rel="stylesheet" href="./_static/code.css">
+    <link rel="stylesheet" href="./_static/colors.css">
+    <link rel="stylesheet" href="./_static/sidebar.css">
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/dockerfile.min.js"></script>
 
 
-<script>hljs.highlightAll();</script>
-<title>Addons</title>
+    <script>hljs.highlightAll();</script>
+    <title>Addons</title>
 </head>
-    
+
 <body>
 
     <div class="sidebar sidebar-large">
@@ -38,45 +39,57 @@
             </ul>
         </ul>
 
-        <a id="backtoindex" href="./index.html" target="_blank" rel="noopener noreferrer">Sprint<img src="./images/back.png"></a>
+        <a id="backtoindex" href="./index.html" target="_blank" rel="noopener noreferrer">Sprint<img
+                src="./images/back.png"></a>
     </div>
 
     <div class="content-small">
-            
-        <h2 id="intro">Introduction</h2> 
+
+        <h2 id="intro">Introduction</h2>
         <div class="remark">
             <p>
-                In questo documento vengono analizzati tutti gli <b>addons</b> portati al progetto <i>ColdStorageService</i> dell'anno accademico 2022/2023. Per ognuno di essi sono riportate l'analisi effettuata e la specifica implementazione.
-                <p>
-                    Al link che segue è presente il <a href="./documents/temafinale.pdf" target="_blank" rel="noopener noreferrer">documento dei requisiti</a> a cui fare riferimento. <br>
-                    Di seguito è invece presente l'<a href="./index.html" target="_blank" rel="noopener noreferrer">indice</a> del progetto, da cui navigare tutti gli Sprint.
-                </p>
+                In questo documento vengono analizzati tutti gli <b>addons</b> portati al progetto
+                <i>ColdStorageService</i> dell'anno accademico 2022/2023. Per ognuno di essi sono riportate l'analisi
+                effettuata e la specifica implementazione.
+            <p>
+                Al link che segue è presente il <a href="./documents/temafinale.pdf" target="_blank"
+                    rel="noopener noreferrer">documento dei requisiti</a> a cui fare riferimento. <br>
+                Di seguito è invece presente l'<a href="./index.html" target="_blank"
+                    rel="noopener noreferrer">indice</a> del progetto, da cui navigare tutti gli Sprint.
+            </p>
             </p>
         </div>
 
 
-        <h2 id="movimento_robot">Movimento del robot</h2> 
+        <h2 id="movimento_robot">Movimento del robot</h2>
         <div class="remark">
-            
+
             <h3 id="ottimizzazione">Ottimizzazione percorso</h3>
 
             <h4>Problema</h4>
             <p>
-                Il percorso che il VirtualRobot effettua per raggiungere una posizione comunicata viene determinato dal basicrobot.
+                Il percorso che il VirtualRobot effettua per raggiungere una posizione comunicata viene determinato dal
+                basicrobot.
             </p>
             <p>
-                Il TransportTrolley tuttavia potrebbe doversi recare in posizioni non determinate da una singola coppia di coordinate ma <b>multiple coppie</b> come nel caso della INDOOR o PORT, per questo tipo di destinazioni &egrave; possibile ottimizzare ulteriormente il percorso scegliendo quella <b>pi&ugrave; vicina</b> alla posizione corrente del robot.
+                Il TransportTrolley tuttavia potrebbe doversi recare in posizioni non determinate da una singola coppia
+                di coordinate ma <b>multiple coppie</b> come nel caso della INDOOR o PORT, per questo tipo di
+                destinazioni &egrave; possibile ottimizzare ulteriormente il percorso scegliendo quella <b>pi&ugrave;
+                    vicina</b> alla posizione corrente del robot.
             </p>
 
             <h4>Soluzione</h4>
 
             <p>
-                Una possibile soluzione a questo problema consiste nell'aggiungere un ulteriore livello di astrazione che estende il protocollo offerto dal basicrobot con un nuovo tipo di interazione che permette di richiedere lo spostamento verso la coordinata pi&ugrave; vicina tra una lista specificata. 
+                Una possibile soluzione a questo problema consiste nell'aggiungere un ulteriore livello di astrazione
+                che estende il protocollo offerto dal basicrobot con un nuovo tipo di interazione che permette di
+                richiedere lo spostamento verso la coordinata pi&ugrave; vicina tra una lista specificata.
             </p>
 
             <h5>TrolleyExecutor</h5>
             <p>
-                La nostra implementazione consiste nell'aggiunta dell'attore <b>trolleyexecutor</b> che sostituisce il basicrobot dal punto di vista del transporttrolley.
+                La nostra implementazione consiste nell'aggiunta dell'attore <b>trolleyexecutor</b> che sostituisce il
+                basicrobot dal punto di vista del transporttrolley.
             </p>
 
             <p>
@@ -112,91 +125,121 @@
                     </tr>
                 </tbody>
             </table>
-            
+
             <p>
-                Abbiamo progettato il comando <b>moveclosest</b> per funzionare sia se inviato in un momento in cui il VirtualRobot &egrave; fermo sia quando &egrave; in movimento.
+                Abbiamo progettato il comando <b>moveclosest</b> per funzionare sia se inviato in un momento in cui il
+                VirtualRobot &egrave; fermo sia quando &egrave; in movimento.
             </p>
             <p>
-                Alla ricezione della richiesta il trolleyexecutor arresta il basicrobot tramite l'evento <b>alarm</b> se in movimento, procede poi a richiedere al basicrobot la posizione del VirtualRobot e la utilizza per calcolare la destinazione pi&ugrave; vicina tra quelle inviate con la richiesta moveclosest, una volta ottenuta la destinazione pi&ugrave; vicina comunica al basicrobot di spostare il VirtualRobot a quella coordinata.
+                Alla ricezione della richiesta il trolleyexecutor arresta il basicrobot tramite l'evento <b>alarm</b> se
+                in movimento, procede poi a richiedere al basicrobot la posizione del VirtualRobot e la utilizza per
+                calcolare la destinazione pi&ugrave; vicina tra quelle inviate con la richiesta moveclosest, una volta
+                ottenuta la destinazione pi&ugrave; vicina comunica al basicrobot di spostare il VirtualRobot a quella
+                coordinata.
             </p>
 
             <p>
-                L'implementazione di questi comandi &egrave; consultabile nel file <a href="./code/coldstorageservice23.qak">coldstorageservice23.qak</a> del progetto sprint4V0.
+                L'implementazione di questi comandi &egrave; consultabile nel file <a
+                    href="./code/coldstorageservice23.qak">coldstorageservice23.qak</a> del progetto sprint4V0.
             </p>
-            
+
             <h3 id="servicearea">Gestione service area</h3>
 
             <h4>Problema</h4>
             <p>
-                Un problema emerso nell'analisi dello Sprint1 &egrave; quello della configurazione della Service Area, dove con configurazione si intende la creazione di una mappa che il basicrobot &egrave; in grado di utilizzare per navigare l'area a disposizione.
+                Un problema emerso nell'analisi dello Sprint1 &egrave; quello della configurazione della Service Area,
+                dove con configurazione si intende la creazione di una mappa che il basicrobot &egrave; in grado di
+                utilizzare per navigare l'area a disposizione.
             </p>
 
             <p>
-                &Egrave; necessario fornire uno strumento per generare il file in formato testuale utilizzato dal basicrobot che permetta di specificare la posizione dei landmark di interesse per il servizio in modo da generare anche una associazione tra i landmark e le loro coordinate per permettere al TransportTrolley di conoscere la posizione dei landmark.
+                &Egrave; necessario fornire uno strumento per generare il file in formato testuale utilizzato dal
+                basicrobot che permetta di specificare la posizione dei landmark di interesse per il servizio in modo da
+                generare anche una associazione tra i landmark e le loro coordinate per permettere al TransportTrolley
+                di conoscere la posizione dei landmark.
             </p>
-            
+
             <h4>Soluzione</h4>
 
             <p>
-                Per creare l'associazione tra landmark e coordinate &egrave; stata predisposta la classe <a href="./code/LandmarkCoordinates.kt">LandmarkCoordinates</a> che mette a disposizione metodi di utilit&agrave; per ottenere le coordinate di un determinato landmark.
+                Per creare l'associazione tra landmark e coordinate &egrave; stata predisposta la classe <a
+                    href="./code/LandmarkCoordinates.kt">LandmarkCoordinates</a> che mette a disposizione metodi di
+                utilit&agrave; per ottenere le coordinate di un determinato landmark.
             </p>
 
             <p>
-                L'applicativo che permette di configurare la Service Area generer&agrave; una istanza di questa classe con le corrette associazioni.
+                L'applicativo che permette di configurare la Service Area generer&agrave; una istanza di questa classe
+                con le corrette associazioni.
             </p>
 
             <h5>MapConfigurato</h5>
 
             <p>
-                Il MapConfigurator &egrave; una applicazione web realizzata con SpringBoot e JavaScript che permette di creare configurazioni della Service Area in modo intuitivo, trascinando i blocchi necessari negli appositi spazi.
+                Il MapConfigurator &egrave; una applicazione web realizzata con SpringBoot e JavaScript che permette di
+                creare configurazioni della Service Area in modo intuitivo, trascinando i blocchi necessari negli
+                appositi spazi.
             </p>
 
             <p>
-                La mappa che il MapConfigurator usa come default &egrave; una semplice mappa che configura i bordi dell'area come visitati e privi di ostacoli e i blocchi interni come non visitati.
+                La mappa che il MapConfigurator usa come default &egrave; una semplice mappa che configura i bordi
+                dell'area come visitati e privi di ostacoli e i blocchi interni come non visitati.
             </p>
 
             <img class="imglim" src="./images/sprint1/mapconf.png" alt="MapConfigurator interface">
         </div>
 
 
-        <h2 id="ticket">Gestione del ticket</h2> 
+        <h2 id="ticket">Gestione del ticket</h2>
         <div class="remark">
-            
+
             <h3 id="sicurezza">Requisiti di sicurezza</h3>
 
             <h4>Problema</h4>
             <p>
                 Far si che il <i>ticket number</i> rispetti i seguenti requisiti:
-                <ul>
-                    <li>non deve essere replicato (univocità)</li>
-                    <li>non deve essere prevedibile</li>
-                    <li>deve essere mantenuto segreto</li>
-                </ul>
+            <ul>
+                <li>non deve essere replicato (univocità)</li>
+                <li>non deve essere prevedibile</li>
+                <li>deve essere mantenuto segreto</li>
+            </ul>
 
-                <p class="nota">
-                    Non abbiamo trattato la <b>cifratura del messaggio</b> durante il suo passaggio <b>in rete</b>. In caso voglia essere implementato, è necessario usare algoritmi di cifratura e decifratura con cifrario simmetrico, che implica la condivisione di un segreto tra il componente <i>ServiceAccessGUI</i> e il servizio principale <i>ColdStorageService</i>. <br>
-                    <p class="nota">
-                        Proponiamo al <b>committente</b> l'aggiunta al sistema <i>qak</i> di un canale di comunicazione con possibilità di cifratura.
-                    </p>
-                </p>
+            <p class="nota">
+                Non abbiamo trattato la <b>cifratura del messaggio</b> durante il suo passaggio <b>in rete</b>. In caso
+                voglia essere implementato, è necessario usare algoritmi di cifratura e decifratura con cifrario
+                simmetrico, che implica la condivisione di un segreto tra il componente <i>ServiceAccessGUI</i> e il
+                servizio principale <i>ColdStorageService</i>. <br>
+            <p class="nota">
+                Proponiamo al <b>committente</b> l'aggiunta al sistema <i>qak</i> di un canale di comunicazione con
+                possibilità di cifratura.
+            </p>
+            </p>
             </p>
 
             <h4>Soluzione</h4>
             <p>
-                <p class="keypoint">
-                    <b>KEY-POINT:</b> il ticket viene analizzato, dal punto di vista della sicurezza, similmente ad una password.
-                </p>
-                <h5>Generazione</h5>
-                <p>
-                    La generazione del codice deve avere i requisiti di univocità e di imprevedibilità. Nonostante non si stiano trattando dati sensibili è bene che per utente malevolo sia computazionalmente impossibile prevedere quale sia il prossimo codice che verrà generato; se così non fosse, l'utente potrebbe calcolare il codice ed immetterlo nella <i>SAG</i> prima che l'utente originale arrivi alla <i>INDOOR</i>, depositando al posto suo. <br>
-                    
-                    Conseguentemente a questi requisiti, dovremo usare uno <b>Pseudo Random Number Generator</b> crittograficamente sicuro.
-                </p>
+            <p class="keypoint">
+                <b>KEY-POINT:</b> il ticket viene analizzato, dal punto di vista della sicurezza, similmente ad una
+                password.
+            </p>
+            <h5>Generazione</h5>
+            <p>
+                La generazione del codice deve avere i requisiti di univocità e di imprevedibilità. Nonostante non si
+                stiano trattando dati sensibili è bene che per utente malevolo sia computazionalmente impossibile
+                prevedere quale sia il prossimo codice che verrà generato; se così non fosse, l'utente potrebbe
+                calcolare il codice ed immetterlo nella <i>SAG</i> prima che l'utente originale arrivi alla
+                <i>INDOOR</i>, depositando al posto suo. <br>
 
-                <p>
-                    Per generare i caratteri random che fanno parte della rappresentazione del ticket si fa utilizzo dei metodi offerti dalla classe <code class="docutils literal notranslate"><span class="pre">java.security.SecureRandom</span></code> che garantisce la sicurezza tramite l'utilizzo di uno PRNG.
-                </p>
-                <pre><code class="language-kotlin">private fun randomString(): String {
+                Conseguentemente a questi requisiti, dovremo usare uno <b>Pseudo Random Number Generator</b>
+                crittograficamente sicuro.
+            </p>
+
+            <p>
+                Per generare i caratteri random che fanno parte della rappresentazione del ticket si fa utilizzo dei
+                metodi offerti dalla classe <code
+                    class="docutils literal notranslate"><span class="pre">java.security.SecureRandom</span></code> che
+                garantisce la sicurezza tramite l'utilizzo di uno PRNG.
+            </p>
+            <pre><code class="language-kotlin">private fun randomString(): String {
                 val sr: SecureRandom = SecureRandom.getInstance("SHA1PRNG")
                 return sr.ints(STRING_LENGTH, 0, CHAR_POOL.size)
                     .asSequence()
@@ -204,18 +247,43 @@
                     .joinToString("")
             }</code></pre>
 
-                <h5>Memorizzazione</h5>
-                <p>
-                    Per questioni di sicurezza il <b>ticket</b> deve essere memorizzato in modo tale da non poter essere scoperto o dedotto dall'esterno. Per ottenere questo risultato possiamo usare una funzione <b>hash</b>: in questo modo memorizzeremo solamente l'impronta generata dalla suddetta funzione, risparmiando molto in termini di memoria occupata. <br>
-                    Per effettuare il controllo, al momento dell'inserimento del codice il <i>CSS</i> ricalcolerà l'impronta tramite la stessa funzione hash per vedere se trova corrispondenza. <br>
-                </p>
-            
-                <p class="nota"> 
-                    <b>Funzione hash</b> <br>
-                    Anche qui necessitiamo di una funzione crittograficamente sicura, che sia efficiente, che non permetta il calcolo a ritroso e che soprattutto sia resistente alle collisioni.
-                </p>
+            <h5>Memorizzazione</h5>
+            <p>
+                Per questioni di sicurezza il <b>ticket</b> deve essere memorizzato in modo tale da non poter essere
+                scoperto o dedotto dall'esterno. Per ottenere questo risultato possiamo usare una funzione <b>hash</b>:
+                in questo modo memorizzeremo solamente l'impronta generata dalla suddetta funzione, risparmiando inoltre
+                in termini di memoria occupata. <br>
+                Per effettuare il controllo, al momento dell'inserimento del codice il <i>CSS</i> ricalcolerà l'impronta
+                tramite la stessa funzione hash per vedere se trova corrispondenza. <br>
+            </p>
 
-                <b>TODO: inserire implementazione</b>
+            <p class="nota">
+                <b>Funzione hash</b> <br>
+                Anche qui necessitiamo di una funzione crittograficamente sicura, che sia efficiente, che non permetta
+                il calcolo a ritroso e che soprattutto sia resistente alle collisioni.
+            </p>
+
+            <p>
+                Per quanto riguarda l'implementazione ci siamo basati sulla classe <code
+                    class="docutils literal notranslate"><span class="pre">java.security.MessageDigest</span></code>.
+                <br>
+                In particolare, è presente nel file di utilità <a href="./code/TicketManager.kt" target="_blank"
+                    rel="noopener noreferrer">TicketManager.kt</a>, assieme ad altre utilità per la gestione del ticket,
+                la seguente funzione per la generazione dell'impronta hash.
+            <pre><code class="language-kotlin">private fun getHash(input: String, algorithm: String = "SHA-256"): String {
+                    val bytes = MessageDigest
+                        .getInstance(algorithm)
+                        .digest(input.toByteArray())
+                    return bytes.fold("") { str, it -> str + "%02x".format(it) }
+                }</code></pre>
+
+            </p>
+
+            <p>
+                Ricordiamo che una funzione hash, una volta definita, genererà sempre la stessa impronta a fronte di
+                input uguali. Perciò la stessa funzione viene riutilizzata in fase di verifica per ottenere l'impronta
+                da confrontare.
+            </p>
 
             </p>
             <h3 id="pdf">Visualizzazione tramite pdf</h3>
@@ -223,37 +291,52 @@
             <h4>Problema</h4>
             <p>
                 Sappiamo che il ticket verrà restituito dal <i>CSS</i> e la <i>SAG</i> dovrà fornirlo all'utente. <br>
-                Ci siamo posti dunque il problema di fornire all'utente il ticket in maniera semplice, comoda e soprattutto resistente ad eventuali chiusure dell'applicazione <i>ServiceAccessGUI</i>. <br>
-                Infatti, se una volta ottenuto il ticket (e fosse visualizzabile solo nella pagina) l'utente chiudesse per errore la pagina web, perderebbe la possibilità di inserirlo in quanto non se lo ricorderebbe (e dovrebbe effettuare una nuova richiesta di deposito). <br>
+                Ci siamo posti dunque il problema di fornire all'utente il ticket in maniera semplice, comoda e
+                soprattutto resistente ad eventuali chiusure dell'applicazione <i>ServiceAccessGUI</i>. <br>
+                Infatti, se una volta ottenuto il ticket (e fosse visualizzabile solo nella pagina) l'utente chiudesse
+                per errore la pagina web, perderebbe la possibilità di inserirlo in quanto non se lo ricorderebbe (e
+                dovrebbe effettuare una nuova richiesta di deposito). <br>
             </p>
 
             <h4>Soluzione</h4>
             <p>
                 Al fine di fornire il ticket all'utente, abbiamo pensato a due vie:
-                <ul>
-                    <li>mostarlo in chiaro nell'applicazione web (all'interno della pagina)</li>
-                    <li>fornirlo in maniera esterna all'applicazione</li>
-                </ul>
-                Mentre il primo modo semplifica la vita all'utente che dovrà fare solamente un copia-incolla all'interno della pagina, il secondo permette invece di far fronte a problemi come la chiusura dell'applicazione, sopra discussi. <br>
-                <p class="keypoint">
-                    <b>KEY-POINT:</b> fornire il <i>ticket</i> all'utente in modo <b>esterno</b> all'applicazione web <i>SAG</i>
-                </p>
+            <ul>
+                <li>mostarlo in chiaro nell'applicazione web (all'interno della pagina)</li>
+                <li>fornirlo in maniera esterna all'applicazione</li>
+            </ul>
+            Mentre il primo modo semplifica la vita all'utente che dovrà fare solamente un copia-incolla all'interno
+            della pagina, il secondo permette invece di far fronte a problemi come la chiusura dell'applicazione, sopra
+            discussi. <br>
+            <p class="keypoint">
+                <b>KEY-POINT:</b> fornire il <i>ticket</i> all'utente in modo <b>esterno</b> all'applicazione web
+                <i>SAG</i>
+            </p>
 
-                <p>
-                    <p>
-                        Abbiamo parlato in analisi del problema di fornire il codice all'utente in maniera esterna all'applicazione. <br>
-                        Pensando in termini di portabilità e semplicità d'uso, abbiamo optato per la generazione di un file <b>pdf</b>, contenente il ticket. <br>
-                        La scelta è stata mossa dal fatto che un file pdf è leggibile facilmente su tutti i dispositivi (smartphone, pc, tablet, ...) senza l'ausilio di applicazione esterne o non pre-installate. Inoltre, è facilmente scaricabile dalla pagina web.  
-                    </p>
-                    <p class="keypoint">
-                        <b>KEY-POINT:</b> portabilità e semplicità d'uso tramite un file <i>.pdf</i> contente il ticket code.
-                    </p>
-                
-                    <p>
-                        Qui il server risponde alla richiesta all'endpoint <code class="docutils literal notranslate"><span class="pre">/generatePdf</span></code> con il contenuto di un file pdf, questo contenuto binario &egrave; convertito in un <code class="docutils literal notranslate"><span class="pre">Blob</span></code> per poi essere salvato come pdf, a questo scopo si fa utilizzo della libreria <code class="docutils literal notranslate"><span class="pre">FileSaver.js</span></code>
-                    </p>
-                
-                    <pre><code class="language-javascript">function generatePdf(inputValue) {
+            <p>
+            <p>
+                Pensando in termini di portabilità e semplicità d'uso, abbiamo optato per la generazione di un file
+                <b>pdf</b>, contenente il ticket. <br>
+                La scelta è stata mossa dal fatto che un file pdf è leggibile facilmente su tutti i dispositivi
+                (smartphone, pc, tablet, ...) senza l'ausilio di applicazione esterne o non pre-installate. Inoltre, è
+                facilmente scaricabile dalla pagina web.
+            </p>
+            <p class="keypoint">
+                <b>KEY-POINT:</b> portabilità e semplicità d'uso tramite un file <i>.pdf</i> contente il ticket code.
+            </p>
+
+            <p>
+                La creazione del file pdf viene gestita lato <i>ServiceAccessGUI</i> tramite Java e JavaScript. In
+                particolare, nella seguente porzione di codice vediamo il server rispondere alla richiesta relativa
+                all'endpoint <code class="docutils literal notranslate"><span class="pre">/generatePdf</span></code> con
+                il contenuto di un file pdf. Questo contenuto binario &egrave; convertito in un <code
+                    class="docutils literal notranslate"><span class="pre">Blob</span></code> per poi essere salvato
+                come pdf, facendo uso della libreria <a href="./code/FileSaver.js" target="_blank"
+                    rel="noopener noreferrer"><code
+                        class="docutils literal notranslate"><span class="pre">FileSaver.js</span></code></a>.
+            </p>
+
+            <pre><code class="language-javascript">function generatePdf(inputValue) {
                 
     //data structure to send to server
     const requestBodyMap = {
@@ -281,19 +364,65 @@
             console.log(error);
     });
 }</code></pre>
-                
-                </p>
+
+            </p>
+
+            <p>
+                Mentre questo endpoint ritorna il file pdf sotto forma di <code
+                    class="docutils literal notranslate"><span class="pre">Blob</span></code>, all'interno di <a
+                    href="./code/FileSaver.js" target="_blank" rel="noopener noreferrer"><code
+                        class="docutils literal notranslate"><span class="pre">FileSaver.js</span></code></a> sono
+                presenti le funzioni per far partire il download dal browser in uso. In particolare, la prima ad essere
+                innescata è la seguente:
+
+            <pre><code class="language-javascript">var saveAs = _global.saveAs || (
+        // probably in some web worker
+        (typeof window !== 'object' || window !== _global)
+          ? function saveAs () { /* noop */ }
+              
+        // Use download attribute first if possible (#193 Lumia mobile) unless this is a macOS WebView
+        : ('download' in HTMLAnchorElement.prototype && !isMacOSWebView)
+        ? function saveAs (blob, name, opts) {
+          var URL = _global.URL || _global.webkitURL
+          var a = document.createElement('a')
+          name = name || blob.name || 'download'
+              
+          a.download = name
+          a.rel = 'noopener' // tabnabbing
+              
+          // TODO: detect chrome extensions & packaged apps
+          // a.target = '_blank'
+              
+          if (typeof blob === 'string') {
+            // Support regular links
+            a.href = blob
+            if (a.origin !== location.origin) {
+              corsEnabled(a.href)
+        ? download(blob, name, opts)
+        : click(a, a.target = '_blank')
+            } else {
+              click(a)
+            }
+          } else {
+            // Support blobs
+            a.href = URL.createObjectURL(blob)
+            setTimeout(function () { URL.revokeObjectURL(a.href) }, 4E4) // 40s
+            setTimeout(function () { click(a) }, 0)
+          }
+        }</code></pre>
+            </p>
             </p>
         </div>
-        
-        
-        <h2 id="deployment">Deployment</h2>    
+
+
+        <h2 id="deployment">Deployment</h2>
         <div class="remark">
-            
+
             <h3 id="gradle">Task gradle</h3>
 
             <h3 id="docker">Docker</h3>
         </div>
     </div>
 </body>
+
 </html>
