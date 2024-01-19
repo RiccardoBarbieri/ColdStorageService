@@ -1,0 +1,28 @@
+version: '3'
+services:
+  serviceaccessgui:
+    image: riccardoob/serviceaccessgui:latest
+    ports:
+      - 8075:8075
+  servicestatusgui:
+    image: riccardoob/servicestatusgui:latest
+    ports:
+      - 8065:8065
+  coldstorageservice:
+    image: riccardoob/coldstorageservice23:latest
+    ports:
+      - 8021:8021
+  wenv:
+    image: riccardoob/virtualrobotdisi23:1.0
+    ports:
+      - 8090:8090
+      - 8091:8091
+  basicrobot23:
+    image: riccardoob/basicrobot23:2.0
+    ports:
+      - 8020:8020/tcp
+      - 8020:8020/udp
+networks:
+  shared:
+    driver: bridge
+    

@@ -159,22 +159,6 @@ tasks.register<Dockerfile>("createDockerfile") {
     description = "Create Dockerfile"
 
     doFirst {
-//        val fileRegex = Regex(".*-(\\d+\\.\\d+\\.\\d+)\\.tar")
-//        val inputDir: Directory = project.layout.projectDirectory.dir("build/distributions")
-//        val lastModified = inputDir.asFileTree.files.filter {
-//            it.name.matches(fileRegex)
-//        }.maxByOrNull { it.lastModified() }
-//
-//        //nessuna distribuzione disponibile
-//        if (lastModified == null) {
-//            println("No file found")
-//            return@doFirst
-//        }
-//        //controllo che file scelto sia della versione corrente
-//        if (fileRegex.matchEntire(lastModified.name)?.groupValues?.get(1)?.contains(project.version.toString()) == false) {
-//            println("Mismatched version, check distribution files")
-//            return@doFirst
-//        }
         val inputTarFile =
             project.layout.projectDirectory.file("build/distributions/" + project.name + "-" + project.version + ".tar")
 

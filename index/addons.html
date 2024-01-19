@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/dockerfile.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/gradle.min.js"></script>
 
 
     <script>hljs.highlightAll();</script>
@@ -240,12 +241,12 @@
                 garantisce la sicurezza tramite l'utilizzo di uno PRNG.
             </p>
             <pre><code class="language-kotlin">private fun randomString(): String {
-                val sr: SecureRandom = SecureRandom.getInstance("SHA1PRNG")
-                return sr.ints(STRING_LENGTH, 0, CHAR_POOL.size)
-                    .asSequence()
-                    .map(CHAR_POOL::get)
-                    .joinToString("")
-            }</code></pre>
+    val sr: SecureRandom = SecureRandom.getInstance("SHA1PRNG")
+    return sr.ints(STRING_LENGTH, 0, CHAR_POOL.size)
+        .asSequence()
+        .map(CHAR_POOL::get)
+        .joinToString("")
+}</code></pre>
 
             <h5>Memorizzazione</h5>
             <p>
@@ -271,11 +272,11 @@
                     rel="noopener noreferrer">TicketManager.kt</a>, assieme ad altre utilità per la gestione del ticket,
                 la seguente funzione per la generazione dell'impronta hash.
             <pre><code class="language-kotlin">private fun getHash(input: String, algorithm: String = "SHA-256"): String {
-                    val bytes = MessageDigest
-                        .getInstance(algorithm)
-                        .digest(input.toByteArray())
-                    return bytes.fold("") { str, it -> str + "%02x".format(it) }
-                }</code></pre>
+    val bytes = MessageDigest
+        .getInstance(algorithm)
+        .digest(input.toByteArray())
+    return bytes.fold("") { str, it -> str + "%02x".format(it) }
+}</code></pre>
 
             </p>
 
@@ -331,7 +332,7 @@
                 all'endpoint <code class="docutils literal notranslate"><span class="pre">/generatePdf</span></code> con
                 il contenuto di un file pdf. Questo contenuto binario &egrave; convertito in un <code
                     class="docutils literal notranslate"><span class="pre">Blob</span></code> per poi essere salvato
-                come pdf, facendo uso della libreria <a href="./code/FileSaver.js" target="_blank"
+                come pdf, facendo uso della libreria <a href="https://github.com/eligrey/FileSaver.js" target="_blank"
                     rel="noopener noreferrer"><code
                         class="docutils literal notranslate"><span class="pre">FileSaver.js</span></code></a>.
             </p>
@@ -365,49 +366,17 @@
     });
 }</code></pre>
 
+            <p>
+                Questo endpoint restituisce il file pdf sotto forma di <code
+                    class="docutils literal notranslate"><span class="pre">Blob</span></code> binario, all'interno di <a
+                    href="./code/FileSaver.js" target="_blank" rel="noopener noreferrer"><code
+                        class="docutils literal notranslate"><span class="pre">FileSaver.js</span></code></a> sono
+                presenti le funzioni per avviare il download dal browser in uso. 
+
             </p>
 
             <p>
-                Mentre questo endpoint ritorna il file pdf sotto forma di <code
-                    class="docutils literal notranslate"><span class="pre">Blob</span></code>, all'interno di <a
-                    href="./code/FileSaver.js" target="_blank" rel="noopener noreferrer"><code
-                        class="docutils literal notranslate"><span class="pre">FileSaver.js</span></code></a> sono
-                presenti le funzioni per far partire il download dal browser in uso. In particolare, la prima ad essere
-                innescata è la seguente:
-
-            <pre><code class="language-javascript">var saveAs = _global.saveAs || (
-        // probably in some web worker
-        (typeof window !== 'object' || window !== _global)
-          ? function saveAs () { /* noop */ }
-              
-        // Use download attribute first if possible (#193 Lumia mobile) unless this is a macOS WebView
-        : ('download' in HTMLAnchorElement.prototype && !isMacOSWebView)
-        ? function saveAs (blob, name, opts) {
-          var URL = _global.URL || _global.webkitURL
-          var a = document.createElement('a')
-          name = name || blob.name || 'download'
-              
-          a.download = name
-          a.rel = 'noopener' // tabnabbing
-
-          if (typeof blob === 'string') {
-            // Support regular links
-            a.href = blob
-            if (a.origin !== location.origin) {
-              corsEnabled(a.href)
-        ? download(blob, name, opts)
-        : click(a, a.target = '_blank')
-            } else {
-              click(a)
-            }
-          } else {
-            // Support blobs
-            a.href = URL.createObjectURL(blob)
-            setTimeout(function () { URL.revokeObjectURL(a.href) }, 4E4) // 40s
-            setTimeout(function () { click(a) }, 0)
-          }
-        }</code></pre>
-            </p>
+                FileSaver.js &egrave; una libreria single-file, esponse una singola funzione: <code class="docutils literal notranslate"><span class="pre">saveAs(blob, filename)</span></code>, questa funzione trasforma il blob binario in un file chiamato <code class="docutils literal notranslate"><span class="pre">filename</span></code> e delega al browser il download del file permettendo di salvare il file nella memoria locale del dispositivo in uso.
             </p>
         </div>
 
@@ -415,9 +384,105 @@
         <h2 id="deployment">Deployment</h2>
         <div class="remark">
 
+            <p>
+                Per semplificare il processo di distribuzione dei componenti abbiamo deciso di creare apposite immagini <a href="https://docs.docker.com/">Docker</a> per ognuno di essi, abbiamo poi opportunamente combinato queste immagini in una specifica <a href="https://docs.docker.com/compose/">Docker Compose</a> chiamata <a href="../code/coldstorageservice.yaml">coldstorageservice.yaml</a>
+            </p>
+
+            <h3 id="docker">Immagini Docker</h3>
+
+            <p>
+                Per questo progetto sono state realizzate due tipologie principali di definizione di immagini tramite <a href="https://docs.docker.com/engine/reference/builder/">Dockerfile</a>: una per applicazioni realizzate in Spring e e l'altra per applicazioni QAK
+            </p>
+
+            <p>
+                Di seguito si riportano due esempi.
+            </p>
+
+            <p>
+                <b>QAK</b>
+            </p>
+            <pre><code class="language-dockerfile">FROM openjdk:11
+EXPOSE 8021
+EXPOSE 8020
+VOLUME ["/data"]
+ADD ./build/distributions/unibo.coldstorageservice23-4.1.0.tar /
+WORKDIR unibo.coldstorageservice23-4.1.0/bin
+COPY ./*.pl ./
+COPY ./*.json ./
+COPY ./*.bin ./
+COPY ./*.txt ./
+CMD ["bash", "./unibo.coldstorageservice23"]
+</code></pre>
+
+            <p>
+                <b>Spring</b>
+            </p>
+            <pre><code class="language-dockerfile">FROM openjdk:11
+EXPOSE 8075
+VOLUME ["/data"]
+ADD ./build/distributions/unibo.serviceaccessGUI-boot-3.0.1.tar /
+WORKDIR unibo.serviceaccessGUI-boot-3.0.1/bin
+CMD ["bash", "./unibo.serviceaccessGUI"]
+</code></pre>
+
+            <p>
+                I servizi necessitano di conoscere l'indirizzo al quale &egrave; raggiungibile un determinato servizio, il deployment con docker citato sopra impone che gli indirizzi siano composti dal <b>nome dato al servizio nella specifica compose</b>, ad esempio il servizio coldstorageservice23 &egrave; raggiungibile all'indirizzo <code class="docutils literal notranslate"><span class="pre">protocollo://coldstorageservice:8021</span></code>.
+            </p>
+
             <h3 id="gradle">Task gradle</h3>
 
-            <h3 id="docker">Docker</h3>
+            <p>
+                Allo scopo di velocizzare la transizione da una versione ad un'altra dei progetti sono state predisposte apposite task gradle che permettono di:
+            </p>
+            <ul>
+                <li>generare Dockerfile</li>
+                <li>creare le immagini definite</li>
+                <li>pubblicare le immagini</li>
+            </ul>
+            <p>
+                Queste task utilizzano informazioni definite all'interno del file <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code>, come versione e nome del progetto, per caratterizzare i Dockerfile generati e assegnare correttamente i tag della versione alle immagini create.
+            </p>
+
+            <p>
+                Si riporta di seguito una task di esempio:
+            </p>
+
+            <pre><code class="language-gradle">tasks.register<Dockerfile>("createDockerfile") {
+    mustRunAfter("distTar")
+    dependsOn("distTar")
+    group = "unibobootdocker"
+    description = "Create Dockerfile"
+
+    doFirst {
+        val inputTarFile =
+            project.layout.projectDirectory.file("build/distributions/" + project.name + "-" + project.version + ".tar")
+
+        from("openjdk:11")
+        exposePort(8021)
+        exposePort(8020)
+        volume("/data")
+        addFile("./build/distributions/${inputTarFile.asFile.name}", "/")
+        workingDir(inputTarFile.asFile.name.removeSuffix(".tar") + "/bin")
+        copyFile("./*.pl", "./")
+        copyFile("./*.json", "./")
+        copyFile("./*.bin", "./")
+        copyFile("./*.txt", "./")
+        defaultCommand("bash", "./" + project.name)
+    }
+}</code></pre>
+
+            <p>
+                Le altre task possono essere visualizzate nei file <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> dei progetti.
+            </p>
+
+            <p>
+                Come si pu&ograve; vedere la task riportata ha come dipendenza la task <code class="docutils literal notranslate"><span class="pre">distTar</span></code>: l'obiettivo di questa dipendenza &egrave; quello di aggiornare la distribuzione del progetto usata per l'immagine all'ultima versione che include le modifiche effettuate.
+            </p>
+
+            <p>
+                Tutte le task in questione fanno uso del plugin gradle <a href="https://github.com/bmuschko/gradle-docker-plugin">gradle-docker-plugin</a>: espone primitive per definire Dockerfile, creare immaginie e pubblicare immagini in modo <i>dichiarativo</i>.
+            </p>
+
         </div>
     </div>
 </body>
